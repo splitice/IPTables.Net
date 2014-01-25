@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using IPTables.Net.Modules;
-using IPTables.Net.Modules.Base;
+using IPTables.Net.Iptables.Modules;
+using IPTables.Net.Iptables.Modules.Base;
 
-namespace IPTables.Net
+namespace IPTables.Net.Iptables
 {
     public class IpTablesRule
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IPTables.Net.DataTypes
+namespace IPTables.Net.Iptables.DataTypes
 {
     public struct PortOrRange
     {

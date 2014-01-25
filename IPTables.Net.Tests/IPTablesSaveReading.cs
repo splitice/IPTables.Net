@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IPTables.Net.Iptables;
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests

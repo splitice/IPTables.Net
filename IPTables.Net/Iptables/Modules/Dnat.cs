@@ -2,27 +2,27 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
-using IPTables.Net.DataTypes;
-using IPTables.Net.Modules.Base;
+using IPTables.Net.Iptables.DataTypes;
+using IPTables.Net.Iptables.Modules.Base;
 
-namespace IPTables.Net.Modules
+namespace IPTables.Net.Iptables.Modules
 {
-    internal class Snat : ModuleBase, IIptablesModule
+    internal class Dnat : ModuleBase, IIptablesModule
     {
-        private const String OptionToSource = "--to-source";
+        private const String OptionToDestination = "--to-destination";
         private const String OptionRandom = "--random";
         private const String OptionPersisent = "--persistent";
 
         public bool Persistent = false;
         public bool Random = false;
-        public IPPortOrRange ToSource = new IPPortOrRange(IPAddress.Any);
+        public IPPortOrRange ToDestination = new IPPortOrRange(IPAddress.Any);
 
         public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {
-                case OptionToSource:
-                    ToSource = IPPortOrRange.Parse(parser.GetNextArg());
+                case OptionToDestination:
+                    ToDestination = IPPortOrRange.Parse(parser.GetNextArg());
                     return 1;
 
                 case OptionRandom:
@@ -41,12 +41,12 @@ namespace IPTables.Net.Modules
         {
             var sb = new StringBuilder();
 
-            if (Equals(ToSource.LowerAddress, IPAddress.Any))
+            if (Equals(ToDestination.LowerAddress, IPAddress.Any))
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
-                sb.Append(OptionToSource + " ");
-                sb.Append(ToSource);
+                sb.Append(OptionToDestination + " ");
+                sb.Append(ToDestination);
             }
 
             if (Random)
@@ -70,7 +70,7 @@ namespace IPTables.Net.Modules
         {
             var options = new List<string>
                           {
-                              OptionToSource,
+                              OptionToDestination,
                               OptionRandom,
                               OptionPersisent
                           };
@@ -79,7 +79,7 @@ namespace IPTables.Net.Modules
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("snat", typeof (Snat), GetOptions, true);
+            return GetModuleEntryInternal("dnat", typeof (Dnat), GetOptions, true);
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace IPTables.Net.Modules.Base
+namespace IPTables.Net.Iptables.Modules.Base
 {
     public class RuleParser
     {

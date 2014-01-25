@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace IPTables.Net.DataTypes
+namespace IPTables.Net.Iptables.DataTypes
 {
     internal struct IpPort
     {

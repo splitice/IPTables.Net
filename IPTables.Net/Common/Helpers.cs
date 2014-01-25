@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace IPTables.Net
+namespace IPTables.Net.Common
 {
     internal class Helpers
     {

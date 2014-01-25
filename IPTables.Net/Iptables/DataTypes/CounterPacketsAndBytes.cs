@@ -1,4 +1,4 @@
-﻿namespace IPTables.Net.DataTypes
+﻿namespace IPTables.Net.Iptables.DataTypes
 {
     internal struct CounterPacketsAndBytes
     {

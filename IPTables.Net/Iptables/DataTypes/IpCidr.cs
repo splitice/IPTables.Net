@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace IPTables.Net.DataTypes
+namespace IPTables.Net.Iptables.DataTypes
 {
     public struct IpCidr : IEquatable<IpCidr>
     {
@@ -23,13 +23,6 @@ namespace IPTables.Net.DataTypes
 
         public static IpCidr Parse(String cidr)
         {
-            bool not = false;
-            cidr = cidr.Trim();
-            if (cidr[0] == '!')
-            {
-                not = true;
-                cidr = cidr.Substring(1).TrimStart();
-            }
             string[] p = cidr.Split(new[] {'/'});
             IPAddress ip;
             try

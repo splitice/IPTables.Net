@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using IPTables.Net.Iptables;
 
 namespace IPTables.Net
 {

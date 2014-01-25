@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace IPTables.Net.DataTypes
+namespace IPTables.Net.Iptables.DataTypes
 {
     public class ValueOrNot<T>
     {

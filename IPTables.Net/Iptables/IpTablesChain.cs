@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace IPTables.Net
+namespace IPTables.Net.Iptables
 {
     public class IpTablesChain
     {

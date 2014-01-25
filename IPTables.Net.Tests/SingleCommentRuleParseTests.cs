@@ -1,4 +1,5 @@
 ﻿using System;
+using IPTables.Net.Iptables;
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests

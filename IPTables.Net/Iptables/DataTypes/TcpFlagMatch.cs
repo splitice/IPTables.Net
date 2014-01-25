@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace IPTables.Net.DataTypes
+namespace IPTables.Net.Iptables.DataTypes
 {
     internal class TcpFlagMatch
     {

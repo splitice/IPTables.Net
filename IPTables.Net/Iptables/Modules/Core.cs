@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using IPTables.Net.DataTypes;
-using IPTables.Net.Modules.Base;
+using IPTables.Net.Iptables.DataTypes;
+using IPTables.Net.Iptables.Modules.Base;
 
-namespace IPTables.Net.Modules
+namespace IPTables.Net.Iptables.Modules
 {
     internal class Core : ModuleBase, IIptablesModule
     {

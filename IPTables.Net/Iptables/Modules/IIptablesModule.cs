@@ -1,7 +1,7 @@
 ﻿using System;
-using IPTables.Net.Modules.Base;
+using IPTables.Net.Iptables.Modules.Base;
 
-namespace IPTables.Net.Modules
+namespace IPTables.Net.Iptables.Modules
 {
     public interface IIptablesModule
     {

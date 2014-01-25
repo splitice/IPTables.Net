@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace IPTables.Net.Modules.Base
+namespace IPTables.Net.Iptables.Modules.Base
 {
     public struct ModuleEntry
     {
