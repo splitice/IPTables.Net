@@ -43,14 +43,7 @@ namespace IPTables.Net.Modules
                     return 1;
 
                 case OptionSyn:
-                    if (not)
-                    {
-                        TcpFlags = TcpFlagMatch.NotSyn;
-                    }
-                    else
-                    {
-                        TcpFlags = TcpFlagMatch.Syn;
-                    }
+                    TcpFlags = not ? TcpFlagMatch.NotSyn : TcpFlagMatch.Syn;
                     return 0;
 
                 case OptionTcpOption:
