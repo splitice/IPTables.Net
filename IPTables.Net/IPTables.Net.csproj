@@ -42,7 +42,7 @@
     <Compile Include="DataTypes\CounterPacketsAndBytes.cs" />
     <Compile Include="DataTypes\IPPortOrRange.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="IPTablesSave.cs" />
+    <Compile Include="IPTablesSystem.cs" />
     <Compile Include="DataTypes\PortOrRange.cs" />
     <Compile Include="DataTypes\TargetMode.cs" />
     <Compile Include="DataTypes\TcpFlag.cs" />
@@ -51,7 +51,6 @@
     <Compile Include="IPAddressExtension.cs" />
     <Compile Include="DataTypes\IpCidr.cs" />
     <Compile Include="DataTypes\IpPort.cs" />
-    <Compile Include="IPTablesProcessor.cs" />
     <Compile Include="IpTablesRule.cs" />
     <Compile Include="Modules\Base\ModuleEntry.cs" />
     <Compile Include="ModuleFactory.cs" />
