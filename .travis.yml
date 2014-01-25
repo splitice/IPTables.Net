@@ -5,5 +5,6 @@ install:
  
 script:
   - export EnableNuGetPackageRestore=true
+  - mozroots --import --sync
   - xbuild CI.proj
   - nunit-console ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll -exclude Integration,NotWorkingOnMono
