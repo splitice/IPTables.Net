@@ -35,12 +35,12 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataTypes\CounterPacketsAndBytes.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="IPTablesSave.cs" />
     <Compile Include="DataTypes\PortOrRange.cs" />
     <Compile Include="DataTypes\TargetMode.cs" />
@@ -58,6 +58,7 @@
     <Compile Include="Modules\Core.cs" />
     <Compile Include="Modules\IIptablesModule.cs" />
     <Compile Include="Modules\Base\ModuleBase.cs" />
+    <Compile Include="Modules\Comment.cs" />
     <Compile Include="Modules\Tcp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

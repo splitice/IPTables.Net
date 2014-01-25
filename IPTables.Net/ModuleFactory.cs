@@ -12,7 +12,8 @@ namespace IPTables.Net
         public static List<Func<ModuleEntry>> AllModules = new List<Func<ModuleEntry>>()
                                                         {
                                                             Modules.Core.GetModuleEntry,
-                                                            Modules.Tcp.GetModuleEntry
+                                                            Modules.Tcp.GetModuleEntry,
+                                                            Modules.Comment.GetModuleEntry
                                                         };
 
         private readonly Dictionary<String, ModuleEntry> _modules = new Dictionary<string, ModuleEntry>();
