@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Remoting;
+using IPTables.Net.System.Interface;
 
 namespace IPTables.Net.System.Local
 {

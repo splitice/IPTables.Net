@@ -468,9 +468,6 @@ namespace IPTables.Net.System
         /// A <see cref="T:System.IO.StreamReader"/> that can be used to read the standard output stream of the application.
         /// </returns>
         /// <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Diagnostics.Process.StandardOutput"/> stream has not been defined for redirection; ensure <see cref="P:System.Diagnostics.ProcessStartInfo.RedirectStandardOutput"/> is set to true and <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute"/> is set to false.- or - The <see cref="P:System.Diagnostics.Process.StandardOutput"/> stream has been opened for asynchronous read operations with <see cref="M:System.Diagnostics.Process.BeginOutputReadLine"/>. </exception><filterpriority>1</filterpriority>
-#if DEBUG
-        private StreamReader _stdout = null;
-#endif
         StreamReader StandardOutput { get; }
 
         /// <summary>
