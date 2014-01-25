@@ -4,7 +4,6 @@ using System.Diagnostics;
 using IPTables.Net.DataTypes;
 using IPTables.Net.Modules;
 using IPTables.Net.Modules.Base;
-using IPTables.Net.System;
 
 namespace IPTables.Net
 {
@@ -59,13 +58,13 @@ namespace IPTables.Net
         public void Add(String table, String chain)
         {
             String command = " -A " + chain + " " + GetCommand(table);
-            SystemProcess process = SystemProcess.Start(new ProcessStartInfo("iptables", command));
+            Process process = Process.Start(new ProcessStartInfo("iptables", command));
         }
 
         public void Delete(String table, String chain)
         {
             String command = " -D " + chain + " " + GetCommand(table);
-            SystemProcess process = SystemProcess.Start(new ProcessStartInfo("iptables", command));
+            Process process = Process.Start(new ProcessStartInfo("iptables", command));
         }
 
         public IIptablesModule GetModuleForParse(string name, Type moduleType)
