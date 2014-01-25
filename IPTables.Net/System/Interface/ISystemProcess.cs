@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.Remoting;
 
-namespace IPTables.Net.System
+namespace IPTables.Net.System.Interface
 {
     public interface ISystemProcess
     {

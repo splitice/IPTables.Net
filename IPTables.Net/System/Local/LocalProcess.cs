@@ -10,29 +10,16 @@ namespace IPTables.Net.System.Local
     internal class LocalProcess : ISystemProcess
     {
         private readonly Process _process;
-#if DEBUG
-        private readonly SshCommand _command;
-#endif
 
         public LocalProcess(Process process)
         {
             _process = process;
         }
 
-#if DEBUG
-        public GreProcess(SshCommand process)
-        {
-            _command = process;
-        }
-#endif
-
         public static LocalProcess Start(ProcessStartInfo info)
         {
             Console.WriteLine(info.FileName + " " + info.Arguments);
-#if DEBUG
-            var e = GreSsh.Instance.Execute(info.FileName + " " + info.Arguments);
-            return new GreProcess(e);
-#else
+
             info.RedirectStandardOutput = true;
             info.RedirectStandardError = true;
 
@@ -40,7 +27,6 @@ namespace IPTables.Net.System.Local
             info.Arguments = "-c \"" + info.FileName + " " + info.Arguments + "\"";
             info.FileName = "/bin/bash";
             return new LocalProcess(Process.Start(info));
-#endif
         }
 
         /// <summary>
@@ -806,25 +792,13 @@ namespace IPTables.Net.System.Local
         /// A <see cref="T:System.IO.StreamReader"/> that can be used to read the standard output stream of the application.
         /// </returns>
         /// <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Diagnostics.Process.StandardOutput"/> stream has not been defined for redirection; ensure <see cref="P:System.Diagnostics.ProcessStartInfo.RedirectStandardOutput"/> is set to true and <see cref="P:System.Diagnostics.ProcessStartInfo.UseShellExecute"/> is set to false.- or - The <see cref="P:System.Diagnostics.Process.StandardOutput"/> stream has been opened for asynchronous read operations with <see cref="M:System.Diagnostics.Process.BeginOutputReadLine"/>. </exception><filterpriority>1</filterpriority>
-#if DEBUG
-        private StreamReader _stdout = null;
-#endif
         public StreamReader StandardOutput
         {
             get
             {
-#if DEBUG
-                if (_stdout == null)
-                    _stdout = new StreamReader(new MemoryStream(ASCIIEncoding.ASCII.GetBytes(_command.Result)));
-                return _stdout;
-#endif
                 return _process.StandardOutput;
             }
         }
-
-#if DEBUG
-        private StreamReader _stderr = null;
-#endif
 
         /// <summary>
         /// Gets a stream used to read the error output of the application.
@@ -837,11 +811,6 @@ namespace IPTables.Net.System.Local
         {
             get
             {
-#if DEBUG
-                if (_stderr == null)
-                    _stderr = new StreamReader(new MemoryStream(ASCIIEncoding.ASCII.GetBytes(_command.Error)));
-                return _stderr;
-#endif
                 return _process.StandardError;
             }
         }
