@@ -31,9 +31,12 @@ namespace IPTables.Net.DataTypes
         public static TcpFlagMatch NotSyn = new TcpFlagMatch(
             new List<TcpFlag>() { TcpFlag.SYN }, new List<TcpFlag>() { });
 
-        public String ToString()
+        public override String ToString()
         {
-            return "";
+            String ret = "";
+            ret += Comparing.Select((f) => GetFlag(f)).Aggregate((current, next) => current + ", " + next);
+            ret += MustHave.Select((f) => GetFlag(f)).Aggregate((current, next) => current + ", " + next);
+            return ret;
         }
 
         static TcpFlag GetFlag(String sFlag)
@@ -48,6 +51,23 @@ namespace IPTables.Net.DataTypes
                     return TcpFlag.FIN;
                 case "RST":
                     return TcpFlag.RST;
+            }
+
+            throw new Exception("Invalid TCP Flag");
+        }
+
+        static String GetFlag(TcpFlag sFlag)
+        {
+            switch (sFlag)
+            {
+                case TcpFlag.SYN:
+                    return "SYN";
+                case TcpFlag.ACK:
+                    return "ACK";
+                case TcpFlag.FIN:
+                    return "FIN";
+                case TcpFlag.RST:
+                    return "RST";
             }
 
             throw new Exception("Invalid TCP Flag");
