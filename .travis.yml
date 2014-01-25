@@ -5,4 +5,4 @@ install:
  
 script:
   - xbuild CI.proj
-  - nunit-console ./IPTables.Net/IPTables.Net/bin/Debug/IPTables.Net.dll -exclude Integration,NotWorkingOnMono
+  - nunit-console ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll -exclude Integration,NotWorkingOnMono
