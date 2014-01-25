@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.Remoting;
-using System.Text;
 
-namespace IPTables.Net.System
+namespace IPTables.Net.System.Local
 {
     internal class LocalProcess : ISystemProcess
     {

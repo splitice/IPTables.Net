@@ -65,8 +65,9 @@
     <Compile Include="Iptables\Modules\Comment.cs" />
     <Compile Include="Iptables\Modules\Tcp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="System\ISystemProcess.cs" />
-    <Compile Include="System\LocalProcess.cs" />
+    <Compile Include="System\Interface\ISystemProcess.cs" />
+    <Compile Include="System\LocalFactory.cs" />
+    <Compile Include="System\Local\LocalProcess.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
