@@ -1,0 +1,74 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace IPTables.Net.Modules.Base
+{
+    public class RuleParser
+    {
+        private readonly string[] _arguments;
+        public String Chain;
+        public int Position = 0;
+
+        private List<ModuleEntry> _parsers = new List<ModuleEntry>();
+        private ModuleFactory _moduleFactory = new ModuleFactory();
+        private IpTablesRule _ipRule;
+
+        public RuleParser(string[] arguments, IpTablesRule ipRule)
+        {
+            _arguments = arguments;
+            _ipRule = ipRule;
+            _parsers.Add(_moduleFactory.GetCoreModule());
+        }
+
+        public string GetCurrentArg()
+        {
+            return _arguments[Position];
+        }
+
+        public string GetNextArg(int offset = 1)
+        {
+            return _arguments[Position + offset];
+        }
+
+        private static bool CanFeedModule(ModuleEntry module, String option)
+        {
+            return module.Options.Contains(option);
+        }
+
+        public int FeedToSkip(int i, bool not)
+        {
+            Position = i;
+            String option = GetCurrentArg();
+
+            if (option == "-m")
+            {
+                LoadParserModule(GetNextArg());
+                return 1;
+            }
+            else if (option == "-A")
+            {
+                Chain = GetNextArg();
+                return 1;
+            }
+            else
+            {
+                foreach (var m in _parsers)
+                {
+                    if (m.Options.Contains(option))
+                    {
+                        IIptablesModule module = _ipRule.GetModuleForParse(m.Name, m.Module);
+                        return module.Feed(this, not);
+                    }
+                }
+            }
+
+            throw new Exception("Unknown option: "+option);
+        }
+
+        private void LoadParserModule(string getNextArg)
+        {
+            _parsers.Add(_moduleFactory.GetModule(getNextArg));
+        }
+    }
+}

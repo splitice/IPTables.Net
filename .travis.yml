@@ -1,0 +1,8 @@
+language: c
+ 
+install:
+  - sudo apt-get install mono-devel mono-gmcs nunit-console
+ 
+script:
+  - xbuild CI.proj
+  - nunit-console ./IPTables.Net/IPTables.Net/bin/Debug/IPTables.Net.dll -exclude Integration,NotWorkingOnMono
