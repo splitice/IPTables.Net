@@ -19,7 +19,7 @@ namespace IPTables.Net.Modules
             switch (parser.GetCurrentArg())
             {
                 case OptionCommentLong:
-                    CommentText = Helpers.EscapeArguments(parser.GetNextArg());
+                    CommentText = parser.GetNextArg();
                     return 1;
             }
 
@@ -33,7 +33,7 @@ namespace IPTables.Net.Modules
             if (CommentText != null)
             {
                 sb.Append("--comment ");
-                sb.Append(CommentText);
+                sb.Append(Helpers.EscapeArguments(CommentText));
             }
 
             return sb.ToString();

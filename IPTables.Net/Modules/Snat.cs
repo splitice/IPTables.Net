@@ -9,13 +9,13 @@ using IPTables.Net.Modules.Base;
 
 namespace IPTables.Net.Modules
 {
-    class Dnat : ModuleBase, IIptablesModule
+    class Snat : ModuleBase, IIptablesModule
     {
-        private const String OptionToDestination = "--to-destination";
+        private const String OptionToSource = "--to-source";
         private const String OptionRandom = "--random";
         private const String OptionPersisent = "--persistent";
 
-        public IPPortOrRange ToDestination = new IPPortOrRange(IPAddress.Any);
+        public IPPortOrRange ToSource = new IPPortOrRange(IPAddress.Any);
         public bool Random = false;
         public bool Persistent = false;
 
@@ -23,8 +23,8 @@ namespace IPTables.Net.Modules
         {
             switch (parser.GetCurrentArg())
             {
-                case OptionToDestination:
-                    ToDestination = IPPortOrRange.Parse(parser.GetNextArg());
+                case OptionToSource:
+                    ToSource = IPPortOrRange.Parse(parser.GetNextArg());
                     return 1;
 
                 case OptionRandom:
@@ -43,12 +43,12 @@ namespace IPTables.Net.Modules
         {
             StringBuilder sb = new StringBuilder();
 
-            if (Equals(ToDestination.LowerAddress, IPAddress.Any))
+            if (Equals(ToSource.LowerAddress, IPAddress.Any))
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
-                sb.Append(OptionToDestination+" ");
-                sb.Append(ToDestination);
+                sb.Append(OptionToSource + " ");
+                sb.Append(ToSource);
             }
 
             if (Random)
@@ -72,7 +72,7 @@ namespace IPTables.Net.Modules
         {
             var options = new List<string>
                           {
-                              OptionToDestination,
+                              OptionToSource,
                               OptionRandom,
                               OptionPersisent
                           };
@@ -81,7 +81,7 @@ namespace IPTables.Net.Modules
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("dnat", typeof(Dnat), GetOptions, true);
+            return GetModuleEntryInternal("snat", typeof(Snat), GetOptions, true);
         }
     }
 }

@@ -56,6 +56,7 @@
     <Compile Include="Modules\Base\ModuleEntry.cs" />
     <Compile Include="ModuleFactory.cs" />
     <Compile Include="Modules\Base\RuleParser.cs" />
+    <Compile Include="Modules\Snat.cs" />
     <Compile Include="Modules\Dnat.cs" />
     <Compile Include="Modules\Connlimit.cs" />
     <Compile Include="Modules\Core.cs" />

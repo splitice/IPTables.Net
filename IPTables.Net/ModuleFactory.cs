@@ -13,6 +13,8 @@ namespace IPTables.Net
                                                         {
                                                             Modules.Core.GetModuleEntry,
                                                             Modules.Tcp.GetModuleEntry,
+                                                            Modules.Dnat.GetModuleEntry,
+                                                            Modules.Snat.GetModuleEntry,
                                                             Modules.Connlimit.GetModuleEntry,
                                                             Modules.Comment.GetModuleEntry
                                                         };

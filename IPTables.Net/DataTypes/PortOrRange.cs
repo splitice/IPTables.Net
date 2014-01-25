@@ -8,8 +8,9 @@ namespace IPTables.Net.DataTypes
 {
     public struct PortOrRange
     {
-        private uint _lowerPort;
-        private uint _upperPort;
+        private readonly uint _lowerPort;
+        private readonly uint _upperPort;
+        public static PortOrRange Any = new PortOrRange(0, 0);
 
         public PortOrRange(uint lowerPort, uint upperPort)
         {
@@ -22,14 +23,24 @@ namespace IPTables.Net.DataTypes
             _upperPort = _lowerPort = lowerPort;
         }
 
+        public uint UpperPort
+        {
+            get { return _upperPort; }
+        }
+
+        public uint LowerPort
+        {
+            get { return _lowerPort; }
+        }
+
         public override String ToString()
         {
-            if (_lowerPort == _upperPort)
+            if (LowerPort == UpperPort)
             {
-                return _lowerPort.ToString();
+                return LowerPort.ToString();
             }
 
-            return String.Format("{0}:{1}", _lowerPort.ToString(), _upperPort.ToString());
+            return String.Format("{0}:{1}", LowerPort.ToString(), UpperPort.ToString());
         }
 
         public static PortOrRange Parse(string getNextArg)
