@@ -5,8 +5,10 @@ using IPTables.Net.Modules.Base;
 
 namespace IPTables.Net
 {
-    public class IPTablesSystem
+    public class IpTablesSystem
     {
+        public static IpTablesSystem Instance = new IpTablesSystem();
+
         public Dictionary<String, List<IpTablesRule>> GetRulesFromOutput(String output, String table)
         {
             var ret = new Dictionary<string, List<IpTablesRule>>();
@@ -62,7 +64,7 @@ namespace IPTables.Net
                     case 'C':
                         if (line == "COMMIT" && ttable == table)
                         {
-                            if (table == null)
+                            if (ttable == null)
                             {
                                 throw new Exception("Parsing error");
                             }
@@ -79,9 +81,43 @@ namespace IPTables.Net
 
         public Dictionary<String, List<IpTablesRule>> GetRules(string table)
         {
-            var process = Process.Start(new ProcessStartInfo("iptables-save", "-c"));
+            var process = Process.Start(new ProcessStartInfo("iptables-save", String.Format("-c -t {0}", table)));
             process.WaitForExit();
             return GetRulesFromOutput(process.StandardOutput.ReadToEnd(), table);
+        }
+
+        public IEnumerable<IpTablesChain> GetChains(string table)
+        {
+            HashSet<IpTablesChain> chains = new HashSet<IpTablesChain>();
+            foreach(var rules in GetRules(table))
+            {
+                chains.Add(new IpTablesChain(table,rules.Key));
+            }
+            return chains;
+        }
+
+
+        public void DeleteChain(string name, string table="filter", bool flush = false)
+        {
+            String arguments;
+            if (flush)
+            {
+                arguments = String.Format("-t {0} -F {1} -X {1}", table, name);
+            }
+            else
+            {
+                arguments = String.Format("-t {0} -X {1}", table, name);
+            }
+            var process = Process.Start(new ProcessStartInfo("iptables", arguments));
+            process.WaitForExit();
+        }
+
+        public IpTablesChain AddChain(String name, String table = "filter")
+        {
+            var process = Process.Start(new ProcessStartInfo("iptables", String.Format("-t {0} -N {1}", name, table)));
+            process.WaitForExit();
+
+            return new IpTablesChain(table, name);
         }
     }
 }

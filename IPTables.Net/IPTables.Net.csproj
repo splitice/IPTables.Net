@@ -42,7 +42,8 @@
     <Compile Include="DataTypes\CounterPacketsAndBytes.cs" />
     <Compile Include="DataTypes\IPPortOrRange.cs" />
     <Compile Include="Helpers.cs" />
-    <Compile Include="IPTablesSystem.cs" />
+    <Compile Include="IpTablesChain.cs" />
+    <Compile Include="IpTablesSystem.cs" />
     <Compile Include="DataTypes\PortOrRange.cs" />
     <Compile Include="DataTypes\TargetMode.cs" />
     <Compile Include="DataTypes\TcpFlag.cs" />

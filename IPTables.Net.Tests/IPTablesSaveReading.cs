@@ -8,9 +8,9 @@ using NUnit.Framework;
 namespace IPTables.Net.Tests
 {
     [TestFixture]
-    class IPTablesSaveReading
+    class IpTablesSaveReading
     {
-        private static readonly IPTablesSystem Processor = new IPTablesSystem();
+        private static readonly IpTablesSystem Processor = new IpTablesSystem();
 
         [Test]
         public void TestParseEmpty()
