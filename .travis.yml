@@ -4,5 +4,6 @@ install:
   - sudo apt-get install mono-devel mono-gmcs nunit-console
  
 script:
+  - export EnableNuGetPackageRestore=true
   - xbuild CI.proj
   - nunit-console ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll -exclude Integration,NotWorkingOnMono
