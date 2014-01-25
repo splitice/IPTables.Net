@@ -8,5 +8,6 @@ namespace IPTables.Net.Modules.Base
         public String Name;
         public Type Module;
         public IEnumerable<String> Options;
+        public bool Preloaded;
     }
 }

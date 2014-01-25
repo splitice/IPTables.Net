@@ -55,7 +55,7 @@ namespace IPTables.Net.Tests
         }
 
         [Test]
-        public void TestCoreDropinUdp()
+        public void TestCoreDropingUdp()
         {
             String rule = "-A INPUT -p udp -j DROP";
             String chain;

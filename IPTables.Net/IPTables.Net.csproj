@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataTypes\CounterPacketsAndBytes.cs" />
+    <Compile Include="DataTypes\IPPortOrRange.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="IPTablesSave.cs" />
     <Compile Include="DataTypes\PortOrRange.cs" />
@@ -55,6 +56,8 @@
     <Compile Include="Modules\Base\ModuleEntry.cs" />
     <Compile Include="ModuleFactory.cs" />
     <Compile Include="Modules\Base\RuleParser.cs" />
+    <Compile Include="Modules\Dnat.cs" />
+    <Compile Include="Modules\Connlimit.cs" />
     <Compile Include="Modules\Core.cs" />
     <Compile Include="Modules\IIptablesModule.cs" />
     <Compile Include="Modules\Base\ModuleBase.cs" />

@@ -214,7 +214,7 @@ namespace IPTables.Net.Modules
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("core", typeof(Core), GetOptions);
+            return GetModuleEntryInternal("core", typeof(Core), GetOptions, true);
         }
     }
 }

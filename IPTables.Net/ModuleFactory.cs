@@ -13,11 +13,11 @@ namespace IPTables.Net
                                                         {
                                                             Modules.Core.GetModuleEntry,
                                                             Modules.Tcp.GetModuleEntry,
+                                                            Modules.Connlimit.GetModuleEntry,
                                                             Modules.Comment.GetModuleEntry
                                                         };
 
         private readonly Dictionary<String, ModuleEntry> _modules = new Dictionary<string, ModuleEntry>();
-        private readonly ModuleEntry _coreModule;
 
         public ModuleFactory()
         {
@@ -25,14 +25,7 @@ namespace IPTables.Net
             {
                 var m = mFunc();
 
-                if (m.Name == "core")
-                {
-                    _coreModule = m;
-                }
-                else
-                {
-                    _modules.Add(m.Name, m);
-                }
+                _modules.Add(m.Name, m);
             }
         }
 
@@ -41,9 +34,9 @@ namespace IPTables.Net
             return _modules[module];
         }
 
-        public ModuleEntry GetCoreModule()
+        public IEnumerable<ModuleEntry> GetPreloadModules()
         {
-            return _coreModule;
+            return _modules.Where((a) => a.Value.Preloaded).Select((a)=>a.Value);
         }
     }
 }

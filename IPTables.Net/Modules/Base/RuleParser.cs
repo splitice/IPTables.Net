@@ -10,15 +10,15 @@ namespace IPTables.Net.Modules.Base
         public String Chain;
         public int Position = 0;
 
-        private List<ModuleEntry> _parsers = new List<ModuleEntry>();
-        private ModuleFactory _moduleFactory = new ModuleFactory();
-        private IpTablesRule _ipRule;
+        private readonly List<ModuleEntry> _parsers = new List<ModuleEntry>();
+        private readonly ModuleFactory _moduleFactory = new ModuleFactory();
+        private readonly IpTablesRule _ipRule;
 
         public RuleParser(string[] arguments, IpTablesRule ipRule)
         {
             _arguments = arguments;
             _ipRule = ipRule;
-            _parsers.Add(_moduleFactory.GetCoreModule());
+            _parsers.AddRange(_moduleFactory.GetPreloadModules());
         }
 
         public string GetCurrentArg()
