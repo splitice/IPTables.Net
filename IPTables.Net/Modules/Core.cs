@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-
 using IPTables.Net.DataTypes;
 using IPTables.Net.Modules.Base;
 
 namespace IPTables.Net.Modules
 {
-    class Core : ModuleBase, IIptablesModule
+    internal class Core : ModuleBase, IIptablesModule
     {
         private const String OptionProtocolLong = "--protocol";
         private const String OptionProtocolShort = "-p";
@@ -28,10 +26,14 @@ namespace IPTables.Net.Modules
         private const String OptionFragmentShort = "-f";
         private const String OptionSetCountersLong = "--set-counters";
         private const String OptionSetCountersShort = "-c";
+        public ValueOrNot<IpCidr> Destination = new ValueOrNot<IpCidr>();
+        public ValueOrNot<bool> Fragmented = new ValueOrNot<bool>();
+        public ValueOrNot<String> InInterface = new ValueOrNot<String>();
+        public ValueOrNot<String> OutInterface = new ValueOrNot<String>();
 
         public ValueOrNot<String> Protocol = new ValueOrNot<String>();
+        public ValueOrNot<CounterPacketsAndBytes> SetCounters = new ValueOrNot<CounterPacketsAndBytes>();
         public ValueOrNot<IpCidr> Source = new ValueOrNot<IpCidr>();
-        public ValueOrNot<IpCidr> Destination = new ValueOrNot<IpCidr>();
         //Target
         public String Target = null;
         public TargetMode TargetMode = TargetMode.Jump;
@@ -39,10 +41,7 @@ namespace IPTables.Net.Modules
 
         public String Jump
         {
-            get
-            {
-                return TargetMode == TargetMode.Jump ? Target : null;
-            }
+            get { return TargetMode == TargetMode.Jump ? Target : null; }
             set
             {
                 if (value != null)
@@ -55,10 +54,7 @@ namespace IPTables.Net.Modules
 
         public String Goto
         {
-            get
-            {
-                return TargetMode == TargetMode.Goto ? Target : null;
-            }
+            get { return TargetMode == TargetMode.Goto ? Target : null; }
             set
             {
                 if (value != null)
@@ -68,12 +64,6 @@ namespace IPTables.Net.Modules
                 }
             }
         }
-
-        public ValueOrNot<String> InInterface = new ValueOrNot<String>();
-        public ValueOrNot<String> OutInterface = new ValueOrNot<String>();
-
-        public ValueOrNot<bool> Fragmented = new ValueOrNot<bool>();
-        public ValueOrNot<CounterPacketsAndBytes> SetCounters = new ValueOrNot<CounterPacketsAndBytes>();
 
         public int Feed(RuleParser parser, bool not)
         {
@@ -113,9 +103,11 @@ namespace IPTables.Net.Modules
                     return 0;
                 case OptionSetCountersLong:
                 case OptionSetCountersShort:
-                    SetCounters = new ValueOrNot<CounterPacketsAndBytes>(new CounterPacketsAndBytes(uint.Parse(parser.GetNextArg(1)), uint.Parse(parser.GetNextArg(2))), not);
+                    SetCounters =
+                        new ValueOrNot<CounterPacketsAndBytes>(
+                            new CounterPacketsAndBytes(uint.Parse(parser.GetNextArg(1)),
+                                uint.Parse(parser.GetNextArg(2))), not);
                     return 2;
-
             }
 
             return 0;
@@ -123,7 +115,7 @@ namespace IPTables.Net.Modules
 
         public String GetRuleString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (!Protocol.Null)
             {
@@ -214,7 +206,7 @@ namespace IPTables.Net.Modules
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("core", typeof(Core), GetOptions, true);
+            return GetModuleEntryInternal("core", typeof (Core), GetOptions, true);
         }
     }
 }

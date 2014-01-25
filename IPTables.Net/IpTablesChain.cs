@@ -1,35 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace IPTables.Net
 {
     public class IpTablesChain
     {
-        private String _name;
-        private String _table;
-
-        public String Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
-
-        public String Table
-        {
-            get
-            {
-                return _table;
-            }
-        }
+        private readonly String _name;
+        private readonly String _table;
 
         public IpTablesChain(String table, String chainName)
         {
             _name = chainName;
             _table = table;
+        }
+
+        public String Name
+        {
+            get { return _name; }
+        }
+
+        public String Table
+        {
+            get { return _table; }
         }
 
         public IEnumerable<IpTablesRule> GetRules()

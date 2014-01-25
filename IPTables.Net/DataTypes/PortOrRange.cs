@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 
 namespace IPTables.Net.DataTypes
 {
     public struct PortOrRange
     {
+        public static PortOrRange Any = new PortOrRange(0, 0);
         private readonly uint _lowerPort;
         private readonly uint _upperPort;
-        public static PortOrRange Any = new PortOrRange(0, 0);
 
         public PortOrRange(uint lowerPort, uint upperPort)
         {
@@ -40,12 +36,12 @@ namespace IPTables.Net.DataTypes
                 return LowerPort.ToString();
             }
 
-            return String.Format("{0}:{1}", LowerPort.ToString(), UpperPort.ToString());
+            return String.Format("{0}:{1}", LowerPort, UpperPort);
         }
 
         public static PortOrRange Parse(string getNextArg)
         {
-            var split = getNextArg.Split(new char[] {':'});
+            string[] split = getNextArg.Split(new[] {':'});
             if (split.Length == 1)
             {
                 return new PortOrRange(uint.Parse(split[0]));

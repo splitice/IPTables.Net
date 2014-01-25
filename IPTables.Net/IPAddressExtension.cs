@@ -23,7 +23,7 @@ namespace IPTables.Net
                 if (i == 0)
                     ip = num.ToString();
                 else
-                    ip = ip + "." + num.ToString();
+                    ip = ip + "." + num;
             }
             return ip;
         }

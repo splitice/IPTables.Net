@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-
 using IPTables.Net.DataTypes;
 using IPTables.Net.Modules.Base;
 
 namespace IPTables.Net.Modules
 {
-    class Tcp : ModuleBase, IIptablesModule
+    internal class Tcp : ModuleBase, IIptablesModule
     {
         private const String OptionSourcePortLong = "--source-port";
         private const String OptionSourcePortShort = "--sport";
@@ -18,8 +16,8 @@ namespace IPTables.Net.Modules
         private const String OptionSyn = "--syn";
         private const String OptionTcpOption = "--tcp-option";
 
-        public ValueOrNot<PortOrRange> SourcePort = new ValueOrNot<PortOrRange>();
         public ValueOrNot<PortOrRange> DestinationPort = new ValueOrNot<PortOrRange>();
+        public ValueOrNot<PortOrRange> SourcePort = new ValueOrNot<PortOrRange>();
         public TcpFlagMatch TcpFlags = null;
         //--syn
         public ValueOrNot<int> TcpOption = new ValueOrNot<int>();
@@ -56,7 +54,7 @@ namespace IPTables.Net.Modules
 
         public String GetRuleString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (!SourcePort.Null)
             {

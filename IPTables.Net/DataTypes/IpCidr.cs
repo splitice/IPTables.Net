@@ -16,6 +16,11 @@ namespace IPTables.Net.DataTypes
             Cidr = cidr;
         }
 
+        public bool Equals(IpCidr other)
+        {
+            return other.Address.Equals(Address) && other.Cidr == Cidr;
+        }
+
         public static IpCidr Parse(String cidr)
         {
             bool not = false;
@@ -33,7 +38,7 @@ namespace IPTables.Net.DataTypes
             }
             catch (Exception)
             {
-                return IpCidr.Any;
+                return Any;
             }
 
             if (p.Length == 1)
@@ -47,13 +52,8 @@ namespace IPTables.Net.DataTypes
             }
             catch (Exception)
             {
-                return IpCidr.Any;
+                return Any;
             }
-        }
-
-        public bool Equals(IpCidr other)
-        {
-            return other.Address.Equals(Address) && other.Cidr == Cidr;
         }
 
         public static bool operator ==(IpCidr a, IpCidr b)

@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 
 namespace IPTables.Net.DataTypes
 {
     public class ValueOrNot<T>
     {
-        private T _value;
-        private bool _not = false;
+        private bool _not;
         private bool _null = true;
+        private T _value;
 
         public ValueOrNot(T value, bool not = false)
         {
@@ -45,10 +42,7 @@ namespace IPTables.Net.DataTypes
 
         public bool Null
         {
-            get
-            {
-                return _null;
-            }
+            get { return _null; }
         }
 
         public void Set(bool not, T value)
@@ -78,7 +72,7 @@ namespace IPTables.Net.DataTypes
             {
                 built += "! ";
             }
-            built += optionKey+" ";
+            built += optionKey + " ";
             built += Value;
             return built;
         }

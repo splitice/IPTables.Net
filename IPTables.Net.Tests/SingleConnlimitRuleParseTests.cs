@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
     [TestFixture]
-    class SingleConnlimitRuleParseTests
+    internal class SingleConnlimitRuleParseTests
     {
         [Test]
         public void TestDropConnectionLimit()

@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-
-using IPTables.Net.DataTypes;
 using IPTables.Net.Modules.Base;
 
 namespace IPTables.Net.Modules
 {
-    class Comment : ModuleBase, IIptablesModule
+    internal class Comment : ModuleBase, IIptablesModule
     {
         private const String OptionCommentLong = "--comment";
 
@@ -28,7 +25,7 @@ namespace IPTables.Net.Modules
 
         public String GetRuleString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (CommentText != null)
             {

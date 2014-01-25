@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-
 
 namespace IPTables.Net.DataTypes
 {
@@ -63,21 +59,21 @@ namespace IPTables.Net.DataTypes
         {
             if (LowerAddress.Equals(UpperAddress))
             {
-                return LowerAddress.ToString() + ":" + PortStringRepresentation();
+                return LowerAddress + ":" + PortStringRepresentation();
             }
 
-            return String.Format("{0}-{1}:{2}", LowerAddress.ToString(), UpperAddress.ToString(), PortStringRepresentation());
+            return String.Format("{0}-{1}:{2}", LowerAddress, UpperAddress, PortStringRepresentation());
         }
 
         public static IPPortOrRange Parse(string getNextArg)
         {
-            var split = getNextArg.Split(new char[] { ':' });
+            string[] split = getNextArg.Split(new[] {':'});
             if (split.Length == 0)
             {
                 throw new Exception("Error");
             }
 
-            var splitIp = split[0].Split(new char[] { '-' });
+            string[] splitIp = split[0].Split(new[] {'-'});
 
             IPAddress lowerIp = IPAddress.Parse(splitIp[0]);
             IPAddress upperIp;
@@ -94,10 +90,7 @@ namespace IPTables.Net.DataTypes
             {
                 return new IPPortOrRange(lowerIp, upperIp);
             }
-            else
-            {
-                return new IPPortOrRange(lowerIp, upperIp, PortOrRange.Parse(split[1]));
-            }
+            return new IPPortOrRange(lowerIp, upperIp, PortOrRange.Parse(split[1]));
         }
     }
 }

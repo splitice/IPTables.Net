@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-
-using IPTables.Net.DataTypes;
 using IPTables.Net.Modules.Base;
 
 namespace IPTables.Net.Modules
 {
-    class Connlimit : ModuleBase, IIptablesModule
+    internal class Connlimit : ModuleBase, IIptablesModule
     {
         private const String OptionUpto = "--connlimit-upto";
         private const String OptionAbove = "--connlimit-above";
@@ -16,17 +13,11 @@ namespace IPTables.Net.Modules
         private const String OptionSourceAddr = "--connlimit-saddr";
         private const String OptionDestinationAddr = "--connlimit-daddr";
 
-        public int Upto = -1;
         public int Above = -1;
-        public int Mask = -1;
-
-        internal enum AddrMode
-        {
-            Source,
-            Target
-        }
 
         public AddrMode LimitMatch = AddrMode.Source;
+        public int Mask = -1;
+        public int Upto = -1;
 
         public int Feed(RuleParser parser, bool not)
         {
@@ -57,7 +48,7 @@ namespace IPTables.Net.Modules
 
         public String GetRuleString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (Upto != -1)
             {
@@ -97,18 +88,24 @@ namespace IPTables.Net.Modules
         {
             var options = new List<string>
                           {
-                                OptionUpto,
-                                OptionAbove,
-                                OptionMask,
-                                OptionSourceAddr,
-                                OptionDestinationAddr
+                              OptionUpto,
+                              OptionAbove,
+                              OptionMask,
+                              OptionSourceAddr,
+                              OptionDestinationAddr
                           };
             return options;
         }
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("connlimit", typeof(Connlimit), GetOptions);
+            return GetModuleEntryInternal("connlimit", typeof (Connlimit), GetOptions);
+        }
+
+        internal enum AddrMode
+        {
+            Source,
+            Target
         }
     }
 }

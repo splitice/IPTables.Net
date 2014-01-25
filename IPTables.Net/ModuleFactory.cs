@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
+using IPTables.Net.Modules;
 using IPTables.Net.Modules.Base;
 
 namespace IPTables.Net
 {
     public class ModuleFactory
     {
-        public static List<Func<ModuleEntry>> AllModules = new List<Func<ModuleEntry>>()
-                                                        {
-                                                            Modules.Core.GetModuleEntry,
-                                                            Modules.Tcp.GetModuleEntry,
-                                                            Modules.Dnat.GetModuleEntry,
-                                                            Modules.Snat.GetModuleEntry,
-                                                            Modules.Connlimit.GetModuleEntry,
-                                                            Modules.Comment.GetModuleEntry
-                                                        };
+        public static List<Func<ModuleEntry>> AllModules = new List<Func<ModuleEntry>>
+                                                           {
+                                                               Core.GetModuleEntry,
+                                                               Tcp.GetModuleEntry,
+                                                               Dnat.GetModuleEntry,
+                                                               Snat.GetModuleEntry,
+                                                               Connlimit.GetModuleEntry,
+                                                               Comment.GetModuleEntry
+                                                           };
 
         private readonly Dictionary<String, ModuleEntry> _modules = new Dictionary<string, ModuleEntry>();
 
@@ -25,7 +24,7 @@ namespace IPTables.Net
         {
             foreach (var mFunc in AllModules)
             {
-                var m = mFunc();
+                ModuleEntry m = mFunc();
 
                 _modules.Add(m.Name, m);
             }
@@ -38,7 +37,7 @@ namespace IPTables.Net
 
         public IEnumerable<ModuleEntry> GetPreloadModules()
         {
-            return _modules.Where((a) => a.Value.Preloaded).Select((a)=>a.Value);
+            return _modules.Where(a => a.Value.Preloaded).Select(a => a.Value);
         }
     }
 }

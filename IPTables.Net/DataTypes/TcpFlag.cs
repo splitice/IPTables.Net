@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-
-namespace IPTables.Net.DataTypes
+﻿namespace IPTables.Net.DataTypes
 {
-    enum TcpFlag
+    internal enum TcpFlag
     {
         SYN,
         ACK,

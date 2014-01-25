@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using IPTables.Net.DataTypes;
 using IPTables.Net.Modules;
 using IPTables.Net.Modules.Base;
 
@@ -10,25 +9,15 @@ namespace IPTables.Net
     public class IpTablesRule
     {
         //Stats
+        private readonly Dictionary<String, IIptablesModule> _modules = new Dictionary<String, IIptablesModule>();
         public long Bytes = 0;
         public long Packets = 0;
 
-        private readonly Dictionary<String, IIptablesModule> _modules = new Dictionary<String, IIptablesModule>();
-
         public Dictionary<String, IIptablesModule> Modules
         {
-            get
-            {
-                return _modules;
-            }
+            get { return _modules; }
         }
 
-        public IpTablesRule()
-        {
-            
-        }
-
-       
 
         public String GetCommand(String table)
         {
@@ -74,17 +63,17 @@ namespace IPTables.Net
                 return _modules[name];
             }
 
-            IIptablesModule module = (IIptablesModule)Activator.CreateInstance(moduleType);
+            var module = (IIptablesModule) Activator.CreateInstance(moduleType);
             _modules.Add(name, module);
             return module;
         }
 
         public static string[] SplitArguments(string commandLine)
         {
-            var parmChars = commandLine.ToCharArray();
-            var inSingleQuote = false;
-            var inDoubleQuote = false;
-            for (var index = 0; index < parmChars.Length; index++)
+            char[] parmChars = commandLine.ToCharArray();
+            bool inSingleQuote = false;
+            bool inDoubleQuote = false;
+            for (int index = 0; index < parmChars.Length; index++)
             {
                 if (parmChars[index] == '"' && !inSingleQuote)
                 {
@@ -99,15 +88,15 @@ namespace IPTables.Net
                 if (!inSingleQuote && !inDoubleQuote && parmChars[index] == ' ')
                     parmChars[index] = '\n';
             }
-            return (new string(parmChars)).Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            return (new string(parmChars)).Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
         }
 
         public static IpTablesRule Parse(String rule, out String chain)
         {
-            var arguments = SplitArguments(rule);
-            var count = arguments.Length;
-            IpTablesRule ipRule = new IpTablesRule();
-            RuleParser parser = new RuleParser(arguments, ipRule);
+            string[] arguments = SplitArguments(rule);
+            int count = arguments.Length;
+            var ipRule = new IpTablesRule();
+            var parser = new RuleParser(arguments, ipRule);
 
             bool not = false;
             for (int i = 0; i < count; i++)

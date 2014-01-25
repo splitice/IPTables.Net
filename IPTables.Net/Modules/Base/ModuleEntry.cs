@@ -5,8 +5,8 @@ namespace IPTables.Net.Modules.Base
 {
     public struct ModuleEntry
     {
-        public String Name;
         public Type Module;
+        public String Name;
         public IEnumerable<String> Options;
         public bool Preloaded;
     }

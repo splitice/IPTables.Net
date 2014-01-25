@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
-
 using IPTables.Net.DataTypes;
 using IPTables.Net.Modules.Base;
 
 namespace IPTables.Net.Modules
 {
-    class Dnat : ModuleBase, IIptablesModule
+    internal class Dnat : ModuleBase, IIptablesModule
     {
         private const String OptionToDestination = "--to-destination";
         private const String OptionRandom = "--random";
         private const String OptionPersisent = "--persistent";
 
-        public IPPortOrRange ToDestination = new IPPortOrRange(IPAddress.Any);
-        public bool Random = false;
         public bool Persistent = false;
+        public bool Random = false;
+        public IPPortOrRange ToDestination = new IPPortOrRange(IPAddress.Any);
 
         public int Feed(RuleParser parser, bool not)
         {
@@ -41,13 +39,13 @@ namespace IPTables.Net.Modules
 
         public String GetRuleString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (Equals(ToDestination.LowerAddress, IPAddress.Any))
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
-                sb.Append(OptionToDestination+" ");
+                sb.Append(OptionToDestination + " ");
                 sb.Append(ToDestination);
             }
 
@@ -81,7 +79,7 @@ namespace IPTables.Net.Modules
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("dnat", typeof(Dnat), GetOptions, true);
+            return GetModuleEntryInternal("dnat", typeof (Dnat), GetOptions, true);
         }
     }
 }

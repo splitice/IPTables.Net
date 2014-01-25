@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using IPTables.Net.Modules.Base;
 
 namespace IPTables.Net
 {
@@ -15,9 +14,9 @@ namespace IPTables.Net
 
             String ttable = null;
 
-            foreach (var lineRaw in output.Split(new char[] {'\n'}))
+            foreach (string lineRaw in output.Split(new[] {'\n'}))
             {
-                var line = lineRaw.Trim();
+                string line = lineRaw.Trim();
 
                 if (String.IsNullOrEmpty(line))
                     continue;
@@ -32,26 +31,26 @@ namespace IPTables.Net
                         break;
 
                     case ':':
-                        var split = line.Split(new char[] {' '});
+                        string[] split = line.Split(new[] {' '});
                         ret.Add(split[0].Substring(1), new List<IpTablesRule>());
                         break;
 
-                    //Byte & packet count
+                        //Byte & packet count
                     case '[':
                         int positionEnd = line.IndexOf(']');
                         if (positionEnd == -1)
                         {
                             throw new Exception("Parsing error, could not find end of counters");
                         }
-                        var counters = line.Substring(0, positionEnd).Split(new char[]{':'});
+                        string[] counters = line.Substring(0, positionEnd).Split(new[] {':'});
                         line = line.Substring(positionEnd + 1);
-                        
+
                         rule = IpTablesRule.Parse(line, out chain);
                         rule.Packets = long.Parse(counters[0]);
                         rule.Bytes = long.Parse(counters[1]);
                         ret[chain].Add(rule);
                         break;
-                        
+
 
                     case '-':
                         rule = IpTablesRule.Parse(line, out chain);
@@ -81,23 +80,23 @@ namespace IPTables.Net
 
         public Dictionary<String, List<IpTablesRule>> GetRules(string table)
         {
-            var process = Process.Start(new ProcessStartInfo("iptables-save", String.Format("-c -t {0}", table)));
+            Process process = Process.Start(new ProcessStartInfo("iptables-save", String.Format("-c -t {0}", table)));
             process.WaitForExit();
             return GetRulesFromOutput(process.StandardOutput.ReadToEnd(), table);
         }
 
         public IEnumerable<IpTablesChain> GetChains(string table)
         {
-            HashSet<IpTablesChain> chains = new HashSet<IpTablesChain>();
-            foreach(var rules in GetRules(table))
+            var chains = new HashSet<IpTablesChain>();
+            foreach (var rules in GetRules(table))
             {
-                chains.Add(new IpTablesChain(table,rules.Key));
+                chains.Add(new IpTablesChain(table, rules.Key));
             }
             return chains;
         }
 
 
-        public void DeleteChain(string name, string table="filter", bool flush = false)
+        public void DeleteChain(string name, string table = "filter", bool flush = false)
         {
             String arguments;
             if (flush)
@@ -108,13 +107,14 @@ namespace IPTables.Net
             {
                 arguments = String.Format("-t {0} -X {1}", table, name);
             }
-            var process = Process.Start(new ProcessStartInfo("iptables", arguments));
+            Process process = Process.Start(new ProcessStartInfo("iptables", arguments));
             process.WaitForExit();
         }
 
         public IpTablesChain AddChain(String name, String table = "filter")
         {
-            var process = Process.Start(new ProcessStartInfo("iptables", String.Format("-t {0} -N {1}", name, table)));
+            Process process =
+                Process.Start(new ProcessStartInfo("iptables", String.Format("-t {0} -N {1}", name, table)));
             process.WaitForExit();
 
             return new IpTablesChain(table, name);

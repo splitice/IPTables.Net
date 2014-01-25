@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 
 namespace IPTables.Net.DataTypes
 {
-    class TcpFlagMatch
+    internal class TcpFlagMatch
     {
+        public static TcpFlagMatch Syn = new TcpFlagMatch(
+            new List<TcpFlag> {TcpFlag.SYN, TcpFlag.RST, TcpFlag.ACK, TcpFlag.FIN}, new List<TcpFlag> {TcpFlag.SYN});
+
+        public static TcpFlagMatch NotSyn = new TcpFlagMatch(
+            new List<TcpFlag> {TcpFlag.SYN}, new List<TcpFlag>());
+
         public HashSet<TcpFlag> Comparing = new HashSet<TcpFlag>();
         public HashSet<TcpFlag> MustHave = new HashSet<TcpFlag>();
 
@@ -19,27 +23,18 @@ namespace IPTables.Net.DataTypes
 
         public HashSet<TcpFlag> MustNotHave
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
+            get { throw new NotImplementedException(); }
         }
-
-        public static TcpFlagMatch Syn = new TcpFlagMatch(
-            new List<TcpFlag>() { TcpFlag.SYN, TcpFlag.RST, TcpFlag.ACK, TcpFlag.FIN }, new List<TcpFlag>() { TcpFlag.SYN });
-
-        public static TcpFlagMatch NotSyn = new TcpFlagMatch(
-            new List<TcpFlag>() { TcpFlag.SYN }, new List<TcpFlag>() { });
 
         public override String ToString()
         {
             String ret = "";
-            ret += Comparing.Select((f) => GetFlag(f)).Aggregate((current, next) => current + ", " + next);
-            ret += MustHave.Select((f) => GetFlag(f)).Aggregate((current, next) => current + ", " + next);
+            ret += Comparing.Select(f => GetFlag(f)).Aggregate((current, next) => current + ", " + next);
+            ret += MustHave.Select(f => GetFlag(f)).Aggregate((current, next) => current + ", " + next);
             return ret;
         }
 
-        static TcpFlag GetFlag(String sFlag)
+        private static TcpFlag GetFlag(String sFlag)
         {
             switch (sFlag)
             {
@@ -56,7 +51,7 @@ namespace IPTables.Net.DataTypes
             throw new Exception("Invalid TCP Flag");
         }
 
-        static String GetFlag(TcpFlag sFlag)
+        private static String GetFlag(TcpFlag sFlag)
         {
             switch (sFlag)
             {
@@ -73,10 +68,10 @@ namespace IPTables.Net.DataTypes
             throw new Exception("Invalid TCP Flag");
         }
 
-        static IEnumerable<TcpFlag> GetFlags(String sFlags)
+        private static IEnumerable<TcpFlag> GetFlags(String sFlags)
         {
-            List<TcpFlag> flags = new List<TcpFlag>();
-            foreach (var f in sFlags.Split(new char[] {','}))
+            var flags = new List<TcpFlag>();
+            foreach (string f in sFlags.Split(new[] {','}))
             {
                 flags.Add(GetFlag(f));
             }
@@ -85,7 +80,7 @@ namespace IPTables.Net.DataTypes
 
         public static TcpFlagMatch Parse(string getNextArg)
         {
-            var split = getNextArg.Split(new char[] {' '});
+            string[] split = getNextArg.Split(new[] {' '});
 
             return new TcpFlagMatch(GetFlags(split[0]), GetFlags(split[1]));
         }

@@ -7,12 +7,11 @@ namespace IPTables.Net.Modules.Base
     public class RuleParser
     {
         private readonly string[] _arguments;
+        private readonly IpTablesRule _ipRule;
+        private readonly ModuleFactory _moduleFactory = new ModuleFactory();
+        private readonly List<ModuleEntry> _parsers = new List<ModuleEntry>();
         public String Chain;
         public int Position = 0;
-
-        private readonly List<ModuleEntry> _parsers = new List<ModuleEntry>();
-        private readonly ModuleFactory _moduleFactory = new ModuleFactory();
-        private readonly IpTablesRule _ipRule;
 
         public RuleParser(string[] arguments, IpTablesRule ipRule)
         {
@@ -46,24 +45,21 @@ namespace IPTables.Net.Modules.Base
                 LoadParserModule(GetNextArg());
                 return 1;
             }
-            else if (option == "-A")
+            if (option == "-A")
             {
                 Chain = GetNextArg();
                 return 1;
             }
-            else
+            foreach (ModuleEntry m in _parsers)
             {
-                foreach (var m in _parsers)
+                if (m.Options.Contains(option))
                 {
-                    if (m.Options.Contains(option))
-                    {
-                        IIptablesModule module = _ipRule.GetModuleForParse(m.Name, m.Module);
-                        return module.Feed(this, not);
-                    }
+                    IIptablesModule module = _ipRule.GetModuleForParse(m.Name, m.Module);
+                    return module.Feed(this, not);
                 }
             }
 
-            throw new Exception("Unknown option: "+option);
+            throw new Exception("Unknown option: " + option);
         }
 
         private void LoadParserModule(string getNextArg)

@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
     [TestFixture]
-    class SingleCommentRuleParseTests
+    internal class SingleCommentRuleParseTests
     {
         [Test]
         public void TestDropFragmentedTcpDnsWithComment()

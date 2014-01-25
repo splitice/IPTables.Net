@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-
-namespace IPTables.Net.DataTypes
+﻿namespace IPTables.Net.DataTypes
 {
-    struct CounterPacketsAndBytes
+    internal struct CounterPacketsAndBytes
     {
-        public uint Packets;
         public uint Bytes;
+        public uint Packets;
 
         public CounterPacketsAndBytes(uint packets, uint bytes)
         {
