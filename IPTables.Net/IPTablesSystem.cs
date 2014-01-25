@@ -1,25 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using IPTables.Net.Modules.Base;
 
 namespace IPTables.Net
 {
-    public class IPTablesSave
+    public class IPTablesSystem
     {
-        private ModuleFactory _moduleFactory;
-
-        public IPTablesSave(ModuleFactory moduleFactory)
-        {
-            _moduleFactory = moduleFactory;
-        }
-
         public Dictionary<String, List<IpTablesRule>> GetRulesFromOutput(String output, String table)
         {
-            Dictionary<String, List<IpTablesRule>> ret = new Dictionary<string, List<IpTablesRule>>();
+            var ret = new Dictionary<string, List<IpTablesRule>>();
 
             String ttable = null;
-            String chain;
-            IpTablesRule rule;
 
             foreach (var lineRaw in output.Split(new char[] {'\n'}))
             {
@@ -29,6 +21,8 @@ namespace IPTables.Net
                     continue;
 
                 char c = line[0];
+                IpTablesRule rule;
+                String chain;
                 switch (c)
                 {
                     case '*':
@@ -83,9 +77,11 @@ namespace IPTables.Net
             return null;
         }
 
-        public List<IpTablesRule> GetRules(string table)
+        public Dictionary<String, List<IpTablesRule>> GetRules(string table)
         {
-            throw new NotImplementedException();
+            var process = Process.Start(new ProcessStartInfo("iptables-save", "-c"));
+            process.WaitForExit();
+            return GetRulesFromOutput(process.StandardOutput.ReadToEnd(), table);
         }
     }
 }

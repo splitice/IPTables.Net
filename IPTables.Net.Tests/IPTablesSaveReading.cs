@@ -10,7 +10,7 @@ namespace IPTables.Net.Tests
     [TestFixture]
     class IPTablesSaveReading
     {
-        private static readonly IPTablesSave Processor = new IPTablesSave(new ModuleFactory());
+        private static readonly IPTablesSystem Processor = new IPTablesSystem(new ModuleFactory());
 
         [Test]
         public void TestParseEmpty()
