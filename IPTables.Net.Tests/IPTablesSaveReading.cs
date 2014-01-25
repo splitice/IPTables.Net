@@ -19,7 +19,10 @@ namespace IPTables.Net.Tests
 
             var rules = Processor.GetRulesFromOutput(toParse, "filter");
 
-            Assert.AreEqual(0, rules.Count);
+            Assert.AreEqual(3, rules.Count);
+            Assert.AreEqual(0, rules.ElementAt(0).Value.Count);
+            Assert.AreEqual(0, rules.ElementAt(1).Value.Count);
+            Assert.AreEqual(0, rules.ElementAt(2).Value.Count);
         }
 
         [Test]
