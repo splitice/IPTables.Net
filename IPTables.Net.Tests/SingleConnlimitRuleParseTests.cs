@@ -13,7 +13,7 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10";
             String chain;
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, out chain);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, out chain);
 
             Assert.AreEqual(rule, "-A " + chain + " " + irule.GetCommand("filter"));
         }

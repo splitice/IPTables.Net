@@ -1,15 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using SystemInteract;
 using IPTables.Net.Iptables;
 
 namespace IPTables.Net
 {
     public class IpTablesSystem
     {
-        public static IpTablesSystem Instance = new IpTablesSystem();
+        private ISystemFactory _system;
 
-        public Dictionary<String, List<IpTablesRule>> GetRulesFromOutput(String output, String table)
+        public IpTablesSystem(ISystemFactory system)
+        {
+            _system = system;
+        }
+
+        public Dictionary<String, List<IpTablesRule>> GetRulesFromOutput(String output, String table, ISystemFactory system)
         {
             var ret = new Dictionary<string, List<IpTablesRule>>();
 
@@ -46,7 +52,7 @@ namespace IPTables.Net
                         string[] counters = line.Substring(0, positionEnd).Split(new[] {':'});
                         line = line.Substring(positionEnd + 1);
 
-                        rule = IpTablesRule.Parse(line, out chain);
+                        rule = IpTablesRule.Parse(line, system, out chain);
                         rule.Packets = long.Parse(counters[0]);
                         rule.Bytes = long.Parse(counters[1]);
                         ret[chain].Add(rule);
@@ -54,7 +60,7 @@ namespace IPTables.Net
 
 
                     case '-':
-                        rule = IpTablesRule.Parse(line, out chain);
+                        rule = IpTablesRule.Parse(line, system, out chain);
                         ret[chain].Add(rule);
                         break;
 
@@ -81,9 +87,9 @@ namespace IPTables.Net
 
         public Dictionary<String, List<IpTablesRule>> GetRules(string table)
         {
-            Process process = Process.Start(new ProcessStartInfo("iptables-save", String.Format("-c -t {0}", table)));
+            var process = _system.StartProcess("iptables-save", String.Format("-c -t {0}", table));
             process.WaitForExit();
-            return GetRulesFromOutput(process.StandardOutput.ReadToEnd(), table);
+            return GetRulesFromOutput(process.StandardOutput.ReadToEnd(), table, _system);
         }
 
         public IEnumerable<IpTablesChain> GetChains(string table)
@@ -91,7 +97,7 @@ namespace IPTables.Net
             var chains = new HashSet<IpTablesChain>();
             foreach (var rules in GetRules(table))
             {
-                chains.Add(new IpTablesChain(table, rules.Key));
+                chains.Add(new IpTablesChain(table, rules.Key, this));
             }
             return chains;
         }
@@ -108,17 +114,16 @@ namespace IPTables.Net
             {
                 arguments = String.Format("-t {0} -X {1}", table, name);
             }
-            Process process = Process.Start(new ProcessStartInfo("iptables", arguments));
+            var process = _system.StartProcess("iptables", arguments);
             process.WaitForExit();
         }
 
         public IpTablesChain AddChain(String name, String table = "filter")
         {
-            Process process =
-                Process.Start(new ProcessStartInfo("iptables", String.Format("-t {0} -N {1}", name, table)));
+            var process = _system.StartProcess("iptables", String.Format("-t {0} -N {1}", name, table));
             process.WaitForExit();
 
-            return new IpTablesChain(table, name);
+            return new IpTablesChain(table, name, this);
         }
     }
 }

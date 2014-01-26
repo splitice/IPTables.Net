@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using SystemInteract;
 using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Iptables.Modules.Base;
 
@@ -12,6 +13,13 @@ namespace IPTables.Net.Iptables
         private readonly Dictionary<String, IIptablesModule> _modules = new Dictionary<String, IIptablesModule>();
         public long Bytes = 0;
         public long Packets = 0;
+        private ISystemFactory _system;
+
+        public IpTablesRule(ISystemFactory system)
+        {
+            _system = system;
+        }
+
 
         public Dictionary<String, IIptablesModule> Modules
         {
@@ -47,13 +55,15 @@ namespace IPTables.Net.Iptables
         public void Add(String table, String chain)
         {
             String command = " -A " + chain + " " + GetCommand(table);
-            Process process = Process.Start(new ProcessStartInfo("iptables", command));
+            var process = _system.StartProcess("iptables", command);
+            process.WaitForExit();
         }
 
         public void Delete(String table, String chain)
         {
             String command = " -D " + chain + " " + GetCommand(table);
-            Process process = Process.Start(new ProcessStartInfo("iptables", command));
+            var process = _system.StartProcess("iptables", command);
+            process.WaitForExit();
         }
 
         public IIptablesModule GetModuleForParse(string name, Type moduleType)
@@ -91,11 +101,11 @@ namespace IPTables.Net.Iptables
             return (new string(parmChars)).Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        public static IpTablesRule Parse(String rule, out String chain)
+        public static IpTablesRule Parse(String rule, ISystemFactory system, out String chain)
         {
             string[] arguments = SplitArguments(rule);
             int count = arguments.Length;
-            var ipRule = new IpTablesRule();
+            var ipRule = new IpTablesRule(system);
             var parser = new RuleParser(arguments, ipRule);
 
             bool not = false;

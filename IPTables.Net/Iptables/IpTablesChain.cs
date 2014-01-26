@@ -7,11 +7,13 @@ namespace IPTables.Net.Iptables
     {
         private readonly String _name;
         private readonly String _table;
+        private IpTablesSystem _system;
 
-        public IpTablesChain(String table, String chainName)
+        public IpTablesChain(String table, String chainName, IpTablesSystem system)
         {
             _name = chainName;
             _table = table;
+            _system = system;
         }
 
         public String Name
@@ -26,12 +28,12 @@ namespace IPTables.Net.Iptables
 
         public IEnumerable<IpTablesRule> GetRules()
         {
-            return IpTablesSystem.Instance.GetRules(_table)[_name];
+            return _system.GetRules(_table)[_name];
         }
 
         public void Delete(bool flush = false)
         {
-            IpTablesSystem.Instance.DeleteChain(_name, _table, flush);
+            _system.DeleteChain(_name, _table, flush);
         }
     }
 }
