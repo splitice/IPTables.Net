@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace IPTables.Net.Tests
 {
     [TestFixture]
-    class IPTablesSync
+    class IPTablesSyncChain
     {
         [Test]
         public void TestAdd()
