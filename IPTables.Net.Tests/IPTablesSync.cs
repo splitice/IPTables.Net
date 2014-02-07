@@ -58,10 +58,51 @@ namespace IPTables.Net.Tests
         [Test]
         public void TestDelete()
         {
+            var mock = new MockIptablesSystemFactory();
+            string chain;
+            List<IpTablesRule> rulesOriginal = new List<IpTablesRule>()
+                                               {
+                                                   IpTablesRule.Parse("-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",mock, out chain),
+                                                   IpTablesRule.Parse("-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2",mock, out chain)
+                                               };
+            List<IpTablesRule> rulesNew = new List<IpTablesRule>()
+                                               {
+                                                   IpTablesRule.Parse("-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",mock, out chain),
+                                               };
 
+            List<String> expectedCommands = new List<String>() { rulesOriginal[1].GetFullCommand("INPUT", "filter", "-D") };
+
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
         }
 
         [Test]
+        public void TestInsertMiddle()
+        {
+            var mock = new MockIptablesSystemFactory();
+            string chain;
+            List<IpTablesRule> rulesOriginal = new List<IpTablesRule>()
+                                               {
+                                                   IpTablesRule.Parse("-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",mock, out chain),
+                                                   IpTablesRule.Parse("-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2",mock, out chain)
+                                               };
+            List<IpTablesRule> rulesNew = new List<IpTablesRule>()
+                                               {
+                                                   IpTablesRule.Parse("-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",mock, out chain),
+                                                   IpTablesRule.Parse("-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 5",mock, out chain),
+                                                   IpTablesRule.Parse("-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2",mock, out chain)
+                                               };
+
+            List<String> expectedCommands = new List<String>()
+                                            {
+                                                rulesOriginal[1].GetFullCommand("INPUT", "filter", "-D"),
+                                                rulesNew[1].GetFullCommand("INPUT", "filter"),
+                                                rulesNew[2].GetFullCommand("INPUT", "filter")
+                                            };
+
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
+        }
+
+        /*[Test]
         public void TestUpdateEnd()
         {
 
@@ -77,6 +118,6 @@ namespace IPTables.Net.Tests
         public void TestUpdateMiddle()
         {
 
-        }
+        }*/
     }
 }

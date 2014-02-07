@@ -46,7 +46,8 @@ namespace IPTables.Net.Iptables
             {
                 if (i == len)
                 {
-                    break;
+                    cR.Delete(_table, _name);
+                    continue;
                 }
                 if (cR.Equals(with.ElementAt(i)))
                 {
