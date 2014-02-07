@@ -51,7 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPTablesSaveReading.cs" />
-    <Compile Include="IPTablesSync.cs" />
+    <Compile Include="IPTablesSyncChain.cs" />
     <Compile Include="MockSystem\MockIptablesSystemFactory.cs" />
     <Compile Include="MockSystem\MockIptablesSystemProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
