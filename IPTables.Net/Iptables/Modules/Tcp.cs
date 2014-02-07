@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    internal class Tcp : ModuleBase, IIptablesModule
+    internal class Tcp : ModuleBase, IIptablesModule, IEquatable<Tcp>
     {
         private const String OptionSourcePortLong = "--source-port";
         private const String OptionSourcePortShort = "--sport";
@@ -107,6 +107,33 @@ namespace IPTables.Net.Iptables.Modules
         public static ModuleEntry GetModuleEntry()
         {
             return GetModuleEntryInternal("tcp", typeof (Tcp), GetOptions);
+        }
+
+        public bool Equals(Tcp other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(DestinationPort, other.DestinationPort) && Equals(SourcePort, other.SourcePort) && Equals(TcpFlags, other.TcpFlags) && Equals(TcpOption, other.TcpOption);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Tcp) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = (DestinationPort != null ? DestinationPort.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (SourcePort != null ? SourcePort.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (TcpFlags != null ? TcpFlags.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (TcpOption != null ? TcpOption.GetHashCode() : 0);
+                return hashCode;
+            }
         }
     }
 }

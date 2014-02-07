@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    internal class Connlimit : ModuleBase, IIptablesModule
+    internal class Connlimit : ModuleBase, IIptablesModule, IEquatable<Connlimit>
     {
         private const String OptionUpto = "--connlimit-upto";
         private const String OptionAbove = "--connlimit-above";
@@ -106,6 +106,11 @@ namespace IPTables.Net.Iptables.Modules
         {
             Source,
             Target
+        }
+
+        public bool Equals(Connlimit other)
+        {
+            return Above == other.Above && LimitMatch == other.LimitMatch && Mask == other.Mask && Upto == other.Upto;
         }
     }
 }

@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    internal class Core : ModuleBase, IIptablesModule
+    internal class Core : ModuleBase, IIptablesModule,IEquatable<Core>
     {
         private const String OptionProtocolLong = "--protocol";
         private const String OptionProtocolShort = "-p";
@@ -207,6 +207,21 @@ namespace IPTables.Net.Iptables.Modules
         public static ModuleEntry GetModuleEntry()
         {
             return GetModuleEntryInternal("core", typeof (Core), GetOptions, true);
+        }
+
+        public bool Equals(Core other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Destination.Equals(other.Destination) && Fragmented.Equals(other.Fragmented) && InInterface.Equals(other.InInterface) && OutInterface.Equals(other.OutInterface) && Protocol.Equals(other.Protocol) && SetCounters.Equals(other.SetCounters) && Source.Equals(other.Source) && string.Equals(Target, other.Target) && TargetMode == other.TargetMode;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Core) obj);
         }
     }
 }

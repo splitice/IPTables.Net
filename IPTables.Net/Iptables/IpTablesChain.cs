@@ -28,7 +28,12 @@ namespace IPTables.Net.Iptables
 
         public IEnumerable<IpTablesRule> GetRules()
         {
-            return _system.GetRules(_table)[_name];
+            return _system.GetRules(_table, _name);
+        }
+
+        public void Sync(IEnumerable<IpTablesRule> with)
+        {
+            
         }
 
         public void Delete(bool flush = false)

@@ -7,7 +7,7 @@ using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    internal class Dnat : ModuleBase, IIptablesModule
+    internal class Dnat : ModuleBase, IIptablesModule, IEquatable<Dnat>
     {
         private const String OptionToDestination = "--to-destination";
         private const String OptionRandom = "--random";
@@ -80,6 +80,32 @@ namespace IPTables.Net.Iptables.Modules
         public static ModuleEntry GetModuleEntry()
         {
             return GetModuleEntryInternal("dnat", typeof (Dnat), GetOptions, true);
+        }
+
+        public bool Equals(Dnat other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) && ToDestination.Equals(other.ToDestination);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Dnat) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = Persistent.GetHashCode();
+                hashCode = (hashCode*397) ^ Random.GetHashCode();
+                hashCode = (hashCode*397) ^ ToDestination.GetHashCode();
+                return hashCode;
+            }
         }
     }
 }

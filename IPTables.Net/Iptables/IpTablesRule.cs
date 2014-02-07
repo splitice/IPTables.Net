@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using SystemInteract;
+using IPTables.Net.Common;
 using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables
 {
-    public class IpTablesRule
+    public class IpTablesRule : IEquatable<IpTablesRule>
     {
         //Stats
         private readonly Dictionary<String, IIptablesModule> _modules = new Dictionary<String, IIptablesModule>();
@@ -20,6 +21,19 @@ namespace IPTables.Net.Iptables
             _system = system;
         }
 
+        public bool Equals(IpTablesRule rule)
+        {
+            return _modules.DictionaryEqual(rule.Modules);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is IpTablesRule)
+            {
+                return Equals(obj as IpTablesRule);
+            }
+ 	        return base.Equals(obj);
+        }
 
         public Dictionary<String, IIptablesModule> Modules
         {

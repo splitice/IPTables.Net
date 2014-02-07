@@ -108,6 +108,13 @@ namespace IPTables.Net
         }
 
 
+        public IpTablesChain GetChain(string table, string chain)
+        {
+            var rules = GetRules(table, chain);
+            return new IpTablesChain(table, chain, this);
+        }
+
+
         public void DeleteChain(string name, string table = "filter", bool flush = false)
         {
             String arguments;

@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    internal class Comment : ModuleBase, IIptablesModule
+    internal class Comment : ModuleBase, IIptablesModule, IEquatable<Comment>
     {
         private const String OptionCommentLong = "--comment";
 
@@ -49,6 +49,11 @@ namespace IPTables.Net.Iptables.Modules
         public static ModuleEntry GetModuleEntry()
         {
             return GetModuleEntryInternal("comment", typeof (Comment), GetOptions);
+        }
+
+        public bool Equals(Comment other)
+        {
+            return CommentText == other.CommentText;
         }
     }
 }
