@@ -102,7 +102,7 @@ namespace IPTables.Net
             var chains = new HashSet<IpTablesChain>();
             foreach (var rules in GetRules(table))
             {
-                chains.Add(new IpTablesChain(table, rules.Key, this));
+                chains.Add(new IpTablesChain(table, rules.Key, this, rules.Value));
             }
             return chains;
         }
@@ -111,7 +111,7 @@ namespace IPTables.Net
         public IpTablesChain GetChain(string table, string chain)
         {
             var rules = GetRules(table, chain);
-            return new IpTablesChain(table, chain, this);
+            return new IpTablesChain(table, chain, this, rules);
         }
 
 
@@ -135,7 +135,7 @@ namespace IPTables.Net
             var process = _system.StartProcess("iptables", String.Format("-t {0} -N {1}", name, table));
             process.WaitForExit();
 
-            return new IpTablesChain(table, name, this);
+            return new IpTablesChain(table, name, this, new List<IpTablesRule>());
         }
     }
 }

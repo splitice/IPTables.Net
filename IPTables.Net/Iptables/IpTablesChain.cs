@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace IPTables.Net.Iptables
 {
@@ -9,11 +10,12 @@ namespace IPTables.Net.Iptables
         private readonly String _table;
         private IpTablesSystem _system;
 
-        public IpTablesChain(String table, String chainName, IpTablesSystem system)
+        public IpTablesChain(String table, String chainName, IpTablesSystem system, IEnumerable<IpTablesRule> rules)
         {
             _name = chainName;
             _table = table;
             _system = system;
+            _rules = rules;
         }
 
         public String Name
@@ -26,14 +28,41 @@ namespace IPTables.Net.Iptables
             get { return _table; }
         }
 
-        public IEnumerable<IpTablesRule> GetRules()
+        private IEnumerable<IpTablesRule> _rules;
+        public IEnumerable<IpTablesRule> Rules
         {
-            return _system.GetRules(_table, _name);
+            get
+            {
+                return _rules;
+            }
         }
 
         public void Sync(IEnumerable<IpTablesRule> with)
         {
-            
+            var currentRules = Rules.ToList();
+
+            int i = 0, len = with.Count();
+            foreach(var cR in currentRules)
+            {
+                if (i == len)
+                {
+                    break;
+                }
+                if (cR.Equals(with.ElementAt(i)))
+                {
+                    i++;
+                }
+                else
+                {
+                    cR.Delete(_table, _name);
+                }
+            }
+
+            var remaining = with.Skip(i);
+            foreach (var rR in remaining)
+            {
+                rR.Add(_table, _name);
+            }
         }
 
         public void Delete(bool flush = false)

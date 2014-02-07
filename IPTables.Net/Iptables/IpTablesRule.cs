@@ -50,6 +50,19 @@ namespace IPTables.Net.Iptables
                 command = "-t " + table;
             }
 
+            command += GetShortCommand();
+
+            return command;
+        }
+
+        public String GetFullCommand(String chain, String table, String opt = "-A")
+        {
+            return opt+" " + chain + " " + GetCommand(table);
+        }
+
+        public String GetShortCommand()
+        {
+            String command = "";
             foreach (var e in _modules)
             {
                 if (command.Length != 0)
@@ -62,20 +75,19 @@ namespace IPTables.Net.Iptables
                 }
                 command += e.Value.GetRuleString();
             }
-
             return command;
         }
 
         public void Add(String table, String chain)
         {
-            String command = " -A " + chain + " " + GetCommand(table);
+            String command = GetFullCommand(chain, table);
             var process = _system.StartProcess("iptables", command);
             process.WaitForExit();
         }
 
         public void Delete(String table, String chain)
         {
-            String command = " -D " + chain + " " + GetCommand(table);
+            String command = GetFullCommand(chain, table, "-D");
             var process = _system.StartProcess("iptables", command);
             process.WaitForExit();
         }
