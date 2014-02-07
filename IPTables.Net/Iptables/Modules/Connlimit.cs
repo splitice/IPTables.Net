@@ -110,7 +110,29 @@ namespace IPTables.Net.Iptables.Modules
 
         public bool Equals(Connlimit other)
         {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
             return Above == other.Above && LimitMatch == other.LimitMatch && Mask == other.Mask && Upto == other.Upto;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Connlimit) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = Above;
+                hashCode = (hashCode*397) ^ (int) LimitMatch;
+                hashCode = (hashCode*397) ^ Mask;
+                hashCode = (hashCode*397) ^ Upto;
+                return hashCode;
+            }
         }
     }
 }

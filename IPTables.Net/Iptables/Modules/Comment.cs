@@ -53,7 +53,22 @@ namespace IPTables.Net.Iptables.Modules
 
         public bool Equals(Comment other)
         {
-            return CommentText == other.CommentText;
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(CommentText, other.CommentText);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Comment) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (CommentText != null ? CommentText.GetHashCode() : 0);
         }
     }
 }

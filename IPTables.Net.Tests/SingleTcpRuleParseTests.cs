@@ -17,5 +17,17 @@ namespace IPTables.Net.Tests
 
             Assert.AreEqual(rule, "-A " + chain + " " + irule.GetCommand("filter"));
         }
+
+        [Test]
+        public void TestDropFragmentedTcpDnsEquality()
+        {
+            String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53";
+            String chain;
+
+            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, out chain);
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, out chain);
+
+            Assert.AreEqual(irule1, irule2);
+        }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
-    public class ValueOrNot<T>
+    public class ValueOrNot<T> : IEquatable<ValueOrNot<T>>
     {
         private bool _not;
         private bool _null = true;
@@ -75,6 +75,32 @@ namespace IPTables.Net.Iptables.DataTypes
             built += optionKey + " ";
             built += Value;
             return built;
+        }
+
+        public bool Equals(ValueOrNot<T> other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return _not.Equals(other._not) && _null.Equals(other._null) && (_null || EqualityComparer<T>.Default.Equals(_value, other._value));
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((ValueOrNot<T>) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = _not.GetHashCode();
+                hashCode = (hashCode*397) ^ EqualityComparer<T>.Default.GetHashCode(_value);
+                hashCode = (hashCode*397) ^ _null.GetHashCode();
+                return hashCode;
+            }
         }
     }
 }
