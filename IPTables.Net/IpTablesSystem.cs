@@ -92,6 +92,11 @@ namespace IPTables.Net
             return GetRulesFromOutput(process.StandardOutput.ReadToEnd(), table, _system);
         }
 
+        public List<IpTablesRule> GetRules(string table, string chain)
+        {
+            return GetRules(table)[chain];
+        }
+
         public IEnumerable<IpTablesChain> GetChains(string table)
         {
             var chains = new HashSet<IpTablesChain>();
