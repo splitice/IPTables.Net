@@ -127,6 +127,13 @@ namespace IPTables.Net.Iptables
             return (new string(parmChars)).Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
         }
 
+        public static IpTablesRule Parse(String rule, ISystemFactory system)
+        {
+            String chain;
+
+            return Parse(rule, system, out chain);
+        }
+
         public static IpTablesRule Parse(String rule, ISystemFactory system, out String chain)
         {
             string[] arguments = SplitArguments(rule);
