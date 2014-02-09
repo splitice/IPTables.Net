@@ -57,7 +57,7 @@ namespace IPTables.Net
                         {
                             throw new Exception("Parsing error, could not find end of counters");
                         }
-                        string[] counters = line.Substring(0, positionEnd).Split(new[] {':'});
+                        string[] counters = line.Substring(1, positionEnd-1).Split(new[] {':'});
                         line = line.Substring(positionEnd + 1);
 
                         rule = IpTablesRule.Parse(line, system, out chain, ret.Count + 1);
@@ -145,7 +145,7 @@ namespace IPTables.Net
 
         public IpTablesChain AddChain(String name, String table = "filter")
         {
-            var process = _system.StartProcess("iptables", String.Format("-t {0} -N {1}", name, table));
+            var process = _system.StartProcess("iptables", String.Format("-t {0} -N {1}", table, name));
             process.WaitForExit();
 
             return new IpTablesChain(table, name, this, new List<IpTablesRule>());
@@ -153,7 +153,7 @@ namespace IPTables.Net
 
         public IpTablesChain AddChain(IpTablesChain chain)
         {
-            var process = _system.StartProcess("iptables", String.Format("-t {0} -N {1}", chain.Name, chain.Table));
+            var process = _system.StartProcess("iptables", String.Format("-t {0} -N {1}", chain.Table, chain.Name));
             process.WaitForExit();
 
             foreach (var r in chain.Rules)
