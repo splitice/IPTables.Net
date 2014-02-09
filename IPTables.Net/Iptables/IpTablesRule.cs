@@ -26,7 +26,7 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public IpTablesRule(ISystemFactory system, int position)
+        public IpTablesRule(ISystemFactory system, int position = -1)
         {
             _system = system;
             Position = position;

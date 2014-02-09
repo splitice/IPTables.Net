@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\DictionaryExtension.cs" />
+    <Compile Include="Iptables\ControlFlowRuleHelper.cs" />
     <Compile Include="Iptables\DataTypes\CounterPacketsAndBytes.cs" />
     <Compile Include="Iptables\DataTypes\IPPortOrRange.cs" />
     <Compile Include="Common\Helpers.cs" />
