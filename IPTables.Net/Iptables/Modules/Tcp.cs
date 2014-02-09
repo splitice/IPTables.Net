@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    internal class Tcp : ModuleBase, IIptablesModule, IEquatable<Tcp>
+    public class Tcp : ModuleBase, IIptablesModule, IEquatable<Tcp>
     {
         private const String OptionSourcePortLong = "--source-port";
         private const String OptionSourcePortShort = "--sport";

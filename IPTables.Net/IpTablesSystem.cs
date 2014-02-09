@@ -15,6 +15,14 @@ namespace IPTables.Net
             _system = system;
         }
 
+        internal ISystemFactory System
+        {
+            get
+            {
+                return _system;
+            }
+        }
+
         public Dictionary<String, List<IpTablesRule>> GetRulesFromOutput(String output, String table, ISystemFactory system)
         {
             var ret = new Dictionary<string, List<IpTablesRule>>();

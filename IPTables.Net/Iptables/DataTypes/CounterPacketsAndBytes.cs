@@ -1,6 +1,6 @@
 ﻿namespace IPTables.Net.Iptables.DataTypes
 {
-    internal struct CounterPacketsAndBytes
+    public struct CounterPacketsAndBytes
     {
         public uint Bytes;
         public uint Packets;

@@ -10,12 +10,20 @@ namespace IPTables.Net.Iptables
         private readonly String _table;
         private IpTablesSystem _system;
 
-        public IpTablesChain(String table, String chainName, IpTablesSystem system, IEnumerable<IpTablesRule> rules)
+        public IpTablesChain(String table, String chainName, IpTablesSystem system, List<IpTablesRule> rules)
         {
             _name = chainName;
             _table = table;
             _system = system;
             _rules = rules;
+        }
+
+        public IpTablesChain(String table, String chainName, IpTablesSystem system)
+        {
+            _name = chainName;
+            _table = table;
+            _system = system;
+            _rules = new List<IpTablesRule>();
         }
 
         public String Name
@@ -28,8 +36,8 @@ namespace IPTables.Net.Iptables
             get { return _table; }
         }
 
-        private IEnumerable<IpTablesRule> _rules;
-        public IEnumerable<IpTablesRule> Rules
+        private List<IpTablesRule> _rules;
+        public List<IpTablesRule> Rules
         {
             get
             {

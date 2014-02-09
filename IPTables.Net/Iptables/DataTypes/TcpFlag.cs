@@ -1,6 +1,6 @@
 ﻿namespace IPTables.Net.Iptables.DataTypes
 {
-    internal enum TcpFlag
+    public enum TcpFlag
     {
         SYN,
         ACK,

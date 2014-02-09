@@ -50,8 +50,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IPTablesSaveReading.cs" />
-    <Compile Include="IPTablesSyncChain.cs" />
+    <Compile Include="IpTablesRuleSetTests.cs" />
+    <Compile Include="IpTablesSaveReadingTests.cs" />
+    <Compile Include="IpTablesSyncChainTests.cs" />
     <Compile Include="MockSystem\MockIptablesSystemFactory.cs" />
     <Compile Include="MockSystem\MockIptablesSystemProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

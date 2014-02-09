@@ -7,7 +7,7 @@ using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    internal class Dnat : ModuleBase, IIptablesModule, IEquatable<Dnat>
+    public class Dnat : ModuleBase, IIptablesModule, IEquatable<Dnat>
     {
         private const String OptionToDestination = "--to-destination";
         private const String OptionRandom = "--random";

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
-    internal class TcpFlagMatch
+    public class TcpFlagMatch
     {
         public static TcpFlagMatch Syn = new TcpFlagMatch(
             new List<TcpFlag> {TcpFlag.SYN, TcpFlag.RST, TcpFlag.ACK, TcpFlag.FIN}, new List<TcpFlag> {TcpFlag.SYN});

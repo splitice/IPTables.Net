@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace IPTables.Net.Tests
 {
     [TestFixture]
-    internal class IpTablesSaveReading
+    internal class IpTablesSaveReadingTests
     {
         private static readonly IpTablesSystem Processor = new IpTablesSystem(null);
 

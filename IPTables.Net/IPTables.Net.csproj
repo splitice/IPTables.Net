@@ -59,6 +59,7 @@
     <Compile Include="Iptables\DataTypes\IpCidr.cs" />
     <Compile Include="Iptables\DataTypes\IpPort.cs" />
     <Compile Include="Iptables\IpTablesRule.cs" />
+    <Compile Include="Iptables\IpTablesRuleSet.cs" />
     <Compile Include="Iptables\Modules\Base\ModuleEntry.cs" />
     <Compile Include="Iptables\ModuleFactory.cs" />
     <Compile Include="Iptables\Modules\Base\RuleParser.cs" />

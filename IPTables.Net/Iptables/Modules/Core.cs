@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    internal class Core : ModuleBase, IIptablesModule,IEquatable<Core>
+    public class Core : ModuleBase, IIptablesModule,IEquatable<Core>
     {
         private const String OptionProtocolLong = "--protocol";
         private const String OptionProtocolShort = "-p";
@@ -26,6 +26,7 @@ namespace IPTables.Net.Iptables.Modules
         private const String OptionFragmentShort = "-f";
         private const String OptionSetCountersLong = "--set-counters";
         private const String OptionSetCountersShort = "-c";
+        private const String OptionTableShort = "-t";
         public ValueOrNot<IpCidr> Destination = new ValueOrNot<IpCidr>();
         public ValueOrNot<bool> Fragmented = new ValueOrNot<bool>();
         public ValueOrNot<String> InInterface = new ValueOrNot<String>();
@@ -37,6 +38,7 @@ namespace IPTables.Net.Iptables.Modules
         //Target
         public String Target = null;
         public TargetMode TargetMode = TargetMode.Jump;
+        public String Table = "filter";
 
 
         public String Jump
@@ -108,6 +110,9 @@ namespace IPTables.Net.Iptables.Modules
                             new CounterPacketsAndBytes(uint.Parse(parser.GetNextArg(1)),
                                 uint.Parse(parser.GetNextArg(2))), not);
                     return 2;
+                case OptionTableShort:
+                    Table = parser.GetNextArg();
+                    return 1;
             }
 
             return 0;
@@ -117,6 +122,14 @@ namespace IPTables.Net.Iptables.Modules
         {
             var sb = new StringBuilder();
 
+            if (Table != "filter")
+            {
+                if (sb.Length != 0)
+                    sb.Append(" ");
+                sb.Append(OptionTableShort);
+                sb.Append(" ");
+                sb.Append(Table);
+            }
             if (!Protocol.Null)
             {
                 if (sb.Length != 0)

@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    internal class Comment : ModuleBase, IIptablesModule, IEquatable<Comment>
+    public class Comment : ModuleBase, IIptablesModule, IEquatable<Comment>
     {
         private const String OptionCommentLong = "--comment";
 

@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    internal class Connlimit : ModuleBase, IIptablesModule, IEquatable<Connlimit>
+    public class Connlimit : ModuleBase, IIptablesModule, IEquatable<Connlimit>
     {
         private const String OptionUpto = "--connlimit-upto";
         private const String OptionAbove = "--connlimit-above";
@@ -102,7 +102,7 @@ namespace IPTables.Net.Iptables.Modules
             return GetModuleEntryInternal("connlimit", typeof (Connlimit), GetOptions);
         }
 
-        internal enum AddrMode
+        public enum AddrMode
         {
             Source,
             Target

@@ -7,7 +7,7 @@ using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    internal class Snat : ModuleBase, IIptablesModule, IEquatable<Snat>
+    public class Snat : ModuleBase, IIptablesModule, IEquatable<Snat>
     {
         private const String OptionToSource = "--to-source";
         private const String OptionRandom = "--random";

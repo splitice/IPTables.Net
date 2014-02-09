@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
   <TopNode>[0-1000]C:\Users\SplitIce\Documents\GitHub\IPTables.Net\Testing.nunit</TopNode>
-  <SelectedNode>[0-1020]IPTables.Net.Tests</SelectedNode>
+  <SelectedNode>[0-1000]C:\Users\SplitIce\Documents\GitHub\IPTables.Net\Testing.nunit</SelectedNode>
   <ExcludeCategories>false</ExcludeCategories>
   <Nodes>
     <Node UniqueName="[0-1000]C:\Users\SplitIce\Documents\GitHub\IPTables.Net\Testing.nunit" Expanded="true" />
-    <Node UniqueName="[0-1017]C:\Users\SplitIce\Documents\GitHub\IPTables.Net\IPTables.Net.Tests\bin\Debug\IPTables.Net.Tests.dll" Expanded="true" />
-    <Node UniqueName="[0-1018]IPTables" Expanded="true" />
-    <Node UniqueName="[0-1019]IPTables.Net" Expanded="true" />
-    <Node UniqueName="[0-1020]IPTables.Net.Tests" Expanded="true" />
-    <Node UniqueName="[0-1001]IPTables.Net.Tests.IpTablesSaveReading" Expanded="true" />
-    <Node UniqueName="[0-1007]IPTables.Net.Tests.SingleCommentRuleParseTests" Expanded="true" />
-    <Node UniqueName="[0-1005]IPTables.Net.Tests.SingleConnlimitRuleParseTests" Expanded="true" />
-    <Node UniqueName="[0-1011]IPTables.Net.Tests.SingleCoreRuleParseTests" Expanded="true" />
-    <Node UniqueName="[0-1009]IPTables.Net.Tests.SingleTcpRuleParseTests" Expanded="true" />
+    <Node UniqueName="[0-1034]C:\Users\SplitIce\Documents\GitHub\IPTables.Net\IPTables.Net.Tests\bin\Debug\IPTables.Net.Tests.dll" Expanded="true" />
+    <Node UniqueName="[0-1035]IPTables" Expanded="true" />
+    <Node UniqueName="[0-1036]IPTables.Net" Expanded="true" />
+    <Node UniqueName="[0-1037]IPTables.Net.Tests" Expanded="true" />
+    <Node UniqueName="[0-1001]IPTables.Net.Tests.IpTablesRuleSetTests" Expanded="true" />
+    <Node UniqueName="[0-1005]IPTables.Net.Tests.IpTablesSaveReadingTests" Expanded="true" />
+    <Node UniqueName="[0-1009]IPTables.Net.Tests.IpTablesSyncChainTests" Expanded="true" />
+    <Node UniqueName="[0-1017]IPTables.Net.Tests.SingleCommentRuleParseTests" Expanded="true" />
+    <Node UniqueName="[0-1014]IPTables.Net.Tests.SingleConnlimitRuleParseTests" Expanded="true" />
+    <Node UniqueName="[0-1023]IPTables.Net.Tests.SingleCoreRuleParseTests" Expanded="true" />
+    <Node UniqueName="[0-1020]IPTables.Net.Tests.SingleTcpRuleParseTests" Expanded="true" />
   </Nodes>
 </VisualState>

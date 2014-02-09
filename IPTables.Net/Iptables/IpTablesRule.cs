@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using SystemInteract;
 using IPTables.Net.Common;
 using IPTables.Net.Iptables.Modules;
@@ -15,6 +16,14 @@ namespace IPTables.Net.Iptables
         public long Bytes = 0;
         public long Packets = 0;
         private ISystemFactory _system;
+
+        internal ISystemFactory System
+        {
+            get
+            {
+                return _system;
+            }
+        }
 
         public IpTablesRule(ISystemFactory system)
         {
@@ -156,6 +165,11 @@ namespace IPTables.Net.Iptables
             chain = parser.Chain;
 
             return ipRule;
+        }
+
+        public T GetModule<T>(string core) where T: class, IIptablesModule
+        {
+            return Modules[core] as T;
         }
     }
 }
