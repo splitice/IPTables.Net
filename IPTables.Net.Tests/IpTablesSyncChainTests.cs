@@ -30,7 +30,7 @@ namespace IPTables.Net.Tests
                                                    IpTablesRule.Parse("-A INPUT -d 1.2.3.4/16 -j DROP",mock, out chain)
                                                };
 
-            List<String> expectedCommands = new List<String>() { rulesNew[2].GetFullCommand("INPUT","filter") };
+            List<String> expectedCommands = new List<String>() { rulesNew[2].GetFullCommand("INPUT") };
 
             mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
         }
@@ -52,7 +52,7 @@ namespace IPTables.Net.Tests
                                                    IpTablesRule.Parse("-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",mock, out chain)
                                                };
 
-            List<String> expectedCommands = new List<String>() { rulesNew[2].GetFullCommand("INPUT", "filter") };
+            List<String> expectedCommands = new List<String>() { rulesNew[2].GetFullCommand("INPUT") };
 
             mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
         }
@@ -97,8 +97,8 @@ namespace IPTables.Net.Tests
             List<String> expectedCommands = new List<String>()
                                             {
                                                 rulesOriginal[1].GetFullCommand("INPUT", "-D"),
-                                                rulesNew[1].GetFullCommand("INPUT", "filter"),
-                                                rulesNew[2].GetFullCommand("INPUT", "filter")
+                                                rulesNew[1].GetFullCommand("INPUT"),
+                                                rulesNew[2].GetFullCommand("INPUT")
                                             };
 
             mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
@@ -139,7 +139,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>()
                                             {
-                                                rulesNew[1].GetFullCommand("INPUT", "-R")
+                                                rulesNew[1].GetFullCommand("INPUT","-R")
                                             };
 
             mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock, CommentComparer);

@@ -85,9 +85,9 @@ namespace IPTables.Net.Iptables
             return command;
         }
 
-        public void Add(String table, String chain)
+        public void Add(String chain)
         {
-            String command = GetFullCommand(chain, table);
+            String command = GetFullCommand(chain);
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 

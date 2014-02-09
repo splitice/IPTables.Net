@@ -158,7 +158,7 @@ namespace IPTables.Net
 
             foreach (var r in chain.Rules)
             {
-                r.Add(chain.Table, chain.Name);
+                r.Add(chain.Name);
             }
 
             return chain;
