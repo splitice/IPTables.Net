@@ -73,13 +73,13 @@ namespace IPTables.Net.Iptables
         public String GetFullCommand(String chain, String opt = "-A")
         {
             String command = opt + " " + chain + " ";
-            if (command == "-R")
+            if (opt == "-R")
             {
                 if (Position == -1)
                 {
                     throw new Exception("This rule does not have a specific position and hence can not be located for replace");
                 }
-                command += Position + " ";
+                command += Position.ToString() + " ";
             }
             command += GetCommand();
             return command;
