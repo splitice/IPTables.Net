@@ -8,6 +8,7 @@ using IPTables.Net.Iptables.Modules.Connlimit;
 using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Dnat;
 using IPTables.Net.Iptables.Modules.Snat;
+using IPTables.Net.Iptables.Modules.State;
 using IPTables.Net.Iptables.Modules.Tcp;
 
 namespace IPTables.Net.Iptables
@@ -21,7 +22,8 @@ namespace IPTables.Net.Iptables
                                                                DnatModule.GetModuleEntry,
                                                                SnatModule.GetModuleEntry,
                                                                ConnlimitModule.GetModuleEntry,
-                                                               CommentModule.GetModuleEntry
+                                                               CommentModule.GetModuleEntry,
+                                                               StateModule.GetModuleEntry
                                                            };
 
         private readonly Dictionary<String, ModuleEntry> _modules = new Dictionary<string, ModuleEntry>();
@@ -38,6 +40,10 @@ namespace IPTables.Net.Iptables
 
         public ModuleEntry GetModule(String module)
         {
+            if (!_modules.ContainsKey(module))
+            {
+                throw new Exception(String.Format("The factory could not find module: {0}", module));
+            }
             return _modules[module];
         }
 
