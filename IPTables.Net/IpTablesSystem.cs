@@ -60,7 +60,8 @@ namespace IPTables.Net
                         string[] counters = line.Substring(1, positionEnd-1).Split(new[] {':'});
                         line = line.Substring(positionEnd + 1);
 
-                        rule = IpTablesRule.Parse(line, system, out chain, ret.Count + 1);
+                        rule = IpTablesRule.Parse(line, system, out chain);
+                        rule.Position = ret[chain].Count + 1;
                         rule.Packets = long.Parse(counters[0]);
                         rule.Bytes = long.Parse(counters[1]);
                         ret[chain].Add(rule);

@@ -24,7 +24,7 @@ namespace IPTables.Net.Iptables
             }
 
             //ERR: GENERAL ERROR
-            if (process.ExitCode == 2)
+            if (process.ExitCode == 1)
             {
                 throw new Exception("IPTables execution failed: Error");
             }
