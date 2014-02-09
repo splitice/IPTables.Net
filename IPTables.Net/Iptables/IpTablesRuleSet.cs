@@ -65,7 +65,16 @@ namespace IPTables.Net.Iptables
             foreach (var chain in Chains)
             {
                 var realChain = _system.GetChain(chain.Table, chain.Name);
-                realChain.Sync(chain.Rules, comparer);
+                if (realChain == null)
+                {
+                    //Chain doesnt exist create
+                    _system.AddChain(chain);
+                }
+                else
+                {
+                    //Update chain
+                    realChain.Sync(chain.Rules, comparer);
+                }
             }
 
             if (deleteUndefinedChains)

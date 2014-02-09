@@ -102,7 +102,10 @@ namespace IPTables.Net
 
         public List<IpTablesRule> GetRules(string table, string chain)
         {
-            return GetRules(table)[chain];
+            var tableRules = GetRules(table);
+            if (tableRules.ContainsKey(chain))
+                return tableRules[chain];
+            return null;
         }
 
         public IEnumerable<IpTablesChain> GetChains(string table)
@@ -119,6 +122,8 @@ namespace IPTables.Net
         public IpTablesChain GetChain(string table, string chain)
         {
             var rules = GetRules(table, chain);
+            if (rules == null)
+                return null;
             return new IpTablesChain(table, chain, this, rules);
         }
 
@@ -144,6 +149,19 @@ namespace IPTables.Net
             process.WaitForExit();
 
             return new IpTablesChain(table, name, this, new List<IpTablesRule>());
+        }
+
+        public IpTablesChain AddChain(IpTablesChain chain)
+        {
+            var process = _system.StartProcess("iptables", String.Format("-t {0} -N {1}", chain.Name, chain.Table));
+            process.WaitForExit();
+
+            foreach (var r in chain.Rules)
+            {
+                r.Add(chain.Table, chain.Name);
+            }
+
+            return chain;
         }
     }
 }
