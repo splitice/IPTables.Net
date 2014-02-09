@@ -22,5 +22,15 @@ namespace IPTables.Net.Iptables
             rule.GetModuleOrLoad<CoreModule>("core").Goto = chain;
             return rule;
         }
+
+        static IpTablesRule CreateJump(IpTablesChain chain)
+        {
+            return CreateJump(chain.Name, chain.System.System);
+        }
+
+        static IpTablesRule CreateGoto(IpTablesChain chain)
+        {
+            return CreateGoto(chain.Name, chain.System.System);
+        }
     }
 }

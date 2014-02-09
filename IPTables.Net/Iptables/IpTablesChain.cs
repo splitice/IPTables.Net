@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SystemInteract;
 
 namespace IPTables.Net.Iptables
 {
@@ -42,6 +43,14 @@ namespace IPTables.Net.Iptables
             get
             {
                 return _rules;
+            }
+        }
+
+        internal IpTablesSystem System
+        {
+            get
+            {
+                return _system;
             }
         }
 
