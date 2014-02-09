@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Modules;
+using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Tests.MockSystem;
 using NUnit.Framework;
 
@@ -111,8 +112,8 @@ namespace IPTables.Net.Tests
         /// <returns></returns>
         static bool CommentComparer(IpTablesRule rule1, IpTablesRule rule2)
         {
-            var comment1 = rule1.GetModule<Comment>("comment");
-            var comment2 = rule2.GetModule<Comment>("comment");
+            var comment1 = rule1.GetModule<CommentModule>("comment");
+            var comment2 = rule2.GetModule<CommentModule>("comment");
 
             if (comment1 == null || comment2 == null)
                 return false;

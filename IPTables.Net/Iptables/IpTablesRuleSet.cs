@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IPTables.Net.Iptables.Modules;
+using IPTables.Net.Iptables.Modules.Core;
 
 namespace IPTables.Net.Iptables
 {
@@ -26,7 +27,7 @@ namespace IPTables.Net.Iptables
 
         public void AddRule(String chain, IpTablesRule rule)
         {
-            var coreModule = rule.GetModule<Core>("core");
+            var coreModule = rule.GetModule<CoreModule>("core");
             var table = coreModule.Table;
 
             if (_chains.FirstOrDefault((a) => a.Name == chain && a.Table == table) == null)

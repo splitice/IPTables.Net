@@ -5,24 +5,24 @@ using System.Text;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Modules.Base;
 
-namespace IPTables.Net.Iptables.Modules
+namespace IPTables.Net.Iptables.Modules.Snat
 {
-    public class Dnat : ModuleBase, IIptablesModule, IEquatable<Dnat>
+    public class SnatModule : ModuleBase, IIptablesModule, IEquatable<SnatModule>
     {
-        private const String OptionToDestination = "--to-destination";
+        private const String OptionToSource = "--to-source";
         private const String OptionRandom = "--random";
         private const String OptionPersisent = "--persistent";
 
         public bool Persistent = false;
         public bool Random = false;
-        public IPPortOrRange ToDestination = new IPPortOrRange(IPAddress.Any);
+        public IPPortOrRange ToSource = new IPPortOrRange(IPAddress.Any);
 
         public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {
-                case OptionToDestination:
-                    ToDestination = IPPortOrRange.Parse(parser.GetNextArg());
+                case OptionToSource:
+                    ToSource = IPPortOrRange.Parse(parser.GetNextArg());
                     return 1;
 
                 case OptionRandom:
@@ -41,12 +41,12 @@ namespace IPTables.Net.Iptables.Modules
         {
             var sb = new StringBuilder();
 
-            if (Equals(ToDestination.LowerAddress, IPAddress.Any))
+            if (Equals(ToSource.LowerAddress, IPAddress.Any))
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
-                sb.Append(OptionToDestination + " ");
-                sb.Append(ToDestination);
+                sb.Append(OptionToSource + " ");
+                sb.Append(ToSource);
             }
 
             if (Random)
@@ -70,7 +70,7 @@ namespace IPTables.Net.Iptables.Modules
         {
             var options = new List<string>
                           {
-                              OptionToDestination,
+                              OptionToSource,
                               OptionRandom,
                               OptionPersisent
                           };
@@ -79,14 +79,14 @@ namespace IPTables.Net.Iptables.Modules
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("dnat", typeof (Dnat), GetOptions, true);
+            return GetModuleEntryInternal("snat", typeof (SnatModule), GetOptions, true);
         }
 
-        public bool Equals(Dnat other)
+        public bool Equals(SnatModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) && ToDestination.Equals(other.ToDestination);
+            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) && ToSource.Equals(other.ToSource);
         }
 
         public override bool Equals(object obj)
@@ -94,7 +94,7 @@ namespace IPTables.Net.Iptables.Modules
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Dnat) obj);
+            return Equals((SnatModule) obj);
         }
 
         public override int GetHashCode()
@@ -103,7 +103,7 @@ namespace IPTables.Net.Iptables.Modules
             {
                 int hashCode = Persistent.GetHashCode();
                 hashCode = (hashCode*397) ^ Random.GetHashCode();
-                hashCode = (hashCode*397) ^ ToDestination.GetHashCode();
+                hashCode = (hashCode*397) ^ ToSource.GetHashCode();
                 return hashCode;
             }
         }

@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Iptables.Modules.Base;
+using IPTables.Net.Iptables.Modules.Comment;
+using IPTables.Net.Iptables.Modules.Connlimit;
+using IPTables.Net.Iptables.Modules.Core;
+using IPTables.Net.Iptables.Modules.Dnat;
+using IPTables.Net.Iptables.Modules.Snat;
+using IPTables.Net.Iptables.Modules.Tcp;
 
 namespace IPTables.Net.Iptables
 {
@@ -10,12 +16,12 @@ namespace IPTables.Net.Iptables
     {
         public static List<Func<ModuleEntry>> AllModules = new List<Func<ModuleEntry>>
                                                            {
-                                                               Core.GetModuleEntry,
-                                                               Tcp.GetModuleEntry,
-                                                               Dnat.GetModuleEntry,
-                                                               Snat.GetModuleEntry,
-                                                               Connlimit.GetModuleEntry,
-                                                               Comment.GetModuleEntry
+                                                               CoreModule.GetModuleEntry,
+                                                               TcpModule.GetModuleEntry,
+                                                               DnatModule.GetModuleEntry,
+                                                               SnatModule.GetModuleEntry,
+                                                               ConnlimitModule.GetModuleEntry,
+                                                               CommentModule.GetModuleEntry
                                                            };
 
         private readonly Dictionary<String, ModuleEntry> _modules = new Dictionary<string, ModuleEntry>();

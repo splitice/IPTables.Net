@@ -63,14 +63,14 @@
     <Compile Include="Iptables\Modules\Base\ModuleEntry.cs" />
     <Compile Include="Iptables\ModuleFactory.cs" />
     <Compile Include="Iptables\Modules\Base\RuleParser.cs" />
-    <Compile Include="Iptables\Modules\Snat.cs" />
-    <Compile Include="Iptables\Modules\Dnat.cs" />
-    <Compile Include="Iptables\Modules\Connlimit.cs" />
-    <Compile Include="Iptables\Modules\Core.cs" />
+    <Compile Include="Iptables\Modules\Snat\SnatModule.cs" />
+    <Compile Include="Iptables\Modules\Dnat\DnatModule.cs" />
+    <Compile Include="Iptables\Modules\Connlimit\ConnlimitModule.cs" />
+    <Compile Include="Iptables\Modules\Core\CoreModule.cs" />
     <Compile Include="Iptables\Modules\IIptablesModule.cs" />
     <Compile Include="Iptables\Modules\Base\ModuleBase.cs" />
-    <Compile Include="Iptables\Modules\Comment.cs" />
-    <Compile Include="Iptables\Modules\Tcp.cs" />
+    <Compile Include="Iptables\Modules\Comment\CommentModule.cs" />
+    <Compile Include="Iptables\Modules\Tcp\TcpModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

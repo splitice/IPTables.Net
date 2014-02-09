@@ -4,9 +4,9 @@ using System.Text;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Modules.Base;
 
-namespace IPTables.Net.Iptables.Modules
+namespace IPTables.Net.Iptables.Modules.Tcp
 {
-    public class Tcp : ModuleBase, IIptablesModule, IEquatable<Tcp>
+    public class TcpModule : ModuleBase, IIptablesModule, IEquatable<TcpModule>
     {
         private const String OptionSourcePortLong = "--source-port";
         private const String OptionSourcePortShort = "--sport";
@@ -106,10 +106,10 @@ namespace IPTables.Net.Iptables.Modules
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("tcp", typeof (Tcp), GetOptions);
+            return GetModuleEntryInternal("tcp", typeof (TcpModule), GetOptions);
         }
 
-        public bool Equals(Tcp other)
+        public bool Equals(TcpModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -121,7 +121,7 @@ namespace IPTables.Net.Iptables.Modules
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Tcp) obj);
+            return Equals((TcpModule) obj);
         }
 
         public override int GetHashCode()

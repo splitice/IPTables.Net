@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using IPTables.Net.Iptables.Modules.Base;
 
-namespace IPTables.Net.Iptables.Modules
+namespace IPTables.Net.Iptables.Modules.Connlimit
 {
-    public class Connlimit : ModuleBase, IIptablesModule, IEquatable<Connlimit>
+    public class ConnlimitModule : ModuleBase, IIptablesModule, IEquatable<ConnlimitModule>
     {
         private const String OptionUpto = "--connlimit-upto";
         private const String OptionAbove = "--connlimit-above";
@@ -99,7 +99,7 @@ namespace IPTables.Net.Iptables.Modules
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("connlimit", typeof (Connlimit), GetOptions);
+            return GetModuleEntryInternal("connlimit", typeof (ConnlimitModule), GetOptions);
         }
 
         public enum AddrMode
@@ -108,7 +108,7 @@ namespace IPTables.Net.Iptables.Modules
             Target
         }
 
-        public bool Equals(Connlimit other)
+        public bool Equals(ConnlimitModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -120,7 +120,7 @@ namespace IPTables.Net.Iptables.Modules
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Connlimit) obj);
+            return Equals((ConnlimitModule) obj);
         }
 
         public override int GetHashCode()

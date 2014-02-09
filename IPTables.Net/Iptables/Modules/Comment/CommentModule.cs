@@ -4,9 +4,9 @@ using System.Text;
 using IPTables.Net.Common;
 using IPTables.Net.Iptables.Modules.Base;
 
-namespace IPTables.Net.Iptables.Modules
+namespace IPTables.Net.Iptables.Modules.Comment
 {
-    public class Comment : ModuleBase, IIptablesModule, IEquatable<Comment>
+    public class CommentModule : ModuleBase, IIptablesModule, IEquatable<CommentModule>
     {
         private const String OptionCommentLong = "--comment";
 
@@ -48,10 +48,10 @@ namespace IPTables.Net.Iptables.Modules
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("comment", typeof (Comment), GetOptions);
+            return GetModuleEntryInternal("comment", typeof (CommentModule), GetOptions);
         }
 
-        public bool Equals(Comment other)
+        public bool Equals(CommentModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -63,7 +63,7 @@ namespace IPTables.Net.Iptables.Modules
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Comment) obj);
+            return Equals((CommentModule) obj);
         }
 
         public override int GetHashCode()

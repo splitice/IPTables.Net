@@ -4,9 +4,9 @@ using System.Text;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Modules.Base;
 
-namespace IPTables.Net.Iptables.Modules
+namespace IPTables.Net.Iptables.Modules.Core
 {
-    public class Core : ModuleBase, IIptablesModule,IEquatable<Core>
+    public class CoreModule : ModuleBase, IIptablesModule,IEquatable<CoreModule>
     {
         private const String OptionProtocolLong = "--protocol";
         private const String OptionProtocolShort = "-p";
@@ -219,10 +219,10 @@ namespace IPTables.Net.Iptables.Modules
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("core", typeof (Core), GetOptions, true);
+            return GetModuleEntryInternal("core", typeof (CoreModule), GetOptions, true);
         }
 
-        public bool Equals(Core other)
+        public bool Equals(CoreModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -234,7 +234,7 @@ namespace IPTables.Net.Iptables.Modules
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Core) obj);
+            return Equals((CoreModule) obj);
         }
     }
 }
