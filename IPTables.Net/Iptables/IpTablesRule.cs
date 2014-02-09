@@ -179,16 +179,17 @@ namespace IPTables.Net.Iptables
             return ipRule;
         }
 
-        public T GetModule<T>(string core) where T: class, IIptablesModule
+        public T GetModule<T>(string moduleName) where T: class, IIptablesModule
         {
-            return Modules[core] as T;
+            if (!Modules.ContainsKey(moduleName)) return null;
+            return Modules[moduleName] as T;
         }
 
         public void Replace(String table, String chain, IpTablesRule withRule)
         {
-            String command = GetFullCommand(chain, table, "-R");
-            var process = _system.StartProcess("iptables", command);
             withRule.Position = Position;
+            String command = withRule.GetFullCommand(chain, table, "-R");
+            var process = _system.StartProcess("iptables", command);
             process.WaitForExit();
         }
     }

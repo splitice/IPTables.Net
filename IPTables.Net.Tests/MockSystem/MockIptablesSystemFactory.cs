@@ -17,13 +17,17 @@ namespace IPTables.Net.Tests.MockSystem
             return new MockIptablesSystemProcess();
         }
 
-        public void TestSync(List<IpTablesRule> rulesOriginal, List<IpTablesRule> rulesNew, List<string> expectedCommands, MockIptablesSystemFactory mock)
+        public void TestSync(List<IpTablesRule> rulesOriginal, List<IpTablesRule> rulesNew, List<string> expectedCommands, MockIptablesSystemFactory mock, Func<IpTablesRule,IpTablesRule,bool> commentComparer = null)
         {
             IpTablesSystem sys = new IpTablesSystem(mock);
             IpTablesChain chain = new IpTablesChain("filter", "INPUT", sys, rulesOriginal);
-            chain.Sync(rulesNew);
 
-            CollectionAssert.AreEqual(expectedCommands, Commands.Select(a => a.Value));
+            if (commentComparer == null)
+                chain.Sync(rulesNew);
+            else
+                chain.Sync(rulesNew, commentComparer);
+
+            CollectionAssert.AreEqual(expectedCommands, Commands.Select(a => a.Value).ToList());
         }
     }
 }
