@@ -185,6 +185,11 @@ namespace IPTables.Net.Iptables
             return Modules[moduleName] as T;
         }
 
+        public T GetModuleOrLoad<T>(string moduleName) where T : class, IIptablesModule
+        {
+            return GetModuleForParse(moduleName, typeof(T)) as T;
+        }
+
         public void Replace(String table, String chain, IpTablesRule withRule)
         {
             withRule.Position = Position;
