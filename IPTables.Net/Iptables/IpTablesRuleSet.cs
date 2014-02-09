@@ -50,6 +50,16 @@ namespace IPTables.Net.Iptables
             return rule;
         }
 
+        public void AddChain(String name, String table)
+        {
+            if (_chains.FirstOrDefault((a) => a.Name == name && a.Table == table) != null)
+            {
+                throw new Exception("A chain with that name already exists");
+            }
+
+            _chains.Add(new IpTablesChain(table, name, _system));
+        }
+
         public void SyncChains(Func<IpTablesRule, IpTablesRule, bool> comparer = null, bool deleteUndefinedChains = false)
         {
             foreach (var chain in Chains)
