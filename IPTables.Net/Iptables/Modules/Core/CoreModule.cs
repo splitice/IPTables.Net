@@ -212,7 +212,8 @@ namespace IPTables.Net.Iptables.Modules.Core
                               OptionFragmentLong,
                               OptionFragmentShort,
                               OptionSetCountersLong,
-                              OptionSetCountersShort
+                              OptionSetCountersShort,
+                              OptionTableShort
                           };
             return options;
         }
