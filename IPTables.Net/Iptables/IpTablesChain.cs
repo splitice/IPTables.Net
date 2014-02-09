@@ -45,13 +45,12 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public void Sync(IEnumerable<IpTablesRule> with)
+        public void Sync(IEnumerable<IpTablesRule> with, Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate = null)
         {
-            Sync(with, (a, b) => false);
-        }
-
-        public void Sync(IEnumerable<IpTablesRule> with, Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate)
-        {
+            if (ruleComparerForUpdate == null)
+            {
+                ruleComparerForUpdate = (a, b) => false;
+            }
             var currentRules = Rules.ToList();
 
             int i = 0, len = with.Count();

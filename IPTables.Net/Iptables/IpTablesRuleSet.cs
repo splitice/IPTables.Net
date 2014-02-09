@@ -49,5 +49,19 @@ namespace IPTables.Net.Iptables
 
             return rule;
         }
+
+        public void SyncChains(Func<IpTablesRule, IpTablesRule, bool> comparer = null, bool deleteUndefinedChains = false)
+        {
+            foreach (var chain in Chains)
+            {
+                var realChain = _system.GetChain(chain.Table, chain.Name);
+                realChain.Sync(chain.Rules, comparer);
+            }
+
+            if (deleteUndefinedChains)
+            {
+                throw new NotImplementedException("Deletion of non defined chains not implemented yet");
+            }
+        }
     }
 }
