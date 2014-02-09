@@ -15,6 +15,7 @@ namespace IPTables.Net.Iptables
         private readonly Dictionary<String, IIptablesModule> _modules = new Dictionary<String, IIptablesModule>();
         public long Bytes = 0;
         public long Packets = 0;
+        public int Position = 0;
         private ISystemFactory _system;
 
         internal ISystemFactory System
@@ -25,9 +26,10 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public IpTablesRule(ISystemFactory system)
+        public IpTablesRule(ISystemFactory system, int position)
         {
             _system = system;
+            Position = position;
         }
 
         public bool Equals(IpTablesRule rule)
@@ -66,7 +68,17 @@ namespace IPTables.Net.Iptables
 
         public String GetFullCommand(String chain, String table, String opt = "-A")
         {
-            return opt+" " + chain + " " + GetCommand(table);
+            String command = opt + " " + chain + " ";
+            if (command == "-R")
+            {
+                if (Position == -1)
+                {
+                    throw new Exception("This rule does not have a specific position and hence can not be located for replace");
+                }
+                command += Position + " ";
+            }
+            command += GetCommand(table);
+            return command;
         }
 
         public String GetShortCommand()
@@ -136,18 +148,18 @@ namespace IPTables.Net.Iptables
             return (new string(parmChars)).Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        public static IpTablesRule Parse(String rule, ISystemFactory system)
+        public static IpTablesRule Parse(String rule, ISystemFactory system, int position = -1)
         {
             String chain;
 
-            return Parse(rule, system, out chain);
+            return Parse(rule, system, out chain, position);
         }
 
-        public static IpTablesRule Parse(String rule, ISystemFactory system, out String chain)
+        public static IpTablesRule Parse(String rule, ISystemFactory system, out String chain, int position = -1)
         {
             string[] arguments = SplitArguments(rule);
             int count = arguments.Length;
-            var ipRule = new IpTablesRule(system);
+            var ipRule = new IpTablesRule(system, position);
             var parser = new RuleParser(arguments, ipRule);
 
             bool not = false;
@@ -170,6 +182,14 @@ namespace IPTables.Net.Iptables
         public T GetModule<T>(string core) where T: class, IIptablesModule
         {
             return Modules[core] as T;
+        }
+
+        public void Replace(String table, String chain, IpTablesRule withRule)
+        {
+            String command = GetFullCommand(chain, table, "-R");
+            var process = _system.StartProcess("iptables", command);
+            withRule.Position = Position;
+            process.WaitForExit();
         }
     }
 }

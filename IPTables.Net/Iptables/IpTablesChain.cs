@@ -47,6 +47,11 @@ namespace IPTables.Net.Iptables
 
         public void Sync(IEnumerable<IpTablesRule> with)
         {
+            Sync(with, (a, b) => false);
+        }
+
+        public void Sync(IEnumerable<IpTablesRule> with, Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate)
+        {
             var currentRules = Rules.ToList();
 
             int i = 0, len = with.Count();
@@ -57,9 +62,14 @@ namespace IPTables.Net.Iptables
                     cR.Delete(_table, _name);
                     continue;
                 }
-                if (cR.Equals(with.ElementAt(i)))
+                var withRule = with.ElementAt(i);
+                if (cR.Equals(withRule))
                 {
                     i++;
+                }
+                else if (ruleComparerForUpdate(cR, withRule))
+                {
+                    cR.Replace(_table, _name, withRule);
                 }
                 else
                 {
