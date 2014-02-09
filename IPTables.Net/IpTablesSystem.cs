@@ -15,7 +15,7 @@ namespace IPTables.Net
             _system = system;
         }
 
-        internal ISystemFactory System
+        public ISystemFactory System
         {
             get
             {
