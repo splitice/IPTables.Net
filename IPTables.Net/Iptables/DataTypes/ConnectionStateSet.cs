@@ -25,7 +25,7 @@ namespace IPTables.Net.Iptables.DataTypes
             }
         }
 
-        public String ToString()
+        public override String ToString()
         {
             return String.Join(",",_states.Select(ConnectionStateHelper.GetString).ToArray());
         }

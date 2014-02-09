@@ -52,36 +52,7 @@ namespace IPTables.Net.Iptables
         }
 
 
-        public String GetCommand(String table)
-        {
-            String command = "";
-
-            if (table != "filter")
-            {
-                command = "-t " + table;
-            }
-
-            command += GetShortCommand();
-
-            return command;
-        }
-
-        public String GetFullCommand(String chain, String table, String opt = "-A")
-        {
-            String command = opt + " " + chain + " ";
-            if (command == "-R")
-            {
-                if (Position == -1)
-                {
-                    throw new Exception("This rule does not have a specific position and hence can not be located for replace");
-                }
-                command += Position + " ";
-            }
-            command += GetCommand(table);
-            return command;
-        }
-
-        public String GetShortCommand()
+        public String GetCommand()
         {
             String command = "";
             foreach (var e in _modules)
@@ -99,18 +70,31 @@ namespace IPTables.Net.Iptables
             return command;
         }
 
+        public String GetFullCommand(String chain, String opt = "-A")
+        {
+            String command = opt + " " + chain + " ";
+            if (command == "-R")
+            {
+                if (Position == -1)
+                {
+                    throw new Exception("This rule does not have a specific position and hence can not be located for replace");
+                }
+                command += Position + " ";
+            }
+            command += GetCommand();
+            return command;
+        }
+
         public void Add(String table, String chain)
         {
             String command = GetFullCommand(chain, table);
-            var process = _system.StartProcess("iptables", command);
-            process.WaitForExit();
+            ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public void Delete(String table, String chain)
+        public void Delete(String chain)
         {
-            String command = GetFullCommand(chain, table, "-D");
-            var process = _system.StartProcess("iptables", command);
-            process.WaitForExit();
+            String command = GetFullCommand(chain, "-D");
+            ExecutionHelper.ExecuteIptables(_system, command);
         }
 
         public IIptablesModule GetModuleForParse(string name, Type moduleType)
@@ -190,12 +174,11 @@ namespace IPTables.Net.Iptables
             return GetModuleForParse(moduleName, typeof(T)) as T;
         }
 
-        public void Replace(String table, String chain, IpTablesRule withRule)
+        public void Replace(String chain, IpTablesRule withRule)
         {
             withRule.Position = Position;
-            String command = withRule.GetFullCommand(chain, table, "-R");
-            var process = _system.StartProcess("iptables", command);
-            process.WaitForExit();
+            String command = withRule.GetFullCommand(chain, "-R");
+            ExecutionHelper.ExecuteIptables(_system, command);
         }
     }
 }

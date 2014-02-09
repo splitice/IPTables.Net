@@ -8,7 +8,7 @@ namespace IPTables.Net
 {
     public class IpTablesSystem
     {
-        private ISystemFactory _system;
+        private readonly ISystemFactory _system;
 
         public IpTablesSystem(ISystemFactory system)
         {
@@ -139,22 +139,21 @@ namespace IPTables.Net
             {
                 arguments = String.Format("-t {0} -X {1}", table, name);
             }
-            var process = _system.StartProcess("iptables", arguments);
-            process.WaitForExit();
+            ExecutionHelper.ExecuteIptables(_system, arguments);
         }
 
         public IpTablesChain AddChain(String name, String table = "filter")
         {
-            var process = _system.StartProcess("iptables", String.Format("-t {0} -N {1}", table, name));
-            process.WaitForExit();
+            String command = String.Format("-t {0} -N {1}", table, name);
+            ExecutionHelper.ExecuteIptables(_system, command);
 
             return new IpTablesChain(table, name, this, new List<IpTablesRule>());
         }
 
         public IpTablesChain AddChain(IpTablesChain chain)
         {
-            var process = _system.StartProcess("iptables", String.Format("-t {0} -N {1}", chain.Table, chain.Name));
-            process.WaitForExit();
+            String command = String.Format("-t {0} -N {1}", chain.Table, chain.Name);
+            ExecutionHelper.ExecuteIptables(_system, command);
 
             foreach (var r in chain.Rules)
             {

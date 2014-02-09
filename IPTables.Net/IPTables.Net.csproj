@@ -52,6 +52,7 @@
     <Compile Include="Iptables\DataTypes\CounterPacketsAndBytes.cs" />
     <Compile Include="Iptables\DataTypes\IPPortOrRange.cs" />
     <Compile Include="Common\Helpers.cs" />
+    <Compile Include="Iptables\ExecutionHelper.cs" />
     <Compile Include="Iptables\IpTablesChain.cs" />
     <Compile Include="IpTablesSystem.cs" />
     <Compile Include="Iptables\DataTypes\PortOrRange.cs" />

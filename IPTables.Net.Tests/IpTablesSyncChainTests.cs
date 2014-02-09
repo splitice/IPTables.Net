@@ -72,7 +72,7 @@ namespace IPTables.Net.Tests
                                                    IpTablesRule.Parse("-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",mock, out chain),
                                                };
 
-            List<String> expectedCommands = new List<String>() { rulesOriginal[1].GetFullCommand("INPUT", "filter", "-D") };
+            List<String> expectedCommands = new List<String>() { rulesOriginal[1].GetFullCommand("INPUT", "-D") };
 
             mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
         }
@@ -96,7 +96,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>()
                                             {
-                                                rulesOriginal[1].GetFullCommand("INPUT", "filter", "-D"),
+                                                rulesOriginal[1].GetFullCommand("INPUT", "-D"),
                                                 rulesNew[1].GetFullCommand("INPUT", "filter"),
                                                 rulesNew[2].GetFullCommand("INPUT", "filter")
                                             };
@@ -139,7 +139,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>()
                                             {
-                                                rulesNew[1].GetFullCommand("INPUT", "filter", "-R")
+                                                rulesNew[1].GetFullCommand("INPUT", "-R")
                                             };
 
             mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock, CommentComparer);
@@ -163,7 +163,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>()
                                             {
-                                                rulesNew[0].GetFullCommand("INPUT", "filter", "-R")
+                                                rulesNew[0].GetFullCommand("INPUT", "-R")
                                             };
 
             mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock, CommentComparer);
@@ -189,7 +189,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>()
                                             {
-                                                rulesNew[1].GetFullCommand("INPUT", "filter", "-R")
+                                                rulesNew[1].GetFullCommand("INPUT", "-R")
                                             };
 
             mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock, CommentComparer);
