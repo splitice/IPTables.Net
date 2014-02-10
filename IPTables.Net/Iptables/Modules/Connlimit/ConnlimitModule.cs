@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules.Connlimit
 {
@@ -18,6 +17,14 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
         public AddrMode LimitMatch = AddrMode.Source;
         public int Mask = -1;
         public int Upto = -1;
+
+        public bool NeedsLoading
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public int Feed(RuleParser parser, bool not)
         {

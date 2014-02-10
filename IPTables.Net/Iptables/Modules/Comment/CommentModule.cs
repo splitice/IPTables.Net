@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using IPTables.Net.Common;
-using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules.Comment
 {
@@ -22,6 +21,14 @@ namespace IPTables.Net.Iptables.Modules.Comment
             }
 
             return 0;
+        }
+
+        public bool NeedsLoading
+        {
+            get
+            {
+                return true;
+            }
         }
 
         public String GetRuleString()

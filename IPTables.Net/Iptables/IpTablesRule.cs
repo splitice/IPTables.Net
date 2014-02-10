@@ -5,7 +5,6 @@ using System.Linq;
 using SystemInteract;
 using IPTables.Net.Common;
 using IPTables.Net.Iptables.Modules;
-using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables
 {
@@ -61,7 +60,7 @@ namespace IPTables.Net.Iptables
                 {
                     command += " ";
                 }
-                if (e.Key != "core")
+                if (e.Value.NeedsLoading)
                 {
                     command += "-m " + e.Key + " ";
                 }

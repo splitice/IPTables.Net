@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace IPTables.Net.Iptables.Modules.Base
+namespace IPTables.Net.Iptables.Modules
 {
     public abstract class ModuleBase
     {
@@ -13,7 +13,22 @@ namespace IPTables.Net.Iptables.Modules.Base
                             Name = moduleName,
                             Module = moduleType,
                             Options = options(),
-                            Preloaded = preloaded
+                            Preloaded = preloaded,
+                            IsTarget = false
+                        };
+            return entry;
+        }
+
+        protected internal static ModuleEntry GetTargetModuleEntryInternal(String moduleName, Type moduleType,
+            Func<IEnumerable<String>> options, bool preloaded = false)
+        {
+            var entry = new ModuleEntry
+                        {
+                            Name = moduleName,
+                            Module = moduleType,
+                            Options = options(),
+                            Preloaded = preloaded,
+                            IsTarget = true
                         };
             return entry;
         }

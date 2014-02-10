@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
-using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules.Snat
 {
@@ -16,6 +15,14 @@ namespace IPTables.Net.Iptables.Modules.Snat
         public bool Persistent = false;
         public bool Random = false;
         public IPPortOrRange ToSource = new IPPortOrRange(IPAddress.Any);
+
+        public bool NeedsLoading
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public int Feed(RuleParser parser, bool not)
         {
@@ -41,7 +48,7 @@ namespace IPTables.Net.Iptables.Modules.Snat
         {
             var sb = new StringBuilder();
 
-            if (Equals(ToSource.LowerAddress, IPAddress.Any))
+            if (!Equals(ToSource.LowerAddress, IPAddress.Any))
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
@@ -79,7 +86,7 @@ namespace IPTables.Net.Iptables.Modules.Snat
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("snat", typeof (SnatModule), GetOptions, true);
+            return GetTargetModuleEntryInternal("SNAT", typeof(SnatModule), GetOptions, true);
         }
 
         public bool Equals(SnatModule other)

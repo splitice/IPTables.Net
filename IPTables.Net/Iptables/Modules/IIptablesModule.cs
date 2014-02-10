@@ -1,5 +1,4 @@
 ﻿using System;
-using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules
 {
@@ -7,5 +6,7 @@ namespace IPTables.Net.Iptables.Modules
     {
         String GetRuleString();
         int Feed(RuleParser parser, bool not);
+
+        bool NeedsLoading { get; }
     }
 }

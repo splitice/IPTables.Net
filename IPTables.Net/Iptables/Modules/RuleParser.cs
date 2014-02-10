@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace IPTables.Net.Iptables.Modules.Base
+namespace IPTables.Net.Iptables.Modules
 {
     public class RuleParser
     {
@@ -30,11 +30,6 @@ namespace IPTables.Net.Iptables.Modules.Base
             return _arguments[Position + offset];
         }
 
-        private static bool CanFeedModule(ModuleEntry module, String option)
-        {
-            return module.Options.Contains(option);
-        }
-
         public int FeedToSkip(int i, bool not)
         {
             Position = i;
@@ -50,6 +45,10 @@ namespace IPTables.Net.Iptables.Modules.Base
                 Chain = GetNextArg();
                 return 1;
             }
+            if (option == "-j")
+            {
+                LoadParserModule(GetNextArg(), true);
+            }
             foreach (ModuleEntry m in _parsers)
             {
                 if (m.Options.Contains(option))
@@ -62,9 +61,24 @@ namespace IPTables.Net.Iptables.Modules.Base
             throw new Exception("Unknown option: " + option);
         }
 
-        private void LoadParserModule(string getNextArg)
+        private void LoadParserModule(string getNextArg, bool isTarget = false)
         {
-            _parsers.Add(_moduleFactory.GetModule(getNextArg));
+            ModuleEntry entry;
+            if (isTarget)
+            {
+                var entryOrNull = _moduleFactory.GetModuleOrDefault(getNextArg, true);
+
+                //Check if this target is loadable target
+                if (!entryOrNull.HasValue)
+                    return;
+
+                entry = entryOrNull.Value;
+            }
+            else
+            {
+                entry = _moduleFactory.GetModule(getNextArg);
+            }
+            _parsers.Add(entry);
         }
     }
 }

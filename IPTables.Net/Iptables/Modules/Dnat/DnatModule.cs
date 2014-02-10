@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
-using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules.Dnat
 {
@@ -16,6 +15,14 @@ namespace IPTables.Net.Iptables.Modules.Dnat
         public bool Persistent = false;
         public bool Random = false;
         public IPPortOrRange ToDestination = new IPPortOrRange(IPAddress.Any);
+
+        public bool NeedsLoading
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public int Feed(RuleParser parser, bool not)
         {

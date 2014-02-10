@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
-using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules.State
 {
@@ -12,6 +11,14 @@ namespace IPTables.Net.Iptables.Modules.State
         private const String OptionState = "--state";
 
         public ConnectionStateSet State = null;
+
+        public bool NeedsLoading
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public int Feed(RuleParser parser, bool not)
         {

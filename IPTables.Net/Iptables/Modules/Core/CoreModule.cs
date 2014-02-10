@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
-using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules.Core
 {
@@ -40,6 +39,13 @@ namespace IPTables.Net.Iptables.Modules.Core
         public TargetMode TargetMode = TargetMode.Jump;
         public String Table = "filter";
 
+        public bool NeedsLoading
+        {
+            get
+            {
+                return false;
+            }
+        }
 
         public String Jump
         {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using IPTables.Net.Iptables.Modules;
-using IPTables.Net.Iptables.Modules.Base;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.Modules.Connlimit;
 using IPTables.Net.Iptables.Modules.Core;
@@ -38,18 +37,35 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public ModuleEntry GetModule(String module)
+        public ModuleEntry GetModule(String module, bool target = false)
         {
             if (!_modules.ContainsKey(module))
             {
                 throw new Exception(String.Format("The factory could not find module: {0}", module));
             }
-            return _modules[module];
+            var m = _modules[module];
+            if (m.IsTarget == target)
+                return m;
+
+            throw new Exception(String.Format("The factory could not find a module of the correct type: {0}", module));
         }
 
         public IEnumerable<ModuleEntry> GetPreloadModules()
         {
             return _modules.Where(a => a.Value.Preloaded).Select(a => a.Value);
+        }
+
+        public ModuleEntry? GetModuleOrDefault(String module, bool target = false)
+        {
+            if (!_modules.ContainsKey(module))
+            {
+                return null;
+            }
+            var m = _modules[module];
+            if (m.IsTarget == target)
+                return m;
+
+            return null;
         }
     }
 }

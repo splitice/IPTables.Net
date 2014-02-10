@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
-using IPTables.Net.Iptables.Modules.Base;
 
 namespace IPTables.Net.Iptables.Modules.Tcp
 {
@@ -21,6 +20,14 @@ namespace IPTables.Net.Iptables.Modules.Tcp
         public TcpFlagMatch TcpFlags = null;
         //--syn
         public ValueOrNot<int> TcpOption = new ValueOrNot<int>();
+
+        public bool NeedsLoading
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public int Feed(RuleParser parser, bool not)
         {
