@@ -91,7 +91,7 @@ namespace IPTables.Net.Iptables.Modules.Tcp
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((TcpModule) obj);
+            return Equals((UdpModule) obj);
         }
 
         public override int GetHashCode()
