@@ -35,7 +35,7 @@ namespace IPTables.Net.Iptables
 
         public IpTablesRule AddRule(String rawRule)
         {
-            var rule = IpTablesRule.Parse(rawRule, _system.System);
+            var rule = IpTablesRule.Parse(rawRule, _system.System, _chains);
 
             AddRule(rule);
 

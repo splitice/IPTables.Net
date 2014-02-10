@@ -68,7 +68,7 @@ namespace IPTables.Net.Iptables
                 //Delete any extra rules
                 if (i == len)
                 {
-                    cR.Delete(_name);
+                    cR.Delete();
                     continue;
                 }
 
@@ -88,7 +88,7 @@ namespace IPTables.Net.Iptables
                 }
                 else
                 {
-                    cR.Delete(_name);
+                    cR.Delete();
                 }
             }
 

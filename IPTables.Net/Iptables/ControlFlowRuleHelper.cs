@@ -9,30 +9,28 @@ namespace IPTables.Net.Iptables
 {
     public static class ControlFlowRuleHelper
     {
-        public static IpTablesRule CreateJump(String chain, String table, ISystemFactory system)
+        public static IpTablesRule CreateJump(IpTablesChain chainIn, String chainJump, ISystemFactory system)
         {
-            IpTablesRule rule = new IpTablesRule(system);
-            rule.GetModuleOrLoad<CoreModule>("core").Table = table;
-            rule.GetModuleOrLoad<CoreModule>("core").Jump = chain;
+            IpTablesRule rule = new IpTablesRule(system, chainIn);
+            rule.GetModuleOrLoad<CoreModule>("core").Jump = chainJump;
             return rule;
         }
 
-        public static IpTablesRule CreateGoto(String chain, String table, ISystemFactory system)
+        public static IpTablesRule CreateGoto(IpTablesChain chainIn, String chainJump, ISystemFactory system)
         {
-            IpTablesRule rule = new IpTablesRule(system);
-            rule.GetModuleOrLoad<CoreModule>("core").Table = table;
-            rule.GetModuleOrLoad<CoreModule>("core").Goto = chain;
+            IpTablesRule rule = new IpTablesRule(system, chainIn);
+            rule.GetModuleOrLoad<CoreModule>("core").Goto = chainJump;
             return rule;
         }
 
-        public static IpTablesRule CreateJump(IpTablesChain chain)
+        public static IpTablesRule CreateJump(IpTablesChain chain, String target)
         {
-            return CreateJump(chain.Name, chain.Table, chain.System.System);
+            return CreateJump(chain, target, chain.System.System);
         }
 
-        public static IpTablesRule CreateGoto(IpTablesChain chain)
+        public static IpTablesRule CreateGoto(IpTablesChain chain, String target)
         {
-            return CreateGoto(chain.Name, chain.Table, chain.System.System);
+            return CreateGoto(chain, target, chain.System.System);
         }
     }
 }

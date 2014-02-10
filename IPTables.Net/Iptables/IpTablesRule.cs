@@ -124,21 +124,20 @@ namespace IPTables.Net.Iptables
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public void Delete(String chain, bool usingPosition = true)
+        public void Delete(bool usingPosition = true)
         {
             String command;
             if (usingPosition)
             {
-                command = "-D "+chain+" "+Position;
-                var table = GetModule<CoreModule>("core").Table;
-                if (!String.IsNullOrEmpty(table) && table != "filter")
+                command = "-D "+ChainName+" "+Position;
+                if (!String.IsNullOrEmpty(Table) && Table != "filter")
                 {
-                    command += " -t "+table;
+                    command += " -t " + Table;
                 }
             }
             else
             {
-                command = GetFullCommand(chain, "-D");
+                command = GetFullCommand("-D");
             }
             ExecutionHelper.ExecuteIptables(_system, command);
         }
@@ -220,9 +219,10 @@ namespace IPTables.Net.Iptables
 
         public void Replace(String chain, IpTablesRule withRule)
         {
-            withRule.Position = Position;
+            var idx = Chain.Rules.IndexOf(this);
             String command = withRule.GetFullCommand(chain, "-R");
             ExecutionHelper.ExecuteIptables(_system, command);
+            Chain.Rules[idx] = withRule;
         }
     }
 }
