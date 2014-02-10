@@ -25,6 +25,7 @@ namespace IPTables.Net.Iptables
             _system = system;
         }
 
+
         public void AddRule(String chain, IpTablesRule rule)
         {
             var coreModule = rule.GetModule<CoreModule>("core");
@@ -50,9 +51,14 @@ namespace IPTables.Net.Iptables
             return rule;
         }
 
+        public bool HasChain(String name, String table)
+        {
+            return _chains.FirstOrDefault((a) => a.Name == name && a.Table == table) != null;
+        }
+
         public void AddChain(String name, String table)
         {
-            if (_chains.FirstOrDefault((a) => a.Name == name && a.Table == table) != null)
+            if (HasChain(name, table))
             {
                 throw new Exception("A chain with that name already exists");
             }
@@ -60,7 +66,7 @@ namespace IPTables.Net.Iptables
             _chains.Add(new IpTablesChain(table, name, _system));
         }
 
-        public void SyncChains(Func<IpTablesRule, IpTablesRule, bool> comparer = null, bool deleteUndefinedChains = false)
+        public void SyncChains(Func<IpTablesRule, IpTablesRule, bool> comparer = null, Func<IpTablesChain, bool> canDeleteChain = null)
         {
             foreach (var chain in Chains)
             {
@@ -77,9 +83,18 @@ namespace IPTables.Net.Iptables
                 }
             }
 
-            if (deleteUndefinedChains)
+            if (canDeleteChain != null)
             {
-                throw new NotImplementedException("Deletion of non defined chains not implemented yet");
+                foreach (var table in Chains.Select((a) => a.Table).Distinct())
+                {
+                    foreach (var chain in _system.GetChains(table))
+                    {
+                        if (!HasChain(chain.Name, chain.Table) && canDeleteChain(chain))
+                        {
+                            chain.Delete();
+                        }
+                    }
+                }
             }
         }
     }

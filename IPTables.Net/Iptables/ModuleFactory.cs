@@ -18,6 +18,7 @@ namespace IPTables.Net.Iptables
                                                            {
                                                                CoreModule.GetModuleEntry,
                                                                TcpModule.GetModuleEntry,
+                                                               UdpModule.GetModuleEntry,
                                                                DnatModule.GetModuleEntry,
                                                                SnatModule.GetModuleEntry,
                                                                ConnlimitModule.GetModuleEntry,

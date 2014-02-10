@@ -77,7 +77,8 @@
     <Compile Include="Iptables\Modules\ModuleBase.cs" />
     <Compile Include="Iptables\Modules\Comment\CommentModule.cs" />
     <Compile Include="Iptables\Modules\State\StateModule.cs" />
-    <Compile Include="Iptables\Modules\Tcp\TcpModule.cs" />
+    <Compile Include="Iptables\Modules\Tcp\UdpModule.cs" />
+    <Compile Include="Iptables\Modules\Udp\TcpModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
