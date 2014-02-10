@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Snat
 {
-    public class SnatModule : ModuleBase, IIptablesModule, IEquatable<SnatModule>
+    public class SnatModule : ModuleBase, IIpTablesModuleGod, IEquatable<SnatModule>
     {
         private const String OptionToSource = "--to-source";
         private const String OptionRandom = "--random";
@@ -24,7 +24,7 @@ namespace IPTables.Net.Iptables.Modules.Snat
             }
         }
 
-        public int Feed(RuleParser parser, bool not)
+        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.State
 {
-    public class StateModule : ModuleBase, IIptablesModule, IEquatable<StateModule>
+    public class StateModule : ModuleBase, IIpTablesModuleGod, IEquatable<StateModule>
     {
         private const String OptionState = "--state";
 
@@ -20,7 +20,7 @@ namespace IPTables.Net.Iptables.Modules.State
             }
         }
 
-        public int Feed(RuleParser parser, bool not)
+        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

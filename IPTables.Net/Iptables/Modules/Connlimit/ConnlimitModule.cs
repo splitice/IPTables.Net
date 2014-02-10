@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IPTables.Net.Iptables.Modules.Connlimit
 {
-    public class ConnlimitModule : ModuleBase, IIptablesModule, IEquatable<ConnlimitModule>
+    public class ConnlimitModule : ModuleBase, IIpTablesModuleGod, IEquatable<ConnlimitModule>
     {
         private const String OptionUpto = "--connlimit-upto";
         private const String OptionAbove = "--connlimit-above";
@@ -26,7 +26,7 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
             }
         }
 
-        public int Feed(RuleParser parser, bool not)
+        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Core
 {
-    public class CoreModule : ModuleBase, IIptablesModule,IEquatable<CoreModule>
+    public class CoreModule : ModuleBase, IIpTablesModuleGod, IEquatable<CoreModule>
     {
         private const String OptionProtocolLong = "--protocol";
         private const String OptionProtocolShort = "-p";
@@ -25,7 +25,6 @@ namespace IPTables.Net.Iptables.Modules.Core
         private const String OptionFragmentShort = "-f";
         private const String OptionSetCountersLong = "--set-counters";
         private const String OptionSetCountersShort = "-c";
-        private const String OptionTableShort = "-t";
         public ValueOrNot<IpCidr> Destination = new ValueOrNot<IpCidr>();
         public ValueOrNot<bool> Fragmented = new ValueOrNot<bool>();
         public ValueOrNot<String> InInterface = new ValueOrNot<String>();
@@ -37,7 +36,6 @@ namespace IPTables.Net.Iptables.Modules.Core
         //Target
         public String Target = null;
         public TargetMode TargetMode = TargetMode.Jump;
-        public String Table = "filter";
 
         public bool NeedsLoading
         {
@@ -73,7 +71,7 @@ namespace IPTables.Net.Iptables.Modules.Core
             }
         }
 
-        public int Feed(RuleParser parser, bool not)
+        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {
@@ -116,9 +114,6 @@ namespace IPTables.Net.Iptables.Modules.Core
                             new CounterPacketsAndBytes(uint.Parse(parser.GetNextArg(1)),
                                 uint.Parse(parser.GetNextArg(2))), not);
                     return 2;
-                case OptionTableShort:
-                    Table = parser.GetNextArg();
-                    return 1;
             }
 
             return 0;
@@ -128,14 +123,6 @@ namespace IPTables.Net.Iptables.Modules.Core
         {
             var sb = new StringBuilder();
 
-            if (Table != "filter")
-            {
-                if (sb.Length != 0)
-                    sb.Append(" ");
-                sb.Append(OptionTableShort);
-                sb.Append(" ");
-                sb.Append(Table);
-            }
             if (!Protocol.Null)
             {
                 if (sb.Length != 0)
@@ -218,8 +205,7 @@ namespace IPTables.Net.Iptables.Modules.Core
                               OptionFragmentLong,
                               OptionFragmentShort,
                               OptionSetCountersLong,
-                              OptionSetCountersShort,
-                              OptionTableShort
+                              OptionSetCountersShort
                           };
             return options;
         }

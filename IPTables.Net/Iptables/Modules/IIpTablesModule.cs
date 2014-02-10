@@ -2,10 +2,9 @@
 
 namespace IPTables.Net.Iptables.Modules
 {
-    public interface IIptablesModule
+    public interface IIpTablesModule
     {
         String GetRuleString();
-        int Feed(RuleParser parser, bool not);
 
         bool NeedsLoading { get; }
     }

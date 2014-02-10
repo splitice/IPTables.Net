@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using SystemInteract;
 using IPTables.Net.Iptables;
+using IPTables.Net.Iptables.Modules.Core;
 
 namespace IPTables.Net
 {
@@ -38,7 +39,7 @@ namespace IPTables.Net
 
                 char c = line[0];
                 IpTablesRule rule;
-                String chain;
+                IpTablesChain chain;
                 switch (c)
                 {
                     case '*':
@@ -61,9 +62,10 @@ namespace IPTables.Net
                         line = line.Substring(positionEnd + 1);
 
                         rule = IpTablesRule.Parse(line, system, out chain);
-                        rule.Position = ret[chain].Count + 1;
+                        rule.Chain = new IpTa
                         rule.Packets = long.Parse(counters[0]);
                         rule.Bytes = long.Parse(counters[1]);
+                        rule.GetModuleOrLoad<CoreModule>("core").Table = ttable;
                         ret[chain].Add(rule);
                         break;
 

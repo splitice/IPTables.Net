@@ -4,20 +4,31 @@ using System.Linq;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    public class RuleParser
+    internal class RuleParser
     {
         private readonly string[] _arguments;
         private readonly IpTablesRule _ipRule;
         private readonly ModuleFactory _moduleFactory = new ModuleFactory();
         private readonly List<ModuleEntry> _parsers = new List<ModuleEntry>();
-        public String Chain;
+        private IpTablesChainSet _chains;
+
+        public IpTablesChain Chain
+        {
+            get
+            {
+                return _chains.GetChainOrAdd(_chainName, _tableName);
+            }
+        }
+        private String _chainName = null;
+        private String _tableName = "filter";
         public int Position = 0;
 
-        public RuleParser(string[] arguments, IpTablesRule ipRule)
+        public RuleParser(string[] arguments, IpTablesRule ipRule, IpTablesChainSet chains)
         {
             _arguments = arguments;
             _ipRule = ipRule;
             _parsers.AddRange(_moduleFactory.GetPreloadModules());
+            _chains = chains;
         }
 
         public string GetCurrentArg()
@@ -42,7 +53,12 @@ namespace IPTables.Net.Iptables.Modules
             }
             if (option == "-A")
             {
-                Chain = GetNextArg();
+                _chainName = GetNextArg();
+                return 1;
+            }
+            if (option == "-t")
+            {
+                _tableName = GetNextArg();
                 return 1;
             }
             if (option == "-j")
@@ -53,7 +69,7 @@ namespace IPTables.Net.Iptables.Modules
             {
                 if (m.Options.Contains(option))
                 {
-                    IIptablesModule module = _ipRule.GetModuleForParse(m.Name, m.Module);
+                    IIpTablesModuleGod module = _ipRule.GetModuleForParseInternal(m.Name, m.Module);
                     return module.Feed(this, not);
                 }
             }

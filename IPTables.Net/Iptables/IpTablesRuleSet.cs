@@ -9,13 +9,13 @@ namespace IPTables.Net.Iptables
 {
     public class IpTablesRuleSet
     {
-        private List<IpTablesChain> _chains = new List<IpTablesChain>();
+        private IpTablesChainSet _chains = new IpTablesChainSet();
 
         public IEnumerable<IpTablesChain> Chains
         {
             get
             {
-                return _chains;
+                return _chains.Chains;
             }
         }
 
@@ -26,44 +26,32 @@ namespace IPTables.Net.Iptables
         }
 
 
-        public void AddRule(String chain, IpTablesRule rule)
+        public void AddRule(IpTablesRule rule)
         {
-            var coreModule = rule.GetModule<CoreModule>("core");
-            var table = coreModule.Table;
-
-            if (_chains.FirstOrDefault((a) => a.Name == chain && a.Table == table) == null)
-            {
-                _chains.Add(new IpTablesChain(table, chain, _system));
-            }
-
-            var ipchain = _chains.First((a) => a.Name == chain && a.Table == table);
+            var ipchain = _chains.GetChainOrAdd(rule.Chain);
 
             ipchain.Rules.Add(rule);
         }
 
         public IpTablesRule AddRule(String rawRule)
         {
-            String chain;
-            var rule = IpTablesRule.Parse(rawRule, _system.System, out chain);
+            var rule = IpTablesRule.Parse(rawRule, _system.System);
 
-            AddRule(chain, rule);
+            AddRule(rule);
 
             return rule;
         }
 
-        public bool HasChain(String name, String table)
-        {
-            return _chains.FirstOrDefault((a) => a.Name == name && a.Table == table) != null;
-        }
+        
 
         public void AddChain(String name, String table)
         {
-            if (HasChain(name, table))
+            if (_chains.HasChain(name, table))
             {
                 throw new Exception("A chain with that name already exists");
             }
 
-            _chains.Add(new IpTablesChain(table, name, _system));
+            _chains.AddChain(new IpTablesChain(table, name, _system));
         }
 
         public void SyncChains(Func<IpTablesRule, IpTablesRule, bool> comparer = null, Func<IpTablesChain, bool> canDeleteChain = null)
@@ -76,7 +64,12 @@ namespace IPTables.Net.Iptables
                     //Chain doesnt exist create
                     _system.AddChain(chain);
                 }
-                else
+            }
+
+            foreach (var chain in Chains)
+            {
+                var realChain = _system.GetChain(chain.Table, chain.Name);
+                if (realChain != null)
                 {
                     //Update chain
                     realChain.Sync(chain.Rules, comparer);
@@ -89,7 +82,7 @@ namespace IPTables.Net.Iptables
                 {
                     foreach (var chain in _system.GetChains(table))
                     {
-                        if (!HasChain(chain.Name, chain.Table) && canDeleteChain(chain))
+                        if (!_chains.HasChain(chain.Name, chain.Table) && canDeleteChain(chain))
                         {
                             chain.Delete();
                         }

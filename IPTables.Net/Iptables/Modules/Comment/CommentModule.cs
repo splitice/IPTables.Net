@@ -5,13 +5,13 @@ using IPTables.Net.Common;
 
 namespace IPTables.Net.Iptables.Modules.Comment
 {
-    public class CommentModule : ModuleBase, IIptablesModule, IEquatable<CommentModule>
+    public class CommentModule : ModuleBase, IEquatable<CommentModule>, IIpTablesModuleGod
     {
         private const String OptionCommentLong = "--comment";
 
         public String CommentText;
 
-        public int Feed(RuleParser parser, bool not)
+        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

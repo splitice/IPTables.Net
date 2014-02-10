@@ -5,16 +5,41 @@ using System.Linq;
 using SystemInteract;
 using IPTables.Net.Common;
 using IPTables.Net.Iptables.Modules;
+using IPTables.Net.Iptables.Modules.Core;
 
 namespace IPTables.Net.Iptables
 {
     public class IpTablesRule : IEquatable<IpTablesRule>
     {
         //Stats
-        private readonly Dictionary<String, IIptablesModule> _modules = new Dictionary<String, IIptablesModule>();
+        private readonly Dictionary<String, IIpTablesModuleGod> _modules = new Dictionary<String, IIpTablesModuleGod>();
         public long Bytes = 0;
         public long Packets = 0;
-        public int Position = 0;
+        public IpTablesChain Chain;
+
+        public String Table
+        {
+            get
+            {
+                return Chain.Table;
+            }
+        }
+
+        public String ChainName
+        {
+            get
+            {
+                return Chain.Name;
+            }
+        }
+
+        public int Position
+        {
+            get
+            {
+                return Chain.Rules.IndexOf(this) + 1;
+            }
+        }
         private ISystemFactory _system;
 
         internal ISystemFactory System
@@ -25,15 +50,15 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public IpTablesRule(ISystemFactory system, int position = -1)
+        public IpTablesRule(ISystemFactory system, IpTablesChain chain)
         {
             _system = system;
-            Position = position;
+            Chain = chain;
         }
 
         public bool Equals(IpTablesRule rule)
         {
-            return _modules.DictionaryEqual(rule.Modules);
+            return _modules.DictionaryEqual(rule.ModulesInternal);
         }
 
         public override bool Equals(object obj)
@@ -45,15 +70,24 @@ namespace IPTables.Net.Iptables
  	        return base.Equals(obj);
         }
 
-        public Dictionary<String, IIptablesModule> Modules
+        internal Dictionary<String, IIpTablesModuleGod> ModulesInternal
         {
             get { return _modules; }
+        }
+
+        public IEnumerable<IIpTablesModule> Modules
+        {
+            get
+            {
+                return _modules.Values.Select((a) => a as IIpTablesModule);
+            }
         }
 
 
         public String GetCommand()
         {
-            String command = "";
+            String command = "-t " + Table;
+
             foreach (var e in _modules)
             {
                 if (command.Length != 0)
@@ -78,7 +112,7 @@ namespace IPTables.Net.Iptables
                 {
                     throw new Exception("This rule does not have a specific position and hence can not be located for replace");
                 }
-                command += Position.ToString() + " ";
+                command += Position + " ";
             }
             command += GetCommand();
             return command;
@@ -90,22 +124,40 @@ namespace IPTables.Net.Iptables
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public void Delete(String chain)
+        public void Delete(String chain, bool usingPosition = true)
         {
-            String command = GetFullCommand(chain, "-D");
+            String command;
+            if (usingPosition)
+            {
+                command = "-D "+chain+" "+Position;
+                var table = GetModule<CoreModule>("core").Table;
+                if (!String.IsNullOrEmpty(table) && table != "filter")
+                {
+                    command += " -t "+table;
+                }
+            }
+            else
+            {
+                command = GetFullCommand(chain, "-D");
+            }
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public IIptablesModule GetModuleForParse(string name, Type moduleType)
+        internal IIpTablesModuleGod GetModuleForParseInternal(string name, Type moduleType)
         {
             if (_modules.ContainsKey(name))
             {
                 return _modules[name];
             }
 
-            var module = (IIptablesModule) Activator.CreateInstance(moduleType);
+            var module = (IIpTablesModuleGod)Activator.CreateInstance(moduleType);
             _modules.Add(name, module);
             return module;
+        }
+
+        public IIpTablesModule GetModuleForParse(string name, Type moduleType)
+        {
+            return GetModuleForParseInternal(name, moduleType);
         }
 
         public static string[] SplitArguments(string commandLine)
@@ -131,19 +183,12 @@ namespace IPTables.Net.Iptables
             return (new string(parmChars)).Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        public static IpTablesRule Parse(String rule, ISystemFactory system, int position = -1)
-        {
-            String chain;
-
-            return Parse(rule, system, out chain, position);
-        }
-
-        public static IpTablesRule Parse(String rule, ISystemFactory system, out String chain, int position = -1)
+        public static IpTablesRule Parse(String rule, ISystemFactory system, IpTablesChainSet chains)
         {
             string[] arguments = SplitArguments(rule);
             int count = arguments.Length;
-            var ipRule = new IpTablesRule(system, position);
-            var parser = new RuleParser(arguments, ipRule);
+            var ipRule = new IpTablesRule(system, null);
+            var parser = new RuleParser(arguments, ipRule, chains);
 
             bool not = false;
             for (int i = 0; i < count; i++)
@@ -157,18 +202,18 @@ namespace IPTables.Net.Iptables
                 not = false;
             }
 
-            chain = parser.Chain;
+            ipRule.Chain = parser.Chain;
 
             return ipRule;
         }
 
-        public T GetModule<T>(string moduleName) where T: class, IIptablesModule
+        public T GetModule<T>(string moduleName) where T: class, IIpTablesModule
         {
-            if (!Modules.ContainsKey(moduleName)) return null;
-            return Modules[moduleName] as T;
+            if (!_modules.ContainsKey(moduleName)) return null;
+            return _modules[moduleName] as T;
         }
 
-        public T GetModuleOrLoad<T>(string moduleName) where T : class, IIptablesModule
+        public T GetModuleOrLoad<T>(string moduleName) where T : class, IIpTablesModule
         {
             return GetModuleForParse(moduleName, typeof(T)) as T;
         }
