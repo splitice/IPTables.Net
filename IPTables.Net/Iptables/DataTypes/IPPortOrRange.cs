@@ -57,12 +57,21 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public override String ToString()
         {
+            var strPort = PortStringRepresentation();
             if (LowerAddress.Equals(UpperAddress))
             {
+                if (strPort.Length == 0)
+                {
+                    return LowerAddress.ToString();
+                }
                 return LowerAddress + ":" + PortStringRepresentation();
             }
 
-            return String.Format("{0}-{1}:{2}", LowerAddress, UpperAddress, PortStringRepresentation());
+            if (strPort.Length == 0)
+            {
+                return String.Format("{0}-{1}", LowerAddress, UpperAddress);
+            }
+            return String.Format("{0}-{1}:{2}", LowerAddress, UpperAddress, strPort);
         }
 
         public static IPPortOrRange Parse(string getNextArg)

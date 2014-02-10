@@ -28,8 +28,8 @@ namespace IPTables.Net.Tests
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, out chain);
 
             Assert.AreEqual(irule1, irule2);
-            Assert.AreEqual(rule, irule1.GetCommand());
-            Assert.AreEqual(rule, irule2.GetCommand());
+            Assert.AreEqual(rule, "-A " + chain + " " + irule1.GetCommand());
+            Assert.AreEqual(rule, "-A " + chain + " " + irule2.GetCommand());
         }
     }
 }
