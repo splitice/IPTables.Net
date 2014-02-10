@@ -20,7 +20,7 @@ namespace IPTables.Net.Iptables.Modules.Dnat
         {
             get
             {
-                return true;
+                return false;
             }
         }
 
@@ -48,7 +48,7 @@ namespace IPTables.Net.Iptables.Modules.Dnat
         {
             var sb = new StringBuilder();
 
-            if (Equals(ToDestination.LowerAddress, IPAddress.Any))
+            if (!Equals(ToDestination.LowerAddress, IPAddress.Any))
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
@@ -86,7 +86,7 @@ namespace IPTables.Net.Iptables.Modules.Dnat
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("dnat", typeof (DnatModule), GetOptions, true);
+            return GetTargetModuleEntryInternal("DNAT", typeof (DnatModule), GetOptions, true);
         }
 
         public bool Equals(DnatModule other)
