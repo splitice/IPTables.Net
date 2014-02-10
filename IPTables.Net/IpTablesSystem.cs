@@ -24,10 +24,9 @@ namespace IPTables.Net
             }
         }
 
-        public Dictionary<String, List<IpTablesRule>> GetRulesFromOutput(String output, String table, ISystemFactory system)
+        public IpTablesChainSet GetRulesFromOutput(String output, String table)
         {
-            var ret = new Dictionary<string, List<IpTablesRule>>();
-
+            var ret = new IpTablesChainSet();
             String ttable = null;
 
             foreach (string lineRaw in output.Split(new[] {'\n'}))
@@ -48,7 +47,7 @@ namespace IPTables.Net
 
                     case ':':
                         string[] split = line.Split(new[] {' '});
-                        ret.Add(split[0].Substring(1), new List<IpTablesRule>());
+                        ret.AddChain(new IpTablesChain(ttable, split[0].Substring(1), this));
                         break;
 
                         //Byte & packet count
@@ -61,18 +60,16 @@ namespace IPTables.Net
                         string[] counters = line.Substring(1, positionEnd-1).Split(new[] {':'});
                         line = line.Substring(positionEnd + 1);
 
-                        rule = IpTablesRule.Parse(line, system, out chain);
-                        rule.Chain = new IpTa
+                        rule = IpTablesRule.Parse(line, _system, ret);
                         rule.Packets = long.Parse(counters[0]);
                         rule.Bytes = long.Parse(counters[1]);
-                        rule.GetModuleOrLoad<CoreModule>("core").Table = ttable;
-                        ret[chain].Add(rule);
+                        ret.AddRule(rule);
                         break;
 
 
                     case '-':
-                        rule = IpTablesRule.Parse(line, system, out chain);
-                        ret[chain].Add(rule);
+                        rule = IpTablesRule.Parse(line, _system, ret);
+                        ret.AddRule(rule);
                         break;
 
                     case '#':
@@ -87,38 +84,32 @@ namespace IPTables.Net
                             }
                             return ret;
                         }
-                        //else
-                        ret.Clear();
-                        break;
+                        else
+                        {
+                            throw new Exception("Unexepected table: "+table);
+                        }
                 }
             }
 
             return null;
         }
 
-        public Dictionary<String, List<IpTablesRule>> GetRules(string table)
+        public IpTablesChainSet GetRules(string table)
         {
             var process = _system.StartProcess("iptables-save", String.Format("-c -t {0}", table));
             process.WaitForExit();
-            return GetRulesFromOutput(process.StandardOutput.ReadToEnd(), table, _system);
+            return GetRulesFromOutput(process.StandardOutput.ReadToEnd(), table);
         }
 
         public List<IpTablesRule> GetRules(string table, string chain)
         {
             var tableRules = GetRules(table);
-            if (tableRules.ContainsKey(chain))
-                return tableRules[chain];
-            return null;
+            return tableRules.GetChainOrDefault(chain, table);
         }
 
         public IEnumerable<IpTablesChain> GetChains(string table)
         {
-            var chains = new HashSet<IpTablesChain>();
-            foreach (var rules in GetRules(table))
-            {
-                chains.Add(new IpTablesChain(table, rules.Key, this, rules.Value));
-            }
-            return chains;
+            return GetRules(table).Chains;
         }
 
 

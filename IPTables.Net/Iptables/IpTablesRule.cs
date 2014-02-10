@@ -103,9 +103,9 @@ namespace IPTables.Net.Iptables
             return command;
         }
 
-        public String GetFullCommand(String chain, String opt = "-A")
+        public String GetFullCommand(String opt = "-A")
         {
-            String command = opt + " " + chain + " ";
+            String command = opt + " " + Chain.Name + " ";
             if (opt == "-R")
             {
                 if (Position == -1)

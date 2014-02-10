@@ -14,9 +14,9 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53 -m comment --comment 'this is a test rule'";
             String chain;
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, out chain);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, null);
 
-            Assert.AreEqual(rule, "-A " + chain + " " + irule.GetCommand());
+            Assert.AreEqual(rule, irule.GetFullCommand());
         }
 
         [Test]
@@ -25,8 +25,8 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53 -m comment --comment 'this is a test rule'";
             String chain;
 
-            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, out chain);
-            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, out chain);
+            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, null);
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, null);
 
             Assert.AreEqual(irule1, irule2);
         }
@@ -38,10 +38,10 @@ namespace IPTables.Net.Tests
             String rule2 = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53 -m comment --comment 'this is a test rule'";
             String chain;
 
-            IpTablesRule irule1 = IpTablesRule.Parse(rule1, null, out chain);
+            IpTablesRule irule1 = IpTablesRule.Parse(rule1, null, null);
             irule1.SetComment("this is a test rule");
 
-            Assert.AreEqual(rule2, "-A " + chain + " " + irule1.GetCommand());
+            Assert.AreEqual(rule2, irule1.GetFullCommand());
         }
     }
 }

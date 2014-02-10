@@ -47,5 +47,15 @@ namespace IPTables.Net.Iptables
         {
             throw new NotImplementedException();
         }
+
+        public void AddRule(IpTablesRule rule)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<IpTablesRule> GetChainOrDefault(string chain, string table)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
