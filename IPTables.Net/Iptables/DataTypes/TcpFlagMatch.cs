@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
-    public class TcpFlagMatch
+    public class TcpFlagMatch : IEquatable<TcpFlagMatch>
     {
         public static TcpFlagMatch Syn = new TcpFlagMatch(
             new List<TcpFlag> {TcpFlag.SYN, TcpFlag.RST, TcpFlag.ACK, TcpFlag.FIN}, new List<TcpFlag> {TcpFlag.SYN});
@@ -83,6 +83,29 @@ namespace IPTables.Net.Iptables.DataTypes
             string[] split = getNextArg.Split(new[] {' '});
 
             return new TcpFlagMatch(GetFlags(split[0]), GetFlags(split[1]));
+        }
+
+        public bool Equals(TcpFlagMatch other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Comparing.SetEquals(other.Comparing) && MustHave.SetEquals(other.MustHave);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((TcpFlagMatch) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((Comparing != null ? Comparing.GetHashCode() : 0)*397) ^ (MustHave != null ? MustHave.GetHashCode() : 0);
+            }
         }
     }
 }
