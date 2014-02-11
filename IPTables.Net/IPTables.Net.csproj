@@ -51,6 +51,7 @@
     <Compile Include="Iptables\DataTypes\ConnectionStateHelper.cs" />
     <Compile Include="Iptables\DataTypes\ConnectionStateSet.cs" />
     <Compile Include="Iptables\DataTypes\CounterPacketsAndBytes.cs" />
+    <Compile Include="Iptables\DataTypes\FlexibleInt.cs" />
     <Compile Include="Iptables\DataTypes\IPPortOrRange.cs" />
     <Compile Include="Common\Helpers.cs" />
     <Compile Include="Iptables\ExecutionHelper.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Iptables\Modules\Comment\CommentRuleExtension.cs" />
     <Compile Include="Iptables\Modules\IIpTablesModuleGod.cs" />
     <Compile Include="Iptables\Modules\IIpTablesModuleInternal.cs" />
+    <Compile Include="Iptables\Modules\Udp\UdpModule.cs" />
     <Compile Include="Iptables\Modules\ModuleEntry.cs" />
     <Compile Include="Iptables\ModuleFactory.cs" />
     <Compile Include="Iptables\Modules\RuleParser.cs" />
@@ -81,13 +83,15 @@
     <Compile Include="Iptables\Modules\ModuleBase.cs" />
     <Compile Include="Iptables\Modules\Comment\CommentModule.cs" />
     <Compile Include="Iptables\Modules\State\StateModule.cs" />
-    <Compile Include="Iptables\Modules\Udp\UdpModule.cs" />
+    <Compile Include="Iptables\Modules\Mark\MarkTargetModule.cs" />
+    <Compile Include="Iptables\Modules\Mark\MarkLoadableModule.cs" />
     <Compile Include="Iptables\Modules\Tcp\TcpModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
