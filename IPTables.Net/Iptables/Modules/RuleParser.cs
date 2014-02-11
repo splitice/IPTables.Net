@@ -10,7 +10,7 @@ namespace IPTables.Net.Iptables.Modules
         private readonly IpTablesRule _ipRule;
         private readonly ModuleFactory _moduleFactory = new ModuleFactory();
         private readonly List<ModuleEntry> _parsers = new List<ModuleEntry>();
-        private IpTablesChainSet _chains;
+        private readonly IpTablesChainSet _chains;
 
         public IpTablesChain GetChain(IpTablesSystem system)
         {

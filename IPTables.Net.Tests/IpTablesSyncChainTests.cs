@@ -63,7 +63,7 @@ namespace IPTables.Net.Tests
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock);
-            string chain;
+
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
@@ -84,7 +84,7 @@ namespace IPTables.Net.Tests
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock);
-            string chain;
+
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
@@ -129,7 +129,7 @@ namespace IPTables.Net.Tests
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock);
-            string chain;
+
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10 -m comment --comment \"ID1\"",
@@ -154,7 +154,7 @@ namespace IPTables.Net.Tests
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock);
-            string chain;
+
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10 -m comment --comment \"ID1\"",
@@ -179,7 +179,7 @@ namespace IPTables.Net.Tests
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock);
-            string chain;
+
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10 -m comment --comment \"ID1\"",

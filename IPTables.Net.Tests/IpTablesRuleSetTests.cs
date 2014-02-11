@@ -15,9 +15,9 @@ namespace IPTables.Net.Tests
         {
             IpTablesRuleSet ruleSet = new IpTablesRuleSet(null);
             String rule = "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10";
-            String chain;
+            IpTablesChainSet chains = new IpTablesChainSet();
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, null);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
             ruleSet.AddRule(irule);
 
@@ -31,9 +31,9 @@ namespace IPTables.Net.Tests
         {
             IpTablesRuleSet ruleSet = new IpTablesRuleSet(null);
             String rule = "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10";
-            String chain;
+            IpTablesChainSet chains = new IpTablesChainSet();
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, null);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
             ruleSet.AddRule(irule);
 
@@ -52,9 +52,9 @@ namespace IPTables.Net.Tests
         {
             IpTablesRuleSet ruleSet = new IpTablesRuleSet(null);
             String rule = "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10";
-            String chain;
+            IpTablesChainSet chains = new IpTablesChainSet();
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, null);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
             ruleSet.AddRule(irule);
             
@@ -64,7 +64,7 @@ namespace IPTables.Net.Tests
 
             rule = "-A OUTPUT -p tcp -j DROP -m connlimit --connlimit-above 10";
 
-            irule = IpTablesRule.Parse(rule, null, null);
+            irule = IpTablesRule.Parse(rule, null, chains);
             ruleSet.AddRule(irule);
 
             Assert.AreEqual(2, ruleSet.Chains.Count());

@@ -11,9 +11,9 @@ namespace IPTables.Net.Tests
         public void TestDnatSingleSource()
         {
             String rule = "-A PREROUTING -t nat -d 1.1.1.1/24 -j DNAT --to-destination 2.2.2.2";
-            String chain;
+            IpTablesChainSet chains = new IpTablesChainSet();
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, null);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
             Assert.AreEqual(rule, irule.GetFullCommand());
         }
@@ -22,10 +22,10 @@ namespace IPTables.Net.Tests
         public void TestDnatRangeSourceAndEquality()
         {
             String rule = "-A POSTROUTING -t nat -d 1.1.1.1/24 -j DNAT --to-destination 2.2.2.1-2.2.2.250";
-            String chain;
+            IpTablesChainSet chains = new IpTablesChainSet();
 
-            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, null);
-            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, null);
+            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
 
             Assert.AreEqual(irule1, irule2);
             Assert.AreEqual(rule, irule1.GetFullCommand());

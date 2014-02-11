@@ -11,9 +11,9 @@ namespace IPTables.Net.Tests
         public void TestDropFragmentedTcpDns()
         {
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53";
-            String chain;
+            IpTablesChainSet chains = new IpTablesChainSet();
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, null);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
             Assert.AreEqual(rule, irule.GetFullCommand());
         }
@@ -22,10 +22,10 @@ namespace IPTables.Net.Tests
         public void TestDropFragmentedTcpDnsEquality()
         {
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53";
-            String chain;
+            IpTablesChainSet chains = new IpTablesChainSet();
 
-            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, null);
-            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, null);
+            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
 
             Assert.AreEqual(irule1, irule2);
         }
