@@ -53,7 +53,7 @@ namespace IPTables.Net.Tests
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                }, system);
 
-            List<String> expectedCommands = new List<String>() { rulesNew.Chains.First().Rules[2].GetFullCommand("INPUT") };
+            List<String> expectedCommands = new List<String>() { rulesNew.Chains.First().Rules[2].GetFullCommand() };
 
             mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
         }
@@ -74,7 +74,7 @@ namespace IPTables.Net.Tests
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                }, system);
 
-            List<String> expectedCommands = new List<String>() { rulesOriginal.Chains.First().Rules[1].GetFullCommand("-D") };
+            List<String> expectedCommands = new List<String>() { rulesOriginal.Chains.First().Rules[1].GetPositionalDeleteCommand() };
 
             mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
         }
