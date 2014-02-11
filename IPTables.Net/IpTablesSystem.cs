@@ -86,7 +86,7 @@ namespace IPTables.Net
                         }
                         else
                         {
-                            throw new Exception("Unexepected table \""+table+"\" found \""+table+"\" instead");
+                            throw new Exception("Unexepected table \""+table+"\" found \""+ttable+"\" instead");
                         }
                 }
             }
