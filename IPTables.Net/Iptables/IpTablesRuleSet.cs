@@ -19,6 +19,14 @@ namespace IPTables.Net.Iptables
             }
         }
 
+        public IpTablesChainSet ChainSet
+        {
+            get
+            {
+                return _chains;
+            }
+        }
+
         private IpTablesSystem _system;
         public IpTablesRuleSet(IpTablesSystem system)
         {
