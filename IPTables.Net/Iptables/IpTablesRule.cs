@@ -86,7 +86,11 @@ namespace IPTables.Net.Iptables
 
         public String GetCommand()
         {
-            String command = "-t " + Table;
+            String command = "";
+            if (Table != "filter")
+            {
+                command += "-t " + Table;
+            }
 
             foreach (var e in _modules)
             {

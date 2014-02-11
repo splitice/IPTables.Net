@@ -15,7 +15,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
-            Assert.AreEqual(rule, "-A " + irule.Chain + " " + irule.GetCommand());
+            Assert.AreEqual(rule, irule.GetFullCommand());
         }
 
         [Test]
