@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
 
-namespace IPTables.Net.Iptables.Modules.Tcp
+namespace IPTables.Net.Iptables.Modules.Udp
 {
     public class UdpModule : ModuleBase, IIpTablesModuleGod, IEquatable<UdpModule>
     {

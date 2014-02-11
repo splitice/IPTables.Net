@@ -9,6 +9,7 @@ using IPTables.Net.Iptables.Modules.Dnat;
 using IPTables.Net.Iptables.Modules.Snat;
 using IPTables.Net.Iptables.Modules.State;
 using IPTables.Net.Iptables.Modules.Tcp;
+using IPTables.Net.Iptables.Modules.Udp;
 
 namespace IPTables.Net.Iptables
 {
