@@ -83,7 +83,7 @@ namespace IPTables.Net.Iptables
                 else if (ruleComparerForUpdate(cR, withRule))
                 {
                     //Replace this rule
-                    cR.Replace(_name, withRule);
+                    cR.Replace(withRule);
                     i++;
                 }
                 else

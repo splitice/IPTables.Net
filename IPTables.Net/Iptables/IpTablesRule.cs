@@ -217,10 +217,10 @@ namespace IPTables.Net.Iptables
             return GetModuleForParse(moduleName, typeof(T)) as T;
         }
 
-        public void Replace(String chain, IpTablesRule withRule)
+        public void Replace(IpTablesRule withRule)
         {
             var idx = Chain.Rules.IndexOf(this);
-            String command = withRule.GetFullCommand(chain, "-R");
+            String command = withRule.GetFullCommand("-R");
             ExecutionHelper.ExecuteIptables(_system, command);
             Chain.Rules[idx] = withRule;
         }

@@ -17,15 +17,15 @@ namespace IPTables.Net.Tests.MockSystem
             return new MockIptablesSystemProcess();
         }
 
-        public void TestSync(List<IpTablesRule> rulesOriginal, List<IpTablesRule> rulesNew, List<string> expectedCommands, MockIptablesSystemFactory mock, Func<IpTablesRule,IpTablesRule,bool> commentComparer = null)
+        public void TestSync(IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, List<string> expectedCommands, MockIptablesSystemFactory mock, Func<IpTablesRule, IpTablesRule, bool> commentComparer = null)
         {
             IpTablesSystem sys = new IpTablesSystem(mock);
-            IpTablesChain chain = new IpTablesChain("filter", "INPUT", sys, rulesOriginal);
+            IpTablesChain chain = rulesOriginal.Chains.First();
 
             if (commentComparer == null)
-                chain.Sync(rulesNew);
+                chain.Sync(rulesNew.Chains.First().Rules);
             else
-                chain.Sync(rulesNew, commentComparer);
+                chain.Sync(rulesNew.Chains.First().Rules, commentComparer);
 
             CollectionAssert.AreEqual(expectedCommands, Commands.Select(a => a.Value).ToList());
         }

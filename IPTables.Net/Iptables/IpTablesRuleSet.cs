@@ -25,6 +25,15 @@ namespace IPTables.Net.Iptables
             _system = system;
         }
 
+        public IpTablesRuleSet(List<string> rules, IpTablesSystem system)
+        {
+            _system = system;
+            foreach (var s in rules)
+            {
+                AddRule(s);
+            }
+        }
+
 
         public void AddRule(IpTablesRule rule)
         {
