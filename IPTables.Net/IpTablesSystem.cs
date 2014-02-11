@@ -86,7 +86,7 @@ namespace IPTables.Net
                         }
                         else
                         {
-                            throw new Exception("Unexepected table: "+table);
+                            throw new Exception("Unexepected table \""+table+"\" found \""+table+"\" instead");
                         }
                 }
             }
@@ -151,7 +151,7 @@ namespace IPTables.Net
 
             foreach (var r in chain.Rules)
             {
-                r.Add(chain.Name);
+                r.Add();
             }
 
             return chain;

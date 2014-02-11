@@ -122,9 +122,20 @@ namespace IPTables.Net.Iptables
             return command;
         }
 
-        public void Add(String chain)
+        public string GetPositionalDeleteCommand()
         {
-            String command = GetFullCommand(chain);
+            String command = "-D " + ChainName + " " + Position;
+            if (!String.IsNullOrEmpty(Table) && Table != "filter")
+            {
+                command += " -t " + Table;
+            }
+
+            return command;
+        }
+
+        public void Add()
+        {
+            String command = GetFullCommand();
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
@@ -133,11 +144,7 @@ namespace IPTables.Net.Iptables
             String command;
             if (usingPosition)
             {
-                command = "-D "+ChainName+" "+Position;
-                if (!String.IsNullOrEmpty(Table) && Table != "filter")
-                {
-                    command += " -t " + Table;
-                }
+                command = GetPositionalDeleteCommand();
             }
             else
             {

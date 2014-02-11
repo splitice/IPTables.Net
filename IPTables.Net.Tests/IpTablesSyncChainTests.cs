@@ -99,7 +99,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>()
                                             {
-                                                rulesOriginal.Chains.First().Rules[1].GetFullCommand("-D"),
+                                                rulesOriginal.Chains.First().Rules[1].GetPositionalDeleteCommand(),
                                                 rulesNew.Chains.First().Rules[1].GetFullCommand(),
                                                 rulesNew.Chains.First().Rules[2].GetFullCommand()
                                             };

@@ -96,7 +96,7 @@ namespace IPTables.Net.Iptables
             var remaining = with.Skip(i);
             foreach (var rR in remaining)
             {
-                rR.Add(_name);
+                rR.Add();
             }
         }
 
