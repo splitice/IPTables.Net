@@ -60,7 +60,7 @@ namespace IPTables.Net
                         string[] counters = line.Substring(1, positionEnd-1).Split(new[] {':'});
                         line = line.Substring(positionEnd + 1);
 
-                        rule = IpTablesRule.Parse(line, _system, ret);
+                        rule = IpTablesRule.Parse(line, this, ret);
                         rule.Packets = long.Parse(counters[0]);
                         rule.Bytes = long.Parse(counters[1]);
                         ret.AddRule(rule);
@@ -68,7 +68,7 @@ namespace IPTables.Net
 
 
                     case '-':
-                        rule = IpTablesRule.Parse(line, _system, ret);
+                        rule = IpTablesRule.Parse(line, this, ret);
                         ret.AddRule(rule);
                         break;
 
@@ -104,7 +104,7 @@ namespace IPTables.Net
         public List<IpTablesRule> GetRules(string table, string chain)
         {
             var tableRules = GetRules(table);
-            return tableRules.GetChainOrDefault(chain, table);
+            return tableRules.GetChainOrDefault(chain, table).Rules;
         }
 
         public IEnumerable<IpTablesChain> GetChains(string table)
@@ -133,13 +133,13 @@ namespace IPTables.Net
             {
                 arguments = String.Format("-t {0} -X {1}", table, name);
             }
-            ExecutionHelper.ExecuteIptables(_system, arguments);
+            ExecutionHelper.ExecuteIptables(this, arguments);
         }
 
         public IpTablesChain AddChain(String name, String table = "filter")
         {
             String command = String.Format("-t {0} -N {1}", table, name);
-            ExecutionHelper.ExecuteIptables(_system, command);
+            ExecutionHelper.ExecuteIptables(this, command);
 
             return new IpTablesChain(table, name, this, new List<IpTablesRule>());
         }
@@ -147,7 +147,7 @@ namespace IPTables.Net
         public IpTablesChain AddChain(IpTablesChain chain)
         {
             String command = String.Format("-t {0} -N {1}", chain.Table, chain.Name);
-            ExecutionHelper.ExecuteIptables(_system, command);
+            ExecutionHelper.ExecuteIptables(this, command);
 
             foreach (var r in chain.Rules)
             {

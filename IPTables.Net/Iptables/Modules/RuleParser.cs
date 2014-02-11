@@ -12,12 +12,9 @@ namespace IPTables.Net.Iptables.Modules
         private readonly List<ModuleEntry> _parsers = new List<ModuleEntry>();
         private IpTablesChainSet _chains;
 
-        public IpTablesChain Chain
+        public IpTablesChain GetChain(IpTablesSystem system)
         {
-            get
-            {
-                return _chains.GetChainOrAdd(_chainName, _tableName);
-            }
+            return _chains.GetChainOrAdd(_chainName, _tableName, system);
         }
         private String _chainName = null;
         private String _tableName = "filter";

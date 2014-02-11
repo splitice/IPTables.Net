@@ -40,9 +40,9 @@ namespace IPTables.Net.Iptables
                 return Chain.Rules.IndexOf(this) + 1;
             }
         }
-        private ISystemFactory _system;
+        private IpTablesSystem _system;
 
-        internal ISystemFactory System
+        internal IpTablesSystem System
         {
             get
             {
@@ -50,7 +50,7 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public IpTablesRule(ISystemFactory system, IpTablesChain chain)
+        public IpTablesRule(IpTablesSystem system, IpTablesChain chain)
         {
             _system = system;
             Chain = chain;
@@ -182,7 +182,7 @@ namespace IPTables.Net.Iptables
             return (new string(parmChars)).Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        public static IpTablesRule Parse(String rule, ISystemFactory system, IpTablesChainSet chains)
+        public static IpTablesRule Parse(String rule, IpTablesSystem system, IpTablesChainSet chains)
         {
             string[] arguments = SplitArguments(rule);
             int count = arguments.Length;
@@ -201,7 +201,7 @@ namespace IPTables.Net.Iptables
                 not = false;
             }
 
-            ipRule.Chain = parser.Chain;
+            ipRule.Chain = parser.GetChain(system);
 
             return ipRule;
         }

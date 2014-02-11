@@ -8,9 +8,9 @@ namespace IPTables.Net.Iptables
 {
     static class ExecutionHelper
     {
-        public static ISystemProcess ExecuteIptables(ISystemFactory system, String command)
+        public static ISystemProcess ExecuteIptables(IpTablesSystem system, String command)
         {
-            var process = system.StartProcess("iptables", command);
+            var process = system.System.StartProcess("iptables", command);
             process.WaitForExit();
 
             //OK

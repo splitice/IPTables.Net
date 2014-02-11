@@ -17,9 +17,9 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public bool HasChain(String name, String table)
+        public bool HasChain(String chain, String table)
         {
-            return _chains.FirstOrDefault((a) => a.Name == name && a.Table == table) != null;
+            return GetChainOrDefault(chain, table) != null;
         }
 
         public void AddChain(IpTablesChain chain)
@@ -38,24 +38,49 @@ namespace IPTables.Net.Iptables
         }
 
 
-        public IpTablesChain GetChainOrAdd(string chainName, string tableName)
+        public IpTablesChain GetChainOrAdd(string chainName, string tableName, IpTablesSystem system)
         {
-            throw new NotImplementedException();
+            var chain = GetChainOrDefault(chainName, tableName);
+
+            if (chain != null)
+                return chain;
+
+            return AddChain(chainName, tableName, system);
         }
 
-        public IpTablesChain GetChainOrAdd(IpTablesChain chainName)
+        private IpTablesChain AddChain(string chainName, string tableName, IpTablesSystem system)
         {
-            throw new NotImplementedException();
+            IpTablesChain chain = new IpTablesChain(tableName, chainName, system);
+            AddChain(chain);
+            return chain;
+        }
+
+        public IpTablesChain GetChainOrAdd(IpTablesChain chain)
+        {
+            var chainFound = GetChainOrDefault(chain.Name, chain.Table);
+
+            if (chainFound == null)
+            {
+                AddChain(chain);
+            }
+            else
+            {
+                return chainFound;
+            }
+
+
+            return chain;
         }
 
         public void AddRule(IpTablesRule rule)
         {
-            throw new NotImplementedException();
+            var chain = GetChainOrAdd(rule.Chain);
+            chain.Rules.Add(rule);
         }
 
-        public List<IpTablesRule> GetChainOrDefault(string chain, string table)
+        public IpTablesChain GetChainOrDefault(string chain, string table)
         {
-            throw new NotImplementedException();
+            return _chains.FirstOrDefault((a) => a.Name == chain && a.Table == table);
         }
     }
 }
