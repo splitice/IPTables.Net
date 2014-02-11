@@ -17,15 +17,16 @@ namespace IPTables.Net.Iptables.Modules
             return _chains.GetChainOrAdd(_chainName, _tableName, system);
         }
         private String _chainName = null;
-        private String _tableName = "filter";
+        private String _tableName;
         public int Position = 0;
 
-        public RuleParser(string[] arguments, IpTablesRule ipRule, IpTablesChainSet chains)
+        public RuleParser(string[] arguments, IpTablesRule ipRule, IpTablesChainSet chains, String defaultTable)
         {
             _arguments = arguments;
             _ipRule = ipRule;
             _parsers.AddRange(_moduleFactory.GetPreloadModules());
             _chains = chains;
+            _tableName = defaultTable;
         }
 
         public string GetCurrentArg()

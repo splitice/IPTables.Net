@@ -194,12 +194,12 @@ namespace IPTables.Net.Iptables
             return (new string(parmChars)).Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        public static IpTablesRule Parse(String rule, IpTablesSystem system, IpTablesChainSet chains)
+        public static IpTablesRule Parse(String rule, IpTablesSystem system, IpTablesChainSet chains, String defaultTable = "filter")
         {
             string[] arguments = SplitArguments(rule);
             int count = arguments.Length;
             var ipRule = new IpTablesRule(system, null);
-            var parser = new RuleParser(arguments, ipRule, chains);
+            var parser = new RuleParser(arguments, ipRule, chains, defaultTable);
 
             bool not = false;
             for (int i = 0; i < count; i++)

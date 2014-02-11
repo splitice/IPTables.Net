@@ -60,7 +60,7 @@ namespace IPTables.Net
                         string[] counters = line.Substring(1, positionEnd-1).Split(new[] {':'});
                         line = line.Substring(positionEnd + 1);
 
-                        rule = IpTablesRule.Parse(line, this, ret);
+                        rule = IpTablesRule.Parse(line, this, ret, ttable);
                         rule.Packets = long.Parse(counters[0]);
                         rule.Bytes = long.Parse(counters[1]);
                         ret.AddRule(rule);
@@ -68,7 +68,7 @@ namespace IPTables.Net
 
 
                     case '-':
-                        rule = IpTablesRule.Parse(line, this, ret);
+                        rule = IpTablesRule.Parse(line, this, ret, ttable);
                         ret.AddRule(rule);
                         break;
 
