@@ -103,8 +103,7 @@ namespace IPTables.Net
 
         public List<IpTablesRule> GetRules(string table, string chain)
         {
-            var tableRules = GetRules(table);
-            return tableRules.GetChainOrDefault(chain, table).Rules;
+            return GetChain(table, chain).Rules;
         }
 
         public IEnumerable<IpTablesChain> GetChains(string table)
@@ -115,10 +114,8 @@ namespace IPTables.Net
 
         public IpTablesChain GetChain(string table, string chain)
         {
-            var rules = GetRules(table, chain);
-            if (rules == null)
-                return null;
-            return new IpTablesChain(table, chain, this, rules);
+            var tableRules = GetRules(table);
+            return tableRules.GetChainOrDefault(chain, table);
         }
 
 

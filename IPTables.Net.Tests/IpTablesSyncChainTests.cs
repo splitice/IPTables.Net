@@ -36,6 +36,48 @@ namespace IPTables.Net.Tests
         }
 
         [Test]
+        public void TestSimpleDoNothing()
+        {
+            var mock = new MockIptablesSystemFactory();
+            var system = new IpTablesSystem(mock);
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+                                               {
+                                                   "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
+                                                   "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2"
+                                               }, system);
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+                                               {
+                                                   "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
+                                                   "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2"
+                                               }, system);
+
+            List<String> expectedCommands = new List<String>() { };
+
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
+        }
+
+        [Test]
+        public void TestNatDoNothing()
+        {
+            var mock = new MockIptablesSystemFactory();
+            var system = new IpTablesSystem(mock);
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+                                               {
+                                                   "-A PREROUTING -t nat -j DNAT -p tcp -m tcp --dport 80 --to-destination 99.99.99.99:80",
+                                                   "-A PREROUTING -t nat -j SNAT --to-source 99.99.99.99:80"
+                                               }, system);
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+                                               {
+                                                   "-A PREROUTING -t nat -j DNAT -p tcp -m tcp --dport 80 --to-destination 99.99.99.99:80",
+                                                   "-A PREROUTING -t nat -j SNAT --to-source 99.99.99.99:80"
+                                               }, system);
+
+            List<String> expectedCommands = new List<String>() { };
+
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
+        }
+
+        [Test]
         public void TestAddDuplicate()
         {
             var mock = new MockIptablesSystemFactory();
@@ -75,6 +117,28 @@ namespace IPTables.Net.Tests
                                                }, system);
 
             List<String> expectedCommands = new List<String>() { rulesOriginal.Chains.First().Rules[1].GetPositionalDeleteCommand() };
+
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
+        }
+
+        [Test]
+        public void TestDeleteMultiples()
+        {
+            var mock = new MockIptablesSystemFactory();
+            var system = new IpTablesSystem(mock);
+
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+                                               {
+                                                   "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
+                                                   "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 5",
+                                                   "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2"
+                                               }, system);
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+                                               {
+                                                   "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 5"
+                                               }, system);
+
+            List<String> expectedCommands = new List<String>() { "-D INPUT 1", "-D INPUT 2" };
 
             mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
         }

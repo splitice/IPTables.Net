@@ -151,6 +151,7 @@ namespace IPTables.Net.Iptables
                 command = GetFullCommand("-D");
             }
             ExecutionHelper.ExecuteIptables(_system, command);
+            Chain.Rules.Remove(this);
         }
 
         internal IIpTablesModuleGod GetModuleForParseInternal(string name, Type moduleType)

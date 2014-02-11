@@ -9,6 +9,23 @@ namespace IPTables.Net.Iptables
     {
         private readonly HashSet<IpTablesChain> _chains = new HashSet<IpTablesChain>();
 
+        public void AddDefaultChains(IpTablesSystem system)
+        {
+            _chains.Add(new IpTablesChain("filter", "INPUT", system));
+            _chains.Add(new IpTablesChain("filter", "FORWARD", system));
+            _chains.Add(new IpTablesChain("filter", "OUTPUT", system));
+
+            _chains.Add(new IpTablesChain("mangle", "INPUT", system));
+            _chains.Add(new IpTablesChain("mangle", "FORWARD", system));
+            _chains.Add(new IpTablesChain("mangle", "OUTPUT", system));
+            _chains.Add(new IpTablesChain("mangle", "PREROUTING", system));
+            _chains.Add(new IpTablesChain("mangle", "POSTROUTING", system));
+
+            _chains.Add(new IpTablesChain("nat", "PREROUTING", system));
+            _chains.Add(new IpTablesChain("nat", "POSTROUTING", system));
+            _chains.Add(new IpTablesChain("nat", "OUTPUT", system));
+        }
+
         public HashSet<IpTablesChain> Chains
         {
             get
