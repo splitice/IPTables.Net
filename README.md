@@ -1,6 +1,6 @@
 # IPTables.Net
 
-[^1]
+[![Build Status](https://travis-ci.org/splitice/IPTables.Net.png?branch=master)](https://travis-ci.org/splitice/IPTables.Net)
 
 A library for for interfacing with linux the IPTables utility
 
@@ -36,5 +36,3 @@ Syncing a chain set:
     IpTablesChain chain = new IpTablesChain("filter","INPUT",system); 
     chain.AddRule("-A INPUT !-f"); 
     system.GetChain("filter","INPUT").Sync(chain);
-
-[^1]: <https://travis-ci.org/splitice/IPTables.Net>
