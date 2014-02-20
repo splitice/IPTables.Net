@@ -7,6 +7,7 @@ using IPTables.Net.Iptables.Modules.Connlimit;
 using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Dnat;
 using IPTables.Net.Iptables.Modules.Mark;
+using IPTables.Net.Iptables.Modules.Polyfill;
 using IPTables.Net.Iptables.Modules.Recent;
 using IPTables.Net.Iptables.Modules.Snat;
 using IPTables.Net.Iptables.Modules.State;
@@ -31,7 +32,8 @@ namespace IPTables.Net.Iptables
                                                                MarkLoadableModule.GetModuleEntry,
                                                                MarkTargetModule.GetModuleEntry,
                                                                RecentModule.GetModuleEntry,
-                                                               TcpMssModule.GetModuleEntry
+                                                               TcpMssModule.GetModuleEntry,
+                                                               PolyfillModule.GetModuleEntry
                                                            };
 
         private readonly Dictionary<String, ModuleEntry> _modules = new Dictionary<string, ModuleEntry>();
@@ -46,10 +48,20 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public ModuleEntry GetModule(String module, bool target = false)
+        public ModuleEntry GetModule(String module, bool target = false, bool polyfill = true)
         {
             if (!_modules.ContainsKey(module))
             {
+                if (polyfill)
+                {
+                    var pm = _modules.Select((a) => a.Value).Where((a) => a.Polyfill);
+                    if (pm.Count() != 0)
+                    {
+                        var moduleEntry = pm.FirstOrDefault();
+                        moduleEntry.Name = module;
+                        return moduleEntry;
+                    }
+                }
                 throw new Exception(String.Format("The factory could not find module: {0}", module));
             }
             var m = _modules[module];

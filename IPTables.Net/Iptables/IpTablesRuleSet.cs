@@ -71,7 +71,7 @@ namespace IPTables.Net.Iptables
             _chains.AddChain(new IpTablesChain(table, name, _system));
         }
 
-        public void SyncChains(Func<IpTablesRule, IpTablesRule, bool> comparer = null, Func<IpTablesChain, bool> canDeleteChain = null)
+        public void SyncChains(Func<IpTablesRule, IpTablesRule, bool> comparer = null, Func<IpTablesChain, bool> canDeleteChain = null, Func<IpTablesRule, bool> shouldDelete = null)
         {
             var tableChains = new Dictionary<string, List<IpTablesChain>>();
             foreach (var chain in Chains)
@@ -94,7 +94,7 @@ namespace IPTables.Net.Iptables
                 if (realChain != null)
                 {
                     //Update chain
-                    realChain.Sync(chain.Rules, comparer);
+                    realChain.Sync(chain.Rules, comparer, shouldDelete);
                 }
             }
 

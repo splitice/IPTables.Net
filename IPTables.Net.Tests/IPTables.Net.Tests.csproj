@@ -62,6 +62,7 @@
     <Compile Include="SingleDnatRuleParseTests.cs" />
     <Compile Include="SingleSnatRuleParseTests.cs" />
     <Compile Include="SingleRecentRuleParseTests.cs" />
+    <Compile Include="SinglePolyfillTests.cs" />
     <Compile Include="SingleTcpRuleParseTests.cs" />
     <Compile Include="SingleCoreRuleParseTests.cs" />
   </ItemGroup>

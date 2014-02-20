@@ -39,6 +39,11 @@ namespace IPTables.Net.Iptables.Modules
             return _arguments[Position + offset];
         }
 
+        public int GetRemainingArgs()
+        {
+            return _arguments.Length - Position - 1;
+        }
+
         public int FeedToSkip(int i, bool not)
         {
             Position = i;
@@ -65,7 +70,18 @@ namespace IPTables.Net.Iptables.Modules
             }
             foreach (ModuleEntry m in _parsers)
             {
-                if (m.Options.Contains(option))
+                if (!m.Polyfill)
+                {
+                    if (m.Options.Contains(option))
+                    {
+                        IIpTablesModuleGod module = _ipRule.GetModuleForParseInternal(m.Name, m.Module);
+                        return module.Feed(this, not);
+                    }
+                }
+            }
+            foreach (ModuleEntry m in _parsers.Reverse<ModuleEntry>())
+            {
+                if (m.Polyfill)
                 {
                     IIpTablesModuleGod module = _ipRule.GetModuleForParseInternal(m.Name, m.Module);
                     return module.Feed(this, not);

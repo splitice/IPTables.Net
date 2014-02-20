@@ -72,7 +72,9 @@
     <Compile Include="Iptables\Modules\Comment\CommentRuleExtension.cs" />
     <Compile Include="Iptables\Modules\IIpTablesModuleGod.cs" />
     <Compile Include="Iptables\Modules\IIpTablesModuleInternal.cs" />
+    <Compile Include="Iptables\Modules\HashLimit\HashLimitModule.cs" />
     <Compile Include="Iptables\Modules\Limit\LimitModule.cs" />
+    <Compile Include="Iptables\Modules\Polyfill\PolyfillModule.cs" />
     <Compile Include="Iptables\Modules\Recent\RecentMode.cs" />
     <Compile Include="Iptables\Modules\Recent\RecentModule.cs" />
     <Compile Include="Iptables\Modules\TcpMss\TcpMssModule.cs" />

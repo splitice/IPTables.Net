@@ -10,5 +10,6 @@ namespace IPTables.Net.Iptables.Modules
         public bool IsTarget;
         public IEnumerable<String> Options;
         public bool Preloaded;
+        public bool Polyfill;
     }
 }

@@ -54,11 +54,15 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public void Sync(IEnumerable<IpTablesRule> with, Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate = null)
+        public void Sync(IEnumerable<IpTablesRule> with, Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate = null, Func<IpTablesRule, bool> shouldDelete = null)
         {
             if (ruleComparerForUpdate == null)
             {
                 ruleComparerForUpdate = (a, b) => false;
+            }
+            if (shouldDelete == null)
+            {
+                shouldDelete = (a) => true;
             }
             var currentRules = Rules.ToList();
 
@@ -88,7 +92,10 @@ namespace IPTables.Net.Iptables
                 }
                 else
                 {
-                    cR.Delete();
+                    if (shouldDelete(cR))
+                    {
+                        cR.Delete();
+                    }
                 }
             }
 
