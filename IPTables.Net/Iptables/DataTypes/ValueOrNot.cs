@@ -60,7 +60,7 @@ namespace IPTables.Net.Iptables.DataTypes
             }
         }
 
-        public String ToOption(String optionKey)
+        public String ToOption(String optionKey, String value = null)
         {
             String built = "";
             if (Null)
@@ -72,8 +72,17 @@ namespace IPTables.Net.Iptables.DataTypes
             {
                 built += "! ";
             }
-            built += optionKey + " ";
-            built += Value;
+            built += optionKey;
+
+            if (value == null)
+            {
+                value = Value.ToString();
+            }
+
+            if (!String.IsNullOrEmpty(value))
+            {
+                built += " " + Value;
+            }
             return built;
         }
 
