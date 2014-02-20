@@ -11,6 +11,7 @@ using IPTables.Net.Iptables.Modules.Recent;
 using IPTables.Net.Iptables.Modules.Snat;
 using IPTables.Net.Iptables.Modules.State;
 using IPTables.Net.Iptables.Modules.Tcp;
+using IPTables.Net.Iptables.Modules.TcpMss;
 using IPTables.Net.Iptables.Modules.Udp;
 
 namespace IPTables.Net.Iptables
@@ -29,7 +30,8 @@ namespace IPTables.Net.Iptables
                                                                StateModule.GetModuleEntry,
                                                                MarkLoadableModule.GetModuleEntry,
                                                                MarkTargetModule.GetModuleEntry,
-                                                               RecentModule.GetModuleEntry
+                                                               RecentModule.GetModuleEntry,
+                                                               TcpMssModule.GetModuleEntry
                                                            };
 
         private readonly Dictionary<String, ModuleEntry> _modules = new Dictionary<string, ModuleEntry>();
