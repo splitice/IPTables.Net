@@ -24,7 +24,7 @@ namespace IPTables.Net
             }
         }
 
-        public IpTablesChainSet GetRulesFromOutput(String output, String table)
+        public IpTablesChainSet GetRulesFromOutput(String output, String table, bool ignoreErrors = false)
         {
             var ret = new IpTablesChainSet();
             String ttable = null;
@@ -60,7 +60,18 @@ namespace IPTables.Net
                         string[] counters = line.Substring(1, positionEnd-1).Split(new[] {':'});
                         line = line.Substring(positionEnd + 1);
 
-                        rule = IpTablesRule.Parse(line, this, ret, ttable);
+                        try
+                        {
+                            rule = IpTablesRule.Parse(line, this, ret, ttable);
+                        }
+                        catch
+                        {
+                            if (ignoreErrors)
+                            {
+                                continue;
+                            }
+                            throw;
+                        }
                         rule.Packets = long.Parse(counters[0]);
                         rule.Bytes = long.Parse(counters[1]);
                         ret.AddRule(rule);
