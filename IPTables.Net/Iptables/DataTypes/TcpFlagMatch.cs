@@ -46,6 +46,10 @@ namespace IPTables.Net.Iptables.DataTypes
                     return TcpFlag.FIN;
                 case "RST":
                     return TcpFlag.RST;
+                case "URG":
+                    return TcpFlag.URG;
+                case "PSH":
+                    return TcpFlag.PSH;
             }
 
             throw new Exception("Invalid TCP Flag");
@@ -63,6 +67,10 @@ namespace IPTables.Net.Iptables.DataTypes
                     return "FIN";
                 case TcpFlag.RST:
                     return "RST";
+                case TcpFlag.URG:
+                    return "URG";
+                case TcpFlag.PSH:
+                    return "PSH";
             }
 
             throw new Exception("Invalid TCP Flag");
@@ -70,6 +78,14 @@ namespace IPTables.Net.Iptables.DataTypes
 
         private static IEnumerable<TcpFlag> GetFlags(String sFlags)
         {
+            if (sFlags == "ALL")
+            {
+                return new List<TcpFlag> { TcpFlag.ACK, TcpFlag.FIN, TcpFlag.PSH, TcpFlag.RST, TcpFlag.SYN, TcpFlag.URG };
+            }
+            if (sFlags == "NONE")
+            {
+                return new List<TcpFlag>();
+            }
             var flags = new List<TcpFlag>();
             foreach (string f in sFlags.Split(new[] {','}))
             {
@@ -78,11 +94,9 @@ namespace IPTables.Net.Iptables.DataTypes
             return flags;
         }
 
-        public static TcpFlagMatch Parse(string getNextArg)
+        public static TcpFlagMatch Parse(string comparing, string mustHave)
         {
-            string[] split = getNextArg.Split(new[] {' '});
-
-            return new TcpFlagMatch(GetFlags(split[0]), GetFlags(split[1]));
+            return new TcpFlagMatch(GetFlags(comparing), GetFlags(mustHave));
         }
 
         public bool Equals(TcpFlagMatch other)

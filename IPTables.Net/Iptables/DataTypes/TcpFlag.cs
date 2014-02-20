@@ -2,9 +2,13 @@
 {
     public enum TcpFlag
     {
+        // ReSharper disable InconsistentNaming
         SYN,
         ACK,
         FIN,
-        RST
+        RST,
+        URG,
+        PSH
+        // ReSharper restore InconsistentNaming
     }
 }

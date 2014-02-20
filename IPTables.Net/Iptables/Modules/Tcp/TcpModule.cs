@@ -44,8 +44,8 @@ namespace IPTables.Net.Iptables.Modules.Tcp
                     return 1;
 
                 case OptionDestinationTcpFlags:
-                    TcpFlags = TcpFlagMatch.Parse(parser.GetNextArg());
-                    return 1;
+                    TcpFlags = TcpFlagMatch.Parse(parser.GetNextArg(), parser.GetNextArg(2));
+                    return 2;
 
                 case OptionSyn:
                     TcpFlags = not ? TcpFlagMatch.NotSyn : TcpFlagMatch.Syn;
