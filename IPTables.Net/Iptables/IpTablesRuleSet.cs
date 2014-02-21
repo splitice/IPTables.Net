@@ -83,8 +83,7 @@ namespace IPTables.Net.Iptables
                 if (tableChains[chain.Table].FirstOrDefault((a)=>a.Name == chain.Name) == null)
                 {
                     //Chain doesnt exist create
-                    _system.AddChain(chain);
-                    tableChains[chain.Table].Add(new IpTablesChain(chain.Table, chain.Name, _system));
+                    tableChains[chain.Table].Add(_system.AddChain(chain));
                 }
             }
 

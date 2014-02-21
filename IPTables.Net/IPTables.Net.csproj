@@ -74,6 +74,7 @@
     <Compile Include="Iptables\Modules\IIpTablesModuleInternal.cs" />
     <Compile Include="Iptables\Modules\HashLimit\HashLimitModule.cs" />
     <Compile Include="Iptables\Modules\Limit\LimitModule.cs" />
+    <Compile Include="Iptables\Modules\Nfacct\NfacctModule.cs" />
     <Compile Include="Iptables\Modules\Polyfill\PolyfillModule.cs" />
     <Compile Include="Iptables\Modules\Recent\RecentMode.cs" />
     <Compile Include="Iptables\Modules\Recent\RecentModule.cs" />
