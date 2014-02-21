@@ -21,7 +21,7 @@ namespace IPTables.Net.Tests
         [Test]
         public void TestPolyfillParseAdditionalOptionsAfter()
         {
-            String rule = "-A INPUT -m unknown --unknown -d 1.1.1.1 -p tcp -m tcp --dport 80";
+            String rule = "-A INPUT -m unknown --unknown -p tcp -d 1.1.1.1 -m tcp --dport 80";
             IpTablesChainSet chains = new IpTablesChainSet();
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);

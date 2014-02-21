@@ -23,10 +23,10 @@ namespace IPTables.Net.Iptables.Modules.Polyfill
             _data.Add(current, new List<string>());
             for (var i = 1; i < parser.GetRemainingArgs(); i++)
             {
-                var arg = parser.GetNextArg();
+                var arg = parser.GetNextArg(i);
                 if (arg[0] == '-')
                 {
-                    return i;
+                    return i - 1;
                 }
                 _data[current].Add(arg);
             }
