@@ -29,12 +29,12 @@ namespace IPTables.Net.Iptables.Modules.Udp
             {
                 case OptionSourcePortLong:
                 case OptionSourcePortShort:
-                    SourcePort.Set(not, PortOrRange.Parse(parser.GetNextArg()));
+                    SourcePort.Set(not, PortOrRange.Parse(parser.GetNextArg(), ':'));
                     return 1;
 
                 case OptionDestinationPortLong:
                 case OptionDestinationPortShort:
-                    DestinationPort.Set(not, PortOrRange.Parse(parser.GetNextArg()));
+                    DestinationPort.Set(not, PortOrRange.Parse(parser.GetNextArg(), ':'));
                     return 1;
             }
 

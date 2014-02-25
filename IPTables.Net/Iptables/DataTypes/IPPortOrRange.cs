@@ -74,9 +74,9 @@ namespace IPTables.Net.Iptables.DataTypes
             return String.Format("{0}-{1}:{2}", LowerAddress, UpperAddress, strPort);
         }
 
-        public static IPPortOrRange Parse(string getNextArg)
+        public static IPPortOrRange Parse(string getNextArg, char splitChar=':')
         {
-            string[] split = getNextArg.Split(new[] {':'});
+            string[] split = getNextArg.Split(new[] { splitChar });
             if (split.Length == 0)
             {
                 throw new Exception("Error");
@@ -99,7 +99,7 @@ namespace IPTables.Net.Iptables.DataTypes
             {
                 return new IPPortOrRange(lowerIp, upperIp);
             }
-            return new IPPortOrRange(lowerIp, upperIp, PortOrRange.Parse(split[1]));
+            return new IPPortOrRange(lowerIp, upperIp, PortOrRange.Parse(split[1], '-'));
         }
     }
 }

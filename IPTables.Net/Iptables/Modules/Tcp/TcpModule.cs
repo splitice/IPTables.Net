@@ -35,12 +35,12 @@ namespace IPTables.Net.Iptables.Modules.Tcp
             {
                 case OptionSourcePortLong:
                 case OptionSourcePortShort:
-                    SourcePort.Set(not, PortOrRange.Parse(parser.GetNextArg()));
+                    SourcePort.Set(not, PortOrRange.Parse(parser.GetNextArg(), ':'));
                     return 1;
 
                 case OptionDestinationPortLong:
                 case OptionDestinationPortShort:
-                    DestinationPort.Set(not, PortOrRange.Parse(parser.GetNextArg()));
+                    DestinationPort.Set(not, PortOrRange.Parse(parser.GetNextArg(), ':'));
                     return 1;
 
                 case OptionDestinationTcpFlags:

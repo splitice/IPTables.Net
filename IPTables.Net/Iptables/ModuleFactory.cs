@@ -23,6 +23,7 @@ namespace IPTables.Net.Iptables
         public static List<Func<ModuleEntry>> AllModules = new List<Func<ModuleEntry>>
                                                            {
                                                                CoreModule.GetModuleEntry,
+                                                               RejectTargetModule.GetModuleEntry,
                                                                TcpModule.GetModuleEntry,
                                                                UdpModule.GetModuleEntry,
                                                                DnatModule.GetModuleEntry,

@@ -4,19 +4,22 @@ namespace IPTables.Net.Iptables.DataTypes
 {
     public struct PortOrRange
     {
-        public static PortOrRange Any = new PortOrRange(0, 0);
+        public static PortOrRange Any = new PortOrRange(0, 0, ':');
         private readonly uint _lowerPort;
         private readonly uint _upperPort;
+        private readonly char _splitChar;
 
-        public PortOrRange(uint lowerPort, uint upperPort)
+        public PortOrRange(uint lowerPort, uint upperPort, char splitChar = ':')
         {
             _lowerPort = lowerPort;
             _upperPort = upperPort;
+            _splitChar = splitChar;
         }
 
-        public PortOrRange(uint lowerPort)
+        public PortOrRange(uint lowerPort, char splitChar = ':')
         {
             _upperPort = _lowerPort = lowerPort;
+            _splitChar = splitChar;
         }
 
         public uint UpperPort
@@ -36,18 +39,18 @@ namespace IPTables.Net.Iptables.DataTypes
                 return LowerPort.ToString();
             }
 
-            return String.Format("{0}:{1}", LowerPort, UpperPort);
+            return String.Format("{0}{2}{1}", LowerPort, UpperPort, _splitChar);
         }
 
-        public static PortOrRange Parse(string getNextArg)
+        public static PortOrRange Parse(string getNextArg, char splitChar)
         {
-            string[] split = getNextArg.Split(new[] {':'});
+            string[] split = getNextArg.Split(new[] { splitChar });
             if (split.Length == 1)
             {
-                return new PortOrRange(uint.Parse(split[0]));
+                return new PortOrRange(uint.Parse(split[0]), splitChar);
             }
 
-            return new PortOrRange(uint.Parse(split[0]), uint.Parse(split[1]));
+            return new PortOrRange(uint.Parse(split[0]), uint.Parse(split[1]), splitChar);
         }
     }
 }
