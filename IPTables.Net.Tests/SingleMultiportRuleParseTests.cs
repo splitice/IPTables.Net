@@ -37,5 +37,36 @@ namespace IPTables.Net.Tests
 
             Assert.AreEqual(rule, irule.GetFullCommand());
         }
+
+        [Test]
+        public void TesNottMultiports()
+        {
+            String rule = "-A INPUT -p tcp -m multiport ! --ports 80,1000:1080";
+            IpTablesChainSet chains = new IpTablesChainSet();
+
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+
+            Assert.AreEqual(rule, irule.GetFullCommand());
+        }
+        [Test]
+        public void TestDestinationNotMultiports()
+        {
+            String rule = "-A INPUT -p tcp -m multiport ! --sports 80,1000:1080";
+            IpTablesChainSet chains = new IpTablesChainSet();
+
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+
+            Assert.AreEqual(rule, irule.GetFullCommand());
+        }
+        [Test]
+        public void TestSourceNotMultiports()
+        {
+            String rule = "-A INPUT -p tcp -m multiport ! --dports 80,1000:1080";
+            IpTablesChainSet chains = new IpTablesChainSet();
+
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+
+            Assert.AreEqual(rule, irule.GetFullCommand());
+        }
     }
 }

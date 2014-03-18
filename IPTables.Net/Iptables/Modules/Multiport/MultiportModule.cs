@@ -14,16 +14,16 @@ namespace IPTables.Net.Iptables.Modules.Multiport
         private const String OptionDestinationPortsLong = "--destination-ports";
         private const String OptionSourcePortsLong = "--source-ports";
 
-        public HashSet<PortOrRange> DestinationPorts = new HashSet<PortOrRange>();
-        public HashSet<PortOrRange> Ports = new HashSet<PortOrRange>();
-        public HashSet<PortOrRange> SourcePorts = new HashSet<PortOrRange>();
+        public ValueOrNot<HashSet<PortOrRange>> DestinationPorts = new ValueOrNot<HashSet<PortOrRange>>();
+        public ValueOrNot<HashSet<PortOrRange>> Ports = new ValueOrNot<HashSet<PortOrRange>>();
+        public ValueOrNot<HashSet<PortOrRange>> SourcePorts = new ValueOrNot<HashSet<PortOrRange>>();
 
         public bool Equals(MultiportModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Ports.SetEquals(other.Ports) && DestinationPorts.SetEquals(other.DestinationPorts) &&
-                   SourcePorts.SetEquals(other.SourcePorts);
+            return Ports.Value.SetEquals(other.Ports.Value) && DestinationPorts.Value.SetEquals(other.DestinationPorts.Value) &&
+                   SourcePorts.Value.SetEquals(other.SourcePorts.Value);
         }
 
         public bool NeedsLoading
@@ -36,15 +36,15 @@ namespace IPTables.Net.Iptables.Modules.Multiport
             switch (parser.GetCurrentArg())
             {
                 case OptionPorts:
-                    Ports = ParseListOfPortOrRanges(parser.GetNextArg());
+                    Ports = new ValueOrNot<HashSet<PortOrRange>>(ParseListOfPortOrRanges(parser.GetNextArg()), not);
                     return 1;
                 case OptionDestinationPorts:
                 case OptionDestinationPortsLong:
-                    DestinationPorts = ParseListOfPortOrRanges(parser.GetNextArg());
+                    DestinationPorts = new ValueOrNot<HashSet<PortOrRange>>(ParseListOfPortOrRanges(parser.GetNextArg()), not);
                     return 1;
                 case OptionSourcePorts:
                 case OptionSourcePortsLong:
-                    SourcePorts = ParseListOfPortOrRanges(parser.GetNextArg());
+                    SourcePorts = new ValueOrNot<HashSet<PortOrRange>>(ParseListOfPortOrRanges(parser.GetNextArg()), not);
                     return 1;
             }
 
@@ -55,26 +55,32 @@ namespace IPTables.Net.Iptables.Modules.Multiport
         {
             var sb = new StringBuilder();
 
-            if (Ports.Count != 0)
+            if (!Ports.Null && Ports.Value.Count != 0)
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
+                if (Ports.Not)
+                    sb.Append("! ");
                 sb.Append(OptionPorts + " ");
-                sb.Append(String.Join(",", Ports.Select(a => a.ToString()).ToArray()));
+                sb.Append(String.Join(",", Ports.Value.Select(a => a.ToString()).ToArray()));
             }
-            if (DestinationPorts.Count != 0)
+            if (!DestinationPorts.Null && DestinationPorts.Value.Count != 0)
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
+                if (DestinationPorts.Not)
+                    sb.Append("! ");
                 sb.Append(OptionDestinationPorts + " ");
-                sb.Append(String.Join(",", DestinationPorts.Select(a => a.ToString()).ToArray()));
+                sb.Append(String.Join(",", DestinationPorts.Value.Select(a => a.ToString()).ToArray()));
             }
-            if (SourcePorts.Count != 0)
+            if (!SourcePorts.Null && SourcePorts.Value.Count != 0)
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
+                if (SourcePorts.Not)
+                    sb.Append("! ");
                 sb.Append(OptionSourcePorts + " ");
-                sb.Append(String.Join(",", SourcePorts.Select(a => a.ToString()).ToArray()));
+                sb.Append(String.Join(",", SourcePorts.Value.Select(a => a.ToString()).ToArray()));
             }
 
             return sb.ToString();
