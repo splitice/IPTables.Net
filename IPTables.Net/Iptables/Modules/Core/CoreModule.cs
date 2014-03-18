@@ -37,14 +37,6 @@ namespace IPTables.Net.Iptables.Modules.Core
         public String Target = null;
         public TargetMode TargetMode = TargetMode.Jump;
 
-        public bool NeedsLoading
-        {
-            get
-            {
-                return false;
-            }
-        }
-
         public String Jump
         {
             get { return TargetMode == TargetMode.Jump ? Target : null; }
@@ -69,6 +61,21 @@ namespace IPTables.Net.Iptables.Modules.Core
                     Target = value;
                 }
             }
+        }
+
+        public bool Equals(CoreModule other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Destination.Equals(other.Destination) && Fragmented.Equals(other.Fragmented) &&
+                   InInterface.Equals(other.InInterface) && OutInterface.Equals(other.OutInterface) &&
+                   Protocol.Equals(other.Protocol) && SetCounters.Equals(other.SetCounters) &&
+                   Source.Equals(other.Source) && string.Equals(Target, other.Target) && TargetMode == other.TargetMode;
+        }
+
+        public bool NeedsLoading
+        {
+            get { return false; }
         }
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
@@ -187,26 +194,26 @@ namespace IPTables.Net.Iptables.Modules.Core
         public static IEnumerable<String> GetOptions()
         {
             var options = new List<string>
-                          {
-                              OptionProtocolLong,
-                              OptionProtocolShort,
-                              OptionSourceLong,
-                              OptionSourceShort,
-                              OptionDestinationLong,
-                              OptionDestinationShort,
-                              OptionJumpLong,
-                              OptionJumpShort,
-                              OptionGotoLong,
-                              OptionGotoShort,
-                              OptionInInterfaceLong,
-                              OptionInInterfaceShort,
-                              OptionOutInterfaceLong,
-                              OptionOutInterfaceShort,
-                              OptionFragmentLong,
-                              OptionFragmentShort,
-                              OptionSetCountersLong,
-                              OptionSetCountersShort
-                          };
+            {
+                OptionProtocolLong,
+                OptionProtocolShort,
+                OptionSourceLong,
+                OptionSourceShort,
+                OptionDestinationLong,
+                OptionDestinationShort,
+                OptionJumpLong,
+                OptionJumpShort,
+                OptionGotoLong,
+                OptionGotoShort,
+                OptionInInterfaceLong,
+                OptionInInterfaceShort,
+                OptionOutInterfaceLong,
+                OptionOutInterfaceShort,
+                OptionFragmentLong,
+                OptionFragmentShort,
+                OptionSetCountersLong,
+                OptionSetCountersShort
+            };
             return options;
         }
 
@@ -215,18 +222,11 @@ namespace IPTables.Net.Iptables.Modules.Core
             return GetModuleEntryInternal("core", typeof (CoreModule), GetOptions, true);
         }
 
-        public bool Equals(CoreModule other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Destination.Equals(other.Destination) && Fragmented.Equals(other.Fragmented) && InInterface.Equals(other.InInterface) && OutInterface.Equals(other.OutInterface) && Protocol.Equals(other.Protocol) && SetCounters.Equals(other.SetCounters) && Source.Equals(other.Source) && string.Equals(Target, other.Target) && TargetMode == other.TargetMode;
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((CoreModule) obj);
         }
     }

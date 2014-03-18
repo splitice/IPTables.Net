@@ -57,7 +57,7 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public override String ToString()
         {
-            var strPort = PortStringRepresentation();
+            string strPort = PortStringRepresentation();
             if (LowerAddress.Equals(UpperAddress))
             {
                 if (strPort.Length == 0)
@@ -74,9 +74,9 @@ namespace IPTables.Net.Iptables.DataTypes
             return String.Format("{0}-{1}:{2}", LowerAddress, UpperAddress, strPort);
         }
 
-        public static IPPortOrRange Parse(string getNextArg, char splitChar=':')
+        public static IPPortOrRange Parse(string getNextArg, char splitChar = ':')
         {
-            string[] split = getNextArg.Split(new[] { splitChar });
+            string[] split = getNextArg.Split(new[] {splitChar});
             if (split.Length == 0)
             {
                 throw new Exception("Error");

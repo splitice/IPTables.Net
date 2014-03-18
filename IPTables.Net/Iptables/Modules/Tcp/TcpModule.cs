@@ -21,12 +21,17 @@ namespace IPTables.Net.Iptables.Modules.Tcp
         //--syn
         public ValueOrNot<int> TcpOption = new ValueOrNot<int>();
 
+        public bool Equals(TcpModule other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(DestinationPort, other.DestinationPort) && Equals(SourcePort, other.SourcePort) &&
+                   Equals(TcpFlags, other.TcpFlags) && Equals(TcpOption, other.TcpOption);
+        }
+
         public bool NeedsLoading
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
@@ -99,15 +104,15 @@ namespace IPTables.Net.Iptables.Modules.Tcp
         public static IEnumerable<String> GetOptions()
         {
             var options = new List<string>
-                          {
-                              OptionSourcePortLong,
-                              OptionSourcePortShort,
-                              OptionDestinationPortShort,
-                              OptionDestinationPortLong,
-                              OptionDestinationTcpFlags,
-                              OptionSyn,
-                              OptionTcpOption
-                          };
+            {
+                OptionSourcePortLong,
+                OptionSourcePortShort,
+                OptionDestinationPortShort,
+                OptionDestinationPortLong,
+                OptionDestinationTcpFlags,
+                OptionSyn,
+                OptionTcpOption
+            };
             return options;
         }
 
@@ -116,18 +121,11 @@ namespace IPTables.Net.Iptables.Modules.Tcp
             return GetModuleEntryInternal("tcp", typeof (TcpModule), GetOptions);
         }
 
-        public bool Equals(TcpModule other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(DestinationPort, other.DestinationPort) && Equals(SourcePort, other.SourcePort) && Equals(TcpFlags, other.TcpFlags) && Equals(TcpOption, other.TcpOption);
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((TcpModule) obj);
         }
 

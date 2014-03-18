@@ -6,6 +6,12 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
 {
     public class ConnlimitModule : ModuleBase, IIpTablesModuleGod, IEquatable<ConnlimitModule>
     {
+        public enum AddrMode
+        {
+            Source,
+            Target
+        }
+
         private const String OptionUpto = "--connlimit-upto";
         private const String OptionAbove = "--connlimit-above";
         private const String OptionMask = "--connlimit-mask";
@@ -18,12 +24,16 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
         public int Mask = -1;
         public int Upto = -1;
 
+        public bool Equals(ConnlimitModule other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Above == other.Above && LimitMatch == other.LimitMatch && Mask == other.Mask && Upto == other.Upto;
+        }
+
         public bool NeedsLoading
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
@@ -94,13 +104,13 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
         public static IEnumerable<String> GetOptions()
         {
             var options = new List<string>
-                          {
-                              OptionUpto,
-                              OptionAbove,
-                              OptionMask,
-                              OptionSourceAddr,
-                              OptionDestinationAddr
-                          };
+            {
+                OptionUpto,
+                OptionAbove,
+                OptionMask,
+                OptionSourceAddr,
+                OptionDestinationAddr
+            };
             return options;
         }
 
@@ -109,24 +119,11 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
             return GetModuleEntryInternal("connlimit", typeof (ConnlimitModule), GetOptions);
         }
 
-        public enum AddrMode
-        {
-            Source,
-            Target
-        }
-
-        public bool Equals(ConnlimitModule other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Above == other.Above && LimitMatch == other.LimitMatch && Mask == other.Mask && Upto == other.Upto;
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((ConnlimitModule) obj);
         }
 

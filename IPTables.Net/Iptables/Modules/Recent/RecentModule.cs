@@ -18,37 +18,35 @@ namespace IPTables.Net.Iptables.Modules.Recent
         private const String OptionReapLong = "--reap";
         private const String OptionHitcountLong = "--hitcount";
         private const String OptionRttlLong = "--rttl";
+        public int? HitCount;
 
         public ValueOrNot<RecentMode> Mode = new ValueOrNot<RecentMode>();
         public String Name = "DEFAULT";
-        public bool Rsource = true;
-
-        public int? Seconds = null;
 
         public bool Reap;
-
-        public int? HitCount;
+        public bool Rsource = true;
 
         public bool Rttl;
+        public int? Seconds = null;
 
         public bool Rdest
         {
-            get
-            {
-                return !Rsource;
-            }
-            set
-            {
-                Rsource = !value;
-            }
+            get { return !Rsource; }
+            set { Rsource = !value; }
+        }
+
+        public bool Equals(RecentModule other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(Mode, other.Mode) && string.Equals(Name, other.Name) && Rsource.Equals(other.Rsource) &&
+                   Seconds == other.Seconds && Reap.Equals(other.Reap) && HitCount == other.HitCount &&
+                   Rttl.Equals(other.Rttl);
         }
 
         public bool NeedsLoading
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
@@ -173,40 +171,33 @@ namespace IPTables.Net.Iptables.Modules.Recent
         public static IEnumerable<String> GetOptions()
         {
             var options = new List<string>
-                          {
-                                OptionNameLong,
-                                OptionSetLong,
-                                OptionRsourceLong,
-                                OptionRdestLong,
-                                OptionRcheckLong,
-                                OptionUpdateLong,
-                                OptionRemoveLong,
-                                OptionSecondsLong,
-                                OptionReapLong,
-                                OptionHitcountLong,
-                                OptionRttlLong
-                          };
+            {
+                OptionNameLong,
+                OptionSetLong,
+                OptionRsourceLong,
+                OptionRdestLong,
+                OptionRcheckLong,
+                OptionUpdateLong,
+                OptionRemoveLong,
+                OptionSecondsLong,
+                OptionReapLong,
+                OptionHitcountLong,
+                OptionRttlLong
+            };
             return options;
         }
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("recent", typeof(RecentModule), GetOptions);
-        }
-
-        public bool Equals(RecentModule other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(Mode, other.Mode) && string.Equals(Name, other.Name) && Rsource.Equals(other.Rsource) && Seconds == other.Seconds && Reap.Equals(other.Reap) && HitCount == other.HitCount && Rttl.Equals(other.Rttl);
+            return GetModuleEntryInternal("recent", typeof (RecentModule), GetOptions);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((RecentModule)obj);
+            if (obj.GetType() != GetType()) return false;
+            return Equals((RecentModule) obj);
         }
 
         public override int GetHashCode()
@@ -214,12 +205,12 @@ namespace IPTables.Net.Iptables.Modules.Recent
             unchecked
             {
                 int hashCode = (Mode != null ? Mode.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (Name != null ? Name.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ Rsource.GetHashCode();
-                hashCode = (hashCode * 397) ^ Seconds.GetHashCode();
-                hashCode = (hashCode * 397) ^ Reap.GetHashCode();
-                hashCode = (hashCode * 397) ^ HitCount.GetHashCode();
-                hashCode = (hashCode * 397) ^ Rttl.GetHashCode();
+                hashCode = (hashCode*397) ^ (Name != null ? Name.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ Rsource.GetHashCode();
+                hashCode = (hashCode*397) ^ Seconds.GetHashCode();
+                hashCode = (hashCode*397) ^ Reap.GetHashCode();
+                hashCode = (hashCode*397) ^ HitCount.GetHashCode();
+                hashCode = (hashCode*397) ^ Rttl.GetHashCode();
                 return hashCode;
             }
         }

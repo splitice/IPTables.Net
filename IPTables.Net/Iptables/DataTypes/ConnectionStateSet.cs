@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
@@ -9,31 +8,17 @@ namespace IPTables.Net.Iptables.DataTypes
     {
         private readonly HashSet<ConnectionState> _states = new HashSet<ConnectionState>();
 
-        public IEnumerable<ConnectionState> States
-        {
-            get
-            {
-                return _states;
-            }
-        }
-
         public ConnectionStateSet(IEnumerable<ConnectionState> states)
         {
-            foreach (var s in states)
+            foreach (ConnectionState s in states)
             {
                 _states.Add(s);
             }
         }
 
-        public override String ToString()
+        public IEnumerable<ConnectionState> States
         {
-            return String.Join(",",_states.Select(ConnectionStateHelper.GetString).ToArray());
-        }
-
-        public static ConnectionStateSet Parse(string stringRepresentation)
-        {
-            var split = stringRepresentation.Split(new char[] {','});
-            return new ConnectionStateSet(split.Select(ConnectionStateHelper.FromString));
+            get { return _states; }
         }
 
         public bool Equals(ConnectionStateSet other)
@@ -43,11 +28,22 @@ namespace IPTables.Net.Iptables.DataTypes
             return _states.SetEquals(other._states);
         }
 
+        public override String ToString()
+        {
+            return String.Join(",", _states.Select(ConnectionStateHelper.GetString).ToArray());
+        }
+
+        public static ConnectionStateSet Parse(string stringRepresentation)
+        {
+            string[] split = stringRepresentation.Split(new[] {','});
+            return new ConnectionStateSet(split.Select(ConnectionStateHelper.FromString));
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((ConnectionStateSet) obj);
         }
 

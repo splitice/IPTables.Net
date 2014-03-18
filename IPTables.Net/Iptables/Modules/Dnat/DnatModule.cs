@@ -16,12 +16,17 @@ namespace IPTables.Net.Iptables.Modules.Dnat
         public bool Random = false;
         public IPPortOrRange ToDestination = new IPPortOrRange(IPAddress.Any);
 
+        public bool Equals(DnatModule other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) &&
+                   ToDestination.Equals(other.ToDestination);
+        }
+
         public bool NeedsLoading
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
@@ -76,11 +81,11 @@ namespace IPTables.Net.Iptables.Modules.Dnat
         public static IEnumerable<String> GetOptions()
         {
             var options = new List<string>
-                          {
-                              OptionToDestination,
-                              OptionRandom,
-                              OptionPersisent
-                          };
+            {
+                OptionToDestination,
+                OptionRandom,
+                OptionPersisent
+            };
             return options;
         }
 
@@ -89,18 +94,11 @@ namespace IPTables.Net.Iptables.Modules.Dnat
             return GetTargetModuleEntryInternal("DNAT", typeof (DnatModule), GetOptions, true);
         }
 
-        public bool Equals(DnatModule other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) && ToDestination.Equals(other.ToDestination);
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((DnatModule) obj);
         }
 

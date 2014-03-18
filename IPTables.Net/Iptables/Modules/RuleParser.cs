@@ -7,18 +7,14 @@ namespace IPTables.Net.Iptables.Modules
     internal class RuleParser
     {
         private readonly string[] _arguments;
+        private readonly IpTablesChainSet _chains;
         private readonly IpTablesRule _ipRule;
         private readonly ModuleFactory _moduleFactory = new ModuleFactory();
         private readonly List<ModuleEntry> _parsers = new List<ModuleEntry>();
-        private readonly IpTablesChainSet _chains;
-
-        public IpTablesChain GetChain(IpTablesSystem system)
-        {
-            return _chains.GetChainOrAdd(_chainName, _tableName, system);
-        }
-        private String _chainName = null;
-        private String _tableName;
         public int Position = 0;
+
+        private String _chainName;
+        private String _tableName;
 
         public RuleParser(string[] arguments, IpTablesRule ipRule, IpTablesChainSet chains, String defaultTable)
         {
@@ -27,6 +23,11 @@ namespace IPTables.Net.Iptables.Modules
             _parsers.AddRange(_moduleFactory.GetPreloadModules());
             _chains = chains;
             _tableName = defaultTable;
+        }
+
+        public IpTablesChain GetChain(IpTablesSystem system)
+        {
+            return _chains.GetChainOrAdd(_chainName, _tableName, system);
         }
 
         public string GetCurrentArg()
@@ -96,7 +97,7 @@ namespace IPTables.Net.Iptables.Modules
             ModuleEntry entry;
             if (isTarget)
             {
-                var entryOrNull = _moduleFactory.GetModuleOrDefault(getNextArg, true);
+                ModuleEntry? entryOrNull = _moduleFactory.GetModuleOrDefault(getNextArg, true);
 
                 //Check if this target is loadable target
                 if (!entryOrNull.HasValue)

@@ -81,6 +81,7 @@
     <Compile Include="Iptables\Modules\Recent\RecentMode.cs" />
     <Compile Include="Iptables\Modules\Recent\RecentModule.cs" />
     <Compile Include="Iptables\Modules\TcpMss\TcpMssModule.cs" />
+    <Compile Include="Iptables\Modules\Multiport\MultiportModule.cs" />
     <Compile Include="Iptables\Modules\Udp\UdpModule.cs" />
     <Compile Include="Iptables\Modules\ModuleEntry.cs" />
     <Compile Include="Iptables\ModuleFactory.cs" />

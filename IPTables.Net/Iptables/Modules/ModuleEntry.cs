@@ -5,11 +5,11 @@ namespace IPTables.Net.Iptables.Modules
 {
     public struct ModuleEntry
     {
+        public bool IsTarget;
         public Type Module;
         public String Name;
-        public bool IsTarget;
         public IEnumerable<String> Options;
-        public bool Preloaded;
         public bool Polyfill;
+        public bool Preloaded;
     }
 }

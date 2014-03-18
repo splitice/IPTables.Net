@@ -60,6 +60,7 @@
     <Compile Include="SingleConnlimitRuleParseTests.cs" />
     <Compile Include="SingleCommentRuleParseTests.cs" />
     <Compile Include="SingleDnatRuleParseTests.cs" />
+    <Compile Include="SingleMultiportRuleParseTests.cs" />
     <Compile Include="SingleLogRuleParseTests.cs" />
     <Compile Include="SingleSnatRuleParseTests.cs" />
     <Compile Include="SingleRecentRuleParseTests.cs" />

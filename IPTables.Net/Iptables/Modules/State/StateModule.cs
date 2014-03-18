@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
 
@@ -12,12 +11,16 @@ namespace IPTables.Net.Iptables.Modules.State
 
         public ConnectionStateSet State = null;
 
+        public bool Equals(StateModule other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(State, other.State);
+        }
+
         public bool NeedsLoading
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
@@ -48,9 +51,9 @@ namespace IPTables.Net.Iptables.Modules.State
         public static IEnumerable<String> GetOptions()
         {
             var options = new List<string>
-                          {
-                              OptionState
-                          };
+            {
+                OptionState
+            };
             return options;
         }
 
@@ -59,18 +62,11 @@ namespace IPTables.Net.Iptables.Modules.State
             return GetModuleEntryInternal("state", typeof (StateModule), GetOptions, true);
         }
 
-        public bool Equals(StateModule other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(State, other.State);
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((StateModule) obj);
         }
 

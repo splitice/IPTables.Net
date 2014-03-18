@@ -16,12 +16,16 @@ namespace IPTables.Net.Iptables.Modules.Snat
         public bool Random = false;
         public IPPortOrRange ToSource = new IPPortOrRange(IPAddress.Any);
 
+        public bool Equals(SnatModule other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) && ToSource.Equals(other.ToSource);
+        }
+
         public bool NeedsLoading
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
@@ -76,31 +80,24 @@ namespace IPTables.Net.Iptables.Modules.Snat
         public static IEnumerable<String> GetOptions()
         {
             var options = new List<string>
-                          {
-                              OptionToSource,
-                              OptionRandom,
-                              OptionPersisent
-                          };
+            {
+                OptionToSource,
+                OptionRandom,
+                OptionPersisent
+            };
             return options;
         }
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("SNAT", typeof(SnatModule), GetOptions, true);
-        }
-
-        public bool Equals(SnatModule other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) && ToSource.Equals(other.ToSource);
+            return GetTargetModuleEntryInternal("SNAT", typeof (SnatModule), GetOptions, true);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((SnatModule) obj);
         }
 

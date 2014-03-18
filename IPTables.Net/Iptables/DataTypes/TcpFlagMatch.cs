@@ -26,6 +26,13 @@ namespace IPTables.Net.Iptables.DataTypes
             get { throw new NotImplementedException(); }
         }
 
+        public bool Equals(TcpFlagMatch other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Comparing.SetEquals(other.Comparing) && MustHave.SetEquals(other.MustHave);
+        }
+
         public override String ToString()
         {
             String ret = "";
@@ -80,7 +87,7 @@ namespace IPTables.Net.Iptables.DataTypes
         {
             if (sFlags == "ALL")
             {
-                return new List<TcpFlag> { TcpFlag.ACK, TcpFlag.FIN, TcpFlag.PSH, TcpFlag.RST, TcpFlag.SYN, TcpFlag.URG };
+                return new List<TcpFlag> {TcpFlag.ACK, TcpFlag.FIN, TcpFlag.PSH, TcpFlag.RST, TcpFlag.SYN, TcpFlag.URG};
             }
             if (sFlags == "NONE")
             {
@@ -99,18 +106,11 @@ namespace IPTables.Net.Iptables.DataTypes
             return new TcpFlagMatch(GetFlags(comparing), GetFlags(mustHave));
         }
 
-        public bool Equals(TcpFlagMatch other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Comparing.SetEquals(other.Comparing) && MustHave.SetEquals(other.MustHave);
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((TcpFlagMatch) obj);
         }
 
@@ -118,7 +118,8 @@ namespace IPTables.Net.Iptables.DataTypes
         {
             unchecked
             {
-                return ((Comparing != null ? Comparing.GetHashCode() : 0)*397) ^ (MustHave != null ? MustHave.GetHashCode() : 0);
+                return ((Comparing != null ? Comparing.GetHashCode() : 0)*397) ^
+                       (MustHave != null ? MustHave.GetHashCode() : 0);
             }
         }
     }

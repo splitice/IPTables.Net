@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SystemInteract;
 
 namespace IPTables.Net.Iptables
 {
-    static class ExecutionHelper
+    internal static class ExecutionHelper
     {
         public static ISystemProcess ExecuteIptables(IpTablesSystem system, String command)
         {
-            var process = system.System.StartProcess("iptables", command);
+            ISystemProcess process = system.System.StartProcess("iptables", command);
             process.WaitForExit();
 
             //OK

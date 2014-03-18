@@ -12,12 +12,16 @@ namespace IPTables.Net.Iptables.Modules.Mark
 
         public ValueOrNot<int> Mark = new ValueOrNot<int>();
 
+        public bool Equals(MarkLoadableModule other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Mark.Equals(other.Mark);
+        }
+
         public bool NeedsLoading
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
@@ -49,29 +53,22 @@ namespace IPTables.Net.Iptables.Modules.Mark
         public static IEnumerable<String> GetOptions()
         {
             var options = new List<string>
-                          {
-                              OptionMarkLong
-                          };
+            {
+                OptionMarkLong
+            };
             return options;
         }
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("mark", typeof(MarkLoadableModule), GetOptions);
-        }
-
-        public bool Equals(MarkLoadableModule other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Mark.Equals(other.Mark);
+            return GetModuleEntryInternal("mark", typeof (MarkLoadableModule), GetOptions);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((MarkLoadableModule) obj);
         }
 

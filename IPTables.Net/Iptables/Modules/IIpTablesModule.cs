@@ -4,8 +4,7 @@ namespace IPTables.Net.Iptables.Modules
 {
     public interface IIpTablesModule
     {
-        String GetRuleString();
-
         bool NeedsLoading { get; }
+        String GetRuleString();
     }
 }

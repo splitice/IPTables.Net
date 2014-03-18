@@ -45,6 +45,14 @@ namespace IPTables.Net.Iptables.DataTypes
             get { return _null; }
         }
 
+        public bool Equals(ValueOrNot<T> other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return _not.Equals(other._not) && _null.Equals(other._null) &&
+                   (_null || EqualityComparer<T>.Default.Equals(_value, other._value));
+        }
+
         public void Set(bool not, T value)
         {
             _not = not;
@@ -86,18 +94,11 @@ namespace IPTables.Net.Iptables.DataTypes
             return built;
         }
 
-        public bool Equals(ValueOrNot<T> other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return _not.Equals(other._not) && _null.Equals(other._null) && (_null || EqualityComparer<T>.Default.Equals(_value, other._value));
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((ValueOrNot<T>) obj);
         }
 

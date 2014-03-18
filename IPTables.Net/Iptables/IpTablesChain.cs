@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SystemInteract;
 
 namespace IPTables.Net.Iptables
 {
     public class IpTablesChain
     {
         private readonly String _name;
+        private readonly List<IpTablesRule> _rules;
+        private readonly IpTablesSystem _system;
         private readonly String _table;
-        private IpTablesSystem _system;
 
         public IpTablesChain(String table, String chainName, IpTablesSystem system, List<IpTablesRule> rules)
         {
@@ -37,24 +37,19 @@ namespace IPTables.Net.Iptables
             get { return _table; }
         }
 
-        private List<IpTablesRule> _rules;
         public List<IpTablesRule> Rules
         {
-            get
-            {
-                return _rules;
-            }
+            get { return _rules; }
         }
 
         internal IpTablesSystem System
         {
-            get
-            {
-                return _system;
-            }
+            get { return _system; }
         }
 
-        public void Sync(IEnumerable<IpTablesRule> with, Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate = null, Func<IpTablesRule, bool> shouldDelete = null)
+        public void Sync(IEnumerable<IpTablesRule> with,
+            Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate = null,
+            Func<IpTablesRule, bool> shouldDelete = null)
         {
             if (ruleComparerForUpdate == null)
             {
@@ -62,12 +57,12 @@ namespace IPTables.Net.Iptables
             }
             if (shouldDelete == null)
             {
-                shouldDelete = (a) => true;
+                shouldDelete = a => true;
             }
-            var currentRules = Rules.ToList();
+            List<IpTablesRule> currentRules = Rules.ToList();
 
             int i = 0, len = with.Count();
-            foreach(var cR in currentRules)
+            foreach (IpTablesRule cR in currentRules)
             {
                 //Delete any extra rules
                 if (i == len)
@@ -77,7 +72,7 @@ namespace IPTables.Net.Iptables
                 }
 
                 //Get the rule for comparison
-                var withRule = with.ElementAt(i);
+                IpTablesRule withRule = with.ElementAt(i);
 
                 if (cR.Equals(withRule))
                 {
@@ -100,8 +95,8 @@ namespace IPTables.Net.Iptables
             }
 
             //Get rules to be added
-            var remaining = with.Skip(i);
-            foreach (var rR in remaining)
+            IEnumerable<IpTablesRule> remaining = with.Skip(i);
+            foreach (IpTablesRule rR in remaining)
             {
                 rR.Add();
             }

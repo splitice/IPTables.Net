@@ -9,10 +9,17 @@ namespace IPTables.Net.Iptables.Modules.Log
     {
         private const String OptionPrefixLong = "--log-prefix";
         private const String OptionLevelLong = "--log-level";
-        
 
-        public String LogPrefix;
+
         public int LogLevel = 7;
+        public String LogPrefix;
+
+        public bool Equals(LogModule other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(LogPrefix, other.LogPrefix) && LogLevel == other.LogLevel;
+        }
 
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
@@ -32,10 +39,7 @@ namespace IPTables.Net.Iptables.Modules.Log
 
         public bool NeedsLoading
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         public String GetRuleString()
@@ -44,7 +48,7 @@ namespace IPTables.Net.Iptables.Modules.Log
 
             if (LogPrefix != null)
             {
-                sb.Append(OptionPrefixLong+" ");
+                sb.Append(OptionPrefixLong + " ");
                 sb.Append(Helpers.EscapeArguments(LogPrefix));
             }
 
@@ -58,30 +62,23 @@ namespace IPTables.Net.Iptables.Modules.Log
         public static IEnumerable<String> GetOptions()
         {
             var options = new List<string>
-                          {
-                              OptionLevelLong,
-                              OptionPrefixLong
-                          };
+            {
+                OptionLevelLong,
+                OptionPrefixLong
+            };
             return options;
         }
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("LOG", typeof(LogModule), GetOptions);
-        }
-
-        public bool Equals(LogModule other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return string.Equals(LogPrefix, other.LogPrefix) && LogLevel == other.LogLevel;
+            return GetTargetModuleEntryInternal("LOG", typeof (LogModule), GetOptions);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((LogModule) obj);
         }
 

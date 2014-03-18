@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.TcpMss
 {
@@ -11,12 +10,16 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
 
         public bool ClampMssToPmtu = false;
 
+        public bool Equals(TcpMssModule other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return ClampMssToPmtu.Equals(other.ClampMssToPmtu);
+        }
+
         public bool NeedsLoading
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
@@ -48,9 +51,9 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
         public static IEnumerable<String> GetOptions()
         {
             var options = new List<string>
-                          {
-                              OptionClampMssToPmtuLong
-                          };
+            {
+                OptionClampMssToPmtuLong
+            };
             return options;
         }
 
@@ -59,18 +62,11 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
             return GetTargetModuleEntryInternal("TCPMSS", typeof (TcpMssModule), GetOptions);
         }
 
-        public bool Equals(TcpMssModule other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return ClampMssToPmtu.Equals(other.ClampMssToPmtu);
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((TcpMssModule) obj);
         }
 

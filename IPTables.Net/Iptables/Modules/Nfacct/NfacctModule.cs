@@ -11,6 +11,13 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
 
         public String Name;
 
+        public bool Equals(NfacctModule other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(Name, other.Name);
+        }
+
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
@@ -25,10 +32,7 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
 
         public bool NeedsLoading
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         public String GetRuleString()
@@ -47,9 +51,9 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
         public static IEnumerable<String> GetOptions()
         {
             var options = new List<string>
-                          {
-                              OptionNameLong
-                          };
+            {
+                OptionNameLong
+            };
             return options;
         }
 
@@ -58,18 +62,11 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
             return GetModuleEntryInternal("nfacct", typeof (NfacctModule), GetOptions);
         }
 
-        public bool Equals(NfacctModule other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return string.Equals(Name, other.Name);
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((NfacctModule) obj);
         }
 

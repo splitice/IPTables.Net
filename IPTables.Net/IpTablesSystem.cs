@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using SystemInteract;
 using IPTables.Net.Iptables;
-using IPTables.Net.Iptables.Modules.Core;
 
 namespace IPTables.Net
 {
@@ -18,10 +16,7 @@ namespace IPTables.Net
 
         public ISystemFactory System
         {
-            get
-            {
-                return _system;
-            }
+            get { return _system; }
         }
 
         public IpTablesChainSet GetRulesFromOutput(String output, String table, bool ignoreErrors = false)
@@ -57,7 +52,7 @@ namespace IPTables.Net
                         {
                             throw new Exception("Parsing error, could not find end of counters");
                         }
-                        string[] counters = line.Substring(1, positionEnd-1).Split(new[] {':'});
+                        string[] counters = line.Substring(1, positionEnd - 1).Split(new[] {':'});
                         line = line.Substring(positionEnd + 1);
 
                         try
@@ -95,10 +90,7 @@ namespace IPTables.Net
                             }
                             return ret;
                         }
-                        else
-                        {
-                            throw new Exception("Unexepected table \""+table+"\" found \""+ttable+"\" instead");
-                        }
+                        throw new Exception("Unexepected table \"" + table + "\" found \"" + ttable + "\" instead");
                 }
             }
 
@@ -107,7 +99,7 @@ namespace IPTables.Net
 
         public IpTablesChainSet GetRules(string table)
         {
-            var process = _system.StartProcess("iptables-save", String.Format("-c -t {0}", table));
+            ISystemProcess process = _system.StartProcess("iptables-save", String.Format("-c -t {0}", table));
             process.WaitForExit();
             return GetRulesFromOutput(process.StandardOutput.ReadToEnd(), table);
         }
@@ -125,7 +117,7 @@ namespace IPTables.Net
 
         public IpTablesChain GetChain(string table, string chain)
         {
-            var tableRules = GetRules(table);
+            IpTablesChainSet tableRules = GetRules(table);
             return tableRules.GetChainOrDefault(chain, table);
         }
 
@@ -157,7 +149,7 @@ namespace IPTables.Net
             String command = String.Format("-t {0} -N {1}", chain.Table, chain.Name);
             ExecutionHelper.ExecuteIptables(this, command);
 
-            foreach (var r in chain.Rules)
+            foreach (IpTablesRule r in chain.Rules)
             {
                 r.Add();
             }

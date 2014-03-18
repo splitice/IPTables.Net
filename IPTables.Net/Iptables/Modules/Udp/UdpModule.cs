@@ -15,12 +15,16 @@ namespace IPTables.Net.Iptables.Modules.Udp
         public ValueOrNot<PortOrRange> DestinationPort = new ValueOrNot<PortOrRange>();
         public ValueOrNot<PortOrRange> SourcePort = new ValueOrNot<PortOrRange>();
 
+        public bool Equals(UdpModule other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(DestinationPort, other.DestinationPort) && Equals(SourcePort, other.SourcePort);
+        }
+
         public bool NeedsLoading
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
@@ -65,32 +69,25 @@ namespace IPTables.Net.Iptables.Modules.Udp
         public static IEnumerable<String> GetOptions()
         {
             var options = new List<string>
-                          {
-                              OptionSourcePortLong,
-                              OptionSourcePortShort,
-                              OptionDestinationPortShort,
-                              OptionDestinationPortLong
-                          };
+            {
+                OptionSourcePortLong,
+                OptionSourcePortShort,
+                OptionDestinationPortShort,
+                OptionDestinationPortLong
+            };
             return options;
         }
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("udp", typeof(UdpModule), GetOptions);
-        }
-
-        public bool Equals(UdpModule other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(DestinationPort, other.DestinationPort) && Equals(SourcePort, other.SourcePort);
+            return GetModuleEntryInternal("udp", typeof (UdpModule), GetOptions);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((UdpModule) obj);
         }
 

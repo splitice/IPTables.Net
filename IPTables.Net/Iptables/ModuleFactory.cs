@@ -8,6 +8,7 @@ using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Dnat;
 using IPTables.Net.Iptables.Modules.Log;
 using IPTables.Net.Iptables.Modules.Mark;
+using IPTables.Net.Iptables.Modules.Multiport;
 using IPTables.Net.Iptables.Modules.Nfacct;
 using IPTables.Net.Iptables.Modules.Polyfill;
 using IPTables.Net.Iptables.Modules.Recent;
@@ -22,24 +23,25 @@ namespace IPTables.Net.Iptables
     public class ModuleFactory
     {
         public static List<Func<ModuleEntry>> AllModules = new List<Func<ModuleEntry>>
-                                                           {
-                                                               CoreModule.GetModuleEntry,
-                                                               RejectTargetModule.GetModuleEntry,
-                                                               TcpModule.GetModuleEntry,
-                                                               UdpModule.GetModuleEntry,
-                                                               DnatModule.GetModuleEntry,
-                                                               SnatModule.GetModuleEntry,
-                                                               ConnlimitModule.GetModuleEntry,
-                                                               CommentModule.GetModuleEntry,
-                                                               NfacctModule.GetModuleEntry,
-                                                               StateModule.GetModuleEntry,
-                                                               MarkLoadableModule.GetModuleEntry,
-                                                               MarkTargetModule.GetModuleEntry,
-                                                               RecentModule.GetModuleEntry,
-                                                               TcpMssModule.GetModuleEntry,
-                                                               LogModule.GetModuleEntry,
-                                                               PolyfillModule.GetModuleEntry
-                                                           };
+        {
+            CoreModule.GetModuleEntry,
+            RejectTargetModule.GetModuleEntry,
+            TcpModule.GetModuleEntry,
+            UdpModule.GetModuleEntry,
+            DnatModule.GetModuleEntry,
+            SnatModule.GetModuleEntry,
+            ConnlimitModule.GetModuleEntry,
+            CommentModule.GetModuleEntry,
+            NfacctModule.GetModuleEntry,
+            StateModule.GetModuleEntry,
+            MarkLoadableModule.GetModuleEntry,
+            MarkTargetModule.GetModuleEntry,
+            RecentModule.GetModuleEntry,
+            TcpMssModule.GetModuleEntry,
+            MultiportModule.GetModuleEntry,
+            LogModule.GetModuleEntry,
+            PolyfillModule.GetModuleEntry
+        };
 
         private readonly Dictionary<String, ModuleEntry> _modules = new Dictionary<string, ModuleEntry>();
 
@@ -59,17 +61,17 @@ namespace IPTables.Net.Iptables
             {
                 if (polyfill)
                 {
-                    var pm = _modules.Select((a) => a.Value).Where((a) => a.Polyfill);
+                    IEnumerable<ModuleEntry> pm = _modules.Select(a => a.Value).Where(a => a.Polyfill);
                     if (pm.Count() != 0)
                     {
-                        var moduleEntry = pm.FirstOrDefault();
+                        ModuleEntry moduleEntry = pm.FirstOrDefault();
                         moduleEntry.Name = module;
                         return moduleEntry;
                     }
                 }
                 throw new Exception(String.Format("The factory could not find module: {0}", module));
             }
-            var m = _modules[module];
+            ModuleEntry m = _modules[module];
             if (m.IsTarget == target)
                 return m;
 
@@ -87,7 +89,7 @@ namespace IPTables.Net.Iptables
             {
                 return null;
             }
-            var m = _modules[module];
+            ModuleEntry m = _modules[module];
             if (m.IsTarget == target)
                 return m;
 

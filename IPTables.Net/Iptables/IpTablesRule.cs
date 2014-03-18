@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using SystemInteract;
 using IPTables.Net.Common;
 using IPTables.Net.Iptables.Modules;
-using IPTables.Net.Iptables.Modules.Core;
 
 namespace IPTables.Net.Iptables
 {
@@ -13,47 +10,45 @@ namespace IPTables.Net.Iptables
     {
         //Stats
         private readonly Dictionary<String, IIpTablesModuleGod> _modules = new Dictionary<String, IIpTablesModuleGod>();
+        private readonly IpTablesSystem _system;
         public long Bytes = 0;
-        public long Packets = 0;
         public IpTablesChain Chain;
-
-        public String Table
-        {
-            get
-            {
-                return Chain.Table;
-            }
-        }
-
-        public String ChainName
-        {
-            get
-            {
-                return Chain.Name;
-            }
-        }
-
-        public int Position
-        {
-            get
-            {
-                return Chain.Rules.IndexOf(this) + 1;
-            }
-        }
-        private IpTablesSystem _system;
-
-        internal IpTablesSystem System
-        {
-            get
-            {
-                return _system;
-            }
-        }
+        public long Packets = 0;
 
         public IpTablesRule(IpTablesSystem system, IpTablesChain chain)
         {
             _system = system;
             Chain = chain;
+        }
+
+        public String Table
+        {
+            get { return Chain.Table; }
+        }
+
+        public String ChainName
+        {
+            get { return Chain.Name; }
+        }
+
+        public int Position
+        {
+            get { return Chain.Rules.IndexOf(this) + 1; }
+        }
+
+        internal IpTablesSystem System
+        {
+            get { return _system; }
+        }
+
+        internal Dictionary<String, IIpTablesModuleGod> ModulesInternal
+        {
+            get { return _modules; }
+        }
+
+        public IEnumerable<IIpTablesModule> Modules
+        {
+            get { return _modules.Values.Select(a => a as IIpTablesModule); }
         }
 
         public bool Equals(IpTablesRule rule)
@@ -67,20 +62,7 @@ namespace IPTables.Net.Iptables
             {
                 return Equals(obj as IpTablesRule);
             }
- 	        return base.Equals(obj);
-        }
-
-        internal Dictionary<String, IIpTablesModuleGod> ModulesInternal
-        {
-            get { return _modules; }
-        }
-
-        public IEnumerable<IIpTablesModule> Modules
-        {
-            get
-            {
-                return _modules.Values.Select((a) => a as IIpTablesModule);
-            }
+            return base.Equals(obj);
         }
 
 
@@ -114,7 +96,8 @@ namespace IPTables.Net.Iptables
             {
                 if (Position == -1)
                 {
-                    throw new Exception("This rule does not have a specific position and hence can not be located for replace");
+                    throw new Exception(
+                        "This rule does not have a specific position and hence can not be located for replace");
                 }
                 command += Position + " ";
             }
@@ -161,7 +144,7 @@ namespace IPTables.Net.Iptables
                 return _modules[name];
             }
 
-            var module = (IIpTablesModuleGod)Activator.CreateInstance(moduleType);
+            var module = (IIpTablesModuleGod) Activator.CreateInstance(moduleType);
             _modules.Add(name, module);
             return module;
         }
@@ -194,7 +177,8 @@ namespace IPTables.Net.Iptables
             return (new string(parmChars)).Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        public static IpTablesRule Parse(String rule, IpTablesSystem system, IpTablesChainSet chains, String defaultTable = "filter")
+        public static IpTablesRule Parse(String rule, IpTablesSystem system, IpTablesChainSet chains,
+            String defaultTable = "filter")
         {
             string[] arguments = SplitArguments(rule);
             int count = arguments.Length;
@@ -218,7 +202,7 @@ namespace IPTables.Net.Iptables
             return ipRule;
         }
 
-        public T GetModule<T>(string moduleName) where T: class, IIpTablesModule
+        public T GetModule<T>(string moduleName) where T : class, IIpTablesModule
         {
             if (!_modules.ContainsKey(moduleName)) return null;
             return _modules[moduleName] as T;
@@ -226,12 +210,12 @@ namespace IPTables.Net.Iptables
 
         public T GetModuleOrLoad<T>(string moduleName) where T : class, IIpTablesModule
         {
-            return GetModuleForParse(moduleName, typeof(T)) as T;
+            return GetModuleForParse(moduleName, typeof (T)) as T;
         }
 
         public void Replace(IpTablesRule withRule)
         {
-            var idx = Chain.Rules.IndexOf(this);
+            int idx = Chain.Rules.IndexOf(this);
             String command = withRule.GetFullCommand("-R");
             ExecutionHelper.ExecuteIptables(_system, command);
             Chain.Rules[idx] = withRule;

@@ -9,13 +9,13 @@ namespace IPTables.Net.Iptables.Modules
             Func<IEnumerable<String>> options, bool preloaded = false)
         {
             var entry = new ModuleEntry
-                        {
-                            Name = moduleName,
-                            Module = moduleType,
-                            Options = options(),
-                            Preloaded = preloaded,
-                            IsTarget = false
-                        };
+            {
+                Name = moduleName,
+                Module = moduleType,
+                Options = options(),
+                Preloaded = preloaded,
+                IsTarget = false
+            };
             return entry;
         }
 
@@ -23,13 +23,13 @@ namespace IPTables.Net.Iptables.Modules
             Func<IEnumerable<String>> options, bool preloaded = false)
         {
             var entry = new ModuleEntry
-                        {
-                            Name = moduleName,
-                            Module = moduleType,
-                            Options = options(),
-                            Preloaded = preloaded,
-                            IsTarget = true
-                        };
+            {
+                Name = moduleName,
+                Module = moduleType,
+                Options = options(),
+                Preloaded = preloaded,
+                IsTarget = true
+            };
             return entry;
         }
     }

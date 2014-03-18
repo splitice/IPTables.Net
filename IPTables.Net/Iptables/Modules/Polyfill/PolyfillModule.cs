@@ -7,23 +7,27 @@ namespace IPTables.Net.Iptables.Modules.Polyfill
 {
     public class PolyfillModule : ModuleBase, IIpTablesModuleGod, IEquatable<PolyfillModule>
     {
-        private Dictionary<String, List<String>> _data = new Dictionary<String, List<String>>();
+        private readonly Dictionary<String, List<String>> _data = new Dictionary<String, List<String>>();
+
+        public bool Equals(PolyfillModule other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return _data.SequenceEqual(other._data);
+        }
 
         public bool NeedsLoading
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
         {
             String current = parser.GetCurrentArg();
             _data.Add(current, new List<string>());
-            for (var i = 1; i < parser.GetRemainingArgs(); i++)
+            for (int i = 1; i < parser.GetRemainingArgs(); i++)
             {
-                var arg = parser.GetNextArg(i);
+                string arg = parser.GetNextArg(i);
                 if (arg[0] == '-')
                 {
                     return i - 1;
@@ -41,14 +45,14 @@ namespace IPTables.Net.Iptables.Modules.Polyfill
             {
                 sb.Append(pair.Key);
                 sb.Append(" ");
-                foreach (var a in pair.Value)
+                foreach (string a in pair.Value)
                 {
                     sb.Append(a);
                     sb.Append(" ");
                 }
             }
 
-            return sb.ToString().TrimEnd(new char[]{ ' ' });
+            return sb.ToString().TrimEnd(new[] {' '});
         }
 
         public static ModuleEntry GetModuleEntry()
@@ -67,18 +71,11 @@ namespace IPTables.Net.Iptables.Modules.Polyfill
             return entry;
         }
 
-        public bool Equals(PolyfillModule other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return _data.SequenceEqual(other._data);
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((PolyfillModule) obj);
         }
 
