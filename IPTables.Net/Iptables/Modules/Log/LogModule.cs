@@ -61,6 +61,7 @@ namespace IPTables.Net.Iptables.Modules.Log
         {
             var options = new List<string>
                           {
+                              OptionLevelLong,
                               OptionPrefixLong
                           };
             return options;
