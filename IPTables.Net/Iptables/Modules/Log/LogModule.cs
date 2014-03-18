@@ -48,11 +48,8 @@ namespace IPTables.Net.Iptables.Modules.Log
                 sb.Append(Helpers.EscapeArguments(LogPrefix));
             }
 
-            if (LogLevel != 7)
-            {
-                sb.Append(OptionLevelLong + " ");
-                sb.Append(LogLevel);
-            }
+            sb.Append(OptionLevelLong + " ");
+            sb.Append(LogLevel);
 
             return sb.ToString();
         }
