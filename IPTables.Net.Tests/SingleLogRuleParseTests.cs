@@ -10,7 +10,7 @@ namespace IPTables.Net.Tests
         [Test]
         public void TestLogWithPrefix()
         {
-            String rule = "-A INPUT --log-prefix \"IPTABLES (Rule ATTACKED): \" --log-level 7";
+            String rule = "-A INPUT -j LOG --log-prefix \"IPTABLES (Rule ATTACKED): \" --log-level 7";
             IpTablesChainSet chains = new IpTablesChainSet();
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);

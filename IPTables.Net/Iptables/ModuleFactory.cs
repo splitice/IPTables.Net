@@ -6,6 +6,7 @@ using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.Modules.Connlimit;
 using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Dnat;
+using IPTables.Net.Iptables.Modules.Log;
 using IPTables.Net.Iptables.Modules.Mark;
 using IPTables.Net.Iptables.Modules.Nfacct;
 using IPTables.Net.Iptables.Modules.Polyfill;
@@ -36,6 +37,7 @@ namespace IPTables.Net.Iptables
                                                                MarkTargetModule.GetModuleEntry,
                                                                RecentModule.GetModuleEntry,
                                                                TcpMssModule.GetModuleEntry,
+                                                               LogModule.GetModuleEntry,
                                                                PolyfillModule.GetModuleEntry
                                                            };
 
