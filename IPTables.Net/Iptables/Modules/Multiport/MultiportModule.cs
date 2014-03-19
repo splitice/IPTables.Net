@@ -22,7 +22,12 @@ namespace IPTables.Net.Iptables.Modules.Multiport
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Ports.Value.SetEquals(other.Ports.Value) && DestinationPorts.Value.SetEquals(other.DestinationPorts.Value) &&
+            return Ports.Not == other.Ports.Not && DestinationPorts.Not == other.DestinationPorts.Not &&
+                   SourcePorts.Not == other.SourcePorts.Not && Ports.Null == other.Ports.Null && !Ports.Null &&
+                   SourcePorts.Null == other.SourcePorts.Null && !SourcePorts.Null &&
+                   DestinationPorts.Null == other.DestinationPorts.Null && !DestinationPorts.Null &&
+                   Ports.Value.SetEquals(other.Ports.Value) &&
+                   DestinationPorts.Value.SetEquals(other.DestinationPorts.Value) &&
                    SourcePorts.Value.SetEquals(other.SourcePorts.Value);
         }
 
@@ -40,7 +45,8 @@ namespace IPTables.Net.Iptables.Modules.Multiport
                     return 1;
                 case OptionDestinationPorts:
                 case OptionDestinationPortsLong:
-                    DestinationPorts = new ValueOrNot<HashSet<PortOrRange>>(ParseListOfPortOrRanges(parser.GetNextArg()), not);
+                    DestinationPorts = new ValueOrNot<HashSet<PortOrRange>>(
+                        ParseListOfPortOrRanges(parser.GetNextArg()), not);
                     return 1;
                 case OptionSourcePorts:
                 case OptionSourcePortsLong:
