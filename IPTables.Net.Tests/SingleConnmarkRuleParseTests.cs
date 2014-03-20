@@ -59,5 +59,17 @@ namespace IPTables.Net.Tests
 
             Assert.AreEqual(ruleExpect, irule.GetFullCommand());
         }
+
+        [Test]
+        public void TestXMarkMasked()
+        {
+            String rule = "-A RETURN_AFWCON -j CONNMARK --set-xmark 0x1/0x1";
+            IpTablesChainSet chains = new IpTablesChainSet();
+
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+
+            Assert.AreEqual(rule, irule.GetFullCommand());
+        }
+        
     }
 }

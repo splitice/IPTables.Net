@@ -9,7 +9,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
     {
         private const String OptionMarkLong = "--mark";
 
-        public ValueOrNot<int> Mark;
+        public ValueOrNot<int> Mark = new ValueOrNot<int>();
         public int Mask = unchecked ((int)0xFFFFFFFF);
 
         public bool Equals(MarkLoadableModule other)
