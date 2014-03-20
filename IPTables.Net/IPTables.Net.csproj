@@ -69,6 +69,8 @@
     <Compile Include="Iptables\IpTablesChainSet.cs" />
     <Compile Include="Iptables\IpTablesRule.cs" />
     <Compile Include="Iptables\IpTablesRuleSet.cs" />
+    <Compile Include="Iptables\Modules\Connmark\ConnmarkTargetModule.cs" />
+    <Compile Include="Iptables\Modules\Connmark\ConnmarkLoadableModule.cs" />
     <Compile Include="Iptables\Modules\Log\LogModule.cs" />
     <Compile Include="Iptables\Modules\Comment\CommentRuleExtension.cs" />
     <Compile Include="Iptables\Modules\Core\RejectTargetModule.cs" />

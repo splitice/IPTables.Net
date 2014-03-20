@@ -4,6 +4,7 @@ using System.Linq;
 using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.Modules.Connlimit;
+using IPTables.Net.Iptables.Modules.Connmark;
 using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Dnat;
 using IPTables.Net.Iptables.Modules.Log;
@@ -36,6 +37,8 @@ namespace IPTables.Net.Iptables
             StateModule.GetModuleEntry,
             MarkLoadableModule.GetModuleEntry,
             MarkTargetModule.GetModuleEntry,
+            ConnmarkLoadableModule.GetModuleEntry,
+            ConnmarkTargetModule.GetModuleEntry,
             RecentModule.GetModuleEntry,
             TcpMssModule.GetModuleEntry,
             MultiportModule.GetModuleEntry,

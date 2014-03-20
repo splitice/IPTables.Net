@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
 
-namespace IPTables.Net.Iptables.Modules.Mark
+namespace IPTables.Net.Iptables.Modules.Connmark
 {
-    public class MarkTargetModule : ModuleBase, IIpTablesModuleGod, IEquatable<MarkTargetModule>
+    public class ConnmarkTargetModule : ModuleBase, IIpTablesModuleGod, IEquatable<ConnmarkTargetModule>
     {
         private const String OptionSetMarkLong = "--set-mark";
         private const String OptionSetXMarkLong = "--set-xmark";
@@ -15,7 +16,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
         private const String OptionSetOrMarkLong = "--or-mark";
         private const String OptionSetXorMarkLong = "--xor-mark";
 
-        private const int DefaultMask = unchecked ((int) 0xFFFFFFFF);
+        private const int DefaultMask = unchecked((int)0xFFFFFFFF);
 
         private bool _markProvided = false;
         private bool _x = true;
@@ -53,7 +54,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
             _markProvided = true;
         }
 
-        public bool Equals(MarkTargetModule other)
+        public bool Equals(ConnmarkTargetModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -88,13 +89,13 @@ namespace IPTables.Net.Iptables.Modules.Mark
                 case OptionSetMarkLong:
                     var s1 = parser.GetNextArg().Split('/');
 
-                    SetMark(FlexibleInt.Parse(s1[0]), s1.Length == 1?DefaultMask:FlexibleInt.Parse(s1[1]));
+                    SetMark(FlexibleInt.Parse(s1[0]), s1.Length == 1 ? DefaultMask : FlexibleInt.Parse(s1[1]));
                     return 1;
 
                 case OptionSetXMarkLong:
                     var s2 = parser.GetNextArg().Split('/');
 
-                    SetXMark(FlexibleInt.Parse(s2[0]), s2.Length == 1?DefaultMask:FlexibleInt.Parse(s2[1]));
+                    SetXMark(FlexibleInt.Parse(s2[0]), s2.Length == 1 ? DefaultMask : FlexibleInt.Parse(s2[1]));
                     return 1;
             }
 
@@ -117,7 +118,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
                 }
                 sb.Append("0x");
                 sb.Append(_value.ToString("X"));
-                if (_mask != unchecked ((int)0xFFFFFFFF))
+                if (_mask != unchecked((int)0xFFFFFFFF))
                 {
                     sb.Append("/0x");
                     sb.Append(_mask.ToString("X"));
@@ -142,7 +143,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("MARK", typeof (MarkTargetModule), GetOptions);
+            return GetTargetModuleEntryInternal("CONNMARK", typeof(ConnmarkTargetModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -150,7 +151,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((MarkTargetModule) obj);
+            return Equals((ConnmarkTargetModule)obj);
         }
 
         public override int GetHashCode()
@@ -158,9 +159,9 @@ namespace IPTables.Net.Iptables.Modules.Mark
             unchecked
             {
                 int hashCode = _x.GetHashCode();
-                hashCode = (hashCode*397) ^ _markProvided.GetHashCode();
-                hashCode = (hashCode*397) ^ _value;
-                hashCode = (hashCode*397) ^ _mask;
+                hashCode = (hashCode * 397) ^ _markProvided.GetHashCode();
+                hashCode = (hashCode * 397) ^ _value;
+                hashCode = (hashCode * 397) ^ _mask;
                 return hashCode;
             }
         }

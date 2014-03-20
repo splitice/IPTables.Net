@@ -60,11 +60,13 @@
     <Compile Include="SingleConnlimitRuleParseTests.cs" />
     <Compile Include="SingleCommentRuleParseTests.cs" />
     <Compile Include="SingleDnatRuleParseTests.cs" />
+    <Compile Include="SingleConnmarkRuleParseTests.cs" />
     <Compile Include="SingleMultiportRuleParseTests.cs" />
     <Compile Include="SingleLogRuleParseTests.cs" />
     <Compile Include="SingleSnatRuleParseTests.cs" />
     <Compile Include="SingleRecentRuleParseTests.cs" />
     <Compile Include="SinglePolyfillTests.cs" />
+    <Compile Include="SingleMarkRuleParseTests.cs" />
     <Compile Include="SingleTcpRuleParseTests.cs" />
     <Compile Include="SingleCoreRuleParseTests.cs" />
   </ItemGroup>
