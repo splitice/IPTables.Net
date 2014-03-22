@@ -137,7 +137,7 @@ namespace IPTables.Net.Common
 		{
 			get
 			{
-				if(null == List)
+				if(null == _list)
 				{
 					_list = new List<KeyValuePair<TKey, TValue>>(_initialCapacity);
 				}
