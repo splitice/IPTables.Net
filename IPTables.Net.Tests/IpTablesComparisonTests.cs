@@ -11,7 +11,7 @@ namespace IPTables.Net.Tests
     class IpTablesComparisonTests
     {
         [Test]
-        public void TestComparison()
+        public void TestComparisonMultiport()
         {
             String rule = "-A INPUT -p tcp -j RETURN -m multiport --dports 79,22 -m comment --comment TCP";
 

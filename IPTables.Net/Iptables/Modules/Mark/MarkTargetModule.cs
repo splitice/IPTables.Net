@@ -18,14 +18,12 @@ namespace IPTables.Net.Iptables.Modules.Mark
         private const int DefaultMask = unchecked ((int) 0xFFFFFFFF);
 
         private bool _markProvided = false;
-        private bool _x = true;
-        private int _value = 0;
+        private int _mark = 0;
         private int _mask = unchecked((int)0xFFFFFFFF);
 
         public void SetXMark(int value, int mask = unchecked ((int)0xFFFFFFFF))
         {
-            _x = true;
-            _value = value;
+            _mark = value;
             _mask = mask;
             _markProvided = true;
         }
@@ -47,9 +45,8 @@ namespace IPTables.Net.Iptables.Modules.Mark
 
         public void SetMark(int value, int mask)
         {
-            _x = false;
-            _value = value;
-            _mask = mask;
+            _mark = value;
+            _mask = mask | value;
             _markProvided = true;
         }
 
@@ -57,7 +54,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return _x.Equals(other._x) && _markProvided.Equals(other._markProvided) && _value == other._value && _mask == other._mask;
+            return _markProvided.Equals(other._markProvided) && _mark == other._mark && _mask == other._mask;
         }
 
         public bool NeedsLoading
@@ -107,16 +104,9 @@ namespace IPTables.Net.Iptables.Modules.Mark
 
             if (_markProvided)
             {
-                if (_x)
-                {
-                    sb.Append(OptionSetXMarkLong + " ");
-                }
-                else
-                {
-                    sb.Append(OptionSetMarkLong + " ");
-                }
+                sb.Append(OptionSetXMarkLong + " ");
                 sb.Append("0x");
-                sb.Append(_value.ToString("X"));
+                sb.Append(_mark.ToString("X"));
                 if (_mask != unchecked ((int)0xFFFFFFFF))
                 {
                     sb.Append("/0x");
@@ -157,9 +147,8 @@ namespace IPTables.Net.Iptables.Modules.Mark
         {
             unchecked
             {
-                int hashCode = _x.GetHashCode();
-                hashCode = (hashCode*397) ^ _markProvided.GetHashCode();
-                hashCode = (hashCode*397) ^ _value;
+                int hashCode =  _markProvided.GetHashCode();
+                hashCode = (hashCode*397) ^ _mark;
                 hashCode = (hashCode*397) ^ _mask;
                 return hashCode;
             }
