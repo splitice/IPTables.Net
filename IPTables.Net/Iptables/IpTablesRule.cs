@@ -9,7 +9,7 @@ namespace IPTables.Net.Iptables
     public class IpTablesRule : IEquatable<IpTablesRule>
     {
         //Stats
-        private readonly Dictionary<String, IIpTablesModuleGod> _modules = new Dictionary<String, IIpTablesModuleGod>();
+        private readonly OrderedDictionary<String, IIpTablesModuleGod> _modules = new OrderedDictionary<String, IIpTablesModuleGod>();
         private readonly IpTablesSystem _system;
         public long Bytes = 0;
         public IpTablesChain Chain;
@@ -41,7 +41,7 @@ namespace IPTables.Net.Iptables
             get { return _system; }
         }
 
-        internal Dictionary<String, IIpTablesModuleGod> ModulesInternal
+        internal OrderedDictionary<String, IIpTablesModuleGod> ModulesInternal
         {
             get { return _modules; }
         }
