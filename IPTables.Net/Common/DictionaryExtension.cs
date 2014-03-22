@@ -8,16 +8,20 @@ namespace IPTables.Net.Common
             IDictionary<TKey, TValue> second)
         {
             if (first == second) return true;
-            if ((first == null) || (second == null)) return false;
-            if (first.Count != second.Count) return false;
+            if ((first == null) || (second == null)) 
+                return false;
+            if (first.Count != second.Count) 
+                return false;
 
             EqualityComparer<TValue> comparer = EqualityComparer<TValue>.Default;
 
             foreach (var kvp in first)
             {
                 TValue secondValue;
-                if (!second.TryGetValue(kvp.Key, out secondValue)) return false;
-                if (!comparer.Equals(kvp.Value, secondValue)) return false;
+                if (!second.TryGetValue(kvp.Key, out secondValue)) 
+                    return false;
+                if (!comparer.Equals(kvp.Value, secondValue)) 
+                    return false;
             }
             return true;
         }

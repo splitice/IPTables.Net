@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EscapeHelperTests.cs" />
+    <Compile Include="IpTablesComparisonTests.cs" />
     <Compile Include="IpTablesRuleSetTests.cs" />
     <Compile Include="IpTablesSaveReadingTests.cs" />
     <Compile Include="IpTablesSyncChainTests.cs" />

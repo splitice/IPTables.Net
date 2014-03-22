@@ -22,13 +22,25 @@ namespace IPTables.Net.Iptables.Modules.Multiport
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Ports.Not == other.Ports.Not && DestinationPorts.Not == other.DestinationPorts.Not &&
-                   SourcePorts.Not == other.SourcePorts.Not && Ports.Null == other.Ports.Null && !Ports.Null &&
-                   SourcePorts.Null == other.SourcePorts.Null && !SourcePorts.Null &&
-                   DestinationPorts.Null == other.DestinationPorts.Null && !DestinationPorts.Null &&
-                   Ports.Value.SetEquals(other.Ports.Value) &&
-                   DestinationPorts.Value.SetEquals(other.DestinationPorts.Value) &&
-                   SourcePorts.Value.SetEquals(other.SourcePorts.Value);
+
+            if (Ports.Null != other.Ports.Null ||
+                SourcePorts.Null != other.SourcePorts.Null ||
+                DestinationPorts.Null != other.DestinationPorts.Null)
+            {
+                return false;
+            }
+
+            //Not's all equal
+            if (Ports.Not != other.Ports.Not || DestinationPorts.Not != other.DestinationPorts.Not ||
+                SourcePorts.Not != other.SourcePorts.Not)
+            {
+                return false;
+            }
+
+            return 
+                   (Ports.Null || Ports.Value.SetEquals(other.Ports.Value)) &&
+                   (DestinationPorts.Null || DestinationPorts.Value.SetEquals(other.DestinationPorts.Value)) &&
+                   (SourcePorts.Null || SourcePorts.Value.SetEquals(other.SourcePorts.Value));
         }
 
         public bool NeedsLoading
