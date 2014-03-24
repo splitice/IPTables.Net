@@ -144,14 +144,21 @@ namespace IPTables.Net
             return new IpTablesChain(table, name, this, new List<IpTablesRule>());
         }
 
-        public IpTablesChain AddChain(IpTablesChain chain)
+        public IpTablesChain AddChain(IpTablesChain chain, bool addRules = false)
         {
             String command = String.Format("-t {0} -N {1}", chain.Table, chain.Name);
             ExecutionHelper.ExecuteIptables(this, command);
 
-            foreach (IpTablesRule r in chain.Rules)
+            if (addRules)
             {
-                r.Add();
+                foreach (IpTablesRule r in chain.Rules)
+                {
+                    r.Add();
+                }
+            }
+            else
+            {
+                chain = new IpTablesChain(chain.Table,chain.Name,chain.System);
             }
 
             return chain;

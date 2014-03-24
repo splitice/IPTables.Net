@@ -72,7 +72,7 @@ namespace IPTables.Net.Iptables
                 {
                     tableChains.Add(chain.Table, _system.GetChains(chain.Table).ToList());
                 }
-                if (tableChains[chain.Table].FirstOrDefault(a => a.Name == chain.Name) == null)
+                if (tableChains[chain.Table].FirstOrDefault(a => a.Name == chain.Name && a.Table == chain.Table) == null)
                 {
                     //Chain doesnt exist create
                     tableChains[chain.Table].Add(_system.AddChain(chain));

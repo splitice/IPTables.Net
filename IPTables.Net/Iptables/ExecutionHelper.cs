@@ -17,17 +17,17 @@ namespace IPTables.Net.Iptables
             //ERR: INVALID COMMAND LINE
             if (process.ExitCode == 2)
             {
-                throw new Exception("IPTables execution failed: Invalid Command Line");
+                throw new Exception("IPTables execution failed: Invalid Command Line - "+command);
             }
 
             //ERR: GENERAL ERROR
             if (process.ExitCode == 1)
             {
-                throw new Exception("IPTables execution failed: Error");
+                throw new Exception("IPTables execution failed: Error - " + command);
             }
 
             //ERR: UNKNOWN
-            throw new Exception("IPTables execution failed: Unknown Error");
+            throw new Exception("IPTables execution failed: Unknown Error - " + command);
         }
     }
 }
