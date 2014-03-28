@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IPTables.Net.Iptables;
+using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Tests.MockSystem;
@@ -17,7 +18,7 @@ namespace IPTables.Net.Tests
         public void TestAdd()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock);
+            var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
@@ -39,7 +40,7 @@ namespace IPTables.Net.Tests
         public void TestSimpleDoNothing()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock);
+            var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
@@ -60,7 +61,7 @@ namespace IPTables.Net.Tests
         public void TestNatDoNothing()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock);
+            var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
                                                    "-A PREROUTING -t nat -j DNAT -p tcp -m tcp --dport 80 --to-destination 99.99.99.99:80",
@@ -81,8 +82,7 @@ namespace IPTables.Net.Tests
         public void TestAddDuplicate()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock);
-            string chain;
+            var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
@@ -104,7 +104,7 @@ namespace IPTables.Net.Tests
         public void TestDelete()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock);
+            var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
 
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
@@ -116,7 +116,7 @@ namespace IPTables.Net.Tests
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                }, system);
 
-            List<String> expectedCommands = new List<String>() { rulesOriginal.Chains.First().Rules[1].GetPositionalDeleteCommand() };
+            List<String> expectedCommands = new List<String>() { "-D INPUT 2" };
 
             mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
         }
@@ -125,7 +125,7 @@ namespace IPTables.Net.Tests
         public void TestDeleteMultiples()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock);
+            var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
 
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
@@ -147,7 +147,7 @@ namespace IPTables.Net.Tests
         public void TestInsertMiddle()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock);
+            var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
 
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
@@ -163,7 +163,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>()
                                             {
-                                                rulesOriginal.Chains.First().Rules[1].GetPositionalDeleteCommand(),
+                                                "-D INPUT 2",
                                                 rulesNew.Chains.First().Rules[1].GetFullCommand(),
                                                 rulesNew.Chains.First().Rules[2].GetFullCommand()
                                             };
@@ -192,7 +192,7 @@ namespace IPTables.Net.Tests
         public void TestUpdateEnd()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock);
+            var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
 
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
@@ -217,7 +217,7 @@ namespace IPTables.Net.Tests
         public void TestUpdateBegin()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock);
+            var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
 
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
@@ -242,7 +242,7 @@ namespace IPTables.Net.Tests
         public void TestUpdateMiddle()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock);
+            var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
 
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {

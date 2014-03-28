@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using SystemInteract;
 using IPTables.Net.Iptables;
+using IPTables.Net.Iptables.Adapter;
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests.MockSystem
@@ -19,7 +20,7 @@ namespace IPTables.Net.Tests.MockSystem
 
         public void TestSync(IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, List<string> expectedCommands, MockIptablesSystemFactory mock, Func<IpTablesRule, IpTablesRule, bool> commentComparer = null)
         {
-            IpTablesSystem sys = new IpTablesSystem(mock);
+            IpTablesSystem sys = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
             IpTablesChain chain = rulesOriginal.Chains.First();
 
             if (commentComparer == null)

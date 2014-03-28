@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using SystemInteract;
 using IPTables.Net.Iptables;
+using IPTables.Net.Iptables.Adapter;
+using IPTables.Net.Iptables.Adapter.Client;
 
 namespace IPTables.Net
 {
     public class IpTablesSystem
     {
         private readonly ISystemFactory _system;
+        private readonly IIPTablesAdapterClient _adapter;
 
-        public IpTablesSystem(ISystemFactory system)
+        public IpTablesSystem(ISystemFactory system, IIPTablesAdapter adapter)
         {
             _system = system;
+            _adapter = adapter.GetClient(this);
         }
 
         public ISystemFactory System
@@ -19,89 +23,14 @@ namespace IPTables.Net
             get { return _system; }
         }
 
-        public IpTablesChainSet GetRulesFromOutput(String output, String table, bool ignoreErrors = false)
+        public IIPTablesAdapterClient Adapter
         {
-            var ret = new IpTablesChainSet();
-            String ttable = null;
-
-            foreach (string lineRaw in output.Split(new[] {'\n'}))
-            {
-                string line = lineRaw.Trim();
-
-                if (String.IsNullOrEmpty(line))
-                    continue;
-
-                char c = line[0];
-                IpTablesRule rule;
-                IpTablesChain chain;
-                switch (c)
-                {
-                    case '*':
-                        ttable = line.Substring(1);
-                        break;
-
-                    case ':':
-                        string[] split = line.Split(new[] {' '});
-                        ret.AddChain(new IpTablesChain(ttable, split[0].Substring(1), this));
-                        break;
-
-                        //Byte & packet count
-                    case '[':
-                        int positionEnd = line.IndexOf(']');
-                        if (positionEnd == -1)
-                        {
-                            throw new Exception("Parsing error, could not find end of counters");
-                        }
-                        string[] counters = line.Substring(1, positionEnd - 1).Split(new[] {':'});
-                        line = line.Substring(positionEnd + 1);
-
-                        try
-                        {
-                            rule = IpTablesRule.Parse(line, this, ret, ttable);
-                        }
-                        catch
-                        {
-                            if (ignoreErrors)
-                            {
-                                continue;
-                            }
-                            throw;
-                        }
-                        rule.Packets = long.Parse(counters[0]);
-                        rule.Bytes = long.Parse(counters[1]);
-                        ret.AddRule(rule);
-                        break;
-
-
-                    case '-':
-                        rule = IpTablesRule.Parse(line, this, ret, ttable);
-                        ret.AddRule(rule);
-                        break;
-
-                    case '#':
-                        break;
-
-                    case 'C':
-                        if (line == "COMMIT" && ttable == table)
-                        {
-                            if (ttable == null)
-                            {
-                                throw new Exception("Parsing error");
-                            }
-                            return ret;
-                        }
-                        throw new Exception("Unexepected table \"" + table + "\" found \"" + ttable + "\" instead");
-                }
-            }
-
-            return null;
+            get { return _adapter; }
         }
 
         public IpTablesChainSet GetRules(string table)
         {
-            ISystemProcess process = _system.StartProcess("iptables-save", String.Format("-c -t {0}", table));
-            process.WaitForExit();
-            return GetRulesFromOutput(process.StandardOutput.ReadToEnd(), table);
+            return _adapter.ListRules(table);
         }
 
         public List<IpTablesRule> GetRules(string table, string chain)

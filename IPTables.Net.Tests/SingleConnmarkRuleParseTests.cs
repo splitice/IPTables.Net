@@ -23,7 +23,6 @@ namespace IPTables.Net.Tests
         public void TestAndMark()
         {
             Int32 mark = 0;
-            Int32 markInverted = unchecked ((Int32)0xFFFFFFFF);
             String rule = "-A INPUT -p tcp -j CONNMARK --and-mark 0x" + mark.ToString("X");
             String ruleExpect = "-A INPUT -p tcp -j CONNMARK --set-xmark 0x0";
             IpTablesChainSet chains = new IpTablesChainSet();
@@ -37,7 +36,6 @@ namespace IPTables.Net.Tests
         public void TestOrMark()
         {
             Int32 mark = 0;
-            Int32 markInverted = unchecked((Int32)0xFFFFFFFF);
             String rule = "-A INPUT -p tcp -j CONNMARK --or-mark " + mark;
             String ruleExpect = "-A INPUT -p tcp -j CONNMARK --set-xmark 0x" + mark.ToString("X") + "/0x" + mark.ToString("X");
             IpTablesChainSet chains = new IpTablesChainSet();

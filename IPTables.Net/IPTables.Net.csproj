@@ -48,6 +48,11 @@
     <Compile Include="Common\DictionaryExtension.cs" />
     <Compile Include="Common\IOrderedDictionary.cs" />
     <Compile Include="Common\OrderedDictionary.cs" />
+    <Compile Include="Iptables\Adapter\Client\Helper\IPTablesSaveParser.cs" />
+    <Compile Include="Iptables\Adapter\Client\IIPTablesAdapterClient.cs" />
+    <Compile Include="Iptables\Adapter\Client\IPTablesBinaryAdapterClient.cs" />
+    <Compile Include="Iptables\Adapter\IIPTablesAdapter.cs" />
+    <Compile Include="Iptables\Adapter\IPTablesBinaryAdapter.cs" />
     <Compile Include="Iptables\ControlFlowRuleHelper.cs" />
     <Compile Include="Iptables\DataTypes\ConnectionState.cs" />
     <Compile Include="Iptables\DataTypes\ConnectionStateHelper.cs" />

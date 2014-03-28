@@ -101,39 +101,33 @@ namespace IPTables.Net.Iptables
                 }
                 command += Position + " ";
             }
-            command += GetCommand();
-            return command;
-        }
-
-        public string GetPositionalDeleteCommand()
-        {
-            String command = "-D " + ChainName + " " + Position;
-            if (!String.IsNullOrEmpty(Table) && Table != "filter")
+            else if (opt == "-I")
             {
-                command += " -t " + Table;
+                //Posotion not specified, insert at top
+                if (Position != -1)
+                {
+                    command += Position + " ";
+                }
             }
-
+            command += GetCommand();
             return command;
         }
 
         public void Add()
         {
-            String command = GetFullCommand();
-            ExecutionHelper.ExecuteIptables(_system, command);
+            _system.Adapter.Add(this);
         }
 
         public void Delete(bool usingPosition = true)
         {
-            String command;
             if (usingPosition)
             {
-                command = GetPositionalDeleteCommand();
+                _system.Adapter.Delete(Table, ChainName, Position);
             }
             else
             {
-                command = GetFullCommand("-D");
+                _system.Adapter.Delete(this);
             }
-            ExecutionHelper.ExecuteIptables(_system, command);
             Chain.Rules.Remove(this);
         }
 
@@ -216,8 +210,7 @@ namespace IPTables.Net.Iptables
         public void Replace(IpTablesRule withRule)
         {
             int idx = Chain.Rules.IndexOf(this);
-            String command = withRule.GetFullCommand("-R");
-            ExecutionHelper.ExecuteIptables(_system, command);
+            _system.Adapter.Replace(withRule);
             Chain.Rules[idx] = withRule;
         }
     }
