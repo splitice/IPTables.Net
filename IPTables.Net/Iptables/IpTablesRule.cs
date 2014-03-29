@@ -8,7 +8,6 @@ namespace IPTables.Net.Iptables
 {
     public class IpTablesRule : IEquatable<IpTablesRule>
     {
-        //Stats
         private readonly OrderedDictionary<String, IIpTablesModuleGod> _modules = new OrderedDictionary<String, IIpTablesModuleGod>();
         private readonly IpTablesSystem _system;
         public long Bytes = 0;
@@ -115,18 +114,18 @@ namespace IPTables.Net.Iptables
 
         public void Add()
         {
-            _system.Adapter.Add(this);
+            _system.Adapter.AddRule(this);
         }
 
         public void Delete(bool usingPosition = true)
         {
             if (usingPosition)
             {
-                _system.Adapter.Delete(Table, ChainName, Position);
+                _system.Adapter.DeleteRule(Table, ChainName, Position);
             }
             else
             {
-                _system.Adapter.Delete(this);
+                _system.Adapter.DeleteRule(this);
             }
             Chain.Rules.Remove(this);
         }
@@ -210,7 +209,7 @@ namespace IPTables.Net.Iptables
         public void Replace(IpTablesRule withRule)
         {
             int idx = Chain.Rules.IndexOf(this);
-            _system.Adapter.Replace(withRule);
+            _system.Adapter.ReplaceRule(withRule);
             Chain.Rules[idx] = withRule;
         }
     }

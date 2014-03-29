@@ -65,6 +65,9 @@ namespace IPTables.Net.Iptables
         public void SyncChains(Func<IpTablesRule, IpTablesRule, bool> comparer = null,
             Func<IpTablesChain, bool> canDeleteChain = null, Func<IpTablesRule, bool> shouldDelete = null)
         {
+            //Start transaction
+            _system.Adapter.StartTransaction();
+
             var tableChains = new Dictionary<string, List<IpTablesChain>>();
             foreach (IpTablesChain chain in Chains)
             {
@@ -86,7 +89,7 @@ namespace IPTables.Net.Iptables
                 if (realChain != null)
                 {
                     //Update chain
-                    realChain.Sync(chain.Rules, comparer, shouldDelete);
+                    realChain.SyncInternal(chain.Rules, comparer, shouldDelete);
                 }
             }
 
@@ -103,6 +106,9 @@ namespace IPTables.Net.Iptables
                     }
                 }
             }
+
+            //End Transaction: COMMIT
+            _system.Adapter.EndTransactionCommit();
         }
     }
 }

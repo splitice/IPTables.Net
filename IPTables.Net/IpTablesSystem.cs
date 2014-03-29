@@ -53,30 +53,19 @@ namespace IPTables.Net
 
         public void DeleteChain(string name, string table = "filter", bool flush = false)
         {
-            String arguments;
-            if (flush)
-            {
-                arguments = String.Format("-t {0} -F {1} -X {1}", table, name);
-            }
-            else
-            {
-                arguments = String.Format("-t {0} -X {1}", table, name);
-            }
-            ExecutionHelper.ExecuteIptables(this, arguments);
+            _adapter.DeleteChain(table, name, flush);
         }
 
         public IpTablesChain AddChain(String name, String table = "filter")
         {
-            String command = String.Format("-t {0} -N {1}", table, name);
-            ExecutionHelper.ExecuteIptables(this, command);
+            _adapter.AddChain(table, name);
 
             return new IpTablesChain(table, name, this, new List<IpTablesRule>());
         }
 
         public IpTablesChain AddChain(IpTablesChain chain, bool addRules = false)
         {
-            String command = String.Format("-t {0} -N {1}", chain.Table, chain.Name);
-            ExecutionHelper.ExecuteIptables(this, command);
+            _adapter.AddChain(chain.Table,chain.Name);
 
             if (addRules)
             {

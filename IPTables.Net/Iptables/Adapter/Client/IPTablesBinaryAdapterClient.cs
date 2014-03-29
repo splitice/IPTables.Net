@@ -3,7 +3,7 @@ using SystemInteract;
 
 namespace IPTables.Net.Iptables.Adapter.Client
 {
-    public class IPTablesBinaryAdapterClient: IIPTablesAdapterClient
+    internal class IPTablesBinaryAdapterClient: IIPTablesAdapterClient
     {
         private readonly IpTablesSystem _system;
 
@@ -12,7 +12,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _system = system;
         }
 
-        public void Delete(String table, String chainName, int position)
+        public void DeleteRule(String table, String chainName, int position)
         {
             String command = "-D " + chainName + " " + position;
             if (!String.IsNullOrEmpty(table) && table != "filter")
@@ -23,28 +23,53 @@ namespace IPTables.Net.Iptables.Adapter.Client
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public void Delete(IpTablesRule rule)
+        public void DeleteRule(IpTablesRule rule)
         {
             String command = rule.GetFullCommand("-D");
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public void Insert(IpTablesRule rule)
+        public void InsertRule(IpTablesRule rule)
         {
             String command = rule.GetFullCommand("-I");
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public void Replace(IpTablesRule rule)
+        public void ReplaceRule(IpTablesRule rule)
         {
             String command = rule.GetFullCommand("-R");
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public void Add(IpTablesRule rule)
+        public void AddRule(IpTablesRule rule)
         {
             String command = rule.GetFullCommand();
             ExecutionHelper.ExecuteIptables(_system, command);
+        }
+
+        public bool HasChain(string table, string chainName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddChain(string table, string chainName)
+        {
+            String command = String.Format("-t {0} -N {1}", table, chainName);
+            ExecutionHelper.ExecuteIptables(_system, command);
+        }
+
+        public void DeleteChain(string table, string chainName, bool flush = false)
+        {
+            String arguments;
+            if (flush)
+            {
+                arguments = String.Format("-t {0} -F {1} -X {1}", table, chainName);
+            }
+            else
+            {
+                arguments = String.Format("-t {0} -X {1}", table, chainName);
+            }
+            ExecutionHelper.ExecuteIptables(_system, arguments);
         }
 
         public IpTablesChainSet ListRules(String table)
@@ -52,6 +77,21 @@ namespace IPTables.Net.Iptables.Adapter.Client
             ISystemProcess process = _system.System.StartProcess("iptables-save", String.Format("-c -t {0}", table));
             process.WaitForExit();
             return Helper.IPTablesSaveParser.GetRulesFromOutput(_system,process.StandardOutput.ReadToEnd(), table);
+        }
+
+        public void StartTransaction()
+        {
+            //No transaction support
+        }
+
+        public void EndTransactionCommit()
+        {
+            //No transaction support
+        }
+
+        public void EndTransactionRollback()
+        {
+            //No transaction support
         }
     }
 }

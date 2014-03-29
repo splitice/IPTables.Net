@@ -51,6 +51,22 @@ namespace IPTables.Net.Iptables
             Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate = null,
             Func<IpTablesRule, bool> shouldDelete = null)
         {
+            _system.Adapter.StartTransaction();
+
+            SyncInternal(with, ruleComparerForUpdate, shouldDelete);
+
+            _system.Adapter.EndTransactionCommit();
+        }
+
+        public void Delete(bool flush = false)
+        {
+            _system.DeleteChain(_name, _table, flush);
+        }
+
+        internal void SyncInternal(IEnumerable<IpTablesRule> with,
+            Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate = null,
+            Func<IpTablesRule, bool> shouldDelete = null)
+        {
             if (ruleComparerForUpdate == null)
             {
                 ruleComparerForUpdate = (a, b) => false;
@@ -100,11 +116,6 @@ namespace IPTables.Net.Iptables
             {
                 rR.Add();
             }
-        }
-
-        public void Delete(bool flush = false)
-        {
-            _system.DeleteChain(_name, _table, flush);
         }
     }
 }
