@@ -142,9 +142,16 @@ namespace IPTables.Net.Iptables.Adapter.Client
         public virtual void EndTransactionCommit()
         {
             ISystemProcess process = _system.System.StartProcess(_iptablesRestoreBinary, NoFlushOption);
-            _builder.WriteOutput(process.StandardInput);
-            process.WaitForExit();
-            process.StandardInput.Flush();
+            if (_builder.WriteOutput(process.StandardInput))
+            {
+                process.WaitForExit();
+                process.StandardInput.Flush();
+            }
+            else
+            {
+                process.Close();
+                return;
+            }
 
             //OK
             if (process.ExitCode != 0)

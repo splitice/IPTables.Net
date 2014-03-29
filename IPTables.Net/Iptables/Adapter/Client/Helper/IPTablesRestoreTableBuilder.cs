@@ -41,7 +41,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
             commandTable.Commands.Add(ruleCommand);
         }
 
-        public void WriteOutput(StreamWriter output)
+        public bool WriteOutput(StreamWriter output)
         {
             foreach (var table in _tables)
             {
@@ -58,8 +58,13 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
                 }
             }
 
-            if(_tables.Count != 0)
+            if (_tables.Count != 0)
+            {
                 output.WriteLine("COMMIT");
+                return true;
+            }
+
+            return false;
         }
 
         public void Clear()
