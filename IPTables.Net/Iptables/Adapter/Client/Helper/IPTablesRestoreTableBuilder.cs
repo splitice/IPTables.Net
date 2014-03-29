@@ -58,7 +58,8 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
                 }
             }
 
-            output.WriteLine("COMMIT");
+            if(_tables.Count != 0)
+                output.WriteLine("COMMIT");
         }
 
         public void Clear()

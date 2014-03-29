@@ -52,9 +52,12 @@
   <ItemGroup>
     <Compile Include="EscapeHelperTests.cs" />
     <Compile Include="IpTablesComparisonTests.cs" />
+    <Compile Include="IpTablesRestoreSyncTests.cs" />
     <Compile Include="IpTablesRuleSetTests.cs" />
     <Compile Include="IpTablesSaveReadingTests.cs" />
-    <Compile Include="IpTablesSyncChainTests.cs" />
+    <Compile Include="IpTablesBinarySyncChainTests.cs" />
+    <Compile Include="MockSystem\IpTablesRestore\MockIpTablesRestoreAdapter.cs" />
+    <Compile Include="MockSystem\IpTablesRestore\MockIpTablesRestoreAdapterClient.cs" />
     <Compile Include="MockSystem\MockIptablesSystemFactory.cs" />
     <Compile Include="MockSystem\MockIptablesSystemProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -10,9 +10,9 @@ namespace IPTables.Net.Iptables.Adapter.Client
         private const String NoFlushOption = "--noflush";
 
         private readonly IpTablesSystem _system;
-        private String _iptablesRestoreBinary;
+        private readonly String _iptablesRestoreBinary;
         private bool _inTransaction = false;
-        private IPTablesRestoreTableBuilder _builder = new IPTablesRestoreTableBuilder();
+        protected IPTablesRestoreTableBuilder _builder = new IPTablesRestoreTableBuilder();
 
         public IPTablesRestoreAdapterClient(IpTablesSystem system, String iptablesRestoreBinary = "iptables-restore")
         {
@@ -139,11 +139,12 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _inTransaction = true;
         }
 
-        public void EndTransactionCommit()
+        public virtual void EndTransactionCommit()
         {
             ISystemProcess process = _system.System.StartProcess(_iptablesRestoreBinary, NoFlushOption);
             _builder.WriteOutput(process.StandardInput);
             process.WaitForExit();
+            process.StandardInput.Flush();
 
             //OK
             if (process.ExitCode != 0)
