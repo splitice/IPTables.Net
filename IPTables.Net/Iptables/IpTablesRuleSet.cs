@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IPTables.Net.Netfilter;
 using IPTables.Net.Netfilter.Sync;
 
 namespace IPTables.Net.Iptables
@@ -9,14 +10,14 @@ namespace IPTables.Net.Iptables
     {
         private readonly IpTablesChainSet _chains = new IpTablesChainSet();
 
-        private readonly NetfilterSystem _system;
+        private readonly IpTablesSystem _system;
 
-        public IpTablesRuleSet(NetfilterSystem system)
+        public IpTablesRuleSet(IpTablesSystem system)
         {
             _system = system;
         }
 
-        public IpTablesRuleSet(List<string> rules, NetfilterSystem system)
+        public IpTablesRuleSet(List<string> rules, IpTablesSystem system)
         {
             _system = system;
             foreach (string s in rules)

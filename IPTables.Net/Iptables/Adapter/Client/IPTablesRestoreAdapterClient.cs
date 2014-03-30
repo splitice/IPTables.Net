@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using SystemInteract;
 using IPTables.Net.Iptables.Adapter.Client.Helper;
+using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Adapter.Client
 {
-    internal class IPTablesRestoreAdapterClient : IIPTablesAdapterClient
+    internal class IPTablesRestoreAdapterClient : IpTablesAdapterClientBase, IIPTablesAdapterClient
     {
         private const String NoFlushOption = "--noflush";
 
@@ -20,7 +21,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _iptablesRestoreBinary = iptablesRestoreBinary;
         }
 
-        public void DeleteRule(String table, String chainName, int position)
+        public override void DeleteRule(String table, String chainName, int position)
         {
             if (!_inTransaction)
             {
@@ -34,7 +35,12 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _builder.AddCommand(table, command);
         }
 
-        public void DeleteRule(IpTablesRule rule)
+        INetfilterChainSet INetfilterAdapterClient.ListRules(string table)
+        {
+            return ListRules(table);
+        }
+
+        public override void DeleteRule(IpTablesRule rule)
         {
             if (!_inTransaction)
             {
@@ -47,7 +53,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _builder.AddCommand(rule.Table, command);
         }
 
-        public void InsertRule(IpTablesRule rule)
+        public override void InsertRule(IpTablesRule rule)
         {
             if (!_inTransaction)
             {
@@ -60,7 +66,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _builder.AddCommand(rule.Table, command);
         }
 
-        public void ReplaceRule(IpTablesRule rule)
+        public override void ReplaceRule(IpTablesRule rule)
         {
             if (!_inTransaction)
             {
@@ -73,7 +79,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _builder.AddCommand(rule.Table, command);
         }
 
-        public void AddRule(IpTablesRule rule)
+        public override void AddRule(IpTablesRule rule)
         {
             if (!_inTransaction)
             {
@@ -86,7 +92,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _builder.AddCommand(rule.Table, command);
         }
 
-        public bool HasChain(string table, string chainName)
+        public override bool HasChain(string table, string chainName)
         {
             if (_inTransaction)
             {
@@ -100,7 +106,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             return binaryClient.HasChain(table, chainName);
         }
 
-        public void AddChain(string table, string chainName)
+        public override void AddChain(string table, string chainName)
         {
             if (!_inTransaction)
             {
@@ -112,7 +118,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _builder.AddChain(table, chainName);
         }
 
-        public void DeleteChain(string table, string chainName, bool flush = false)
+        public override void DeleteChain(string table, string chainName, bool flush = false)
         {
             if (_inTransaction)
             {
@@ -123,14 +129,14 @@ namespace IPTables.Net.Iptables.Adapter.Client
             binaryClient.DeleteChain(table, chainName);
         }
 
-        public IpTablesChainSet ListRules(String table)
+        public override IpTablesChainSet ListRules(String table)
         {
             ISystemProcess process = _system.System.StartProcess("iptables-save", String.Format("-c -t {0}", table));
             process.WaitForExit();
             return Helper.IPTablesSaveParser.GetRulesFromOutput(_system,process.StandardOutput.ReadToEnd(), table);
         }
 
-        public void StartTransaction()
+        public override void StartTransaction()
         {
             if (_inTransaction)
             {
@@ -139,7 +145,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _inTransaction = true;
         }
 
-        public virtual void EndTransactionCommit()
+        public override void EndTransactionCommit()
         {
             ISystemProcess process = _system.System.StartProcess(_iptablesRestoreBinary, NoFlushOption);
             if (_builder.WriteOutput(process.StandardInput))
@@ -176,7 +182,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _inTransaction = false;
         }
 
-        public void EndTransactionRollback()
+        public override void EndTransactionRollback()
         {
             _builder.Clear();
             _inTransaction = false;

@@ -48,12 +48,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IpTablesSystem.cs" />
+    <Compile Include="Iptables\Adapter\Client\IpTablesAdapterClientBase.cs" />
+    <Compile Include="Iptables\Adapter\IPTablesAdapterBase.cs" />
+    <Compile Include="Netfilter\INetfilterAdapter.cs" />
+    <Compile Include="Netfilter\INetfilterAdapterClient.cs" />
     <Compile Include="Netfilter\INetfilterChain.cs" />
+    <Compile Include="Netfilter\INetfilterChainSet.cs" />
     <Compile Include="Netfilter\INetfilterRule.cs" />
     <Compile Include="Netfilter\NetfilterChainSet.cs" />
     <Compile Include="Netfilter\PacketCounters.cs" />
     <Compile Include="Netfilter\Sync\DefaultNetfilterSync.cs" />
     <Compile Include="Netfilter\Sync\INetfilterSync.cs" />
+    <Compile Include="NfTables\Adapter\Client\NfTablesAdapterClientBase.cs" />
     <Compile Include="NfTables\Modules\ConnectionTracking\NfCtMarkOp.cs" />
     <Compile Include="NfTables\Modules\ConnectionTracking\NfCtStateOp.cs" />
     <Compile Include="NfTables\Modules\Core\NfCounterOp.cs" />
@@ -62,6 +69,7 @@
     <Compile Include="NfTables\Modules\Nat\NfDnatActionOp.cs" />
     <Compile Include="NfTables\Modules\Nat\NfSnatActionOp.cs" />
     <Compile Include="NfTables\Modules\Reject\NfRejectActionOp.cs" />
+    <Compile Include="NfTables\NfTablesChainSet.cs" />
     <Compile Include="Supporting\ArgumentHelper.cs" />
     <Compile Include="Supporting\DictionaryExtension.cs" />
     <Compile Include="Supporting\IOrderedDictionary.cs" />
@@ -94,7 +102,7 @@
     <Compile Include="Iptables\Helpers\Subnet\SubnetJumpRule.cs" />
     <Compile Include="Iptables\Helpers\Subnet\SubnetMatch.cs" />
     <Compile Include="Iptables\IpTablesChain.cs" />
-    <Compile Include="NetfilterSystem.cs" />
+    <Compile Include="Netfilter\NetfilterSystem.cs" />
     <Compile Include="Iptables\DataTypes\PortOrRange.cs" />
     <Compile Include="Iptables\DataTypes\TargetMode.cs" />
     <Compile Include="Iptables\DataTypes\TcpFlag.cs" />
@@ -136,7 +144,7 @@
     <Compile Include="Iptables\Modules\Mark\MarkTargetModule.cs" />
     <Compile Include="Iptables\Modules\Mark\MarkLoadableModule.cs" />
     <Compile Include="Iptables\Modules\Tcp\TcpModule.cs" />
-    <Compile Include="NfTables\Adapter\NfTablesBinaryAdapter.cs" />
+    <Compile Include="NfTables\Adapter\Client\NfTablesBinaryAdapterClient.cs" />
     <Compile Include="NfTables\DataTypes\INfDataType.cs" />
     <Compile Include="NfTables\DataTypes\NfDictionaryType.cs" />
     <Compile Include="NfTables\DataTypes\NfIntervalType.cs" />

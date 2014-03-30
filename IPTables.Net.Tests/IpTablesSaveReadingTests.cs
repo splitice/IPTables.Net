@@ -5,6 +5,7 @@ using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Adapter.Client;
 using IPTables.Net.Iptables.Adapter.Client.Helper;
+using IPTables.Net.Netfilter;
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests

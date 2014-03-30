@@ -1,10 +1,11 @@
 ﻿using System;
 using SystemInteract;
 using IPTables.Net.Iptables.Helpers;
+using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Adapter.Client
 {
-    internal class IPTablesBinaryAdapterClient: IIPTablesAdapterClient
+    internal class IPTablesBinaryAdapterClient : IpTablesAdapterClientBase, IIPTablesAdapterClient
     {
         private readonly NetfilterSystem _system;
 
@@ -13,7 +14,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _system = system;
         }
 
-        public void DeleteRule(String table, String chainName, int position)
+        public override void DeleteRule(String table, String chainName, int position)
         {
             String command = "-D " + chainName + " " + position;
             if (!String.IsNullOrEmpty(table) && table != "filter")
@@ -24,42 +25,42 @@ namespace IPTables.Net.Iptables.Adapter.Client
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public void DeleteRule(IpTablesRule rule)
+        public override void DeleteRule(IpTablesRule rule)
         {
             String command = rule.GetFullCommand("-D");
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public void InsertRule(IpTablesRule rule)
+        public override void InsertRule(IpTablesRule rule)
         {
             String command = rule.GetFullCommand("-I");
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public void ReplaceRule(IpTablesRule rule)
+        public override void ReplaceRule(IpTablesRule rule)
         {
             String command = rule.GetFullCommand("-R");
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public void AddRule(IpTablesRule rule)
+        public override void AddRule(IpTablesRule rule)
         {
             String command = rule.GetFullCommand();
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public bool HasChain(string table, string chainName)
+        public override bool HasChain(string table, string chainName)
         {
             throw new NotImplementedException();
         }
 
-        public void AddChain(string table, string chainName)
+        public override void AddChain(string table, string chainName)
         {
             String command = String.Format("-t {0} -N {1}", table, chainName);
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
-        public void DeleteChain(string table, string chainName, bool flush = false)
+        public override void DeleteChain(string table, string chainName, bool flush = false)
         {
             String arguments;
             if (flush)
@@ -73,24 +74,24 @@ namespace IPTables.Net.Iptables.Adapter.Client
             ExecutionHelper.ExecuteIptables(_system, arguments);
         }
 
-        public IpTablesChainSet ListRules(String table)
+        public override IpTablesChainSet ListRules(String table)
         {
             ISystemProcess process = _system.System.StartProcess("iptables-save", String.Format("-c -t {0}", table));
             process.WaitForExit();
             return Helper.IPTablesSaveParser.GetRulesFromOutput(_system,process.StandardOutput.ReadToEnd(), table);
         }
 
-        public void StartTransaction()
+        public override void StartTransaction()
         {
             //No transaction support
         }
 
-        public void EndTransactionCommit()
+        public override void EndTransactionCommit()
         {
             //No transaction support
         }
 
-        public void EndTransactionRollback()
+        public override void EndTransactionRollback()
         {
             //No transaction support
         }

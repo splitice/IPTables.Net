@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using IPTables.Net.Iptables.Adapter.Client;
 using IPTables.Net.Iptables.Adapter.Client.Helper;
+using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Tests.MockSystem.IpTablesRestore
 {

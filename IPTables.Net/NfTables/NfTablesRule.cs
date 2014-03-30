@@ -6,7 +6,7 @@ using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.NfTables
 {
-    class NfTablesRule: INetfilterRule
+    public class NfTablesRule: INetfilterRule
     {
         private NfTablesChain _chain;
         private PacketCounters _packet;

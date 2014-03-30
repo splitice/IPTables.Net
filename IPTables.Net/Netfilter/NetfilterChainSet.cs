@@ -6,7 +6,7 @@ using IPTables.Net.Iptables;
 
 namespace IPTables.Net.Netfilter
 {
-    public abstract class NetfilterChainSet<T, T2>
+    public abstract class NetfilterChainSet<T, T2> : INetfilterChainSet
         where T : class, INetfilterChain
         where T2 : class, INetfilterRule
     {
@@ -15,6 +15,11 @@ namespace IPTables.Net.Netfilter
         public HashSet<T> Chains
         {
             get { return _chains; }
+        }
+
+        IEnumerable<INetfilterChain> INetfilterChainSet.Chains
+        {
+            get { return _chains.Cast<INetfilterChain>(); }
         }
 
         public bool HasChain(String chain, String table)
@@ -82,6 +87,11 @@ namespace IPTables.Net.Netfilter
         public T GetChainOrDefault(string chain, string table)
         {
             return _chains.FirstOrDefault(a => a.Name == chain && a.Table == table);
+        }
+
+        INetfilterChain INetfilterChainSet.GetChainOrDefault(string chain, string table)
+        {
+            return GetChainOrDefault(chain, table);
         }
     }
 }

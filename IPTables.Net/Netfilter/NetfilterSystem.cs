@@ -5,14 +5,14 @@ using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Adapter.Client;
 
-namespace IPTables.Net
+namespace IPTables.Net.Netfilter
 {
     public class NetfilterSystem
     {
         private readonly ISystemFactory _system;
-        private readonly IIPTablesAdapterClient _adapter;
+        private readonly INetfilterAdapterClient _adapter;
 
-        public NetfilterSystem(ISystemFactory system, IIPTablesAdapter adapter)
+        public NetfilterSystem(ISystemFactory system, INetfilterAdapter adapter)
         {
             _system = system;
             _adapter = adapter.GetClient(this);
@@ -23,30 +23,30 @@ namespace IPTables.Net
             get { return _system; }
         }
 
-        public IIPTablesAdapterClient Adapter
+        public INetfilterAdapterClient Adapter
         {
             get { return _adapter; }
         }
 
-        public IpTablesChainSet GetRules(string table)
+        public INetfilterChainSet GetRules(string table)
         {
             return _adapter.ListRules(table);
         }
 
-        public List<IpTablesRule> GetRules(string table, string chain)
+        public IEnumerable<INetfilterRule> GetRules(string table, string chain)
         {
             return GetChain(table, chain).Rules;
         }
 
-        public IEnumerable<IpTablesChain> GetChains(string table)
+        public IEnumerable<INetfilterChain> GetChains(string table)
         {
             return GetRules(table).Chains;
         }
 
 
-        public IpTablesChain GetChain(string table, string chain)
+        public INetfilterChain GetChain(string table, string chain)
         {
-            IpTablesChainSet tableRules = GetRules(table);
+            INetfilterChainSet tableRules = GetRules(table);
             return tableRules.GetChainOrDefault(chain, table);
         }
 
