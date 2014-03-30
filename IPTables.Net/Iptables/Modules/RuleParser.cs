@@ -25,7 +25,7 @@ namespace IPTables.Net.Iptables.Modules
             _tableName = defaultTable;
         }
 
-        public IpTablesChain GetChain(IpTablesSystem system)
+        public IpTablesChain GetChain(NetfilterSystem system)
         {
             return _chains.GetChainOrAdd(_chainName, _tableName, system);
         }

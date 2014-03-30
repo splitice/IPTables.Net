@@ -9,7 +9,7 @@ namespace IPTables.Net.Tests.MockSystem.IpTablesRestore
 {
     class MockIpTablesRestoreAdapter: IIPTablesAdapter
     {
-        public IIPTablesAdapterClient GetClient(IpTablesSystem system)
+        public IIPTablesAdapterClient GetClient(NetfilterSystem system)
         {
             return new MockIpTablesRestoreAdapterClient(system);
         }

@@ -12,7 +12,7 @@ namespace IPTables.Net.Tests
     [TestFixture]
     internal class IpTablesSaveReadingTests
     {
-        private static readonly IpTablesSystem System = new IpTablesSystem(null, new IPTablesBinaryAdapter());
+        private static readonly NetfilterSystem System = new NetfilterSystem(null, new IPTablesBinaryAdapter());
 
         [Test]
         public void TestParseBlocklist()

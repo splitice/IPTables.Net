@@ -8,14 +8,14 @@ namespace IPTables.Net.Iptables
     {
         private readonly IpTablesChainSet _chains = new IpTablesChainSet();
 
-        private readonly IpTablesSystem _system;
+        private readonly NetfilterSystem _system;
 
-        public IpTablesRuleSet(IpTablesSystem system)
+        public IpTablesRuleSet(NetfilterSystem system)
         {
             _system = system;
         }
 
-        public IpTablesRuleSet(List<string> rules, IpTablesSystem system)
+        public IpTablesRuleSet(List<string> rules, NetfilterSystem system)
         {
             _system = system;
             foreach (string s in rules)

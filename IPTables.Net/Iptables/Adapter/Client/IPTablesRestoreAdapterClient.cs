@@ -9,12 +9,12 @@ namespace IPTables.Net.Iptables.Adapter.Client
     {
         private const String NoFlushOption = "--noflush";
 
-        private readonly IpTablesSystem _system;
+        private readonly NetfilterSystem _system;
         private readonly String _iptablesRestoreBinary;
         private bool _inTransaction = false;
         protected IPTablesRestoreTableBuilder _builder = new IPTablesRestoreTableBuilder();
 
-        public IPTablesRestoreAdapterClient(IpTablesSystem system, String iptablesRestoreBinary = "iptables-restore")
+        public IPTablesRestoreAdapterClient(NetfilterSystem system, String iptablesRestoreBinary = "iptables-restore")
         {
             _system = system;
             _iptablesRestoreBinary = iptablesRestoreBinary;

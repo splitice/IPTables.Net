@@ -8,7 +8,7 @@ namespace IPTables.Net.Iptables.Adapter
 {
     public class IPTablesBinaryAdapter : IIPTablesAdapter
     {
-        public IIPTablesAdapterClient GetClient(IpTablesSystem system)
+        public IIPTablesAdapterClient GetClient(NetfilterSystem system)
         {
             return new Client.IPTablesBinaryAdapterClient(system);
         }

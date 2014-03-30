@@ -18,7 +18,7 @@ namespace IPTables.Net.Tests
         public void TestAdd()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+            var system = new NetfilterSystem(mock, new MockIpTablesRestoreAdapter());
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
@@ -41,7 +41,7 @@ namespace IPTables.Net.Tests
         public void TestSimpleDoNothing()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+            var system = new NetfilterSystem(mock, new MockIpTablesRestoreAdapter());
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
@@ -63,7 +63,7 @@ namespace IPTables.Net.Tests
         public void TestNatDoNothing()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+            var system = new NetfilterSystem(mock, new MockIpTablesRestoreAdapter());
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
                                                    "-A PREROUTING -t nat -j DNAT -p tcp -m tcp --dport 80 --to-destination 99.99.99.99:80",
@@ -85,7 +85,7 @@ namespace IPTables.Net.Tests
         public void TestAddDuplicate()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+            var system = new NetfilterSystem(mock, new MockIpTablesRestoreAdapter());
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
@@ -108,7 +108,7 @@ namespace IPTables.Net.Tests
         public void TestDelete()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+            var system = new NetfilterSystem(mock, new MockIpTablesRestoreAdapter());
 
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
@@ -130,7 +130,7 @@ namespace IPTables.Net.Tests
         public void TestDeleteMultiples()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+            var system = new NetfilterSystem(mock, new MockIpTablesRestoreAdapter());
 
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
@@ -153,7 +153,7 @@ namespace IPTables.Net.Tests
         public void TestInsertMiddle()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+            var system = new NetfilterSystem(mock, new MockIpTablesRestoreAdapter());
 
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
@@ -199,7 +199,7 @@ namespace IPTables.Net.Tests
         public void TestUpdateEnd()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+            var system = new NetfilterSystem(mock, new MockIpTablesRestoreAdapter());
 
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
@@ -224,7 +224,7 @@ namespace IPTables.Net.Tests
         public void TestUpdateBegin()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+            var system = new NetfilterSystem(mock, new MockIpTablesRestoreAdapter());
 
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {
@@ -249,7 +249,7 @@ namespace IPTables.Net.Tests
         public void TestUpdateMiddle()
         {
             var mock = new MockIptablesSystemFactory();
-            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+            var system = new NetfilterSystem(mock, new MockIpTablesRestoreAdapter());
 
             IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
                                                {

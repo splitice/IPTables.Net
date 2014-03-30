@@ -6,9 +6,9 @@ namespace IPTables.Net.Iptables.Adapter.Client
 {
     internal class IPTablesBinaryAdapterClient: IIPTablesAdapterClient
     {
-        private readonly IpTablesSystem _system;
+        private readonly NetfilterSystem _system;
 
-        public IPTablesBinaryAdapterClient(IpTablesSystem system)
+        public IPTablesBinaryAdapterClient(NetfilterSystem system)
         {
             _system = system;
         }

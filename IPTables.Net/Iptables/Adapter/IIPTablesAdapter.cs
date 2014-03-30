@@ -8,6 +8,6 @@ namespace IPTables.Net.Iptables.Adapter
 {
     public interface IIPTablesAdapter
     {
-        IIPTablesAdapterClient GetClient(IpTablesSystem system);
+        IIPTablesAdapterClient GetClient(NetfilterSystem system);
     }
 }

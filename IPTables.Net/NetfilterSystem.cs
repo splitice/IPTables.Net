@@ -7,12 +7,12 @@ using IPTables.Net.Iptables.Adapter.Client;
 
 namespace IPTables.Net
 {
-    public class IpTablesSystem
+    public class NetfilterSystem
     {
         private readonly ISystemFactory _system;
         private readonly IIPTablesAdapterClient _adapter;
 
-        public IpTablesSystem(ISystemFactory system, IIPTablesAdapter adapter)
+        public NetfilterSystem(ISystemFactory system, IIPTablesAdapter adapter)
         {
             _system = system;
             _adapter = adapter.GetClient(this);

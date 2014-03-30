@@ -12,7 +12,7 @@ namespace IPTables.Net.Tests.MockSystem.IpTablesRestore
     {
         private readonly MemoryStream _output = new MemoryStream();
 
-        public MockIpTablesRestoreAdapterClient(IpTablesSystem system, string iptablesRestoreBinary = "iptables-restore") : base(system, iptablesRestoreBinary)
+        public MockIpTablesRestoreAdapterClient(NetfilterSystem system, string iptablesRestoreBinary = "iptables-restore") : base(system, iptablesRestoreBinary)
         {
         }
 

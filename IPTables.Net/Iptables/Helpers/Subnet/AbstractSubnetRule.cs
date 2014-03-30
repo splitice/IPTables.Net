@@ -8,7 +8,7 @@ namespace IPTables.Net.Iptables.Helpers.Subnet
 {
     internal abstract class AbstractSubnetRule: IpTablesRule
     {
-        protected AbstractSubnetRule(IpTablesSystem system, IpTablesChain chain, IpTablesChain targetChain, bool isJump) : base(system, chain)
+        protected AbstractSubnetRule(NetfilterSystem system, IpTablesChain chain, IpTablesChain targetChain, bool isJump) : base(system, chain)
         {
             if (chain.Table != targetChain.Table)
             {

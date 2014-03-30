@@ -13,7 +13,7 @@ namespace IPTables.Net.Iptables
             get { return _chains; }
         }
 
-        public void AddDefaultChains(IpTablesSystem system)
+        public void AddDefaultChains(NetfilterSystem system)
         {
             _chains.Add(new IpTablesChain("filter", "INPUT", system));
             _chains.Add(new IpTablesChain("filter", "FORWARD", system));
@@ -51,7 +51,7 @@ namespace IPTables.Net.Iptables
         }
 
 
-        public IpTablesChain GetChainOrAdd(string chainName, string tableName, IpTablesSystem system)
+        public IpTablesChain GetChainOrAdd(string chainName, string tableName, NetfilterSystem system)
         {
             IpTablesChain chain = GetChainOrDefault(chainName, tableName);
 
@@ -61,7 +61,7 @@ namespace IPTables.Net.Iptables
             return AddChain(chainName, tableName, system);
         }
 
-        private IpTablesChain AddChain(string chainName, string tableName, IpTablesSystem system)
+        private IpTablesChain AddChain(string chainName, string tableName, NetfilterSystem system)
         {
             var chain = new IpTablesChain(tableName, chainName, system);
             AddChain(chain);

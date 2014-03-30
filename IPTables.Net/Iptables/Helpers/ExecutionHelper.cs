@@ -5,7 +5,7 @@ namespace IPTables.Net.Iptables.Helpers
 {
     internal static class ExecutionHelper
     {
-        public static ISystemProcess ExecuteIptables(IpTablesSystem system, String command)
+        public static ISystemProcess ExecuteIptables(NetfilterSystem system, String command)
         {
             ISystemProcess process = system.System.StartProcess("iptables", command);
             process.WaitForExit();

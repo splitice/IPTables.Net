@@ -8,7 +8,7 @@ namespace IPTables.Net.Iptables.Helpers.Subnet
 {
     internal class SubnetGotoRule : AbstractSubnetRule, ISubnetTargetRule
     {
-        public SubnetGotoRule(IpTablesSystem system, IpTablesChain chain, IpTablesChain targetChain)
+        public SubnetGotoRule(NetfilterSystem system, IpTablesChain chain, IpTablesChain targetChain)
             : base(system, chain, targetChain, false)
         {
         }

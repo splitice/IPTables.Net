@@ -13,7 +13,7 @@ namespace IPTables.Net.Iptables.Adapter
         {
             _iptablesRestoreBinary = iptablesRestoreBinary;
         }
-        public IIPTablesAdapterClient GetClient(IpTablesSystem system)
+        public IIPTablesAdapterClient GetClient(NetfilterSystem system)
         {
             return new Client.IPTablesRestoreAdapterClient(system, _iptablesRestoreBinary);
         }

@@ -9,12 +9,12 @@ namespace IPTables.Net.Iptables
     public class IpTablesRule : IEquatable<IpTablesRule>
     {
         private readonly OrderedDictionary<String, IIpTablesModuleGod> _modules = new OrderedDictionary<String, IIpTablesModuleGod>();
-        protected internal readonly IpTablesSystem _system;
+        protected internal readonly NetfilterSystem _system;
         public long Bytes = 0;
         public IpTablesChain Chain;
         public long Packets = 0;
 
-        public IpTablesRule(IpTablesSystem system, IpTablesChain chain)
+        public IpTablesRule(NetfilterSystem system, IpTablesChain chain)
         {
             _system = system;
             Chain = chain;
@@ -35,7 +35,7 @@ namespace IPTables.Net.Iptables
             get { return Chain.Rules.IndexOf(this) + 1; }
         }
 
-        internal IpTablesSystem System
+        internal NetfilterSystem System
         {
             get { return _system; }
         }
@@ -170,7 +170,7 @@ namespace IPTables.Net.Iptables
             return (new string(parmChars)).Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        public static IpTablesRule Parse(String rule, IpTablesSystem system, IpTablesChainSet chains,
+        public static IpTablesRule Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
             String defaultTable = "filter")
         {
             string[] arguments = SplitArguments(rule);

@@ -8,10 +8,10 @@ namespace IPTables.Net.Iptables
     {
         private readonly String _name;
         private readonly List<IpTablesRule> _rules;
-        private readonly IpTablesSystem _system;
+        private readonly NetfilterSystem _system;
         private readonly String _table;
 
-        public IpTablesChain(String table, String chainName, IpTablesSystem system, List<IpTablesRule> rules)
+        public IpTablesChain(String table, String chainName, NetfilterSystem system, List<IpTablesRule> rules)
         {
             _name = chainName;
             _table = table;
@@ -19,7 +19,7 @@ namespace IPTables.Net.Iptables
             _rules = rules;
         }
 
-        public IpTablesChain(String table, String chainName, IpTablesSystem system)
+        public IpTablesChain(String table, String chainName, NetfilterSystem system)
         {
             _name = chainName;
             _table = table;
@@ -42,7 +42,7 @@ namespace IPTables.Net.Iptables
             get { return _rules; }
         }
 
-        internal IpTablesSystem System
+        internal NetfilterSystem System
         {
             get { return _system; }
         }

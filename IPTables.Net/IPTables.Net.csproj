@@ -79,7 +79,7 @@
     <Compile Include="Iptables\Helpers\Subnet\SubnetJumpRule.cs" />
     <Compile Include="Iptables\Helpers\Subnet\SubnetMatch.cs" />
     <Compile Include="Iptables\IpTablesChain.cs" />
-    <Compile Include="IpTablesSystem.cs" />
+    <Compile Include="NetfilterSystem.cs" />
     <Compile Include="Iptables\DataTypes\PortOrRange.cs" />
     <Compile Include="Iptables\DataTypes\TargetMode.cs" />
     <Compile Include="Iptables\DataTypes\TcpFlag.cs" />
@@ -121,10 +121,23 @@
     <Compile Include="Iptables\Modules\Mark\MarkTargetModule.cs" />
     <Compile Include="Iptables\Modules\Mark\MarkLoadableModule.cs" />
     <Compile Include="Iptables\Modules\Tcp\TcpModule.cs" />
+    <Compile Include="NfTables\DataTypes\INfDataType.cs" />
+    <Compile Include="NfTables\DataTypes\NfDictionaryType.cs" />
+    <Compile Include="NfTables\DataTypes\NfIntervalType.cs" />
+    <Compile Include="NfTables\DataTypes\NfMapType.cs" />
+    <Compile Include="NfTables\DataTypes\NfSetType.cs" />
+    <Compile Include="NfTables\NfNetfilterHook.cs" />
+    <Compile Include="NfTables\NfTablesChain.cs" />
+    <Compile Include="NfTables\NfTablesDataStructure.cs" />
+    <Compile Include="NfTables\NfTablesRule.cs" />
+    <Compile Include="NfTables\NfTablesTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NfTables\Adapter\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
