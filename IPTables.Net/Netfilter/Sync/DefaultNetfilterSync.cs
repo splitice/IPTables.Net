@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 
@@ -46,6 +47,7 @@ namespace IPTables.Net.Netfilter.Sync
         public DefaultNetfilterSync(Func<T, T, bool> ruleComparerForUpdate, Func<T, bool> shouldDelete = null)
         {
             ShouldDelete = shouldDelete;
+            RuleComparerForUpdate = ruleComparerForUpdate;
         } 
 
         public void SyncChainRules(IEnumerable<T> with, IEnumerable<T> currentRules)
