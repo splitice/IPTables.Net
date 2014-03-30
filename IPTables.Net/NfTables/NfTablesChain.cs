@@ -16,5 +16,9 @@ namespace IPTables.Net.NfTables
         public string Name { get; private set; }
         public string Table { get; private set; }
         public IEnumerable<INetfilterRule> Rules { get; private set; }
+        public void AddRule(INetfilterRule rule)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

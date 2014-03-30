@@ -5,12 +5,14 @@ using System.Text;
 
 namespace IPTables.Net.Netfilter
 {
-    interface INetfilterChain
+    public interface INetfilterChain
     {
         String Name { get; }
 
         String Table { get; }
 
         IEnumerable<INetfilterRule> Rules { get; }
+
+        void AddRule(INetfilterRule rule);
     }
 }

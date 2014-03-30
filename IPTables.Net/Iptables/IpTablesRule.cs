@@ -12,12 +12,18 @@ namespace IPTables.Net.Iptables
         private readonly OrderedDictionary<String, IIpTablesModuleGod> _modules = new OrderedDictionary<String, IIpTablesModuleGod>();
         protected internal readonly NetfilterSystem _system;
         private PacketCounters _counters = new PacketCounters();
-        public IpTablesChain Chain;
+        private IpTablesChain _chain;
+
+        public IpTablesChain Chain
+        {
+            get { return _chain; }
+            set { _chain = value; }
+        }
 
         public IpTablesRule(NetfilterSystem system, IpTablesChain chain)
         {
             _system = system;
-            Chain = chain;
+            _chain = chain;
         }
 
         public String Table
@@ -28,6 +34,11 @@ namespace IPTables.Net.Iptables
         public String ChainName
         {
             get { return Chain.Name; }
+        }
+
+        INetfilterChain INetfilterRule.Chain
+        {
+            get { return _chain; }
         }
 
         public int Position

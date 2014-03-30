@@ -32,5 +32,10 @@ namespace IPTables.Net.NfTables
         }
 
         public PacketCounters Counters { get; private set; }
+
+        INetfilterChain INetfilterRule.Chain
+        {
+            get { return _chain; }
+        }
     }
 }

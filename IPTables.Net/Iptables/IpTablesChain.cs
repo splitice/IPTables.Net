@@ -44,6 +44,15 @@ namespace IPTables.Net.Iptables
             get { return _rules; }
         }
 
+        public void AddRule(INetfilterRule rule)
+        {
+            var ruleCast = rule as IpTablesRule;
+            if(ruleCast == null)
+                throw new Exception("Invalid rule type for this chain");
+
+            Rules.Add(ruleCast);
+        }
+
         IEnumerable<INetfilterRule> INetfilterChain.Rules
         {
             get { return _rules.Cast<INetfilterRule>(); }
