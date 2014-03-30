@@ -9,7 +9,7 @@ namespace IPTables.Net.NfTables
     class NfTablesRule: INetfilterRule
     {
         private NfTablesTable _table;
-        private String _chain;
+        private NfTablesChain _chain;
 
         public void Delete(bool usingPosition = true)
         {
@@ -25,5 +25,12 @@ namespace IPTables.Net.NfTables
         {
             throw new NotImplementedException();
         }
+
+        public string ChainName
+        {
+            get { return _chain.Name; }
+        }
+
+        public PacketCounters Counters { get; private set; }
     }
 }

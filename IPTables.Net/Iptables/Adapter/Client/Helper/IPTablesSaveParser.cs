@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Adapter.Client.Helper
 {
@@ -55,8 +56,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
                             }
                             throw;
                         }
-                        rule.Packets = long.Parse(counters[0]);
-                        rule.Bytes = long.Parse(counters[1]);
+                        rule._counters = new PacketCounters(long.Parse(counters[0]), long.Parse(counters[1]));
                         ret.AddRule(rule);
                         break;
 

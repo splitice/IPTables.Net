@@ -50,8 +50,10 @@
   <ItemGroup>
     <Compile Include="Netfilter\INetfilterChain.cs" />
     <Compile Include="Netfilter\INetfilterRule.cs" />
+    <Compile Include="Netfilter\PacketCounters.cs" />
     <Compile Include="Netfilter\Sync\DefaultNetfilterSync.cs" />
     <Compile Include="Netfilter\Sync\INetfilterSync.cs" />
+    <Compile Include="Supporting\ArgumentHelper.cs" />
     <Compile Include="Supporting\DictionaryExtension.cs" />
     <Compile Include="Supporting\IOrderedDictionary.cs" />
     <Compile Include="Supporting\OrderedDictionary.cs" />

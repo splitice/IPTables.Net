@@ -10,5 +10,7 @@ namespace IPTables.Net.Netfilter
         void Delete(bool usingPosition = true);
         void Add();
         void Replace(INetfilterRule with);
+        String ChainName { get; }
+        PacketCounters Counters { get; }
     }
 }

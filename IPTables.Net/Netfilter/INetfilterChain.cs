@@ -7,5 +7,10 @@ namespace IPTables.Net.Netfilter
 {
     interface INetfilterChain
     {
+        String Name { get; }
+
+        String Table { get; }
+
+        IEnumerable<INetfilterRule> Rules { get; }
     }
 }

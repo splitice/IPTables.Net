@@ -11,9 +11,8 @@ namespace IPTables.Net.Iptables
     {
         private readonly OrderedDictionary<String, IIpTablesModuleGod> _modules = new OrderedDictionary<String, IIpTablesModuleGod>();
         protected internal readonly NetfilterSystem _system;
-        public long Bytes = 0;
+        public PacketCounters _counters = new PacketCounters();
         public IpTablesChain Chain;
-        public long Packets = 0;
 
         public IpTablesRule(NetfilterSystem system, IpTablesChain chain)
         {
@@ -34,6 +33,11 @@ namespace IPTables.Net.Iptables
         public int Position
         {
             get { return Chain.Rules.IndexOf(this) + 1; }
+        }
+
+        public PacketCounters Counters
+        {
+            get { return _counters; }
         }
 
         internal NetfilterSystem System
@@ -158,33 +162,10 @@ namespace IPTables.Net.Iptables
             return GetModuleForParseInternal(name, moduleType);
         }
 
-        public static string[] SplitArguments(string commandLine)
-        {
-            char[] parmChars = commandLine.ToCharArray();
-            bool inSingleQuote = false;
-            bool inDoubleQuote = false;
-            for (int index = 0; index < parmChars.Length; index++)
-            {
-                if (parmChars[index] == '"' && !inSingleQuote)
-                {
-                    inDoubleQuote = !inDoubleQuote;
-                    parmChars[index] = '\n';
-                }
-                if (parmChars[index] == '\'' && !inDoubleQuote)
-                {
-                    inSingleQuote = !inSingleQuote;
-                    parmChars[index] = '\n';
-                }
-                if (!inSingleQuote && !inDoubleQuote && parmChars[index] == ' ')
-                    parmChars[index] = '\n';
-            }
-            return (new string(parmChars)).Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
-        }
-
         public static IpTablesRule Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
             String defaultTable = "filter")
         {
-            string[] arguments = SplitArguments(rule);
+            string[] arguments = ArgumentHelper.SplitArguments(rule);
             int count = arguments.Length;
             var ipRule = new IpTablesRule(system, null);
             var parser = new RuleParser(arguments, ipRule, chains, defaultTable);

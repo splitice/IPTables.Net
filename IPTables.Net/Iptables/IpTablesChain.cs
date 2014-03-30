@@ -44,6 +44,11 @@ namespace IPTables.Net.Iptables
             get { return _rules; }
         }
 
+        IEnumerable<INetfilterRule> INetfilterChain.Rules
+        {
+            get { return _rules.Cast<INetfilterRule>(); }
+        } 
+
         internal NetfilterSystem System
         {
             get { return _system; }
