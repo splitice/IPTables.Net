@@ -9,5 +9,15 @@ namespace IPTables.Net.NfTables
     {
         private String _name;
         private String _type;
+
+        public String Name
+        {
+            get { return _name; }
+        }
+
+        public String Type
+        {
+            get { return _type; }
+        }
     }
 }

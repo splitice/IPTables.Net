@@ -54,6 +54,14 @@
     <Compile Include="Netfilter\PacketCounters.cs" />
     <Compile Include="Netfilter\Sync\DefaultNetfilterSync.cs" />
     <Compile Include="Netfilter\Sync\INetfilterSync.cs" />
+    <Compile Include="NfTables\Modules\ConnectionTracking\NfCtMarkOp.cs" />
+    <Compile Include="NfTables\Modules\ConnectionTracking\NfCtStateOp.cs" />
+    <Compile Include="NfTables\Modules\Core\NfCounterOp.cs" />
+    <Compile Include="NfTables\Modules\INfModuleOp.cs" />
+    <Compile Include="NfTables\Modules\Log\NfLogActionOp.cs" />
+    <Compile Include="NfTables\Modules\Nat\NfDnatActionOp.cs" />
+    <Compile Include="NfTables\Modules\Nat\NfSnatActionOp.cs" />
+    <Compile Include="NfTables\Modules\Reject\NfRejectActionOp.cs" />
     <Compile Include="Supporting\ArgumentHelper.cs" />
     <Compile Include="Supporting\DictionaryExtension.cs" />
     <Compile Include="Supporting\IOrderedDictionary.cs" />
@@ -144,9 +152,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NfTables\Modules\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

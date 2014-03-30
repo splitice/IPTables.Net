@@ -8,8 +8,8 @@ namespace IPTables.Net.NfTables
 {
     class NfTablesRule: INetfilterRule
     {
-        private NfTablesTable _table;
         private NfTablesChain _chain;
+        private PacketCounters _packet;
 
         public void Delete(bool usingPosition = true)
         {
@@ -31,11 +31,20 @@ namespace IPTables.Net.NfTables
             get { return _chain.Name; }
         }
 
-        public PacketCounters Counters { get; private set; }
+        public PacketCounters Counters
+        {
+            get { return _packet; }
+            set { _packet = value; }
+        }
 
         INetfilterChain INetfilterRule.Chain
         {
             get { return _chain; }
+        }
+
+        public String Table
+        {
+            get { return _chain.Table; }
         }
     }
 }
