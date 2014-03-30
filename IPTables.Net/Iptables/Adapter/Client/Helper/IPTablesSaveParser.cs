@@ -56,7 +56,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
                             }
                             throw;
                         }
-                        rule._counters = new PacketCounters(long.Parse(counters[0]), long.Parse(counters[1]));
+                        rule.Counters = new PacketCounters(long.Parse(counters[0]), long.Parse(counters[1]));
                         ret.AddRule(rule);
                         break;
 

@@ -11,7 +11,7 @@ namespace IPTables.Net.Iptables
     {
         private readonly OrderedDictionary<String, IIpTablesModuleGod> _modules = new OrderedDictionary<String, IIpTablesModuleGod>();
         protected internal readonly NetfilterSystem _system;
-        public PacketCounters _counters = new PacketCounters();
+        private PacketCounters _counters = new PacketCounters();
         public IpTablesChain Chain;
 
         public IpTablesRule(NetfilterSystem system, IpTablesChain chain)
@@ -38,6 +38,7 @@ namespace IPTables.Net.Iptables
         public PacketCounters Counters
         {
             get { return _counters; }
+            set { _counters = value; }
         }
 
         internal NetfilterSystem System
