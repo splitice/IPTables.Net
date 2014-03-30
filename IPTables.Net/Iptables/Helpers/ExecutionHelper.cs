@@ -1,7 +1,7 @@
 ﻿using System;
 using SystemInteract;
 
-namespace IPTables.Net.Iptables
+namespace IPTables.Net.Iptables.Helpers
 {
     internal static class ExecutionHelper
     {

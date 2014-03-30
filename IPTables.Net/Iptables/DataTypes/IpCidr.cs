@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Net;
+using IPTables.Net.Common;
+using LukeSkywalker.IPNetwork;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
@@ -14,6 +16,11 @@ namespace IPTables.Net.Iptables.DataTypes
         {
             Address = address;
             Cidr = cidr;
+        }
+
+        public IPNetwork GetIPNetwork()
+        {
+            return IPNetwork.Parse(Address, IPNetwork.ToNetmask((byte)Cidr));
         }
 
         public bool Equals(IpCidr other)
@@ -66,6 +73,20 @@ namespace IPTables.Net.Iptables.DataTypes
                 return Address.ToString();
             }
             return Address + "/" + Cidr;
+        }
+
+        public bool Contains(IpCidr cidr)
+        {
+            var thisNetwork = GetIPNetwork();
+            var innerNetwork = cidr.GetIPNetwork();
+
+            if (thisNetwork.Network.ToInt() <= innerNetwork.Network.ToInt() &&
+                thisNetwork.Broadcast.ToInt() >= innerNetwork.Broadcast.ToInt())
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

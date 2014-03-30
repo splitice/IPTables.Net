@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using IPTables.Net.Common;
+using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.Log
 {
@@ -49,7 +50,7 @@ namespace IPTables.Net.Iptables.Modules.Log
             if (LogPrefix != null)
             {
                 sb.Append(OptionPrefixLong + " ");
-                sb.Append(Helpers.EscapeArguments(LogPrefix));
+                sb.Append(ShellHelper.EscapeArguments(LogPrefix));
             }
 
             if (sb.Length != 0) sb.Append(" ");

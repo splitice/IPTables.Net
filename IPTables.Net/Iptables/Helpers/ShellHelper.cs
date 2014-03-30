@@ -1,6 +1,6 @@
-﻿namespace IPTables.Net.Common
+﻿namespace IPTables.Net.Iptables.Helpers
 {
-    internal class Helpers
+    internal class ShellHelper
     {
         /// <summary>
         ///     Encodes an argument for passing into a program

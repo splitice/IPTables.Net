@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using IPTables.Net.Common;
+using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.Nfacct
 {
@@ -42,7 +43,7 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
             if (!String.IsNullOrEmpty(Name))
             {
                 sb.Append("--nfacct-name ");
-                sb.Append(Helpers.EscapeArguments(Name));
+                sb.Append(ShellHelper.EscapeArguments(Name));
             }
 
             return sb.ToString();

@@ -1,5 +1,6 @@
 ﻿using System;
 using SystemInteract;
+using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Adapter.Client
 {

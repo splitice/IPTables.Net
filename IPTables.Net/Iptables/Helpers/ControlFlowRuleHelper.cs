@@ -1,7 +1,7 @@
 ﻿using System;
 using IPTables.Net.Iptables.Modules.Core;
 
-namespace IPTables.Net.Iptables
+namespace IPTables.Net.Iptables.Helpers
 {
     public static class ControlFlowRuleHelper
     {

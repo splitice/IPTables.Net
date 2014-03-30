@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.Modules.Connlimit;
 using IPTables.Net.Iptables.Modules.Connmark;
@@ -19,9 +18,9 @@ using IPTables.Net.Iptables.Modules.Tcp;
 using IPTables.Net.Iptables.Modules.TcpMss;
 using IPTables.Net.Iptables.Modules.Udp;
 
-namespace IPTables.Net.Iptables
+namespace IPTables.Net.Iptables.Modules
 {
-    public class ModuleFactory
+    internal class ModuleFactory
     {
         public static List<Func<ModuleEntry>> AllModules = new List<Func<ModuleEntry>>
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IPTables.Net.Common;
+using IPTables.Net.Iptables.Helpers;
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests
@@ -13,16 +14,16 @@ namespace IPTables.Net.Tests
         [Test]
         public void TestSpaces()
         {
-            Assert.AreEqual("'a word'", Helpers.EscapeArguments("a word"));
-            Assert.AreEqual("singleword", Helpers.EscapeArguments("singleword"));
+            Assert.AreEqual("'a word'", ShellHelper.EscapeArguments("a word"));
+            Assert.AreEqual("singleword", ShellHelper.EscapeArguments("singleword"));
         }
 
         [Test]
         public void TestPipe()
         {
-            Assert.AreEqual("'|'", Helpers.EscapeArguments("|"));
-            Assert.AreEqual("'a|word'", Helpers.EscapeArguments("a|word"));
-            Assert.AreEqual("singleword", Helpers.EscapeArguments("singleword"));
+            Assert.AreEqual("'|'", ShellHelper.EscapeArguments("|"));
+            Assert.AreEqual("'a|word'", ShellHelper.EscapeArguments("a|word"));
+            Assert.AreEqual("singleword", ShellHelper.EscapeArguments("singleword"));
         }
     }
 }

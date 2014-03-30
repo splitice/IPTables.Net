@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LukeSkywalker.IPNetwork">
+      <HintPath>..\packages\IPNetwork.1.3.1.0\lib\LukeSkywalker.IPNetwork.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -56,16 +59,25 @@
     <Compile Include="Iptables\Adapter\IIPTablesAdapter.cs" />
     <Compile Include="Iptables\Adapter\IPTablesRestoreAdapter.cs" />
     <Compile Include="Iptables\Adapter\IPTablesBinaryAdapter.cs" />
-    <Compile Include="Iptables\ControlFlowRuleHelper.cs" />
+    <Compile Include="Iptables\Helpers\ControlFlowRuleHelper.cs" />
     <Compile Include="Iptables\DataTypes\ConnectionState.cs" />
     <Compile Include="Iptables\DataTypes\ConnectionStateHelper.cs" />
     <Compile Include="Iptables\DataTypes\ConnectionStateSet.cs" />
     <Compile Include="Iptables\DataTypes\CounterPacketsAndBytes.cs" />
     <Compile Include="Iptables\DataTypes\FlexibleInt.cs" />
     <Compile Include="Iptables\DataTypes\IPPortOrRange.cs" />
-    <Compile Include="Common\Helpers.cs" />
+    <Compile Include="Iptables\Helpers\ShellHelper.cs" />
     <Compile Include="Iptables\DataTypes\LimitUnit.cs" />
-    <Compile Include="Iptables\ExecutionHelper.cs" />
+    <Compile Include="Iptables\Helpers\ExecutionHelper.cs" />
+    <Compile Include="Iptables\Helpers\SubnetHelper.cs" />
+    <Compile Include="Iptables\Helpers\Subnet\AbstractSubnetRule.cs" />
+    <Compile Include="Iptables\Helpers\Subnet\ISubnetTargetRule.cs" />
+    <Compile Include="Iptables\Helpers\Subnet\Matches\ISubnetMatch.cs" />
+    <Compile Include="Iptables\Helpers\Subnet\Matches\SubnetSourceAddressMatch.cs" />
+    <Compile Include="Iptables\Helpers\Subnet\Matches\SubnetDestinationAddressMatch.cs" />
+    <Compile Include="Iptables\Helpers\Subnet\SubnetGotoRule.cs" />
+    <Compile Include="Iptables\Helpers\Subnet\SubnetJumpRule.cs" />
+    <Compile Include="Iptables\Helpers\Subnet\SubnetMatch.cs" />
     <Compile Include="Iptables\IpTablesChain.cs" />
     <Compile Include="IpTablesSystem.cs" />
     <Compile Include="Iptables\DataTypes\PortOrRange.cs" />
@@ -96,7 +108,7 @@
     <Compile Include="Iptables\Modules\Multiport\MultiportModule.cs" />
     <Compile Include="Iptables\Modules\Udp\UdpModule.cs" />
     <Compile Include="Iptables\Modules\ModuleEntry.cs" />
-    <Compile Include="Iptables\ModuleFactory.cs" />
+    <Compile Include="Iptables\Modules\ModuleFactory.cs" />
     <Compile Include="Iptables\Modules\RuleParser.cs" />
     <Compile Include="Iptables\Modules\Snat\SnatModule.cs" />
     <Compile Include="Iptables\Modules\Dnat\DnatModule.cs" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using IPTables.Net.Common;
+using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.Comment
 {
@@ -42,7 +43,7 @@ namespace IPTables.Net.Iptables.Modules.Comment
             if (CommentText != null)
             {
                 sb.Append("--comment ");
-                sb.Append(Helpers.EscapeArguments(CommentText));
+                sb.Append(ShellHelper.EscapeArguments(CommentText));
             }
 
             return sb.ToString();

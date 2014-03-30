@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
   <TopNode>[0-1000]C:\Users\splitice\Documents\GitHub\IPTables.Net\Testing.nunit</TopNode>
-  <SelectedNode>[0-1078]C:\Users\splitice\Documents\GitHub\IPTables.Net\IPTables.Net.Tests\bin\Release\IPTables.Net.Tests.dll</SelectedNode>
+  <SelectedNode>[0-1092]IPTables.Net.Tests</SelectedNode>
   <ExcludeCategories>false</ExcludeCategories>
   <Nodes>
     <Node UniqueName="[0-1000]C:\Users\splitice\Documents\GitHub\IPTables.Net\Testing.nunit" Expanded="true" />
-    <Node UniqueName="[0-1078]C:\Users\splitice\Documents\GitHub\IPTables.Net\IPTables.Net.Tests\bin\Release\IPTables.Net.Tests.dll" Expanded="true" />
-    <Node UniqueName="[0-1079]IPTables" Expanded="true" />
-    <Node UniqueName="[0-1080]IPTables.Net" Expanded="true" />
-    <Node UniqueName="[0-1081]IPTables.Net.Tests" Expanded="true" />
+    <Node UniqueName="[0-1089]C:\Users\splitice\Documents\GitHub\IPTables.Net\IPTables.Net.Tests\bin\Release\IPTables.Net.Tests.dll" Expanded="true" />
+    <Node UniqueName="[0-1090]IPTables" Expanded="true" />
+    <Node UniqueName="[0-1091]IPTables.Net" Expanded="true" />
+    <Node UniqueName="[0-1092]IPTables.Net.Tests" Expanded="true" />
     <Node UniqueName="[0-1004]IPTables.Net.Tests.IpTablesComparisonTests" Expanded="true" />
-    <Node UniqueName="[0-1059]IPTables.Net.Tests.SingleMarkRuleParseTests" Expanded="true" />
   </Nodes>
 </VisualState>

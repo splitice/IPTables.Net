@@ -9,7 +9,7 @@ namespace IPTables.Net.Iptables
     public class IpTablesRule : IEquatable<IpTablesRule>
     {
         private readonly OrderedDictionary<String, IIpTablesModuleGod> _modules = new OrderedDictionary<String, IIpTablesModuleGod>();
-        private readonly IpTablesSystem _system;
+        protected internal readonly IpTablesSystem _system;
         public long Bytes = 0;
         public IpTablesChain Chain;
         public long Packets = 0;
