@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using IPTables.Net.Common;
 using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.Comment

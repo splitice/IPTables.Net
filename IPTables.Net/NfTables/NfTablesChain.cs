@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.NfTables
 {
-    class NfTablesChain
+    class NfTablesChain: INetfilterChain
     {
         private String _name;
         private NfTablesTable _table;

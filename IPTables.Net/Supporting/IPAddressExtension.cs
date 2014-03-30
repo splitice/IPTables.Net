@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace IPTables.Net.Common
+namespace IPTables.Net.Supporting
 {
     internal static class IPAddressExtension
     {

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using IPTables.Net.Common;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Helpers.Subnet;
 using IPTables.Net.Iptables.Helpers.Subnet.Matches;
+using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables.Helpers
 {

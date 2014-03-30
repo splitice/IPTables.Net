@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IPTables.Net.Netfilter;
+using IPTables.Net.Netfilter.Sync;
 
 namespace IPTables.Net.Iptables
 {
-    public class IpTablesChain
+    public class IpTablesChain : INetfilterChain
     {
         private readonly String _name;
         private readonly List<IpTablesRule> _rules;
@@ -48,12 +50,11 @@ namespace IPTables.Net.Iptables
         }
 
         public void Sync(IEnumerable<IpTablesRule> with,
-            Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate = null,
-            Func<IpTablesRule, bool> shouldDelete = null)
+            INetfilterSync<IpTablesRule> sync)
         {
             _system.Adapter.StartTransaction();
 
-            SyncInternal(with, ruleComparerForUpdate, shouldDelete);
+            SyncInternal(with, sync);
 
             _system.Adapter.EndTransactionCommit();
         }
@@ -64,58 +65,9 @@ namespace IPTables.Net.Iptables
         }
 
         internal void SyncInternal(IEnumerable<IpTablesRule> with,
-            Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate = null,
-            Func<IpTablesRule, bool> shouldDelete = null)
+            INetfilterSync<IpTablesRule> sync)
         {
-            if (ruleComparerForUpdate == null)
-            {
-                ruleComparerForUpdate = (a, b) => false;
-            }
-            if (shouldDelete == null)
-            {
-                shouldDelete = a => true;
-            }
-            List<IpTablesRule> currentRules = Rules.ToList();
-
-            int i = 0, len = with.Count();
-            foreach (IpTablesRule cR in currentRules)
-            {
-                //Delete any extra rules
-                if (i == len)
-                {
-                    cR.Delete();
-                    continue;
-                }
-
-                //Get the rule for comparison
-                IpTablesRule withRule = with.ElementAt(i);
-
-                if (cR.Equals(withRule))
-                {
-                    //No need to make any changes
-                    i++;
-                }
-                else if (ruleComparerForUpdate(cR, withRule))
-                {
-                    //Replace this rule
-                    cR.Replace(withRule);
-                    i++;
-                }
-                else
-                {
-                    if (shouldDelete(cR))
-                    {
-                        cR.Delete();
-                    }
-                }
-            }
-
-            //Get rules to be added
-            IEnumerable<IpTablesRule> remaining = with.Skip(i);
-            foreach (IpTablesRule rR in remaining)
-            {
-                rR.Add();
-            }
+            sync.SyncChainRules(with, Rules);
         }
     }
 }

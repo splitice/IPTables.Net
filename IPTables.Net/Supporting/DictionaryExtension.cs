@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace IPTables.Net.Common
+namespace IPTables.Net.Supporting
 {
     internal static class DictionaryExtension
     {

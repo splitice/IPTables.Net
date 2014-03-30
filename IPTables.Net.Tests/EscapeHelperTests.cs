@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using IPTables.Net.Common;
 using IPTables.Net.Iptables.Helpers;
 using NUnit.Framework;
 

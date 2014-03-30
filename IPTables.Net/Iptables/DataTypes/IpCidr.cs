@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Net;
-using IPTables.Net.Common;
+using IPTables.Net.Supporting;
 using LukeSkywalker.IPNetwork;
 
 namespace IPTables.Net.Iptables.DataTypes

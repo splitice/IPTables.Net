@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
-namespace IPTables.Net.Common
+namespace IPTables.Net.Supporting
 {
 	/// <summary>
 	/// Represents a generic collection of key/value pairs that are ordered independently of the key and value.

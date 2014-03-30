@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using IPTables.Net.Common;
 using IPTables.Net.Iptables.Modules;
+using IPTables.Net.Netfilter;
+using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables
 {
-    public class IpTablesRule : IEquatable<IpTablesRule>
+    public class IpTablesRule : IEquatable<IpTablesRule>, INetfilterRule
     {
         private readonly OrderedDictionary<String, IIpTablesModuleGod> _modules = new OrderedDictionary<String, IIpTablesModuleGod>();
         protected internal readonly NetfilterSystem _system;
@@ -115,6 +116,16 @@ namespace IPTables.Net.Iptables
         public void Add()
         {
             _system.Adapter.AddRule(this);
+        }
+
+        public void Replace(INetfilterRule with)
+        {
+            var withCast = with as IpTablesRule;
+            if (withCast == null)
+            {
+                throw new Exception("Comparing different Netfilter rule types, unsupported");
+            }
+            Replace(withCast);
         }
 
         public void Delete(bool usingPosition = true)

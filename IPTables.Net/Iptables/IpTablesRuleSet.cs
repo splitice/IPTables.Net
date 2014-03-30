@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IPTables.Net.Netfilter.Sync;
 
 namespace IPTables.Net.Iptables
 {
@@ -62,8 +63,8 @@ namespace IPTables.Net.Iptables
             _chains.AddChain(new IpTablesChain(table, name, _system));
         }
 
-        public void SyncChains(Func<IpTablesRule, IpTablesRule, bool> comparer = null,
-            Func<IpTablesChain, bool> canDeleteChain = null, Func<IpTablesRule, bool> shouldDelete = null)
+        public void SyncChains(INetfilterSync<IpTablesRule> sync,
+            Func<IpTablesChain, bool> canDeleteChain = null)
         {
             //Start transaction
             _system.Adapter.StartTransaction();
@@ -89,7 +90,7 @@ namespace IPTables.Net.Iptables
                 if (realChain != null)
                 {
                     //Update chain
-                    realChain.SyncInternal(chain.Rules, comparer, shouldDelete);
+                    realChain.SyncInternal(chain.Rules, sync);
                 }
             }
 
