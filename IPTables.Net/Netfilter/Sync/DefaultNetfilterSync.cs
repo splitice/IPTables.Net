@@ -6,7 +6,7 @@ using System.Text;
 
 namespace IPTables.Net.Netfilter.Sync
 {
-    class DefaultNetfilterSync<T> : INetfilterSync<T> where T : INetfilterRule
+    public class DefaultNetfilterSync<T> : INetfilterSync<T> where T : INetfilterRule
     {
         private Func<T, bool> _shouldDelete = null;
 

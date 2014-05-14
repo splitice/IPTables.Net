@@ -21,5 +21,20 @@ namespace IPTables.Net.Tests
 
             Assert.IsTrue(r1.Equals(r2));
         }
+
+        [Test]
+        public void TestLimitComparison()
+        {
+            String rule = "-A INPUT -m limit --limit 100/second --limit-burst 7";
+            IpTablesChainSet chains = new IpTablesChainSet();
+
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+
+            Assert.AreEqual(rule, irule.GetFullCommand());
+
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
+
+            Assert.AreEqual(irule2, irule);
+        }
     }
 }

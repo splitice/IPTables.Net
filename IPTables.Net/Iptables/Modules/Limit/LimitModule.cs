@@ -74,14 +74,18 @@ namespace IPTables.Net.Iptables.Modules.Limit
             switch (strUnit)
             {
                 case "second":
+                case "s":
                     return LimitUnit.Second;
                     break;
                 case "minute":
+                case "sm":
                     return LimitUnit.Minute;
                     break;
                 case "hour":
+                case "h":
                     return LimitUnit.Hour;
                 case "day":
+                case "d":
                     return LimitUnit.Day;
             }
 

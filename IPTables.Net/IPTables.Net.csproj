@@ -48,6 +48,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Iptables\Exceptions\IpTablesParserException.cs" />
+    <Compile Include="NfTablesSystem.cs" />
     <Compile Include="IpTablesSystem.cs" />
     <Compile Include="Iptables\Adapter\Client\IpTablesAdapterClientBase.cs" />
     <Compile Include="Iptables\Adapter\IPTablesAdapterBase.cs" />
@@ -61,6 +63,7 @@
     <Compile Include="Netfilter\Sync\DefaultNetfilterSync.cs" />
     <Compile Include="Netfilter\Sync\INetfilterSync.cs" />
     <Compile Include="NfTables\Adapter\Client\NfTablesAdapterClientBase.cs" />
+    <Compile Include="NfTables\Adapter\INfTablesAdapter.cs" />
     <Compile Include="NfTables\Modules\ConnectionTracking\NfCtMarkOp.cs" />
     <Compile Include="NfTables\Modules\ConnectionTracking\NfCtStateOp.cs" />
     <Compile Include="NfTables\Modules\Core\NfCounterOp.cs" />

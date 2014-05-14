@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IPTables.Net.Iptables.Exceptions;
 using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Netfilter;
 using IPTables.Net.Supporting;
@@ -82,10 +83,10 @@ namespace IPTables.Net.Iptables
         }
 
 
-        public String GetCommand()
+        public String GetCommand(bool incTable = true)
         {
             String command = "";
-            if (Table != "filter")
+            if (incTable && Table != "filter")
             {
                 command += "-t " + Table;
             }
@@ -105,7 +106,7 @@ namespace IPTables.Net.Iptables
             return command;
         }
 
-        public String GetFullCommand(String opt = "-A")
+        public String GetFullCommand(String opt = "-A", bool incTable = true)
         {
             String command = opt + " " + Chain.Name + " ";
             if (opt == "-R")
@@ -125,7 +126,7 @@ namespace IPTables.Net.Iptables
                     command += Position + " ";
                 }
             }
-            command += GetCommand();
+            command += GetCommand(incTable);
             return command;
         }
 
@@ -180,21 +181,29 @@ namespace IPTables.Net.Iptables
             string[] arguments = ArgumentHelper.SplitArguments(rule);
             int count = arguments.Length;
             var ipRule = new IpTablesRule(system, null);
-            var parser = new RuleParser(arguments, ipRule, chains, defaultTable);
 
-            bool not = false;
-            for (int i = 0; i < count; i++)
+            try
             {
-                if (arguments[i] == "!")
-                {
-                    not = true;
-                    continue;
-                }
-                i += parser.FeedToSkip(i, not);
-                not = false;
-            }
+                var parser = new RuleParser(arguments, ipRule, chains, defaultTable);
 
-            ipRule.Chain = parser.GetChain(system);
+                bool not = false;
+                for (int i = 0; i < count; i++)
+                {
+                    if (arguments[i] == "!")
+                    {
+                        not = true;
+                        continue;
+                    }
+                    i += parser.FeedToSkip(i, not);
+                    not = false;
+                }
+
+                ipRule.Chain = parser.GetChain(system);
+            }
+            catch (Exception ex)
+            {
+                throw new IpTablesParserException(rule, ex);
+            }
 
             return ipRule;
         }

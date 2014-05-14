@@ -49,11 +49,29 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
 
                 foreach (var chain in table.Value.Chains)
                 {
-                    output.WriteLine(":" + chain);
+                    bool isInternal = false;
+                    if (table.Key == "nat")
+                    {
+                        isInternal = (chain == "PREROUTING" || chain == "POSTROUTING");
+                    }
+                    else if (table.Key == "filter")
+                    {
+                        isInternal = (chain == "INPUT" || chain == "FORWARD" || chain == "OUTPUT");
+                    }
+
+                    if (isInternal)
+                    {
+                        output.WriteLine(":" + chain+" ACCEPT [0:0]");
+                    }
+                    else
+                    {
+                        output.WriteLine(":" + chain + " - [0:0]");
+                    }
                 }
 
                 foreach (var command in table.Value.Commands)
                 {
+                    Console.WriteLine(command);
                     output.WriteLine(command);
                 }
             }
@@ -61,6 +79,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
             if (_tables.Count != 0)
             {
                 output.WriteLine("COMMIT");
+                output.WriteLine();
                 return true;
             }
 

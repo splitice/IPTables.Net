@@ -6,6 +6,7 @@ using IPTables.Net.Iptables.Modules.Connlimit;
 using IPTables.Net.Iptables.Modules.Connmark;
 using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Dnat;
+using IPTables.Net.Iptables.Modules.Limit;
 using IPTables.Net.Iptables.Modules.Log;
 using IPTables.Net.Iptables.Modules.Mark;
 using IPTables.Net.Iptables.Modules.Multiport;
@@ -31,6 +32,7 @@ namespace IPTables.Net.Iptables.Modules
             DnatModule.GetModuleEntry,
             SnatModule.GetModuleEntry,
             ConnlimitModule.GetModuleEntry,
+            LimitModule.GetModuleEntry,
             CommentModule.GetModuleEntry,
             NfacctModule.GetModuleEntry,
             StateModule.GetModuleEntry,

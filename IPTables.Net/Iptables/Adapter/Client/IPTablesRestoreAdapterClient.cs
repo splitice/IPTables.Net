@@ -49,7 +49,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.DeleteRule(rule);
             }
 
-            String command = rule.GetFullCommand("-D");
+            String command = rule.GetFullCommand("-D", false);
             _builder.AddCommand(rule.Table, command);
         }
 
@@ -62,7 +62,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.InsertRule(rule);
             }
 
-            String command = rule.GetFullCommand("-I");
+            String command = rule.GetFullCommand("-I", false);
             _builder.AddCommand(rule.Table, command);
         }
 
@@ -75,7 +75,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.ReplaceRule(rule);
             }
 
-            String command = rule.GetFullCommand("-R");
+            String command = rule.GetFullCommand("-R", false);
             _builder.AddCommand(rule.Table, command);
         }
 
@@ -88,7 +88,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.AddRule(rule);
             }
 
-            String command = rule.GetFullCommand();
+            String command = rule.GetFullCommand("-A", false);
             _builder.AddCommand(rule.Table, command);
         }
 
@@ -150,8 +150,9 @@ namespace IPTables.Net.Iptables.Adapter.Client
             ISystemProcess process = _system.System.StartProcess(_iptablesRestoreBinary, NoFlushOption);
             if (_builder.WriteOutput(process.StandardInput))
             {
-                process.WaitForExit();
                 process.StandardInput.Flush();
+                process.StandardInput.Close();
+                process.WaitForExit();
 
                 //OK
                 if (process.ExitCode != 0)
@@ -160,7 +161,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                     //ERR: INVALID COMMAND LINE
                     if (process.ExitCode == 2)
                     {
-                        throw new Exception("IpTables-Restore execution failed: Invalid Command Line");
+                        throw new Exception("IpTables-Restore execution failed: Invalid Command Line - "+process.StandardError.ReadToEnd());
                     }
 
                     //ERR: GENERAL ERROR
