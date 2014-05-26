@@ -69,13 +69,14 @@ namespace IPTables.Net.Iptables
         {
             //Start transaction
             _system.Adapter.StartTransaction();
-
+            
             var tableChains = new Dictionary<string, List<IpTablesChain>>();
             foreach (IpTablesChain chain in Chains)
             {
                 if (!tableChains.ContainsKey(chain.Table))
                 {
-                    tableChains.Add(chain.Table, _system.GetChains(chain.Table).ToList());
+                    var chains = _system.GetChains(chain.Table).ToList();
+                    tableChains.Add(chain.Table, chains);
                 }
                 if (tableChains[chain.Table].FirstOrDefault(a => a.Name == chain.Name && a.Table == chain.Table) == null)
                 {
