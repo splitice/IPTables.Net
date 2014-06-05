@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Iptables\Exceptions\IpTablesParserException.cs" />
+    <Compile Include="Iptables\Modules\Length\LengthModule.cs" />
     <Compile Include="NfTablesSystem.cs" />
     <Compile Include="IpTablesSystem.cs" />
     <Compile Include="Iptables\Adapter\Client\IpTablesAdapterClientBase.cs" />
