@@ -12,6 +12,7 @@ using IPTables.Net.Iptables.Modules.Log;
 using IPTables.Net.Iptables.Modules.Mark;
 using IPTables.Net.Iptables.Modules.Multiport;
 using IPTables.Net.Iptables.Modules.Nfacct;
+using IPTables.Net.Iptables.Modules.Nflog;
 using IPTables.Net.Iptables.Modules.Polyfill;
 using IPTables.Net.Iptables.Modules.Recent;
 using IPTables.Net.Iptables.Modules.Snat;
@@ -46,6 +47,7 @@ namespace IPTables.Net.Iptables.Modules
             TcpMssModule.GetModuleEntry,
             MultiportModule.GetModuleEntry,
             LogModule.GetModuleEntry,
+            NflogModule.GetModuleEntry,
             PolyfillModule.GetModuleEntry
         };
 
