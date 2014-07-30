@@ -9,16 +9,27 @@ namespace IPTables.Net.Iptables.Adapter.Client
     internal class IPTablesRestoreAdapterClient : IpTablesAdapterClientBase, IIPTablesAdapterClient
     {
         private const String NoFlushOption = "--noflush";
+        private const String NoClearOption = "--noclear";
 
         private readonly NetfilterSystem _system;
         private readonly String _iptablesRestoreBinary;
         private bool _inTransaction = false;
         protected IPTablesRestoreTableBuilder _builder = new IPTablesRestoreTableBuilder();
 
-        public IPTablesRestoreAdapterClient(NetfilterSystem system, String iptablesRestoreBinary = "iptables-restore")
+        public IPTablesRestoreAdapterClient(NetfilterSystem system, String iptablesRestoreBinary = "xtables-multi iptables-restore")
         {
             _system = system;
             _iptablesRestoreBinary = iptablesRestoreBinary;
+        }
+
+        private void CheckBinary()
+        {
+            var process = _system.System.StartProcess(_iptablesRestoreBinary, "--help");
+            process.WaitForExit();
+            if (!process.StandardOutput.ReadToEnd().Contains(NoClearOption))
+            {
+                throw new Exception("iptables-restore client is not compiled from patched source (patch-iptables-restore.diff)");
+            }
         }
 
         public override void DeleteRule(String table, String chainName, int position)
@@ -147,7 +158,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override void EndTransactionCommit()
         {
-            ISystemProcess process = _system.System.StartProcess(_iptablesRestoreBinary, NoFlushOption);
+            ISystemProcess process = _system.System.StartProcess(_iptablesRestoreBinary, NoFlushOption+" "+NoClearOption);
             if (_builder.WriteOutput(process.StandardInput))
             {
                 process.StandardInput.Flush();
