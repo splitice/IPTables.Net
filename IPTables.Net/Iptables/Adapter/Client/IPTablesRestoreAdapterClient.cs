@@ -20,6 +20,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             _system = system;
             _iptablesRestoreBinary = iptablesRestoreBinary;
+            CheckBinary();
         }
 
         private void CheckBinary()
