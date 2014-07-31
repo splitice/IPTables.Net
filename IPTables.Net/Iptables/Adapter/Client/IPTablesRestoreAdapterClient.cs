@@ -20,10 +20,9 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             _system = system;
             _iptablesRestoreBinary = iptablesRestoreBinary;
-            CheckBinary();
         }
 
-        private void CheckBinary()
+        public void CheckBinary()
         {
             var process = _system.System.StartProcess(_iptablesRestoreBinary, "--help");
             process.WaitForExit();
