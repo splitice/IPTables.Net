@@ -26,7 +26,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             var process = _system.System.StartProcess(_iptablesRestoreBinary, "--help");
             process.WaitForExit();
-            if (!process.StandardOutput.ReadToEnd().Contains(NoClearOption))
+            if (!process.StandardError.ReadToEnd().Contains(NoClearOption))
             {
                 throw new Exception("iptables-restore client is not compiled from patched source (patch-iptables-restore.diff)");
             }

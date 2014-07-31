@@ -18,5 +18,11 @@ namespace IPTables.Net.Iptables.Adapter
         {
             return new Client.IPTablesRestoreAdapterClient(system, _iptablesRestoreBinary);
         }
+
+        public void CheckBinary(IpTablesSystem system)
+        {
+            var client = GetClient(system);
+            (client as Client.IPTablesRestoreAdapterClient).CheckBinary();
+        }
     }
 }
