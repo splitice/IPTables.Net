@@ -10,7 +10,7 @@ namespace IPTables.Net.Iptables.Adapter
     public class IPTablesRestoreAdapter : IPTablesAdapterBase
     {
         private readonly String _iptablesRestoreBinary;
-        public IPTablesRestoreAdapter(String iptablesRestoreBinary = "xtables-multi iptables-restore")
+        public IPTablesRestoreAdapter(String iptablesRestoreBinary = "iptables-restore")
         {
             _iptablesRestoreBinary = iptablesRestoreBinary;
         }

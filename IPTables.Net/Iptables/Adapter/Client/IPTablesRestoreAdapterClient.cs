@@ -16,7 +16,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
         private bool _inTransaction = false;
         protected IPTablesRestoreTableBuilder _builder = new IPTablesRestoreTableBuilder();
 
-        public IPTablesRestoreAdapterClient(NetfilterSystem system, String iptablesRestoreBinary = "xtables-multi iptables-restore")
+        public IPTablesRestoreAdapterClient(NetfilterSystem system, String iptablesRestoreBinary = "iptables-restore")
         {
             _system = system;
             _iptablesRestoreBinary = iptablesRestoreBinary;
