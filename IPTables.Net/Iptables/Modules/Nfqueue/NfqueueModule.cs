@@ -23,8 +23,8 @@ namespace IPTables.Net.Iptables.Modules.Nfqueue
                     Num = int.Parse(parser.GetNextArg());
                     return 1;
                 case OptionQueueBypass:
-                    Bypass = int.Parse(parser.GetNextArg()) == 1;
-                    return 1;
+                    Bypass = true;
+                    return 0;
             }
 
             return 0;
