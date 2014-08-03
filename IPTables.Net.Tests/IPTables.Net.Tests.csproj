@@ -66,6 +66,7 @@
     <Compile Include="SingleDnatRuleParseTests.cs" />
     <Compile Include="SingleConnmarkRuleParseTests.cs" />
     <Compile Include="SingleLengthRuleParseTests.cs" />
+    <Compile Include="SingleNqueueRuleParseTests.cs" />
     <Compile Include="SingleNflogRuleParseTests.cs" />
     <Compile Include="SingleMultiportRuleParseTests.cs" />
     <Compile Include="SingleLogRuleParseTests.cs" />
