@@ -38,6 +38,10 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
             }
             var commandTable = _tables[table];
 
+            //iptables-restore doesnt support ' quotes
+            ruleCommand = ruleCommand.Replace('\'', '"');
+
+
             commandTable.Commands.Add(ruleCommand);
         }
 

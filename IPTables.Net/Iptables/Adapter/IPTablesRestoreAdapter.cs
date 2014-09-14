@@ -10,13 +10,16 @@ namespace IPTables.Net.Iptables.Adapter
     public class IPTablesRestoreAdapter : IPTablesAdapterBase
     {
         private readonly String _iptablesRestoreBinary;
-        public IPTablesRestoreAdapter(String iptablesRestoreBinary = "iptables-restore")
+        private readonly String _iptablesSaveBinary;
+
+        public IPTablesRestoreAdapter(String iptablesRestoreBinary = "iptables-restore", String iptableSaveBinary = "iptables-save")
         {
             _iptablesRestoreBinary = iptablesRestoreBinary;
+            _iptablesSaveBinary = iptableSaveBinary;
         }
         public override IIPTablesAdapterClient GetClient(IpTablesSystem system)
         {
-            return new Client.IPTablesRestoreAdapterClient(system, _iptablesRestoreBinary);
+            return new Client.IPTablesRestoreAdapterClient(system, _iptablesRestoreBinary, _iptablesSaveBinary);
         }
 
         public void CheckBinary(IpTablesSystem system)

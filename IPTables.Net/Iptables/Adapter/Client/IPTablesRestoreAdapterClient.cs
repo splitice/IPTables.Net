@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using SystemInteract;
 using IPTables.Net.Iptables.Adapter.Client.Helper;
 using IPTables.Net.Netfilter;
@@ -13,18 +15,33 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         private readonly NetfilterSystem _system;
         private readonly String _iptablesRestoreBinary;
+        private readonly String _iptablesSaveBinary;
         private bool _inTransaction = false;
         protected IPTablesRestoreTableBuilder _builder = new IPTablesRestoreTableBuilder();
 
-        public IPTablesRestoreAdapterClient(NetfilterSystem system, String iptablesRestoreBinary = "iptables-restore")
+        public IPTablesRestoreAdapterClient(NetfilterSystem system, String iptablesRestoreBinary = "iptables-restore", String iptableSaveBinary = "iptables-save")
         {
             _system = system;
             _iptablesRestoreBinary = iptablesRestoreBinary;
+            _iptablesSaveBinary = iptableSaveBinary;
+        }
+
+        private ISystemProcess StartProcess(String binary, String arguments)
+        {
+            binary = binary.TrimStart();
+            //-1 or 0
+            if (binary.IndexOf(" ") > 0)
+            {
+                var splitBinary = binary.Split(new char[] { ' ' });
+                binary = splitBinary[0];
+                arguments = String.Join(" ",splitBinary.Skip(1).ToArray()) + " " + arguments;
+            }
+            return _system.System.StartProcess(binary, arguments);
         }
 
         public void CheckBinary()
         {
-            var process = _system.System.StartProcess(_iptablesRestoreBinary, "--help");
+            var process = StartProcess(_iptablesRestoreBinary, "--help");
             process.WaitForExit();
             if (!process.StandardError.ReadToEnd().Contains(NoClearOption))
             {
@@ -142,7 +159,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override IpTablesChainSet ListRules(String table)
         {
-            ISystemProcess process = _system.System.StartProcess("iptables-save", String.Format("-c -t {0}", table));
+            ISystemProcess process = StartProcess(_iptablesSaveBinary, String.Format("-c -t {0}", table));
             process.WaitForExit();
             return Helper.IPTablesSaveParser.GetRulesFromOutput(_system,process.StandardOutput.ReadToEnd(), table);
         }
@@ -158,7 +175,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override void EndTransactionCommit()
         {
-            ISystemProcess process = _system.System.StartProcess(_iptablesRestoreBinary, NoFlushOption+" "+NoClearOption);
+            ISystemProcess process = StartProcess(_iptablesRestoreBinary, NoFlushOption + " " + NoClearOption);
             if (_builder.WriteOutput(process.StandardInput))
             {
                 process.StandardInput.Flush();
@@ -172,6 +189,13 @@ namespace IPTables.Net.Iptables.Adapter.Client
                     //ERR: INVALID COMMAND LINE
                     if (process.ExitCode == 2)
                     {
+                        MemoryStream ms = new MemoryStream();
+                        var sw = new StreamWriter(ms);
+                        _builder.WriteOutput(sw);
+                        sw.Flush();
+                        ms.Seek(0, SeekOrigin.Begin);
+                        var sr = new StreamReader(ms);
+                        Console.WriteLine(sr.ReadToEnd());
                         throw new Exception("IpTables-Restore execution failed: Invalid Command Line - "+process.StandardError.ReadToEnd());
                     }
 
