@@ -9,7 +9,7 @@ namespace IPTables.Net.Tests
 {
     class LevensheteinSolutionTest
     {
-        [TestCase]
+        [TestCase(Ignore = true)]
         public void DistanceTest()
         {
             String s = "democrat";
@@ -21,7 +21,7 @@ namespace IPTables.Net.Tests
             Assert.AreEqual(8, distance);
         }
 
-        [TestCase]
+        [TestCase(Ignore = true)]
         public void InstructionsTest()
         {
             String s = "democrat";
@@ -37,7 +37,7 @@ namespace IPTables.Net.Tests
             Assert.AreEqual(t, tApplied);
         }
 
-        [TestCase]
+        [TestCase(Ignore=true)]
         public void InstructionsBulkTest()
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
