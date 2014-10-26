@@ -81,12 +81,12 @@ namespace IPTables.Net.Iptables.Modules.Multiport
                     return 1;
                 case OptionDestinationPorts:
                 case OptionDestinationPortsLong:
-                    DestinationPorts = new ValueOrNot<HashSet<PortOrRange>>(
+                    DestinationPorts = new ValueOrNot<IEnumerable<PortOrRange>>(
                         ParseListOfPortOrRanges(parser.GetNextArg()), not);
                     return 1;
                 case OptionSourcePorts:
                 case OptionSourcePortsLong:
-                    SourcePorts = new ValueOrNot<HashSet<PortOrRange>>(ParseListOfPortOrRanges(parser.GetNextArg()), not);
+                    SourcePorts = new ValueOrNot<IEnumerable<PortOrRange>>(ParseListOfPortOrRanges(parser.GetNextArg()), not);
                     return 1;
             }
 
@@ -97,7 +97,7 @@ namespace IPTables.Net.Iptables.Modules.Multiport
         {
             var sb = new StringBuilder();
 
-            if (!Ports.Null && Ports.Value.Count != 0)
+            if (!Ports.Null && Ports.Value.Count() != 0)
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
@@ -106,7 +106,7 @@ namespace IPTables.Net.Iptables.Modules.Multiport
                 sb.Append(OptionPorts + " ");
                 sb.Append(String.Join(",", Ports.Value.Select(a => a.ToString()).ToArray()));
             }
-            if (!DestinationPorts.Null && DestinationPorts.Value.Count != 0)
+            if (!DestinationPorts.Null && DestinationPorts.Value.Count() != 0)
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
@@ -115,7 +115,7 @@ namespace IPTables.Net.Iptables.Modules.Multiport
                 sb.Append(OptionDestinationPorts + " ");
                 sb.Append(String.Join(",", DestinationPorts.Value.Select(a => a.ToString()).ToArray()));
             }
-            if (!SourcePorts.Null && SourcePorts.Value.Count != 0)
+            if (!SourcePorts.Null && SourcePorts.Value.Count() != 0)
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
