@@ -26,9 +26,19 @@ namespace IPTables.Net.Iptables.Modules
             _tableName = defaultTable;
         }
 
+        public String ChainName
+        {
+            get { return _chainName; }
+        }
+
         public IpTablesChain GetChain(NetfilterSystem system)
         {
             return _chains.GetChainOrAdd(_chainName, _tableName, system);
+        }
+
+        public IpTablesChain CreateNewChain(NetfilterSystem system)
+        {
+            return new IpTablesChain(_tableName, _chainName, system);
         }
 
         public string GetCurrentArg()

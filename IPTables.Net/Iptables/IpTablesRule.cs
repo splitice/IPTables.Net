@@ -176,7 +176,7 @@ namespace IPTables.Net.Iptables
         }
 
         public static IpTablesRule Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
-            String defaultTable = "filter")
+            String defaultTable = "filter", bool createChain = false)
         {
             string[] arguments = ArgumentHelper.SplitArguments(rule);
             int count = arguments.Length;
@@ -198,7 +198,16 @@ namespace IPTables.Net.Iptables
                     not = false;
                 }
 
-                ipRule.Chain = parser.GetChain(system);
+                var chain = parser.GetChain(system);
+                if (chain == null)
+                {
+                    if (!createChain)
+                    {
+                        throw new Exception(String.Format("Unable to find chain: {0}", parser.ChainName));
+                    }
+                    chain = parser.CreateNewChain(system);
+                }
+                ipRule.Chain = chain;
             }
             catch (Exception ex)
             {
