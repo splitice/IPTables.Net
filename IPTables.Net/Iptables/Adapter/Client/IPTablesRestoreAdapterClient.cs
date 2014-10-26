@@ -160,8 +160,9 @@ namespace IPTables.Net.Iptables.Adapter.Client
         public override IpTablesChainSet ListRules(String table)
         {
             ISystemProcess process = StartProcess(_iptablesSaveBinary, String.Format("-c -t {0}", table));
+            String toEnd = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
-            return Helper.IPTablesSaveParser.GetRulesFromOutput(_system,process.StandardOutput.ReadToEnd(), table);
+            return Helper.IPTablesSaveParser.GetRulesFromOutput(_system, toEnd, table);
         }
 
         public override void StartTransaction()

@@ -80,6 +80,7 @@
     <Compile Include="Supporting\ArgumentHelper.cs" />
     <Compile Include="Supporting\DictionaryExtension.cs" />
     <Compile Include="Supporting\IOrderedDictionary.cs" />
+    <Compile Include="Supporting\LevenshteinSolution.cs" />
     <Compile Include="Supporting\OrderedDictionary.cs" />
     <Compile Include="Iptables\Adapter\Client\Helper\IPTablesRestoreTableBuilder.cs" />
     <Compile Include="Iptables\Adapter\Client\Helper\IPTablesSaveParser.cs" />

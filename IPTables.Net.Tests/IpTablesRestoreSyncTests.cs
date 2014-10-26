@@ -16,6 +16,29 @@ namespace IPTables.Net.Tests
     class IpTablesRestoreSyncTests
     {
         [Test]
+        public void TestQuotes()
+        {
+            var mock = new MockIptablesSystemFactory();
+            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+                                               {
+                                                   "-A INPUT -p tcp -j DROP",
+                                               }, system);
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+                                               {
+                                                   "-A INPUT -p tcp -j DROP",
+                                                   "-A INPUT -m comment --comment 'test space'"
+                                               }, system);
+
+            List<String> expectedCommands = new List<String> { "*filter", 
+                                                   "-A INPUT -m comment --comment \"test space\"", "COMMIT" };
+
+            mock.TestSync(rulesOriginal, rulesNew, mock);
+            var output = (system.Adapter as MockIpTablesRestoreAdapterClient).GetOutput();
+            CollectionAssert.AreEqual(output, expectedCommands);
+        }
+
+        [Test]
         public void TestAdd()
         {
             var mock = new MockIptablesSystemFactory();

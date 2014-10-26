@@ -78,12 +78,13 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
                     Console.WriteLine(command);
                     output.WriteLine(command);
                 }
+
+                output.WriteLine("COMMIT");
+                output.WriteLine();
             }
 
             if (_tables.Count != 0)
             {
-                output.WriteLine("COMMIT");
-                output.WriteLine();
                 return true;
             }
 
