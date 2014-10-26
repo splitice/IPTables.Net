@@ -14,9 +14,9 @@ namespace IPTables.Net.Iptables.Modules.Multiport
         private const String OptionDestinationPortsLong = "--destination-ports";
         private const String OptionSourcePortsLong = "--source-ports";
 
-        public ValueOrNot<HashSet<PortOrRange>> DestinationPorts = new ValueOrNot<HashSet<PortOrRange>>();
-        public ValueOrNot<HashSet<PortOrRange>> Ports = new ValueOrNot<HashSet<PortOrRange>>();
-        public ValueOrNot<HashSet<PortOrRange>> SourcePorts = new ValueOrNot<HashSet<PortOrRange>>();
+        public ValueOrNot<IEnumerable<PortOrRange>> DestinationPorts = new ValueOrNot<IEnumerable<PortOrRange>>();
+        public ValueOrNot<IEnumerable<PortOrRange>> Ports = new ValueOrNot<IEnumerable<PortOrRange>>();
+        public ValueOrNot<IEnumerable<PortOrRange>> SourcePorts = new ValueOrNot<IEnumerable<PortOrRange>>();
 
         public bool Equals(MultiportModule other)
         {
@@ -37,10 +37,34 @@ namespace IPTables.Net.Iptables.Modules.Multiport
                 return false;
             }
 
-            return 
-                   (Ports.Null || Ports.Value.SetEquals(other.Ports.Value)) &&
-                   (DestinationPorts.Null || DestinationPorts.Value.SetEquals(other.DestinationPorts.Value)) &&
-                   (SourcePorts.Null || SourcePorts.Value.SetEquals(other.SourcePorts.Value));
+            if (!Ports.Null)
+            {
+                HashSet<PortOrRange> ports = new HashSet<PortOrRange>(Ports.Value);
+                if (!ports.SetEquals(other.Ports.Value))
+                {
+                    return false;
+                }
+            }
+
+            if (!SourcePorts.Null)
+            {
+                HashSet<PortOrRange> ports = new HashSet<PortOrRange>(SourcePorts.Value);
+                if (!ports.SetEquals(other.SourcePorts.Value))
+                {
+                    return false;
+                }
+            }
+
+            if (!DestinationPorts.Null)
+            {
+                HashSet<PortOrRange> ports = new HashSet<PortOrRange>(DestinationPorts.Value);
+                if (!ports.SetEquals(other.DestinationPorts.Value))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public bool NeedsLoading
@@ -53,7 +77,7 @@ namespace IPTables.Net.Iptables.Modules.Multiport
             switch (parser.GetCurrentArg())
             {
                 case OptionPorts:
-                    Ports = new ValueOrNot<HashSet<PortOrRange>>(ParseListOfPortOrRanges(parser.GetNextArg()), not);
+                    Ports = new ValueOrNot<IEnumerable<PortOrRange>>(ParseListOfPortOrRanges(parser.GetNextArg()), not);
                     return 1;
                 case OptionDestinationPorts:
                 case OptionDestinationPortsLong:
