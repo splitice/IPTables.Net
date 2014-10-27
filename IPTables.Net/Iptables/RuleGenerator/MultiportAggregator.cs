@@ -6,10 +6,11 @@ using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Multiport;
 using IPTables.Net.Iptables.Modules.Tcp;
+using IPTables.Net.Iptables.Modules.Udp;
 
 namespace IPTables.Net.Iptables.RuleGenerator
 {
-    class MultiportAggregator<TKey> : IRuleGenerator
+    public class MultiportAggregator<TKey> : IRuleGenerator
     {
         private String _chain;
         private String _table;
@@ -21,13 +22,18 @@ namespace IPTables.Net.Iptables.RuleGenerator
         private Action<IpTablesRule, TKey> _setJump;
         private string _baseRule;
 
-        public MultiportAggregator(String chain, String table, Func<IpTablesRule, TKey> extractKey, Func<IpTablesRule, PortOrRange> extractPort, Action<IpTablesRule, List<PortOrRange>> setPort, String baseRule = null)
+        public MultiportAggregator(String chain, String table, Func<IpTablesRule, TKey> extractKey, 
+            Func<IpTablesRule, PortOrRange> extractPort, Action<IpTablesRule, List<PortOrRange>> setPort, 
+            Action<IpTablesRule, TKey> setJump, String commentPrefix,
+            String baseRule = null)
         {
             _chain = chain;
             _table = table;
             _extractKey = extractKey;
             _extractPort = extractPort;
             _setPort = setPort;
+            _setJump = setJump;
+            _commentPrefix = commentPrefix;
             if (baseRule == null)
             {
                 baseRule = "-A "+chain+" -t "+table;
@@ -89,7 +95,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 }
                 else
                 {
-                    var tcp = rule.GetModuleOrLoad<TcpModule>("udp");
+                    var tcp = rule.GetModuleOrLoad<UdpModule>("udp");
                     tcp.DestinationPort = new ValueOrNot<PortOrRange>(ranges[0]);
                 }
             }
@@ -112,7 +118,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 }
                 else
                 {
-                    var tcp = rule.GetModuleOrLoad<TcpModule>("udp");
+                    var tcp = rule.GetModuleOrLoad<UdpModule>("udp");
                     tcp.SourcePort = new ValueOrNot<PortOrRange>(ranges[0]);
                 }
             }
@@ -133,6 +139,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
             int count = 0, ruleCount = 0;
             List<PortOrRange> ranges = new List<PortOrRange>();
             IpTablesRule rule1 = null;
+            var firstCore = rules[0].GetModule<CoreModule>("core");
 
             Action buildRule = () =>
             {
@@ -142,7 +149,17 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 }
 
                 rule1 = IpTablesRule.Parse(_baseRule, system, ruleSet.ChainSet);
-                if (ruleCount == 1)
+                var ruleCore = rule1.GetModuleOrLoad<CoreModule>("core");
+                ruleCore.Protocol = firstCore.Protocol;
+                if (firstCore.TargetMode == TargetMode.Goto && !String.IsNullOrEmpty(firstCore.Goto))
+                {
+                    ruleCore.Goto = firstCore.Goto;
+                }
+                else if (firstCore.TargetMode == TargetMode.Jump && !String.IsNullOrEmpty(firstCore.Jump))
+                {
+                    ruleCore.Jump = firstCore.Jump;
+                }
+                if (ruleCount == 0)
                 {
                     rule1.Chain = ruleSet.ChainSet.GetChainOrDefault(_chain, _table);
                 }
@@ -150,7 +167,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 {
                     rule1.Chain = ruleSet.ChainSet.GetChainOrDefault(chainName, _table);
                 }
-                _setPort(rule1, ranges);
+                _setPort(rule1, new List<PortOrRange>(ranges));
                 ruleSet.AddRule(rule1);
             };
 
@@ -203,6 +220,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                     ruleCount++;
                 }
             }
+            count = 0;
 
             foreach (var e in exceptions)
             {
@@ -248,7 +266,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
         {
             foreach (var p in _rules)
             {
-                String chainName = _chain + "|" + p.Key;
+                String chainName = _chain + "_" + p.Key;
                 if (ruleSet.ChainSet.HasChain(chainName, _table))
                 {
                     throw new Exception(String.Format("Duplicate feature split: {0}", chainName));
@@ -263,11 +281,11 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 {
                     if (chain.Rules.Count != 0)
                     {
-                        IpTablesRule jumpRule = new IpTablesRule(system, chain);
-                        jumpRule.GetModule<CoreModule>("core").Jump = chainName;
+                        IpTablesRule jumpRule = IpTablesRule.Parse(_baseRule, system, ruleSet.ChainSet);
+                        _setJump(jumpRule, p.Key);
+                        jumpRule.GetModuleOrLoad<CoreModule>("core").Jump = chainName;
                         jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix + "|MA|" +
                                                                                          chainName;
-                        _setJump(jumpRule, p.Key);
                         ruleSet.AddRule(jumpRule);
                     }
                 }
