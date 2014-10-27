@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.Modules.Core;
@@ -76,7 +77,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
             return ret;
         }
 
-        public static void DestinateionPortSetter(IpTablesRule rule, List<PortOrRange> ranges)
+        public static void DestinationPortSetter(IpTablesRule rule, List<PortOrRange> ranges)
         {
             var protocol = rule.GetModule<CoreModule>("core").Protocol;
             if (ranges.Count == 1 && !protocol.Null && !protocol.Not)
@@ -99,15 +100,39 @@ namespace IPTables.Net.Iptables.RuleGenerator
             }
         }
 
-        private void OutputRulesForGroup(IpTablesRuleSet ruleSet, IpTablesSystem system, List<IpTablesRule> rules)
+        public static void SourcePortSetter(IpTablesRule rule, List<PortOrRange> ranges)
+        {
+            var protocol = rule.GetModule<CoreModule>("core").Protocol;
+            if (ranges.Count == 1 && !protocol.Null && !protocol.Not)
+            {
+                if (protocol.Value == "tcp")
+                {
+                    var tcp = rule.GetModuleOrLoad<TcpModule>("tcp");
+                    tcp.SourcePort = new ValueOrNot<PortOrRange>(ranges[0]);
+                }
+                else
+                {
+                    var tcp = rule.GetModuleOrLoad<TcpModule>("udp");
+                    tcp.SourcePort = new ValueOrNot<PortOrRange>(ranges[0]);
+                }
+            }
+            else
+            {
+                var multiport = rule.GetModuleOrLoad<MultiportModule>("multiport");
+                multiport.SourcePorts = new ValueOrNot<IEnumerable<PortOrRange>>(ranges);
+            }
+        }
+
+        private IpTablesRule OutputRulesForGroup(IpTablesRuleSet ruleSet, IpTablesSystem system, List<IpTablesRule> rules, string chainName)
         {
             if (rules.Count == 0)
             {
-                return;
+                return null;
             }
 
-            int count = 0, ruleId = 0;
+            int count = 0, ruleCount = 0;
             List<PortOrRange> ranges = new List<PortOrRange>();
+            IpTablesRule rule1 = null;
 
             Action buildRule = () =>
             {
@@ -115,9 +140,16 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 {
                     throw new Exception("this should not happen");
                 }
-                ruleId++;
 
-                IpTablesRule rule1 = IpTablesRule.Parse(_baseRule, system, ruleSet.ChainSet);
+                rule1 = IpTablesRule.Parse(_baseRule, system, ruleSet.ChainSet);
+                if (ruleCount == 1)
+                {
+                    rule1.Chain = ruleSet.ChainSet.GetChainOrDefault(_chain, _table);
+                }
+                else
+                {
+                    rule1.Chain = ruleSet.ChainSet.GetChainOrDefault(chainName, _table);
+                }
                 _setPort(rule1, ranges);
                 ruleSet.AddRule(rule1);
             };
@@ -144,6 +176,34 @@ namespace IPTables.Net.Iptables.RuleGenerator
 
             exceptions = GetRanged(exceptions);
 
+            for (var i=0;i<exceptions.Count;i++)
+            {
+                var e = exceptions[i];
+                if (e.IsRange())
+                {
+                    count += 2;
+                }
+                else
+                {
+                    count++;
+                }
+
+
+                if (i + 1 < exceptions.Count)
+                {
+                    if (count == 14 && exceptions[i+1].IsRange())
+                    {
+                        ruleCount++;
+                        continue;
+                    }
+                }
+
+                if (count == 15)
+                {
+                    ruleCount++;
+                }
+            }
+
             foreach (var e in exceptions)
             {
                 if (count == 14 && e.IsRange() || count == 15)
@@ -165,6 +225,13 @@ namespace IPTables.Net.Iptables.RuleGenerator
             }
 
             buildRule();
+
+            if (ruleCount != 0)
+            {
+                return null;
+            }
+
+            return rule1;
         }
 
         public void AddRule(IpTablesRule rule)
@@ -189,14 +256,29 @@ namespace IPTables.Net.Iptables.RuleGenerator
 
                 //Jump to chain
                 var chain = ruleSet.ChainSet.GetChainOrAdd(chainName, _table, system);
-                IpTablesRule jumpRule = new IpTablesRule(system, chain);
-                jumpRule.GetModule<CoreModule>("core").Jump = chainName;
-                jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix + "|MA|" + chainName;
-                _setJump(jumpRule, p.Key);
-                ruleSet.AddRule(jumpRule);
 
                 //Nested output
-                OutputRulesForGroup(ruleSet, system, p.Value);
+                var singleRule = OutputRulesForGroup(ruleSet, system, p.Value, chainName);
+                if (singleRule == null)
+                {
+                    if (chain.Rules.Count != 0)
+                    {
+                        IpTablesRule jumpRule = new IpTablesRule(system, chain);
+                        jumpRule.GetModule<CoreModule>("core").Jump = chainName;
+                        jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix + "|MA|" +
+                                                                                         chainName;
+                        _setJump(jumpRule, p.Key);
+                        ruleSet.AddRule(jumpRule);
+                    }
+                }
+                else
+                {
+                    _setJump(singleRule, p.Key);
+                }
+                if(chain.Rules.Count == 0)
+                {
+                    ruleSet.ChainSet.Chains.Remove(chain);
+                }
             }
         }
     }
