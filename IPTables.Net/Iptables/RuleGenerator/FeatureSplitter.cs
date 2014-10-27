@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.Modules.Core;
 
 namespace IPTables.Net.Iptables.RuleGenerator
 {
-    class FeatureSplitter<TGenerator, TKey>: IRuleGenerator where TGenerator : IRuleGenerator
+    public class FeatureSplitter<TGenerator, TKey>: IRuleGenerator where TGenerator : IRuleGenerator
     {
         private Dictionary<TKey, IRuleGenerator> _protocols = new Dictionary<TKey, IRuleGenerator>();
         private string _chain;
@@ -30,7 +30,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
             TKey key = _extractor(rule);
             if (!_protocols.ContainsKey(key))
             {
-                _protocols.Add(key, _nestedGenerator(_chain + "|" + key, _table));
+                _protocols.Add(key, _nestedGenerator(_chain + "_" + key, _table));
             }
 
             var gen = _protocols[key];
@@ -42,7 +42,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
         {
             foreach (var p in _protocols)
             {
-                String chainName = _chain + "|" + p.Key;
+                String chainName = _chain + "_" + p.Key;
                 if(ruleSet.ChainSet.HasChain(chainName, _table))
                 {
                     throw new Exception(String.Format("Duplicate feature split: {0}", chainName));
@@ -64,7 +64,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
         }
     }
 
-    class FeatureSplitter<TGenerator> : FeatureSplitter<TGenerator, String> where TGenerator : IRuleGenerator
+    public class FeatureSplitter<TGenerator> : FeatureSplitter<TGenerator, String> where TGenerator : IRuleGenerator
     {
         public FeatureSplitter(string chain, string table, Func<IpTablesRule, string> extractor, Action<IpTablesRule, string> setter, Func<string, string, TGenerator> nestedGenerator, string commentPrefix) : base(chain, table, extractor, setter, nestedGenerator, commentPrefix)
         {

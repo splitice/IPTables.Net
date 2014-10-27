@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Iptables\Exceptions\IpTablesParserException.cs" />
+    <Compile Include="Iptables\Helpers\RulePortHelper.cs" />
     <Compile Include="Iptables\Libiptc\IptcInterface.cs" />
     <Compile Include="Iptables\Modules\Length\LengthModule.cs" />
     <Compile Include="Iptables\Modules\Nfqueue\NfqueueModule.cs" />
