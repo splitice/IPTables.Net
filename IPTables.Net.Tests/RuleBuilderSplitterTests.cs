@@ -39,7 +39,7 @@ namespace IPTables.Net.Tests
                 rules.Chains.First().Rules.First().GetFullCommand());
             Assert.AreEqual("-A INPUT -s 8.1.1.2 -j INPUT|8.1.1.2 -m comment --comment '_|RG|INPUT|8.1.1.2'", 
                 rules.Chains.First().Rules.Skip(1).First().GetFullCommand());
-            Assert.AreEqual("-A INPUT|8.1.1.1 -s 8.1.1.1 -j ACCEPT -m udp --sport 1", 
+            Assert.AreEqual("-A INPUT|8.1.1.1 -j ACCEPT -m udp --sport 1", 
                 rules.Chains.Skip(1).First().Rules.First().GetFullCommand());
         }
 
@@ -55,7 +55,9 @@ namespace IPTables.Net.Tests
 
         private IPAddress extractor(IpTablesRule arg)
         {
-            return arg.GetModule<CoreModule>("core").Source.Value.Address;
+            IPAddress addr = arg.GetModule<CoreModule>("core").Source.Value.Address;
+            arg.GetModule<CoreModule>("core").Source = new ValueOrNot<IpCidr>();
+            return addr;
         }
     }
 }
