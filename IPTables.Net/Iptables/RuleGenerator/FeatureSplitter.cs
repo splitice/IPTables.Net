@@ -52,7 +52,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 var chain = ruleSet.ChainSet.GetChainOrAdd(_chain, _table, system);
                 IpTablesRule jumpRule = new IpTablesRule(system, chain);
                 jumpRule.GetModuleOrLoad<CoreModule>("core").Jump = chainName;
-                jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix+"|RG|"+chainName;
+                jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix+"|FS|"+chainName;
                 _setter(jumpRule, p.Key);
                 ruleSet.AddRule(jumpRule);
 
