@@ -32,6 +32,11 @@ namespace IPTables.Net.Iptables.DataTypes
             get { return _lowerPort; }
         }
 
+        public bool IsRange()
+        {
+            return _upperPort != _lowerPort;
+        }
+
         public override String ToString()
         {
             if (LowerPort == UpperPort)
