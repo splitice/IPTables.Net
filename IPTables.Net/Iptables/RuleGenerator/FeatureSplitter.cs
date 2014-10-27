@@ -49,14 +49,16 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 }
 
                 //Jump to chain
-                var chain = ruleSet.ChainSet.GetChainOrAdd(chainName, _table, system);
+                var chain = ruleSet.ChainSet.GetChainOrAdd(_chain, _table, system);
                 IpTablesRule jumpRule = new IpTablesRule(system, chain);
-                jumpRule.GetModule<CoreModule>("core").Jump = chainName;
+                jumpRule.GetModuleOrLoad<CoreModule>("core").Jump = chainName;
                 jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix+"|RG|"+chainName;
                 _setter(jumpRule, p.Key);
                 ruleSet.AddRule(jumpRule);
 
                 //Nested output
+
+                ruleSet.AddChain(chainName, _table);
                 p.Value.Output(system, ruleSet);
             }
         }

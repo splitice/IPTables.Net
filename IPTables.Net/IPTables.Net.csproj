@@ -58,6 +58,7 @@
     <Compile Include="Iptables\RuleGenerator\MultiportAggregator.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Iptables\RuleGenerator\RuleOutputter.cs" />
     <Compile Include="NfTablesSystem.cs" />
     <Compile Include="IpTablesSystem.cs" />
     <Compile Include="Iptables\Adapter\Client\IpTablesAdapterClientBase.cs" />

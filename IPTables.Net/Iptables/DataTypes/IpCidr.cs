@@ -12,7 +12,7 @@ namespace IPTables.Net.Iptables.DataTypes
         public IPAddress Address;
         public uint Cidr;
 
-        public IpCidr(IPAddress address, uint cidr)
+        public IpCidr(IPAddress address, uint cidr = 32)
         {
             Address = address;
             Cidr = cidr;
