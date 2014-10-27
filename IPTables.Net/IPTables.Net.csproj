@@ -53,6 +53,11 @@
     <Compile Include="Iptables\Modules\Length\LengthModule.cs" />
     <Compile Include="Iptables\Modules\Nfqueue\NfqueueModule.cs" />
     <Compile Include="Iptables\Modules\Nflog\NflogModule.cs" />
+    <Compile Include="Iptables\RuleGenerator\FeatureSplitter.cs" />
+    <Compile Include="Iptables\RuleGenerator\IRuleGenerator.cs" />
+    <Compile Include="Iptables\RuleGenerator\MultiportAggregator.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="NfTablesSystem.cs" />
     <Compile Include="IpTablesSystem.cs" />
     <Compile Include="Iptables\Adapter\Client\IpTablesAdapterClientBase.cs" />
@@ -100,15 +105,6 @@
     <Compile Include="Iptables\Helpers\ShellHelper.cs" />
     <Compile Include="Iptables\DataTypes\LimitUnit.cs" />
     <Compile Include="Iptables\Helpers\ExecutionHelper.cs" />
-    <Compile Include="Iptables\Helpers\SubnetHelper.cs" />
-    <Compile Include="Iptables\Helpers\Subnet\AbstractSubnetRule.cs" />
-    <Compile Include="Iptables\Helpers\Subnet\ISubnetTargetRule.cs" />
-    <Compile Include="Iptables\Helpers\Subnet\Matches\ISubnetMatch.cs" />
-    <Compile Include="Iptables\Helpers\Subnet\Matches\SubnetSourceAddressMatch.cs" />
-    <Compile Include="Iptables\Helpers\Subnet\Matches\SubnetDestinationAddressMatch.cs" />
-    <Compile Include="Iptables\Helpers\Subnet\SubnetGotoRule.cs" />
-    <Compile Include="Iptables\Helpers\Subnet\SubnetJumpRule.cs" />
-    <Compile Include="Iptables\Helpers\Subnet\SubnetMatch.cs" />
     <Compile Include="Iptables\IpTablesChain.cs" />
     <Compile Include="Netfilter\NetfilterSystem.cs" />
     <Compile Include="Iptables\DataTypes\PortOrRange.cs" />

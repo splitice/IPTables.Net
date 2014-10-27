@@ -1,6 +1,8 @@
-﻿namespace IPTables.Net.Iptables.Modules
+﻿using System;
+
+namespace IPTables.Net.Iptables.Modules
 {
-    internal interface IIpTablesModuleGod : IIpTablesModule, IIpTablesModuleInternal
+    internal interface IIpTablesModuleGod : IIpTablesModule, IIpTablesModuleInternal//, ICloneable
     {
     }
 }

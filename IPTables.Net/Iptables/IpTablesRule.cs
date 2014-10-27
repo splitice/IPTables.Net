@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using IPTables.Net.Iptables.Exceptions;
 using IPTables.Net.Iptables.Modules;
@@ -25,6 +26,16 @@ namespace IPTables.Net.Iptables
         {
             _system = system;
             _chain = chain;
+        }
+
+        public IpTablesRule(IpTablesRule rule)
+        {
+            /*Chain = rule.Chain;
+            foreach (var module in rule.ModulesInternal)
+            {
+                _modules.Add(module.Key,module.Value.Clone() as IIpTablesModuleGod);
+            }*/
+            throw new NotImplementedException();
         }
 
         public String Table
