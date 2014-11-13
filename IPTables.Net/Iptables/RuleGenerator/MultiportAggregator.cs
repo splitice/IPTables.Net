@@ -140,6 +140,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
             List<PortOrRange> ranges = new List<PortOrRange>();
             IpTablesRule rule1 = null;
             var firstCore = rules[0].GetModule<CoreModule>("core");
+            int ruleIdx = 1;
 
             Action buildRule = () =>
             {
@@ -159,6 +160,8 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 {
                     ruleCore.Jump = firstCore.Jump;
                 }
+                var ruleComment = rule1.GetModuleOrLoad<CommentModule>("comment");
+                ruleComment.CommentText = _commentPrefix + "|" + chainName + "|" + ruleIdx;
                 if (ruleCount == 0)
                 {
                     rule1.Chain = ruleSet.ChainSet.GetChainOrDefault(_chain, _table);
@@ -169,6 +172,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 }
                 _setPort(rule1, new List<PortOrRange>(ranges));
                 ruleSet.AddRule(rule1);
+                ruleIdx++;
             };
 
             List<PortOrRange> exceptions = new List<PortOrRange>();
