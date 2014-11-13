@@ -6,15 +6,17 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
 {
     public class TcpMssModule : ModuleBase, IIpTablesModuleGod, IEquatable<TcpMssModule>
     {
+        private const String OptionSetMss= "--set-mss";
         private const String OptionClampMssToPmtuLong = "--clamp-mss-to-pmtu";
 
+        public int SetMss = 0;
         public bool ClampMssToPmtu = false;
 
         public bool Equals(TcpMssModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return ClampMssToPmtu.Equals(other.ClampMssToPmtu);
+            return SetMss == other.SetMss && ClampMssToPmtu.Equals(other.ClampMssToPmtu);
         }
 
         public bool NeedsLoading
@@ -28,6 +30,9 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
             {
                 case OptionClampMssToPmtuLong:
                     ClampMssToPmtu = true;
+                    return 1;
+                case OptionSetMss:
+                    SetMss = int.Parse(parser.GetNextArg());
                     return 1;
             }
 
@@ -45,6 +50,15 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
                 sb.Append(OptionClampMssToPmtuLong);
             }
 
+            if (SetMss != 0)
+            {
+                if (sb.Length != 0)
+                    sb.Append(" ");
+                sb.Append(OptionClampMssToPmtuLong);
+                sb.Append(" ");
+                sb.Append(SetMss);
+            }
+
             return sb.ToString();
         }
 
@@ -52,7 +66,8 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
         {
             var options = new List<string>
             {
-                OptionClampMssToPmtuLong
+                OptionClampMssToPmtuLong,
+                OptionSetMss
             };
             return options;
         }
@@ -66,13 +81,16 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
+            if (obj.GetType() != this.GetType()) return false;
             return Equals((TcpMssModule) obj);
         }
 
         public override int GetHashCode()
         {
-            return ClampMssToPmtu.GetHashCode();
+            unchecked
+            {
+                return (SetMss*397) ^ ClampMssToPmtu.GetHashCode();
+            }
         }
     }
 }
