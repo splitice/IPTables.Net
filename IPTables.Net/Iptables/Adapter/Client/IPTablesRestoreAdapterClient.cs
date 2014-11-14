@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using SystemInteract;
 using IPTables.Net.Iptables.Adapter.Client.Helper;
 using IPTables.Net.Netfilter;
@@ -176,6 +177,11 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override void EndTransactionCommit()
         {
+            if (!_inTransaction)
+            {
+                return;
+            }
+
             ISystemProcess process = StartProcess(_iptablesRestoreBinary, NoFlushOption + " " + NoClearOption);
             if (_builder.WriteOutput(process.StandardInput))
             {
@@ -203,6 +209,28 @@ namespace IPTables.Net.Iptables.Adapter.Client
                     //ERR: GENERAL ERROR
                     if (process.ExitCode == 1)
                     {
+                        String error = process.StandardError.ReadToEnd();
+                        Console.WriteLine(error);
+
+                        MemoryStream ms = new MemoryStream();
+                        var sw = new StreamWriter(ms);
+                        _builder.WriteOutput(sw);
+                        sw.Flush();
+                        ms.Seek(0, SeekOrigin.Begin);
+                        var sr = new StreamReader(ms);
+                        var rules = sr.ReadToEnd();
+
+                        var r = new Regex("line ([0-9]+) failed");
+                        if (r.IsMatch(error))
+                        {
+                            var m = r.Match(error);
+                            var g = m.Groups[1];
+                            var i = int.Parse(g.Value);
+
+                            throw new Exception("IpTables-Restore failed to parse rule: " +
+                                                rules.Split(new char[] {'\n'}).Skip(i - 1).FirstOrDefault());
+                        }
+
                         throw new Exception("IpTables-Restore execution failed: Error");
                     }
 
