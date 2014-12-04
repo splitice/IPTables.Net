@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/splitice/IPTables.Net.png?branch=master)](https://travis-ci.org/splitice/IPTables.Net)
 
-A library for for interfacing with linux the IPTables utility
+A library for for interfacing with Linux the IPTables utility
 
 ## Features
 
@@ -16,23 +16,29 @@ A library for for interfacing with linux the IPTables utility
 -   Automatic Synchronization of rules with system (Insert, Delete,
     Replace)
 
-## Example
+## Examples
 
-Parsing an IPTables Rule:
+### Parsing an IPTables Rule:
 
     String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53 -m comment --comment 'this is a test rule'";
     IpTablesChainSet chains = new IpTablesChainSet();
     IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
-Deleting all defined rules:
+### Deleting all defined rules:
 
     var system = new IPTablesSystem();
     foreach(var rule in system.GetRules("nat")){
         rule.Delete();
     }
 
-Syncing a chain set:
+### Syncing a chain set:
 
     IpTablesChain chain = new IpTablesChain("filter","INPUT",system); 
     chain.AddRule("-A INPUT !-f"); 
     system.GetChain("filter","INPUT").Sync(chain);
+	
+### More Examples
+For more examples see the Tests project.
+
+## Contributing
+Pull-Requests and Patches are very welcome.
