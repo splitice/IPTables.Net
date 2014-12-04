@@ -22,6 +22,9 @@ namespace IPTables.Net.Iptables
             _chains.Add(new IpTablesChain("nat", "PREROUTING", system));
             _chains.Add(new IpTablesChain("nat", "POSTROUTING", system));
             _chains.Add(new IpTablesChain("nat", "OUTPUT", system));
+
+            _chains.Add(new IpTablesChain("raw", "PREROUTING", system));
+            _chains.Add(new IpTablesChain("raw", "OUTPUT", system));
         }
         protected override IpTablesChain CreateChain(string tableName, string chainName, NetfilterSystem system)
         {

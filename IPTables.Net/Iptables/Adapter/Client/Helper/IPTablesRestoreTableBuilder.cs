@@ -62,6 +62,10 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
                     {
                         isInternal = (chain == "INPUT" || chain == "FORWARD" || chain == "OUTPUT");
                     }
+                    else if (table.Key == "raw")
+                    {
+                        isInternal = (chain == "PREROUTING" || chain == "OUTPUT");
+                    }
 
                     if (isInternal)
                     {

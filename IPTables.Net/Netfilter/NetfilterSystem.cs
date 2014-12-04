@@ -47,6 +47,10 @@ namespace IPTables.Net.Netfilter
         public INetfilterChain GetChain(string table, string chain)
         {
             INetfilterChainSet tableRules = GetRules(table);
+            if (tableRules == null)
+            {
+                throw new Exception("Unable to get a chainset for table: "+table);
+            }
             return tableRules.GetChainOrDefault(chain, table);
         }
 
