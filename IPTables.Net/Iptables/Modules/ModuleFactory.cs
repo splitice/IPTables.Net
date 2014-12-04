@@ -6,6 +6,7 @@ using IPTables.Net.Iptables.Modules.Connlimit;
 using IPTables.Net.Iptables.Modules.Connmark;
 using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Dnat;
+using IPTables.Net.Iptables.Modules.Helper;
 using IPTables.Net.Iptables.Modules.Length;
 using IPTables.Net.Iptables.Modules.Limit;
 using IPTables.Net.Iptables.Modules.Log;
@@ -32,6 +33,7 @@ namespace IPTables.Net.Iptables.Modules
             RejectTargetModule.GetModuleEntry,
             TcpModule.GetModuleEntry,
             UdpModule.GetModuleEntry,
+            HelperModule.GetModuleEntry,
             DnatModule.GetModuleEntry,
             SnatModule.GetModuleEntry,
             ConnlimitModule.GetModuleEntry,
