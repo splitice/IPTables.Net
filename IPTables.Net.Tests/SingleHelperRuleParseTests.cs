@@ -10,7 +10,7 @@ namespace IPTables.Net.Tests
         [Test]
         public void TestNotHelper()
         {
-            String rule = "-A INPUT -m hemper ! --helper cba -j ACCEPT";
+            String rule = "-A INPUT -m helper ! --helper cba -j ACCEPT";
             IpTablesChainSet chains = new IpTablesChainSet();
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
