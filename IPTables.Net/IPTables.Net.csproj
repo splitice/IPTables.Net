@@ -56,6 +56,7 @@
     <Compile Include="Iptables\Modules\Length\LengthModule.cs" />
     <Compile Include="Iptables\Modules\Nfqueue\NfqueueModule.cs" />
     <Compile Include="Iptables\Modules\Nflog\NflogModule.cs" />
+    <Compile Include="Iptables\Modules\StringMatch\StringModule.cs" />
     <Compile Include="Iptables\RuleGenerator\FeatureSplitter.cs" />
     <Compile Include="Iptables\RuleGenerator\IRuleGenerator.cs" />
     <Compile Include="Iptables\RuleGenerator\MultiportAggregator.cs">
