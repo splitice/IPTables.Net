@@ -60,7 +60,7 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
                     {
                         Algorithm = Strategy.BoyerMoore;
                     }
-                    else if (alg == "kpm")
+                    else if (alg == "kmp")
                     {
                         Algorithm = Strategy.KnuthPrattMorris;
                     }
@@ -100,7 +100,7 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
             }
             else
             {
-                ret += "kpm";
+                ret += "kmp";
             }
 
             if (From != 0)
