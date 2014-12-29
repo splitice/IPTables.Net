@@ -45,11 +45,27 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
             commandTable.Commands.Add(ruleCommand);
         }
 
+        private bool WriteOutputLine(StreamWriter output, String line)
+        {
+            if (!output.BaseStream.CanWrite)
+            {
+                return false;
+            }
+            output.WriteLine(line);
+            return true;
+        }
+
         public bool WriteOutput(StreamWriter output)
         {
+            bool res;
             foreach (var table in _tables)
             {
-                output.WriteLine("*" + table.Key);
+                res = WriteOutputLine(output, "*" + table.Key);
+                if (!res)
+                {
+                    return true;
+                }
+
 
                 foreach (var chain in table.Value.Chains)
                 {
@@ -69,22 +85,38 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
 
                     if (isInternal)
                     {
-                        output.WriteLine(":" + chain+" ACCEPT [0:0]");
+                        res = WriteOutputLine(output, ":" + chain + " ACCEPT [0:0]");
                     }
                     else
                     {
-                        output.WriteLine(":" + chain + " - [0:0]");
+                        res = WriteOutputLine(output, ":" + chain + " - [0:0]");
+                    } 
+                    if (!res)
+                    {
+                        return true;
                     }
                 }
 
                 foreach (var command in table.Value.Commands)
                 {
                     Console.WriteLine(command);
-                    output.WriteLine(command);
+                    res = WriteOutputLine(output, command);
+                    if (!res)
+                    {
+                        return true;
+                    }
                 }
 
-                output.WriteLine("COMMIT");
-                output.WriteLine();
+                res = WriteOutputLine(output, "COMMIT");
+                if (!res)
+                {
+                    return true;
+                }
+                res = WriteOutputLine(output, "");
+                if (!res)
+                {
+                    return true;
+                }
             }
 
             if (_tables.Count != 0)
