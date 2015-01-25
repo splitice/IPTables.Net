@@ -50,6 +50,11 @@
   <ItemGroup>
     <Compile Include="Iptables\Exceptions\IpTablesParserException.cs" />
     <Compile Include="Iptables\Helpers\RulePortHelper.cs" />
+    <Compile Include="Iptables\IpSet\Adapter\IpSetBinaryAdapter.cs" />
+    <Compile Include="Iptables\IpSet\IpSetEntry.cs" />
+    <Compile Include="Iptables\IpSet\IpSetSet.cs" />
+    <Compile Include="Iptables\IpSet\IpSetType.cs" />
+    <Compile Include="Iptables\IpSet\IpSetTypeHelper.cs" />
     <Compile Include="Iptables\Libiptc\IptcInterface.cs" />
     <Compile Include="Iptables\Modules\Ct\CtTargetModule.cs" />
     <Compile Include="Iptables\Modules\Helper\HelperModule.cs" />
