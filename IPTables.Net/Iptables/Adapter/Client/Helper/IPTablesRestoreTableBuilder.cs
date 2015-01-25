@@ -51,7 +51,15 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
             {
                 return false;
             }
-            output.WriteLine(line);
+            try
+            {
+                output.WriteLine(line);
+                output.Flush();
+            }
+            catch (IOException)
+            {
+                return false;
+            }
             return true;
         }
 
@@ -82,6 +90,10 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
                     {
                         isInternal = (chain == "PREROUTING" || chain == "OUTPUT");
                     }
+                    else if (table.Key == "mangle")
+                    {
+                        isInternal = (chain == "INPUT" || chain == "FORWARD" || chain == "OUTPUT" || chain == "PREROUTING" || chain == "POSTROUTING");
+                    }
 
                     if (isInternal)
                     {
@@ -99,7 +111,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
 
                 foreach (var command in table.Value.Commands)
                 {
-                    Console.WriteLine(command);
+                    Console.WriteLine("-t " + table.Key + " " + command);
                     res = WriteOutputLine(output, command);
                     if (!res)
                     {

@@ -192,7 +192,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 //OK
                 if (process.ExitCode != 0)
                 {
-
                     //ERR: INVALID COMMAND LINE
                     if (process.ExitCode == 2)
                     {
@@ -203,7 +202,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                         ms.Seek(0, SeekOrigin.Begin);
                         var sr = new StreamReader(ms);
                         Console.WriteLine(sr.ReadToEnd());
-                        throw new Exception("IpTables-Restore execution failed: Invalid Command Line - "+process.StandardError.ReadToEnd());
+                        throw new Exception("IpTables-Restore execution failed: Invalid Command Line - " + process.StandardError.ReadToEnd());
                     }
 
                     //ERR: GENERAL ERROR
@@ -228,7 +227,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                             var i = int.Parse(g.Value);
 
                             throw new Exception("IpTables-Restore failed to parse rule: " +
-                                                rules.Split(new char[] {'\n'}).Skip(i - 1).FirstOrDefault());
+                                                rules.Split(new char[] { '\n' }).Skip(i - 1).FirstOrDefault());
                         }
 
                         throw new Exception("IpTables-Restore execution failed: Error");
@@ -238,9 +237,14 @@ namespace IPTables.Net.Iptables.Adapter.Client
                     throw new Exception("IpTables-Restore execution failed: Unknown Error");
                 }
             }
-            else
+
+            try
             {
                 process.Close();
+            }
+            catch
+            {
+                
             }
             
 
