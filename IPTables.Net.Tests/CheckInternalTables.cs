@@ -33,7 +33,7 @@ namespace IPTables.Net.Tests
 
         private void TestChain(string table, string chain)
         {
-            Assert.IsTrue(IPTablesTables.IsInternalChain(table, chain));
+            Assert.IsTrue(IPTablesTables.IsInternalChain(table, chain), String.Format("{0}:{1} should be internal", table, chain));
         }
     }
 }
