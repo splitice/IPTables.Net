@@ -7,7 +7,7 @@ using IPTables.Net.Netfilter.TableSync;
 
 namespace IPTables.Net.Iptables
 {
-    public class IpTablesChain : INetfilterChain
+    public class IpTablesChain : INetfilterChain, IEquatable<IpTablesChain>
     {
         private readonly String _name;
         private readonly List<IpTablesRule> _rules;
@@ -93,6 +93,32 @@ namespace IPTables.Net.Iptables
                 return -1;
             }
             return index + 1;
+        }
+
+        public bool Equals(IpTablesChain other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(_name, other._name) && string.Equals(_table, other._table) && Equals(_system, other._system);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((IpTablesChain) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = (_name != null ? _name.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (_table != null ? _table.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (_system != null ? _system.GetHashCode() : 0);
+                return hashCode;
+            }
         }
     }
 }
