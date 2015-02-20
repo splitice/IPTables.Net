@@ -23,7 +23,7 @@ namespace IPTables.Net.Tests
 
             var rules = IPTablesSaveParser.GetRulesFromOutput(System, toParse, "filter");
 
-            Assert.AreEqual(3, rules.Chains.Count);
+            Assert.AreEqual(3, rules.Chains.Count());
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace IPTables.Net.Tests
 
             var rules = IPTablesSaveParser.GetRulesFromOutput(System, toParse, "filter");
 
-            Assert.AreEqual(3, rules.Chains.Count);
+            Assert.AreEqual(3, rules.Chains.Count());
             Assert.AreEqual(0, rules.Chains.ElementAt(0).Rules.Count);
             Assert.AreEqual(0, rules.Chains.ElementAt(1).Rules.Count);
             Assert.AreEqual(0, rules.Chains.ElementAt(2).Rules.Count);

@@ -7,7 +7,8 @@ namespace IPTables.Net.Netfilter
 {
     public interface INetfilterChainSet
     {
-        IEnumerable<INetfilterChain> Chains { get; }
         INetfilterChain GetChainOrDefault(string chain, string table);
+
+        IEnumerable<INetfilterChain> Chains { get; }
     }
 }

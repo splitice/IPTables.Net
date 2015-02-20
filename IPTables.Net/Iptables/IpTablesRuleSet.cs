@@ -1,23 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using IPTables.Net.Netfilter;
-using IPTables.Net.Netfilter.Sync;
+using IPTables.Net.Netfilter.TableSync;
 
 namespace IPTables.Net.Iptables
 {
+    /// <summary>
+    /// A List of rules (and chains!) in an IPTables system
+    /// </summary>
     public class IpTablesRuleSet
     {
+        #region Fields
+        /// <summary>
+        /// The chains in this set
+        /// </summary>
         private readonly IpTablesChainSet _chains = new IpTablesChainSet();
 
+        /// <summary>
+        /// The IPTables system
+        /// </summary>
         private readonly IpTablesSystem _system;
+        #endregion
 
+        #region Constructors
         public IpTablesRuleSet(IpTablesSystem system)
         {
             _system = system;
         }
 
-        public IpTablesRuleSet(List<string> rules, IpTablesSystem system)
+        public IpTablesRuleSet(IEnumerable<string> rules, IpTablesSystem system)
         {
             _system = system;
             foreach (string s in rules)
@@ -25,18 +36,26 @@ namespace IPTables.Net.Iptables
                 AddRule(s);
             }
         }
+        #endregion
 
-        public IEnumerable<IpTablesChain> Chains
-        {
-            get { return _chains.Chains; }
-        }
-
-        public IpTablesChainSet ChainSet
+        #region Properties
+        public IpTablesChainSet Chains
         {
             get { return _chains; }
         }
 
+        public IEnumerable<IpTablesRule> Rules
+        {
+            get { return _chains.SelectMany((a) => a.Rules); }
+        }
+        #endregion
 
+        #region Methods
+
+        /// <summary>
+        /// Add an IPTables rule to the set
+        /// </summary>
+        /// <param name="rule"></param>
         public void AddRule(IpTablesRule rule)
         {
             IpTablesChain ipchain = _chains.GetChainOrAdd(rule.Chain);
@@ -44,31 +63,39 @@ namespace IPTables.Net.Iptables
             ipchain.Rules.Add(rule);
         }
 
+
+        /// <summary>
+        /// Parse and add an IPTables rule to the set
+        /// </summary>
+        /// <param name="rawRule"></param>
+        /// <returns></returns>
         public IpTablesRule AddRule(String rawRule)
         {
             IpTablesRule rule = IpTablesRule.Parse(rawRule, _system, _chains);
-
             AddRule(rule);
-
             return rule;
         }
 
-
+        /// <summary>
+        /// Add a chain to the set
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="table"></param>
         public void AddChain(String name, String table)
         {
-            if (_chains.HasChain(name, table))
-            {
-                throw new Exception("A chain with that name already exists");
-            }
-
-            _chains.AddChain(new IpTablesChain(table, name, _system));
+            _chains.AddChain(name, table, _system);
         }
 
-        public void SyncChains(INetfilterSync<IpTablesRule> sync,
+        /// <summary>
+        /// Sync with an IPTables system
+        /// </summary>
+        /// <param name="sync"></param>
+        /// <param name="canDeleteChain"></param>
+        public void Sync(INetfilterSync<IpTablesRule> sync,
             Func<IpTablesChain, bool> canDeleteChain = null)
         {
             //Start transaction
-            _system.Adapter.StartTransaction();
+            _system.TableAdapter.StartTransaction();
             
             var tableChains = new Dictionary<string, List<IpTablesChain>>();
             foreach (IpTablesChain chain in Chains)
@@ -111,7 +138,9 @@ namespace IPTables.Net.Iptables
             }
 
             //End Transaction: COMMIT
-            _system.Adapter.EndTransactionCommit();
+            _system.TableAdapter.EndTransactionCommit();
         }
+
+        #endregion
     }
 }

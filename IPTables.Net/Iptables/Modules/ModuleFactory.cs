@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.Modules.Connlimit;
 using IPTables.Net.Iptables.Modules.Connmark;
@@ -85,13 +86,13 @@ namespace IPTables.Net.Iptables.Modules
                         return moduleEntry;
                     }
                 }
-                throw new Exception(String.Format("The factory could not find module: {0}", module));
+                throw new IpTablesNetException(String.Format("The factory could not find module: {0}", module));
             }
             ModuleEntry m = _modules[module];
             if (m.IsTarget == target)
                 return m;
 
-            throw new Exception(String.Format("The factory could not find a module of the correct type: {0}", module));
+            throw new IpTablesNetException(String.Format("The factory could not find a module of the correct type: {0}", module));
         }
 
         public IEnumerable<ModuleEntry> GetPreloadModules()

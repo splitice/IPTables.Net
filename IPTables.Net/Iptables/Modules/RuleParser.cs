@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Modules
@@ -34,6 +35,11 @@ namespace IPTables.Net.Iptables.Modules
         public IpTablesChain GetChain(NetfilterSystem system)
         {
             return _chains.GetChainOrAdd(_chainName, _tableName, system);
+        }
+
+        public String GetChainName()
+        {
+            return _chainName;
         }
 
         public IpTablesChain CreateNewChain(NetfilterSystem system)
@@ -100,7 +106,7 @@ namespace IPTables.Net.Iptables.Modules
                 }
             }
 
-            throw new Exception("Unknown option: " + option);
+            throw new IpTablesNetException("Unknown option: " + option);
         }
 
         private void LoadParserModule(string getNextArg, bool isTarget = false)

@@ -32,5 +32,10 @@ namespace IPTables.Net.Iptables.Modules
             };
             return entry;
         }
+
+        public virtual object Clone()
+        {
+            return MemberwiseClone();
+        }
     }
 }

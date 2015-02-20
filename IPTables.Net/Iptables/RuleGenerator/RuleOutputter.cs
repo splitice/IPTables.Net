@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.Iptables.RuleGenerator
 {
@@ -28,10 +29,10 @@ namespace IPTables.Net.Iptables.RuleGenerator
             {
                 if (_chain != null)
                 {
-                    var chain = ruleSet.ChainSet.GetChainOrDefault(_chain, _table);
+                    var chain = ruleSet.Chains.GetChainOrDefault(_chain, _table);
                     if (chain == null)
                     {
-                        throw new Exception("Unable to find chain");
+                        throw new IpTablesNetException("Unable to find chain");
                     }
                     rule.Chain = chain;
                 }

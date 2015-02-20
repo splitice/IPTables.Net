@@ -57,7 +57,7 @@ namespace IPTables.Net.Tests
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
             ruleSet.AddRule(irule);
-            
+
             Assert.AreEqual(1, ruleSet.Chains.Count());
             Assert.AreEqual("filter", ruleSet.Chains.First().Table);
             Assert.AreEqual(1, ruleSet.Chains.First().Rules.Count());

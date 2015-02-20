@@ -7,10 +7,10 @@ namespace IPTables.Net.Netfilter
 {
     public interface INetfilterRule
     {
-        void Delete(bool usingPosition = true);
-        void Add();
-        void Replace(INetfilterRule with);
-        String ChainName { get; }
+        void DeleteRule(bool usingPosition = true);
+        void AddRule();
+        void ReplaceRule(INetfilterRule with);
+
         PacketCounters Counters { get; }
 
         INetfilterChain Chain { get; }

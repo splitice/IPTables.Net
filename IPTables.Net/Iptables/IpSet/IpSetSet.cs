@@ -5,15 +5,21 @@ using System.Text;
 
 namespace IPTables.Net.Iptables.IpSet
 {
-    class IpSetSet
+    /// <summary>
+    /// A IPSet "set" possibly containing "entries"
+    /// </summary>
+    public class IpSetSet
     {
+        #region Fields
         private String _name;
         private IpSetType _type;
         private int _timeout;
         private int _hashSize = 1024;
         private int _maxElem = 65536;
-        private List<IpSetEntry> _entries = new List<IpSetEntry>(); 
+        private List<IpSetEntry> _entries = new List<IpSetEntry>();
+        #endregion
 
+        #region Properties
         public string Name
         {
             get { return _name; }
@@ -47,7 +53,10 @@ namespace IPTables.Net.Iptables.IpSet
         public List<IpSetEntry> Entries
         {
             get { return _entries; }
-        }  
+        }
+        #endregion
+
+        #region Constructor
 
         public IpSetSet(IpSetType type, string name, int timeout)
         {
@@ -55,6 +64,10 @@ namespace IPTables.Net.Iptables.IpSet
             _name = name;
             _timeout = timeout;
         }
+
+        #endregion
+
+        #region Methods
 
         public String GetCommand()
         {
@@ -68,9 +81,16 @@ namespace IPTables.Net.Iptables.IpSet
             List<String> ret = new List<string>();
             foreach (var entry in Entries)
             {
-                ret.Add("add "+_name+" "+entry.GetKey());
+                ret.Add("add "+_name+" "+entry.GetKeyCommand());
             }
             return ret;
-        } 
+        }
+
+        #endregion
+
+        public void DeleteSet()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

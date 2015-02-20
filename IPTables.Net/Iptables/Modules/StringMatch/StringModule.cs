@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Helpers;
 
@@ -66,7 +67,7 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
                     }
                     else
                     {
-                        throw new Exception("Unknown algorithm: "+alg);
+                        throw new IpTablesNetException("Unknown algorithm: "+alg);
                     }
                     return 1;
                 case OptionFromLong:

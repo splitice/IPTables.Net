@@ -36,20 +36,14 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Rhino.Mocks">
-      <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="SystemInteract">
       <HintPath>..\packages\SystemInteract.1.0.0-CI00002\lib\net35\SystemInteract.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckInternalTables.cs" />
     <Compile Include="EscapeHelperTests.cs" />
     <Compile Include="IpTablesComparisonTests.cs" />
     <Compile Include="IpTablesRestoreSyncTests.cs" />

@@ -9,8 +9,19 @@ using IPTables.Net.Iptables.Modules.Udp;
 
 namespace IPTables.Net.Iptables.Helpers
 {
+    /// <summary>
+    /// Helpers for dealing with ports
+    /// </summary>
     public class RulePortHelper
     {
+        /// <summary>
+        /// Extract the first port (or range) from a IPTables rule.
+        /// 
+        /// Supports both TCP & UDP protocol modules and Multiport
+        /// </summary>
+        /// <param name="rule"></param>
+        /// <param name="source"></param>
+        /// <returns></returns>
         public static PortOrRange ExtractPort(IpTablesRule rule, bool source)
         {
             var core = rule.GetModule<CoreModule>("core");

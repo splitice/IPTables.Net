@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
@@ -59,7 +60,7 @@ namespace IPTables.Net.Iptables.DataTypes
                     return TcpFlag.PSH;
             }
 
-            throw new Exception("Invalid TCP Flag");
+            throw new IpTablesNetException("Invalid TCP Flag");
         }
 
         private static String GetFlag(TcpFlag sFlag)
@@ -80,7 +81,7 @@ namespace IPTables.Net.Iptables.DataTypes
                     return "PSH";
             }
 
-            throw new Exception("Invalid TCP Flag");
+            throw new IpTablesNetException("Invalid TCP Flag");
         }
 
         private static IEnumerable<TcpFlag> GetFlags(String sFlags)

@@ -27,25 +27,25 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override void DeleteRule(IpTablesRule rule)
         {
-            String command = rule.GetFullCommand("-D");
+            String command = rule.GetActionCommandParamters("-D");
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
         public override void InsertRule(IpTablesRule rule)
         {
-            String command = rule.GetFullCommand("-I");
+            String command = rule.GetActionCommandParamters("-I");
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
         public override void ReplaceRule(IpTablesRule rule)
         {
-            String command = rule.GetFullCommand("-R");
+            String command = rule.GetActionCommandParamters("-R");
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 
         public override void AddRule(IpTablesRule rule)
         {
-            String command = rule.GetFullCommand();
+            String command = rule.GetActionCommandParamters();
             ExecutionHelper.ExecuteIptables(_system, command);
         }
 

@@ -11,17 +11,17 @@ namespace IPTables.Net.NfTables
         private NfTablesChain _chain;
         private PacketCounters _packet;
 
-        public void Delete(bool usingPosition = true)
+        public void DeleteRule(bool usingPosition = true)
         {
             throw new NotImplementedException();
         }
 
-        public void Add()
+        public void AddRule()
         {
             throw new NotImplementedException();
         }
 
-        public void Replace(INetfilterRule with)
+        public void ReplaceRule(INetfilterRule with)
         {
             throw new NotImplementedException();
         }

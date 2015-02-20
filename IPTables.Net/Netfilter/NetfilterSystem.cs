@@ -1,21 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using SystemInteract;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Adapter.Client;
+using IPTables.Net.Iptables.IpSet.Adapter;
 
 namespace IPTables.Net.Netfilter
 {
     public class NetfilterSystem
     {
         private readonly ISystemFactory _system;
-        private readonly INetfilterAdapterClient _adapter;
+        private readonly INetfilterAdapterClient _tableAdapter;
+        private readonly IpSetBinaryAdapter _setAdapter;
 
         public NetfilterSystem(ISystemFactory system, INetfilterAdapter adapter)
         {
             _system = system;
-            _adapter = adapter.GetClient(this);
+            _tableAdapter = adapter.GetClient(this);
+            _setAdapter = new IpSetBinaryAdapter(this);
         }
 
         public ISystemFactory System
@@ -23,14 +27,19 @@ namespace IPTables.Net.Netfilter
             get { return _system; }
         }
 
-        public INetfilterAdapterClient Adapter
+        public INetfilterAdapterClient TableAdapter
         {
-            get { return _adapter; }
+            get { return _tableAdapter; }
+        }
+
+        public IpSetBinaryAdapter SetAdapter
+        {
+            get { return _setAdapter; }
         }
 
         public INetfilterChainSet GetRules(string table)
         {
-            return _adapter.ListRules(table);
+            return _tableAdapter.ListRules(table);
         }
 
         public IEnumerable<INetfilterRule> GetRules(string table, string chain)
@@ -49,7 +58,7 @@ namespace IPTables.Net.Netfilter
             INetfilterChainSet tableRules = GetRules(table);
             if (tableRules == null)
             {
-                throw new Exception("Unable to get a chainset for table: "+table);
+                throw new IpTablesNetException("Unable to get a chainset for table: "+table);
             }
             return tableRules.GetChainOrDefault(chain, table);
         }
@@ -57,25 +66,25 @@ namespace IPTables.Net.Netfilter
 
         public void DeleteChain(string name, string table = "filter", bool flush = false)
         {
-            _adapter.DeleteChain(table, name, flush);
+            _tableAdapter.DeleteChain(table, name, flush);
         }
 
         public IpTablesChain AddChain(String name, String table = "filter")
         {
-            _adapter.AddChain(table, name);
+            _tableAdapter.AddChain(table, name);
 
             return new IpTablesChain(table, name, this, new List<IpTablesRule>());
         }
 
         public IpTablesChain AddChain(IpTablesChain chain, bool addRules = false)
         {
-            _adapter.AddChain(chain.Table,chain.Name);
+            _tableAdapter.AddChain(chain.Table,chain.Name);
 
             if (addRules)
             {
                 foreach (IpTablesRule r in chain.Rules)
                 {
-                    r.Add();
+                    r.AddRule();
                 }
             }
             else

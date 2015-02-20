@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using SystemInteract;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Adapter.Client.Helper;
 using IPTables.Net.Netfilter;
 
@@ -46,7 +47,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             process.WaitForExit();
             if (!process.StandardError.ReadToEnd().Contains(NoClearOption))
             {
-                throw new Exception("iptables-restore client is not compiled from patched source (patch-iptables-restore.diff)");
+                throw new IpTablesNetException("iptables-restore client is not compiled from patched source (patch-iptables-restore.diff)");
             }
         }
 
@@ -78,8 +79,8 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.DeleteRule(rule);
             }
 
-            String command = rule.GetFullCommand("-D", false);
-            _builder.AddCommand(rule.Table, command);
+            String command = rule.GetActionCommandParamters("-D", false);
+            _builder.AddCommand(rule.Chain.Table, command);
         }
 
         public override void InsertRule(IpTablesRule rule)
@@ -91,8 +92,8 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.InsertRule(rule);
             }
 
-            String command = rule.GetFullCommand("-I", false);
-            _builder.AddCommand(rule.Table, command);
+            String command = rule.GetActionCommandParamters("-I", false);
+            _builder.AddCommand(rule.Chain.Table, command);
         }
 
         public override void ReplaceRule(IpTablesRule rule)
@@ -104,8 +105,8 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.ReplaceRule(rule);
             }
 
-            String command = rule.GetFullCommand("-R", false);
-            _builder.AddCommand(rule.Table, command);
+            String command = rule.GetActionCommandParamters("-R", false);
+            _builder.AddCommand(rule.Chain.Table, command);
         }
 
         public override void AddRule(IpTablesRule rule)
@@ -117,8 +118,8 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.AddRule(rule);
             }
 
-            String command = rule.GetFullCommand("-A", false);
-            _builder.AddCommand(rule.Table, command);
+            String command = rule.GetActionCommandParamters("-A", false);
+            _builder.AddCommand(rule.Chain.Table, command);
         }
 
         public override bool HasChain(string table, string chainName)
@@ -170,7 +171,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             if (_inTransaction)
             {
-                throw new Exception("IPTables transaction already started");
+                throw new IpTablesNetException("IPTables transaction already started");
             }
             _inTransaction = true;
         }
@@ -202,7 +203,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                         ms.Seek(0, SeekOrigin.Begin);
                         var sr = new StreamReader(ms);
                         Console.WriteLine(sr.ReadToEnd());
-                        throw new Exception("IpTables-Restore execution failed: Invalid Command Line - " + process.StandardError.ReadToEnd());
+                        throw new IpTablesNetException("IpTables-Restore execution failed: Invalid Command Line - " + process.StandardError.ReadToEnd());
                     }
 
                     //ERR: GENERAL ERROR
@@ -226,15 +227,15 @@ namespace IPTables.Net.Iptables.Adapter.Client
                             var g = m.Groups[1];
                             var i = int.Parse(g.Value);
 
-                            throw new Exception("IpTables-Restore failed to parse rule: " +
+                            throw new IpTablesNetException("IpTables-Restore failed to parse rule: " +
                                                 rules.Split(new char[] { '\n' }).Skip(i - 1).FirstOrDefault());
                         }
 
-                        throw new Exception("IpTables-Restore execution failed: Error");
+                        throw new IpTablesNetException("IpTables-Restore execution failed: Error");
                     }
 
                     //ERR: UNKNOWN
-                    throw new Exception("IpTables-Restore execution failed: Unknown Error");
+                    throw new IpTablesNetException("IpTables-Restore execution failed: Unknown Error");
                 }
             }
 
@@ -261,7 +262,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             if (_inTransaction)
             {
-                throw new Exception("Transaction active, must be commited or rolled back.");
+                throw new IpTablesNetException("Transaction active, must be commited or rolled back.");
             }
         }
     }

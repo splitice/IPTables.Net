@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using SystemInteract;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.IpSet.Adapter
 {
-    class IpSetBinaryAdapter
+    public class IpSetBinaryAdapter
     {
         private const String BinaryName = "ipset";
 
@@ -73,6 +75,19 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
         public void DestroySet(String name)
         {
             String command = String.Format("destroy {0}", name);
+
+            var process = _system.System.StartProcess(BinaryName, command);
+            process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                throw new IpTablesNetException(String.Format("Failed to destroy set: {0}", process.StandardError.ReadToEnd()));
+            }
+        }
+
+        public IEnumerable<IpSetSet> GetSets()
+        {
+            throw new NotImplementedException();
         }
     }
 }

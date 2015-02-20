@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace IPTables.Net.Iptables.Exceptions
+namespace IPTables.Net.Exceptions
 {
-    class IpTablesParserException: Exception
+    class IpTablesParserException : IpTablesNetException
     {
         public IpTablesParserException(String rule, Exception previousException): base("Error parsing rule: "+rule, previousException)
         {

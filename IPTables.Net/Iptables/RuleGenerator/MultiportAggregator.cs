@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.Modules.Core;
@@ -10,6 +10,22 @@ using IPTables.Net.Iptables.Modules.Udp;
 
 namespace IPTables.Net.Iptables.RuleGenerator
 {
+    /// <summary>
+    /// Combine multiple rules with the same protocol and different ports into the same rule.
+    /// 
+    /// Assumes you have many rules that the same match conditions (except the port) and the same action.
+    /// 
+    /// e.g
+    /// 
+    /// Input:
+    /// iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+    /// iptables -A INPUT -p tcp -m multiport --dports 90:95 -j ACCEPT
+    /// 
+    /// Output:
+    /// iptables -A INPUT -p tcp -m multiport --dports 80,90:95 -j ACCEPT
+    /// 
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
     public class MultiportAggregator<TKey> : IRuleGenerator
     {
         private String _chain;
@@ -146,10 +162,10 @@ namespace IPTables.Net.Iptables.RuleGenerator
             {
                 if (ranges.Count == 0)
                 {
-                    throw new Exception("this should not happen");
+                    throw new IpTablesNetException("this should not happen");
                 }
 
-                rule1 = IpTablesRule.Parse(_baseRule, system, ruleSet.ChainSet);
+                rule1 = IpTablesRule.Parse(_baseRule, system, ruleSet.Chains);
                 var ruleCore = rule1.GetModuleOrLoad<CoreModule>("core");
                 ruleCore.Protocol = firstCore.Protocol;
                 if (firstCore.TargetMode == TargetMode.Goto && !String.IsNullOrEmpty(firstCore.Goto))
@@ -164,11 +180,11 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 ruleComment.CommentText = _commentPrefix + "|" + chainName + "|" + ruleIdx;
                 if (ruleCount == 0)
                 {
-                    rule1.Chain = ruleSet.ChainSet.GetChainOrDefault(_chain, _table);
+                    rule1.Chain = ruleSet.Chains.GetChainOrDefault(_chain, _table);
                 }
                 else
                 {
-                    rule1.Chain = ruleSet.ChainSet.GetChainOrDefault(chainName, _table);
+                    rule1.Chain = ruleSet.Chains.GetChainOrDefault(chainName, _table);
                 }
                 _setPort(rule1, new List<PortOrRange>(ranges));
                 ruleSet.AddRule(rule1);
@@ -271,13 +287,13 @@ namespace IPTables.Net.Iptables.RuleGenerator
             foreach (var p in _rules)
             {
                 String chainName = _chain + "_" + p.Key;
-                if (ruleSet.ChainSet.HasChain(chainName, _table))
+                if (ruleSet.Chains.HasChain(chainName, _table))
                 {
-                    throw new Exception(String.Format("Duplicate feature split: {0}", chainName));
+                    throw new IpTablesNetException(String.Format("Duplicate feature split: {0}", chainName));
                 }
 
                 //Jump to chain
-                var chain = ruleSet.ChainSet.GetChainOrAdd(chainName, _table, system);
+                var chain = ruleSet.Chains.GetChainOrAdd(chainName, _table, system);
 
                 //Nested output
                 var singleRule = OutputRulesForGroup(ruleSet, system, p.Value, chainName);
@@ -285,7 +301,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 {
                     if (chain.Rules.Count != 0)
                     {
-                        IpTablesRule jumpRule = IpTablesRule.Parse(_baseRule, system, ruleSet.ChainSet);
+                        IpTablesRule jumpRule = IpTablesRule.Parse(_baseRule, system, ruleSet.Chains);
                         _setJump(jumpRule, p.Key);
                         jumpRule.GetModuleOrLoad<CoreModule>("core").Jump = chainName;
                         jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix + "|MA|" +
@@ -299,7 +315,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 }
                 if(chain.Rules.Count == 0)
                 {
-                    ruleSet.ChainSet.Chains.Remove(chain);
+                    ruleSet.Chains.RemoveChain(chain);
                 }
             }
         }

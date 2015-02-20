@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.Iptables.Adapter.Client.Helper
 {
@@ -25,7 +26,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
 
             if (chainTable.Chains.Contains(chain))
             {
-                throw new Exception("Chain has already been added");
+                throw new IpTablesNetException("Chain has already been added");
             }
             chainTable.Chains.Add(chain);
         }
@@ -77,25 +78,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
 
                 foreach (var chain in table.Value.Chains)
                 {
-                    bool isInternal = false;
-                    if (table.Key == "nat")
-                    {
-                        isInternal = (chain == "PREROUTING" || chain == "POSTROUTING");
-                    }
-                    else if (table.Key == "filter")
-                    {
-                        isInternal = (chain == "INPUT" || chain == "FORWARD" || chain == "OUTPUT");
-                    }
-                    else if (table.Key == "raw")
-                    {
-                        isInternal = (chain == "PREROUTING" || chain == "OUTPUT");
-                    }
-                    else if (table.Key == "mangle")
-                    {
-                        isInternal = (chain == "INPUT" || chain == "FORWARD" || chain == "OUTPUT" || chain == "PREROUTING" || chain == "POSTROUTING");
-                    }
-
-                    if (isInternal)
+                    if (IPTablesTables.IsInternalChain(table.Key, chain))
                     {
                         res = WriteOutputLine(output, ":" + chain + " ACCEPT [0:0]");
                     }

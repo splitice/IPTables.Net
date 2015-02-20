@@ -5,7 +5,7 @@ using System.Text;
 using SystemInteract;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
-using IPTables.Net.Netfilter.Sync;
+using IPTables.Net.Netfilter.TableSync;
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests.MockSystem

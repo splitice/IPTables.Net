@@ -15,7 +15,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
-            Assert.AreEqual(rule, irule.GetFullCommand());
+            Assert.AreEqual(rule, irule.GetActionCommandParamters());
         }
         [Test]
         public void TestDestinationMultiports()
@@ -25,7 +25,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
-            Assert.AreEqual(rule, irule.GetFullCommand());
+            Assert.AreEqual(rule, irule.GetActionCommandParamters());
         }
         [Test]
         public void TestSourceMultiports()
@@ -35,7 +35,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
-            Assert.AreEqual(rule, irule.GetFullCommand());
+            Assert.AreEqual(rule, irule.GetActionCommandParamters());
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
-            Assert.AreEqual(rule, irule.GetFullCommand());
+            Assert.AreEqual(rule, irule.GetActionCommandParamters());
         }
         [Test]
         public void TestDestinationNotMultiports()
@@ -56,7 +56,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
-            Assert.AreEqual(rule, irule.GetFullCommand());
+            Assert.AreEqual(rule, irule.GetActionCommandParamters());
         }
         [Test]
         public void TestSourceNotMultiports()
@@ -66,7 +66,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
-            Assert.AreEqual(rule, irule.GetFullCommand());
+            Assert.AreEqual(rule, irule.GetActionCommandParamters());
         }
     }
 }

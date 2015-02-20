@@ -1,10 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.Modules.Core;
 
 namespace IPTables.Net.Iptables.RuleGenerator
 {
+    /// <summary>
+    /// Split rules by a specific condition and build a jump based on that condition.
+    /// 
+    /// e.g
+    /// 
+    /// Input:
+    /// iptables -A INPUT -p tcp -m tcp --dport 80 -j CHAIN1
+    /// iptables -A INPUT -p tcp -m tcp --dport 81 --syn -j CHAIN2
+    /// iptables -A INPUT -p udp -m udp --dport 99 -j CHAIN3
+    /// 
+    /// Output:
+    /// iptables -A INPUT -p tcp -g INPUT_tcp
+    /// iptables -A INPUT -p udp -g INPUT_udp
+    /// iptables -A INPUT_tcp -p tcp -m tcp --dport 80 -j CHAIN1
+    /// iptables -A INPUT_tcp -p tcp -m tcp --dport 81 --syn -j CHAIN2
+    /// iptables -A INPUT_tcp -p udp -m udp --dport 99 -j CHAIN3
+    /// 
+    /// 
+    /// This can be used to optimize large lists of rules.
+    /// </summary>
+    /// <typeparam name="TGenerator"></typeparam>
+    /// <typeparam name="TKey"></typeparam>
     public class FeatureSplitter<TGenerator, TKey>: IRuleGenerator where TGenerator : IRuleGenerator
     {
         private Dictionary<TKey, IRuleGenerator> _protocols = new Dictionary<TKey, IRuleGenerator>();
@@ -43,13 +66,13 @@ namespace IPTables.Net.Iptables.RuleGenerator
             foreach (var p in _protocols)
             {
                 String chainName = _chain + "_" + p.Key;
-                if(ruleSet.ChainSet.HasChain(chainName, _table))
+                if(ruleSet.Chains.HasChain(chainName, _table))
                 {
-                    throw new Exception(String.Format("Duplicate feature split: {0}", chainName));
+                    throw new IpTablesNetException(String.Format("Duplicate feature split: {0}", chainName));
                 }
 
                 //Jump to chain
-                var chain = ruleSet.ChainSet.GetChainOrAdd(_chain, _table, system);
+                var chain = ruleSet.Chains.GetChainOrAdd(_chain, _table, system);
                 IpTablesRule jumpRule = new IpTablesRule(system, chain);
                 jumpRule.GetModuleOrLoad<CoreModule>("core").Jump = chainName;
                 jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix+"|FS|"+chainName;

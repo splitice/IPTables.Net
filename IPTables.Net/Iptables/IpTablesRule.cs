@@ -1,88 +1,133 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using IPTables.Net.Iptables.Exceptions;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Netfilter;
 using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables
 {
+    /// <summary>
+    /// An IPTables Rule, which is tied to a specific system (ready to be added, removed, updated etc)
+    /// </summary>
     public class IpTablesRule : IEquatable<IpTablesRule>, INetfilterRule
     {
-        private readonly OrderedDictionary<String, IIpTablesModuleGod> _modules = new OrderedDictionary<String, IIpTablesModuleGod>();
+        #region Fields
+        /// <summary>
+        /// Data stored for each IPTables module / extension (including "core")
+        /// </summary>
+        private readonly OrderedDictionary<String, IIpTablesModuleGod> _moduleData = new OrderedDictionary<String, IIpTablesModuleGod>();
+
+        /// <summary>
+        /// The System hosting this IPTables rule
+        /// </summary>
         protected internal readonly NetfilterSystem _system;
+
+        /// <summary>
+        /// Packet Counters (byte / packets)
+        /// </summary>
         private PacketCounters _counters = new PacketCounters();
+
+        /// <summary>
+        /// The chain in which this IPTables Rule exists
+        /// </summary>
         private IpTablesChain _chain;
 
-        public IpTablesChain Chain
-        {
-            get { return _chain; }
-            set { _chain = value; }
-        }
+        #endregion
 
+        #region Constructors
+        /// <summary>
+        /// Create a new (empty) IPTables Rule
+        /// </summary>
+        /// <param name="system"></param>
+        /// <param name="chain"></param>
         public IpTablesRule(NetfilterSystem system, IpTablesChain chain)
         {
             _system = system;
             _chain = chain;
         }
 
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="rule"></param>
         public IpTablesRule(IpTablesRule rule)
         {
-            /*Chain = rule.Chain;
-            foreach (var module in rule.ModulesInternal)
+            Chain = rule.Chain;
+            foreach (var module in rule.ModuleDataInternal)
             {
-                _modules.Add(module.Key,module.Value.Clone() as IIpTablesModuleGod);
-            }*/
-            throw new NotImplementedException();
+                _moduleData.Add(module.Key,module.Value.Clone() as IIpTablesModuleGod);
+            }
         }
+        #endregion
 
-        public String Table
+        #region Properties
+
+        /// <summary>
+        /// The chain in which this IPTables Rule exists
+        /// </summary>
+        public IpTablesChain Chain
         {
-            get { return Chain.Table; }
+            get { return _chain; }
+            set { _chain = value; }
         }
 
-        public String ChainName
-        {
-            get { return Chain.Name; }
-        }
-
+        /// <summary>
+        /// The Netfilter chain in which this IPTables Rule exists
+        /// </summary>
         INetfilterChain INetfilterRule.Chain
         {
             get { return _chain; }
         }
 
-        public int Position
-        {
-            get { return Chain.Rules.IndexOf(this) + 1; }
-        }
-
+        /// <summary>
+        /// The packet and byte counters for the rule
+        /// </summary>
         public PacketCounters Counters
         {
             get { return _counters; }
             set { _counters = value; }
         }
 
+        /// <summary>
+        /// The Netfiler system to which this rule is tied
+        /// </summary>
         internal NetfilterSystem System
         {
             get { return _system; }
         }
 
-        internal OrderedDictionary<String, IIpTablesModuleGod> ModulesInternal
+        /// <summary>
+        /// The parameters for all modules used in the rule (internal)
+        /// </summary>
+        internal OrderedDictionary<String, IIpTablesModuleGod> ModuleDataInternal
         {
-            get { return _modules; }
+            get { return _moduleData; }
         }
 
-        public IEnumerable<IIpTablesModule> Modules
+        /// <summary>
+        /// The parameters for all modules used in the rule
+        /// </summary>
+        public IEnumerable<IIpTablesModule> ModuleData
         {
-            get { return _modules.Values.Select(a => a as IIpTablesModule); }
+            get { return _moduleData.Values.Select(a => a as IIpTablesModule); }
         }
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Equality comparison, for this to be equal the module data must match
+        /// </summary>
+        /// <param name="rule"></param>
+        /// <returns></returns>
         public bool Equals(IpTablesRule rule)
         {
-            return _modules.DictionaryEqual(rule.ModulesInternal);
+            return Chain.Equals(rule.Chain) && _moduleData.DictionaryEqual(rule.ModuleDataInternal);
         }
+
 
         public override bool Equals(object obj)
         {
@@ -93,16 +138,20 @@ namespace IPTables.Net.Iptables
             return base.Equals(obj);
         }
 
-
-        public String GetCommand(bool incTable = true)
+        /// <summary>
+        /// Get the command parameters that would be necessary to define this rule
+        /// </summary>
+        /// <param name="incTable"></param>
+        /// <returns></returns>
+        public String GetCommandParamters(bool incTable = true)
         {
             String command = "";
-            if (incTable && Table != "filter")
+            if (incTable && Chain.Table != "filter")
             {
-                command += "-t " + Table;
+                command += "-t " + Chain.Table;
             }
 
-            foreach (var e in _modules)
+            foreach (var e in _moduleData)
             {
                 if (command.Length != 0)
                 {
@@ -117,75 +166,140 @@ namespace IPTables.Net.Iptables
             return command;
         }
 
-        public String GetFullCommand(String opt = "-A", bool incTable = true)
+        /// <summary>
+        /// Get the paramters that would be necessary to call IPTables with to execute a specific action (add, insert, remove, etc)
+        /// </summary>
+        /// <param name="opt"></param>
+        /// <param name="incTable"></param>
+        /// <returns></returns>
+        public String GetActionCommandParamters(String opt = "-A", bool incTable = true)
         {
             String command = opt + " " + Chain.Name + " ";
+
             if (opt == "-R")
             {
-                if (Position == -1)
+                var position = Chain.GetRulePosition(this);
+                if (position == -1)
                 {
-                    throw new Exception(
+                    throw new IpTablesNetException(
                         "This rule does not have a specific position and hence can not be located for replace");
                 }
-                command += Position + " ";
+                command += position + " ";
             }
             else if (opt == "-I")
             {
+                var position = Chain.GetRulePosition(this);
                 //Posotion not specified, insert at top
-                if (Position != -1)
+                if (position != -1)
                 {
-                    command += Position + " ";
+                    command += position + " ";
                 }
             }
-            command += GetCommand(incTable);
+            command += GetCommandParamters(incTable);
             return command;
         }
 
-        public void Add()
+        public void AddRule()
         {
-            _system.Adapter.AddRule(this);
+            _system.TableAdapter.AddRule(this);
         }
 
-        public void Replace(INetfilterRule with)
+        public void ReplaceRule(INetfilterRule with)
         {
             var withCast = with as IpTablesRule;
             if (withCast == null)
             {
-                throw new Exception("Comparing different Netfilter rule types, unsupported");
+                throw new IpTablesNetException("Comparing different Netfilter rule types, unsupported");
             }
-            Replace(withCast);
+            ReplaceRule(withCast);
         }
 
-        public void Delete(bool usingPosition = true)
+        public void DeleteRule(bool usingPosition = true)
         {
             if (usingPosition)
             {
-                _system.Adapter.DeleteRule(Table, ChainName, Position);
+                var position = Chain.GetRulePosition(this);
+                _system.TableAdapter.DeleteRule(Chain.Table, Chain.Name, position);
             }
             else
             {
-                _system.Adapter.DeleteRule(this);
+                _system.TableAdapter.DeleteRule(this);
             }
             Chain.Rules.Remove(this);
         }
 
         internal IIpTablesModuleGod GetModuleForParseInternal(string name, Type moduleType)
         {
-            if (_modules.ContainsKey(name))
+            if (_moduleData.ContainsKey(name))
             {
-                return _modules[name];
+                return _moduleData[name];
             }
 
             var module = (IIpTablesModuleGod) Activator.CreateInstance(moduleType);
-            _modules.Add(name, module);
+            _moduleData.Add(name, module);
             return module;
         }
 
-        public IIpTablesModule GetModuleForParse(string name, Type moduleType)
+        /// <summary>
+        /// Append extra options to an existing rule (via parsing)
+        /// </summary>
+        /// <param name="rule"></param>
+        /// <param name="system"></param>
+        /// <param name="chains"></param>
+        /// <param name="createChain"></param>
+        public void AppendToRule(String rule, NetfilterSystem system, IpTablesChainSet chains, bool createChain = false)
         {
-            return GetModuleForParseInternal(name, moduleType);
+            string[] arguments = ArgumentHelper.SplitArguments(rule);
+            int count = arguments.Length;
+
+            try
+            {
+                var parser = new RuleParser(arguments, this, chains, Chain.Table);
+
+                //Parse the extra options
+                bool not = false;
+                for (int i = 0; i < count; i++)
+                {
+                    if (arguments[i] == "!")
+                    {
+                        not = true;
+                        continue;
+                    }
+                    i += parser.FeedToSkip(i, not);
+                    not = false;
+                }
+
+                //Only replace the chain if a new one has been supplied
+                if (parser.GetChainName() != null)
+                {
+                    var chain = parser.GetChain(system);
+                    if (chain == null)
+                    {
+                        if (!createChain)
+                        {
+                            throw new IpTablesNetException(String.Format("Unable to find chain: {0}", parser.ChainName));
+                        }
+                        chain = parser.CreateNewChain(system);
+                    }
+
+                    Chain = chain;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new IpTablesParserException(rule, ex);
+            }
         }
 
+        /// <summary>
+        /// Parse a IPTables rule
+        /// </summary>
+        /// <param name="rule"></param>
+        /// <param name="system"></param>
+        /// <param name="chains"></param>
+        /// <param name="defaultTable"></param>
+        /// <param name="createChain"></param>
+        /// <returns></returns>
         public static IpTablesRule Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
             String defaultTable = "filter", bool createChain = false)
         {
@@ -214,7 +328,7 @@ namespace IPTables.Net.Iptables
                 {
                     if (!createChain)
                     {
-                        throw new Exception(String.Format("Unable to find chain: {0}", parser.ChainName));
+                        throw new IpTablesNetException(String.Format("Unable to find chain: {0}", parser.ChainName));
                     }
                     chain = parser.CreateNewChain(system);
                 }
@@ -228,22 +342,36 @@ namespace IPTables.Net.Iptables
             return ipRule;
         }
 
+        /// <summary>
+        /// Get the data model for a module 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="moduleName"></param>
+        /// <returns></returns>
         public T GetModule<T>(string moduleName) where T : class, IIpTablesModule
         {
-            if (!_modules.ContainsKey(moduleName)) return null;
-            return _modules[moduleName] as T;
+            if (!_moduleData.ContainsKey(moduleName)) return null;
+            return _moduleData[moduleName] as T;
         }
 
+        /// <summary>
+        /// Get the data model for a module, if it doesnt exist add it
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="moduleName"></param>
+        /// <returns></returns>
         public T GetModuleOrLoad<T>(string moduleName) where T : class, IIpTablesModule
         {
-            return GetModuleForParse(moduleName, typeof (T)) as T;
+            return GetModuleForParseInternal(moduleName, typeof(T)) as T;
         }
 
-        public void Replace(IpTablesRule withRule)
+        public void ReplaceRule(IpTablesRule withRule)
         {
             int idx = Chain.Rules.IndexOf(this);
-            _system.Adapter.ReplaceRule(withRule);
+            _system.TableAdapter.ReplaceRule(withRule);
             Chain.Rules[idx] = withRule;
         }
+
+        #endregion
     }
 }

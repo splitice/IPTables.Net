@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.NfTables.Adapter.Client
@@ -37,7 +38,7 @@ namespace IPTables.Net.NfTables.Adapter.Client
             NfTablesRule castRule = rule as NfTablesRule;
 
             if (castRule == null)
-                throw new Exception("Invalid rule type, not nftables");
+                throw new IpTablesNetException("Invalid rule type, not nftables");
 
             return castRule;
         }

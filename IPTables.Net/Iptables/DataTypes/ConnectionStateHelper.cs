@@ -1,4 +1,5 @@
 ﻿using System;
+using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
@@ -24,7 +25,7 @@ namespace IPTables.Net.Iptables.DataTypes
                     return "UNTRACKED";
             }
 
-            throw new Exception("Unknown connection state");
+            throw new IpTablesNetException("Unknown connection state");
         }
 
         public static ConnectionState FromString(String state)
@@ -43,7 +44,7 @@ namespace IPTables.Net.Iptables.DataTypes
                     return ConnectionState.Untracked;
             }
 
-            throw new Exception("Unknown connection stat: " + state);
+            throw new IpTablesNetException("Unknown connection stat: " + state);
         }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Text;
 
-namespace IPTables.Net.Netfilter.Sync
+namespace IPTables.Net.Netfilter.TableSync
 {
     public class DefaultNetfilterSync<T> : INetfilterSync<T> where T : INetfilterRule
     {
@@ -61,7 +59,7 @@ namespace IPTables.Net.Netfilter.Sync
                 //Delete any extra rules
                 if (i == len)
                 {
-                    cR.Delete();
+                    cR.DeleteRule();
                     continue;
                 }
 
@@ -76,14 +74,14 @@ namespace IPTables.Net.Netfilter.Sync
                 else if (_ruleComparerForUpdate(cR, withRule))
                 {
                     //Replace this rule
-                    cR.Replace(withRule);
+                    cR.ReplaceRule(withRule);
                     i++;
                 }
                 else
                 {
                     if (_shouldDelete(cR))
                     {
-                        cR.Delete();
+                        cR.DeleteRule();
                     }
                 }
             }
@@ -91,7 +89,7 @@ namespace IPTables.Net.Netfilter.Sync
             //Get rules to be added
             foreach (T rR in with.Skip(i))
             {
-                rR.Add();
+                rR.AddRule();
             }
         }
 

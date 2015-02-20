@@ -29,8 +29,8 @@ namespace IPTables.Net.Tests
 
             IpTablesRuleSet rules = new IpTablesRuleSet(system);
             ma.Output(system, rules);
-            
-            Assert.AreEqual(3,rules.Chains.Count());
+
+            Assert.AreEqual(3, rules.Chains.Count());
             Assert.AreEqual(2, rules.Chains.Skip(1).First().Rules.Count);
             Assert.AreEqual(1, rules.Chains.Skip(2).First().Rules.Count);
         }

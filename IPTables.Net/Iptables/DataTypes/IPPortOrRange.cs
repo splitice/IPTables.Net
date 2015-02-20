@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
@@ -79,7 +80,7 @@ namespace IPTables.Net.Iptables.DataTypes
             string[] split = getNextArg.Split(new[] {splitChar});
             if (split.Length == 0)
             {
-                throw new Exception("Error");
+                throw new IpTablesNetException("Error");
             }
 
             string[] splitIp = split[0].Split(new[] {'-'});

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.HashLimit
@@ -39,7 +40,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                     }
                     else if (s.Length > 2)
                     {
-                        throw new Exception("Invalid limit format");
+                        throw new IpTablesNetException("Invalid limit format");
                     }
                     return 1;
 
@@ -85,7 +86,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                     return LimitUnit.Day;
             }
 
-            throw new Exception("Invalid limit unit");
+            throw new IpTablesNetException("Invalid limit unit");
         }
 
         private String GetUnit(LimitUnit limitUnit)
@@ -104,7 +105,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                     return "day";
             }
 
-            throw new Exception("Invalid limit unit");
+            throw new IpTablesNetException("Invalid limit unit");
         }
 
         public static IEnumerable<String> GetOptions()

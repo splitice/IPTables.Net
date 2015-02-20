@@ -1,26 +1,18 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables;
 
 namespace IPTables.Net.Netfilter
 {
-    public abstract class NetfilterChainSet<T, T2> : INetfilterChainSet
+    public abstract class NetfilterChainSet<T, T2> : INetfilterChainSet, IEnumerable<T>
         where T : class, INetfilterChain
         where T2 : class, INetfilterRule
     {
         protected readonly HashSet<T> _chains = new HashSet<T>();
-
-        public HashSet<T> Chains
-        {
-            get { return _chains; }
-        }
-
-        IEnumerable<INetfilterChain> INetfilterChainSet.Chains
-        {
-            get { return _chains.Cast<INetfilterChain>(); }
-        }
 
         public bool HasChain(String chain, String table)
         {
@@ -31,12 +23,12 @@ namespace IPTables.Net.Netfilter
         {
             if (_chains.Contains(chain))
             {
-                throw new Exception("Chain Set already contains this chain");
+                throw new IpTablesNetException("Chain Set already contains this chain");
             }
 
             if (_chains.FirstOrDefault(a => a.Name == chain.Name && a.Table == chain.Table) != null)
             {
-                throw new Exception("Chain Set already contains a chain with the same name in this table");
+                throw new IpTablesNetException("Chain Set already contains a chain with the same name in this table");
             }
 
             _chains.Add(chain);
@@ -89,9 +81,24 @@ namespace IPTables.Net.Netfilter
             return _chains.FirstOrDefault(a => a.Name == chain && a.Table == table);
         }
 
+        public IEnumerable<INetfilterChain> Chains
+        {
+            get { return _chains.Cast<INetfilterChain>(); }
+        }
+
         INetfilterChain INetfilterChainSet.GetChainOrDefault(string chain, string table)
         {
             return GetChainOrDefault(chain, table);
+        }
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        {
+            return _chains.Cast<T>().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _chains.GetEnumerator();
         }
     }
 }

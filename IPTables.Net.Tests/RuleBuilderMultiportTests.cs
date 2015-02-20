@@ -31,10 +31,10 @@ namespace IPTables.Net.Tests
             IpTablesRuleSet rules = new IpTablesRuleSet(system);
             ma.Output(system, rules);
 
-            Assert.AreEqual(1,rules.Chains.Count());
+            Assert.AreEqual(1, rules.Chains.Count());
             Assert.AreEqual(2, rules.Chains.First().Rules.Count);
-            Assert.AreEqual("-A INPUT -s 8.1.1.1 -j ACCEPT -m comment --comment '_|INPUT_8.1.1.1|1' -m multiport --sports 1:2", rules.Chains.First().Rules.First().GetFullCommand());
-            Assert.AreEqual("-A INPUT -s 8.1.1.2 -j ACCEPT -m comment --comment '_|INPUT_8.1.1.2|1' -m multiport --sports 3", rules.Chains.First().Rules.Skip(1).First().GetFullCommand());
+            Assert.AreEqual("-A INPUT -s 8.1.1.1 -j ACCEPT -m comment --comment '_|INPUT_8.1.1.1|1' -m multiport --sports 1:2", rules.Chains.First().Rules.First().GetActionCommandParamters());
+            Assert.AreEqual("-A INPUT -s 8.1.1.2 -j ACCEPT -m comment --comment '_|INPUT_8.1.1.2|1' -m multiport --sports 3", rules.Chains.First().Rules.Skip(1).First().GetActionCommandParamters());
         }
 
         [Test]
@@ -70,12 +70,12 @@ namespace IPTables.Net.Tests
             ma.Output(system, rules);
 
             Assert.AreEqual(2, rules.Chains.Count());
-            Assert.AreEqual(1, rules.ChainSet.GetChainOrDefault("INPUT","filter").Rules.Count);
+            Assert.AreEqual(1, rules.Chains.GetChainOrDefault("INPUT","filter").Rules.Count);
             Assert.AreEqual("-A INPUT -s 8.1.1.1 -j INPUT_8.1.1.1 -m comment --comment '_|MA|INPUT_8.1.1.1'", 
-                rules.ChainSet.GetChainOrDefault("INPUT", "filter").Rules.First().GetFullCommand());
+                rules.Chains.GetChainOrDefault("INPUT", "filter").Rules.First().GetActionCommandParamters());
 
             Assert.AreEqual("-A INPUT_8.1.1.1 -j ACCEPT -m comment --comment '_|INPUT_8.1.1.1|1' -m multiport --sports 10,20,30,40,50,60,70,80,90,100,110,120,130,140,150",
-                rules.ChainSet.GetChainOrDefault("INPUT_8.1.1.1", "filter").Rules.First().GetFullCommand());
+                rules.Chains.GetChainOrDefault("INPUT_8.1.1.1", "filter").Rules.First().GetActionCommandParamters());
         }
 
         private void setSourceIp(IpTablesRule arg1, IPAddress arg2)

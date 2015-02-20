@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Adapter.Client.Helper
@@ -39,7 +40,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
                         int positionEnd = line.IndexOf(']');
                         if (positionEnd == -1)
                         {
-                            throw new Exception("Parsing error, could not find end of counters");
+                            throw new IpTablesNetException("Parsing error, could not find end of counters");
                         }
                         string[] counters = line.Substring(1, positionEnd - 1).Split(new[] { ':' });
                         line = line.Substring(positionEnd + 1);
@@ -74,11 +75,11 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
                         {
                             if (ttable == null)
                             {
-                                throw new Exception("Parsing error");
+                                throw new IpTablesNetException("Parsing error");
                             }
                             return ret;
                         }
-                        throw new Exception("Unexepected table \"" + table + "\" found \"" + ttable + "\" instead");
+                        throw new IpTablesNetException("Unexepected table \"" + table + "\" found \"" + ttable + "\" instead");
                 }
             }
 

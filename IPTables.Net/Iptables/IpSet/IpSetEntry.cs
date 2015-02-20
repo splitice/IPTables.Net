@@ -4,17 +4,25 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.IpSet
 {
-    class IpSetEntry
+    /// <summary>
+    /// A "entry" in an IPSet "set"
+    /// </summary>
+    public class IpSetEntry
     {
+        #region Fields
         private IpCidr _cidr;
         private String _protocol;
         private ushort _port;
         private String _mac;
+        #endregion
 
+
+        #region Properties
         public IpCidr Cidr
         {
             get { return _cidr; }
@@ -38,6 +46,9 @@ namespace IPTables.Net.Iptables.IpSet
             get { return _mac; }
             set { _mac = value; }
         }
+        #endregion
+
+        #region Constructor
 
         public IpSetEntry(IpCidr? cidr = null, string protocol = null, ushort port = 0, string mac = null)
         {
@@ -47,7 +58,9 @@ namespace IPTables.Net.Iptables.IpSet
             _mac = mac;
         }
 
-        public String GetKey()
+        #endregion
+
+        public String GetKeyCommand()
         {
             List<String> parts = new List<string>();
             if (_cidr != null)
@@ -64,7 +77,7 @@ namespace IPTables.Net.Iptables.IpSet
             }
             if (parts.Count == 0)
             {
-                throw new Exception("Invalid IpSet entry, no parts to key");
+                throw new IpTablesNetException("Invalid IpSet entry, no parts to key");
             }
 
             return String.Join(",", parts.ToArray());
@@ -95,7 +108,7 @@ namespace IPTables.Net.Iptables.IpSet
             }
         }
 
-        public IpSetEntry FromEntry(String command, IpSetType type, IpSetSet set)
+        public static IpSetEntry FromEntry(String command, IpSetType type, IpSetSet set)
         {
             var parts = command.Split(new char[] {' '});
 

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
-using IPTables.Net.Netfilter.Sync;
+using IPTables.Net.Netfilter.TableSync;
 
 namespace IPTables.Net.Iptables
 {
@@ -48,7 +49,7 @@ namespace IPTables.Net.Iptables
         {
             var ruleCast = rule as IpTablesRule;
             if(ruleCast == null)
-                throw new Exception("Invalid rule type for this chain");
+                throw new IpTablesNetException("Invalid rule type for this chain");
 
             Rules.Add(ruleCast);
         }
@@ -66,11 +67,11 @@ namespace IPTables.Net.Iptables
         public void Sync(IEnumerable<IpTablesRule> with,
             INetfilterSync<IpTablesRule> sync)
         {
-            _system.Adapter.StartTransaction();
+            _system.TableAdapter.StartTransaction();
 
             SyncInternal(with, sync);
 
-            _system.Adapter.EndTransactionCommit();
+            _system.TableAdapter.EndTransactionCommit();
         }
 
         public void Delete(bool flush = false)
@@ -82,6 +83,16 @@ namespace IPTables.Net.Iptables
             INetfilterSync<IpTablesRule> sync)
         {
             sync.SyncChainRules(with, Rules);
+        }
+
+        public int GetRulePosition(IpTablesRule rule)
+        {
+            var index = Rules.IndexOf(rule);
+            if (index == -1)
+            {
+                return -1;
+            }
+            return index + 1;
         }
     }
 }

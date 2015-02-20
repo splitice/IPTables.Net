@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace IPTables.Net.Netfilter.Sync
+namespace IPTables.Net.Netfilter.TableSync
 {
     public interface INetfilterSync
     {

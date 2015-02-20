@@ -11,6 +11,11 @@ using IPTables.Net.NfTables.Adapter;
 
 namespace IPTables.Net
 {
+    /// <summary>
+    /// A class to act as the core controller for the IPTables system being manipulated
+    /// 
+    /// This is not yet complete. DO NOT USE. Pull Requests Welcome.
+    /// </summary>
     public class NfTablesSystem: NetfilterSystem
     {
         public NfTablesSystem(ISystemFactory system, INfTablesAdapter adapter)
@@ -18,7 +23,7 @@ namespace IPTables.Net
         {
         }
 
-        public IEnumerable<NfTablesChain> GetChains(String table)
+        public new IEnumerable<NfTablesChain> GetChains(String table)
         {
             return base.GetChains(table).Cast<NfTablesChain>();
         }

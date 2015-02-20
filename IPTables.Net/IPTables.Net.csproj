@@ -38,23 +38,25 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="SystemInteract, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\SystemInteract.1.0.0-CI00006\lib\net35\SystemInteract.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Iptables\Exceptions\IpTablesParserException.cs" />
+    <Compile Include="Exceptions\IpTablesNetException.cs" />
+    <Compile Include="Exceptions\IpTablesParserException.cs" />
     <Compile Include="Iptables\Helpers\RulePortHelper.cs" />
     <Compile Include="Iptables\IpSet\Adapter\IpSetBinaryAdapter.cs" />
     <Compile Include="Iptables\IpSet\IpSetEntry.cs" />
     <Compile Include="Iptables\IpSet\IpSetSet.cs" />
+    <Compile Include="Iptables\IpSet\IpSetSets.cs" />
+    <Compile Include="Iptables\IpSet\IpSetSyncMode.cs" />
     <Compile Include="Iptables\IpSet\IpSetType.cs" />
     <Compile Include="Iptables\IpSet\IpSetTypeHelper.cs" />
+    <Compile Include="Iptables\IpSet\Sync\IIPSetSync.cs" />
+    <Compile Include="Iptables\IpTablesRuleDefinition.cs" />
+    <Compile Include="Iptables\IPTablesTables.cs" />
     <Compile Include="Iptables\Libiptc\IptcInterface.cs" />
     <Compile Include="Iptables\Modules\Ct\CtTargetModule.cs" />
     <Compile Include="Iptables\Modules\Helper\HelperModule.cs" />
@@ -79,8 +81,8 @@
     <Compile Include="Netfilter\INetfilterRule.cs" />
     <Compile Include="Netfilter\NetfilterChainSet.cs" />
     <Compile Include="Netfilter\PacketCounters.cs" />
-    <Compile Include="Netfilter\Sync\DefaultNetfilterSync.cs" />
-    <Compile Include="Netfilter\Sync\INetfilterSync.cs" />
+    <Compile Include="Netfilter\TableSync\DefaultNetfilterSync.cs" />
+    <Compile Include="Netfilter\TableSync\INetfilterSync.cs" />
     <Compile Include="NfTables\Adapter\Client\NfTablesAdapterClientBase.cs" />
     <Compile Include="NfTables\Adapter\INfTablesAdapter.cs" />
     <Compile Include="NfTables\Modules\ConnectionTracking\NfCtMarkOp.cs" />
