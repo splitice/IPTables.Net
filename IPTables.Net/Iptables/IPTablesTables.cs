@@ -15,7 +15,7 @@ namespace IPTables.Net.Iptables
         {
              { "filter", new List<string>{"INPUT", "FORWARD", "OUTPUT"} },
              { "nat", new List<string>{"PREROUTING", "POSTROUTING", "OUTPUT"} },
-             { "raw", new List<string>{"PREROUTING", "POSTROUTING"} },
+             { "raw", new List<string>{"PREROUTING", "POSTROUTING", "OUTPUT"} },
              { "mangle", new List<string>{"INPUT", "FORWARD", "OUTPUT", "PREROUTING", "POSTROUTING"} },
         };
 
