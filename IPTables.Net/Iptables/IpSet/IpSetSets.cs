@@ -31,49 +31,61 @@ namespace IPTables.Net.Iptables.IpSet
             Func<IpSetSet, bool> canDeleteSet = null)
         {
             //Start transaction
-            _system.TableAdapter.StartTransaction();
+            _system.SetAdapter.StartTransaction();
 
-            var systemSets = _system.SetAdapter.GetSets();
+            var systemSets = _system.SetAdapter.SaveSets();
 
-            var tableChains = new Dictionary<string, List<IpTablesChain>>();
-            /*foreach (IpSetSet set in Sets)
+            foreach (var set in _sets)
             {
-                if (!tableChains.ContainsKey(chain.Table))
+                var systemSet = systemSets.GetSetByName(set.Name);
+                if (systemSet == null)
                 {
-                    var chains = _system.GetChains(chain.Table).ToList();
-                    tableChains.Add(chain.Table, chains);
+                    //Add
+                    _system.SetAdapter.CreateSet(set);
+                    systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, _system, set.SyncMode);
                 }
-                if (tableChains[chain.Table].FirstOrDefault(a => a.Name == chain.Name && a.Table == chain.Table) == null)
+                else
                 {
-                    //Chain doesnt exist create
-                    tableChains[chain.Table].Add(_system.AddChain(chain));
+                    //Update if applicable
+                    //TODO: update
+                }
+
+                if (set.SyncMode == IpSetSyncMode.SetAndEntries)
+                {
+                    foreach (var entry in set.Entries)
+                    {
+                        var systemEntry = systemSet.Entries.FirstOrDefault((a) => a.KeyEquals(entry));
+                        if (systemEntry == null)
+                        {
+                            _system.SetAdapter.AddEntry(entry);
+                        }
+                    }
+
+                    foreach (var entry in systemSet.Entries)
+                    {
+                        IpSetEntry entry1 = entry;
+                        var memEntry = set.Entries.FirstOrDefault(((a) => a.KeyEquals(entry1)));
+                        if (memEntry == null)
+                        {
+                            _system.SetAdapter.DeleteEntry(entry);
+                        }
+                    }
                 }
             }
 
-            foreach (IpSetSet set in Sets)
-            {
-                IpTablesChain realChain =
-                    tableChains[chain.Table].First(a => a.Name == chain.Name && a.Table == chain.Table);
-                if (realChain != null)
-                {
-                    //Update chain
-                    realChain.SyncInternal(chain.Rules, sync);
-                }
-            }*/
-
             if (canDeleteSet != null)
             {
-                foreach (var set in systemSets)
+                foreach (var set in systemSets.Sets)
                 {
                     if (_sets.FirstOrDefault((a) => a.Name == set.Name) == null && canDeleteSet(set))
                     {
-                        set.DeleteSet();
+                        _system.SetAdapter.DestroySet(set.Name);
                     }
                 }
             }
 
             //End Transaction: COMMIT
-            _system.TableAdapter.EndTransactionCommit();
+            _system.SetAdapter.EndTransactionCommit();
         }
 
         public IpSetSet GetSetByName(string name)

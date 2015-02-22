@@ -95,7 +95,7 @@ namespace IPTables.Net.Iptables.IpSet
 
         protected bool Equals(IpSetEntry other)
         {
-            return _cidr.Equals(other._cidr) && string.Equals(_protocol, other._protocol) && _port == other._port && string.Equals(_mac, other._mac);
+            return _set.Equals(other.Set) && KeyEquals(other);
         }
 
         public override bool Equals(object obj)
@@ -137,6 +137,16 @@ namespace IPTables.Net.Iptables.IpSet
             }
 
             return entry;
+        }
+
+        public bool KeyEquals(IpSetEntry other)
+        {
+            return _cidr.Equals(other._cidr) && string.Equals(_protocol, other._protocol) && _port == other._port && string.Equals(_mac, other._mac);
+        }
+
+        public string GetFullCommand(String command = "add")
+        {
+            return String.Format("{0} {1} {2}", command, Set.Name, GetKeyCommand());
         }
     }
 }

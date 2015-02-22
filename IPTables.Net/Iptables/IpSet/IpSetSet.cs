@@ -21,6 +21,7 @@ namespace IPTables.Net.Iptables.IpSet
         private int _maxElem = 65536;
         private List<IpSetEntry> _entries = new List<IpSetEntry>();
         private IpTablesSystem _system;
+        private IpSetSyncMode _syncMode = IpSetSyncMode.SetAndEntries;
         #endregion
 
         #region Properties
@@ -58,16 +59,24 @@ namespace IPTables.Net.Iptables.IpSet
         {
             get { return _entries; }
         }
+
+        public IpSetSyncMode SyncMode
+        {
+            get { return _syncMode; }
+            set { _syncMode = value; }
+        }
+
         #endregion
 
         #region Constructor
 
-        public IpSetSet(IpSetType type, string name, int timeout, IpTablesSystem system)
+        public IpSetSet(IpSetType type, string name, int timeout, IpTablesSystem system, IpSetSyncMode syncMode)
         {
             _type = type;
             _name = name;
             _timeout = timeout;
             _system = system;
+            _syncMode = syncMode;
         }
 
         internal IpSetSet(IpTablesSystem system)
@@ -102,11 +111,6 @@ namespace IPTables.Net.Iptables.IpSet
         }
 
         #endregion
-
-        public void DeleteSet()
-        {
-            throw new NotImplementedException();
-        }
 
         public static IpSetSet Parse(String rule, IpTablesSystem system)
         {
