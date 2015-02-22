@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
+using IPTables.Net.Iptables.Helpers;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Multiport;
@@ -55,48 +57,6 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 baseRule = "-A "+chain+" -t "+table;
             }
             _baseRule = baseRule;
-        }
-
-        private List<PortOrRange> GetRanged(IEnumerable<PortOrRange> ranges)
-        {
-            List<PortOrRange> ret = new List<PortOrRange>();
-            PortOrRange start = new PortOrRange(0);
-            int previous = -1;
-            foreach (PortOrRange current in ranges)
-            {
-                if (current.LowerPort == (previous + 1))
-                {
-                    if (start.LowerPort == 0)
-                    {
-                        start = new PortOrRange((uint)previous, current.UpperPort);
-                    }
-                }
-                else
-                {
-                    if (start.UpperPort != 0)
-                    {
-                        ret.Add(new PortOrRange(start.LowerPort, (uint)previous));
-                        start = new PortOrRange(0);
-                    }
-                    else if (previous != -1)
-                    {
-                        ret.Add(new PortOrRange((uint)previous));
-                    }
-                }
-                previous = (int)current.UpperPort;
-            }
-            if (start.UpperPort != 0)
-            {
-                ret.Add(new PortOrRange(start.LowerPort, (uint)previous));
-                // ReSharper disable RedundantAssignment
-                start = new PortOrRange(0);
-                // ReSharper restore RedundantAssignment
-            }
-            else if (previous != -1)
-            {
-                ret.Add(new PortOrRange((uint)previous));
-            }
-            return ret;
         }
 
         public static void DestinationPortSetter(IpTablesRule rule, List<PortOrRange> ranges)
@@ -211,7 +171,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 return 1;
             });
 
-            exceptions = GetRanged(exceptions);
+            exceptions = PortRangeCompression.CompressRanges(exceptions);
 
             for (var i=0;i<exceptions.Count;i++)
             {
@@ -262,6 +222,12 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 }
             }
 
+            /*if (ranges.Count == 0)
+            {
+                Debug.Assert(count == 0);
+                return rule1;
+            }*/
+
             buildRule();
 
             if (ruleCount != 0)
@@ -272,8 +238,21 @@ namespace IPTables.Net.Iptables.RuleGenerator
             return rule1;
         }
 
+        public void AddRule(IpTablesRule rule, TKey key)
+        {
+            if (!_rules.ContainsKey(key))
+            {
+                _rules.Add(key, new List<IpTablesRule>());
+            }
+            _rules[key].Add(rule);
+        }
+
         public void AddRule(IpTablesRule rule)
         {
+            if (_extractKey == null)
+            {
+                throw new IpTablesNetException("No key extractor provided, key must hence be provided");
+            }
             var key = _extractKey(rule);
             if (!_rules.ContainsKey(key))
             {
