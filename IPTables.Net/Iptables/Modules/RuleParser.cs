@@ -62,9 +62,15 @@ namespace IPTables.Net.Iptables.Modules
             return _arguments.Length - Position - 1;
         }
 
-        public int FeedToSkip(int i, bool not)
+        /// <summary>
+        /// Consume arguments
+        /// </summary>
+        /// <param name="position">Rhe position to parse</param>
+        /// <param name="not"></param>
+        /// <returns>number of arguments consumed</returns>
+        public int FeedToSkip(int position, bool not)
         {
-            Position = i;
+            Position = position;
             String option = GetCurrentArg();
 
             if (option == "-m")

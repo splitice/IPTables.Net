@@ -49,6 +49,7 @@
     <Compile Include="Iptables\Helpers\RulePortHelper.cs" />
     <Compile Include="Iptables\IpSet\Adapter\IpSetBinaryAdapter.cs" />
     <Compile Include="Iptables\IpSet\IpSetEntry.cs" />
+    <Compile Include="Iptables\IpSet\IpSetParser.cs" />
     <Compile Include="Iptables\IpSet\IpSetSet.cs" />
     <Compile Include="Iptables\IpSet\IpSetSets.cs" />
     <Compile Include="Iptables\IpSet\IpSetSyncMode.cs" />

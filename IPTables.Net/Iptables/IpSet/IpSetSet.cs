@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IPTables.Net.Netfilter;
+using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables.IpSet
 {
@@ -17,6 +19,7 @@ namespace IPTables.Net.Iptables.IpSet
         private int _hashSize = 1024;
         private int _maxElem = 65536;
         private List<IpSetEntry> _entries = new List<IpSetEntry>();
+        private IpTablesSystem _system;
         #endregion
 
         #region Properties
@@ -58,11 +61,17 @@ namespace IPTables.Net.Iptables.IpSet
 
         #region Constructor
 
-        public IpSetSet(IpSetType type, string name, int timeout)
+        public IpSetSet(IpSetType type, string name, int timeout, IpTablesSystem system)
         {
             _type = type;
             _name = name;
             _timeout = timeout;
+            _system = system;
+        }
+
+        internal IpSetSet(IpTablesSystem system)
+        {
+            _system = system;
         }
 
         #endregion
@@ -72,8 +81,13 @@ namespace IPTables.Net.Iptables.IpSet
         public String GetCommand()
         {
             String type = IpSetTypeHelper.TypeToString(_type);
-            String command = String.Format("add {0} {1} family inet hashsize {2} maxelem {3}", _name, type, _hashSize, _maxElem);
+            String command = String.Format("{0} {1} family inet hashsize {2} maxelem {3}", _name, type, _hashSize, _maxElem);
             return command;
+        }
+
+        public String GetFullCommand()
+        {
+            return "create " + GetCommand();
         }
 
         public IEnumerable<String> GetEntryCommands()
@@ -91,6 +105,20 @@ namespace IPTables.Net.Iptables.IpSet
         public void DeleteSet()
         {
             throw new NotImplementedException();
+        }
+
+        public static IpSetSet Parse(String rule, IpTablesSystem system)
+        {
+            IpSetSet set = new IpSetSet(system);
+            string[] arguments = ArgumentHelper.SplitArguments(rule);
+            var parser = new IpSetParser(arguments, set);
+
+            for (int i = 0; i < arguments.Length; i++)
+            {
+                i += parser.FeedToSkip(i);
+            }
+
+            return set;
         }
     }
 }
