@@ -6,7 +6,7 @@ using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.Iptables.IpSet
 {
-    class IpSetTypeHelper
+    public class IpSetTypeHelper
     {
         /// <summary>
         /// Concert a set type in enum format to a string
@@ -42,6 +42,28 @@ namespace IPTables.Net.Iptables.IpSet
             }
 
             throw new IpTablesNetException(String.Format("Unknown set type: {0}", str));
+        }
+
+        /// <summary>
+        /// Return the format component of a ipset type (e.g hash)
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string TypeFormat(String str)
+        {
+            var parts = str.Split(new char[] {':'});
+            return parts[0];
+        }
+
+        /// <summary>
+        /// return the components in an ipset type (e.g ip, port)
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> TypeComponents(String str)
+        {
+            var parts = str.Split(new char[] { ':', ',' });
+            return parts.Skip(1);
         }
     }
 }

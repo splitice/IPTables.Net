@@ -6,6 +6,8 @@ using System.Net.Sockets;
 using System.Text;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
+using IPTables.Net.Iptables.IpSet.Parser;
+using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables.IpSet
 {
@@ -19,6 +21,7 @@ namespace IPTables.Net.Iptables.IpSet
         private String _protocol;
         private ushort _port;
         private String _mac;
+        private IpSetSet _set;
         #endregion
 
 
@@ -46,12 +49,19 @@ namespace IPTables.Net.Iptables.IpSet
             get { return _mac; }
             set { _mac = value; }
         }
+
+        public IpSetSet Set
+        {
+            get { return _set; }
+            internal set { _set = value; }
+        }
         #endregion
 
         #region Constructor
 
-        public IpSetEntry(IpCidr? cidr = null, string protocol = null, ushort port = 0, string mac = null)
+        public IpSetEntry(IpSetSet set, IpCidr? cidr = null, string protocol = null, ushort port = 0, string mac = null)
         {
+            _set = set;
             _cidr = cidr.HasValue?cidr.Value:IpCidr.Any;
             _protocol = protocol;
             _port = port;
@@ -108,36 +118,25 @@ namespace IPTables.Net.Iptables.IpSet
             }
         }
 
-        public static IpSetEntry FromEntry(String command, IpSetType type, IpSetSet set)
+        public static IpSetEntry Parse(String command, IpSetSets sets)
         {
             var parts = command.Split(new char[] {' '});
 
-            if (parts.Length < 3)
+            if (parts.Length < 2)
             {
                 return null;
             }
 
-            if (parts[0] != "add")
+            IpSetEntry entry = new IpSetEntry(null);
+            string[] arguments = ArgumentHelper.SplitArguments(command);
+            var parser = new IpSetEntryParser(arguments, entry, sets);
+
+            for (int i = 0; i < arguments.Length; i++)
             {
-                return null;
+                i += parser.FeedToSkip(i);
             }
 
-            String name = parts[1];
-            Debug.Assert(set.Name == name);
-
-            var key = parts[2].Split(new[] {','});
-
-            var ip = IpCidr.Parse(key[0]);
-            ushort port = 0;
-            String protocol = null;
-            if (key.Length != 1)
-            {
-                var s = key[1].Split(new []{':'});
-                port = ushort.Parse(s[0]);
-                protocol = s[1];
-            }
-
-            return new IpSetEntry(ip, protocol, port);
+            return entry;
         }
     }
 }

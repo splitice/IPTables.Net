@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace IPTables.Net.Iptables.IpSet
+namespace IPTables.Net.Iptables.IpSet.Parser
 {
-    class IpSetParser
+    class IpSetSetParser
     {
         private readonly string[] _arguments;
         public int Position = 0;
         private IpSetSet _set;
 
-        public IpSetParser(string[] arguments, IpSetSet set)
+        public IpSetSetParser(string[] arguments, IpSetSet set)
         {
             _arguments = arguments;
             _set = set;

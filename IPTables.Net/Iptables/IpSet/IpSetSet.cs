@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IPTables.Net.Iptables.IpSet.Parser;
 using IPTables.Net.Netfilter;
 using IPTables.Net.Supporting;
 
@@ -111,7 +112,7 @@ namespace IPTables.Net.Iptables.IpSet
         {
             IpSetSet set = new IpSetSet(system);
             string[] arguments = ArgumentHelper.SplitArguments(rule);
-            var parser = new IpSetParser(arguments, set);
+            var parser = new IpSetSetParser(arguments, set);
 
             for (int i = 0; i < arguments.Length; i++)
             {

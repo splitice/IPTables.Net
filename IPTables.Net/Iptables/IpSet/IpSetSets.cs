@@ -75,5 +75,15 @@ namespace IPTables.Net.Iptables.IpSet
             //End Transaction: COMMIT
             _system.TableAdapter.EndTransactionCommit();
         }
+
+        public IpSetSet GetSetByName(string name)
+        {
+            return Sets.FirstOrDefault((a) => a.Name == name);
+        }
+
+        public void AddSet(IpSetSet set)
+        {
+            _sets.Add(set);
+        }
     }
 }
