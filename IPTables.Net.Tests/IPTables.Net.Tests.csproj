@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="CheckInternalTables.cs" />
     <Compile Include="EscapeHelperTests.cs" />
+    <Compile Include="IpSetSyncTests.cs" />
     <Compile Include="IpSetParseTest.cs" />
     <Compile Include="IpTablesComparisonTests.cs" />
     <Compile Include="IpTablesRestoreSyncTests.cs" />
@@ -54,6 +55,8 @@
     <Compile Include="LevensheteinSolutionTest.cs" />
     <Compile Include="MockSystem\IpTablesRestore\MockIpTablesRestoreAdapter.cs" />
     <Compile Include="MockSystem\IpTablesRestore\MockIpTablesRestoreAdapterClient.cs" />
+    <Compile Include="MockSystem\MockIpsetBinaryAdapter.cs" />
+    <Compile Include="MockSystem\MockIpsetSystemFactory.cs" />
     <Compile Include="MockSystem\MockIptablesSystemFactory.cs" />
     <Compile Include="MockSystem\MockIptablesSystemProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

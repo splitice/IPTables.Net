@@ -15,11 +15,15 @@ namespace IPTables.Net.Netfilter
         private readonly INetfilterAdapterClient _tableAdapter;
         private readonly IpSetBinaryAdapter _setAdapter;
 
-        public NetfilterSystem(ISystemFactory system, INetfilterAdapter adapter)
+        public NetfilterSystem(ISystemFactory system, INetfilterAdapter tableAdapter, IpSetBinaryAdapter setAdapter = null)
         {
             _system = system;
-            _tableAdapter = adapter.GetClient(this);
-            _setAdapter = new IpSetBinaryAdapter(this);
+            _tableAdapter = tableAdapter == null ? null : tableAdapter.GetClient(this);
+            if (setAdapter == null)
+            {
+                setAdapter = new IpSetBinaryAdapter(system);
+            }
+            _setAdapter = setAdapter;
         }
 
         public ISystemFactory System

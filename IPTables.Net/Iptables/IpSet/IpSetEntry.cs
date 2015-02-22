@@ -77,7 +77,7 @@ namespace IPTables.Net.Iptables.IpSet
             {
                 parts.Add(_cidr.ToString());
             }
-            if (parts != null)
+            if (_mac != null)
             {
                 parts.Add(_mac);
             }

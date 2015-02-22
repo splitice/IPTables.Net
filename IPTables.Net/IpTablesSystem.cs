@@ -5,6 +5,7 @@ using System.Linq;
 using SystemInteract;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
+using IPTables.Net.Iptables.IpSet.Adapter;
 using IPTables.Net.Netfilter;
 
 namespace IPTables.Net
@@ -14,7 +15,8 @@ namespace IPTables.Net
     /// </summary>
     public class IpTablesSystem: NetfilterSystem
     {
-        public IpTablesSystem(ISystemFactory system, IIPTablesAdapter adapter) : base(system, adapter)
+        public IpTablesSystem(ISystemFactory system, IIPTablesAdapter tableAdapter, IpSetBinaryAdapter setAdapter = null)
+            : base(system, tableAdapter, setAdapter)
         {
         }
 

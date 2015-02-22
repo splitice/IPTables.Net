@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using IPTables.Net.Iptables.IpSet.Adapter;
 using IPTables.Net.Iptables.IpSet.Sync;
 
 namespace IPTables.Net.Iptables.IpSet
@@ -10,11 +11,20 @@ namespace IPTables.Net.Iptables.IpSet
     public class IpSetSets
     {
         private List<IpSetSet> _sets = new List<IpSetSet>();
-        private IpTablesSystem _system;
+        private IpSetBinaryAdapter _adapter;
 
-        public IpSetSets(IpTablesSystem system)
+        public IpSetSets(IEnumerable<String> commands, IpTablesSystem system)
         {
-            _system = system;
+            _adapter = system.SetAdapter;
+            foreach (var command in commands)
+            {
+                Accept(command, system);
+            }
+        }
+
+        public IpSetSets(IpSetBinaryAdapter adapter)
+        {
+            _adapter = adapter;
         }
 
         public IEnumerable<IpSetSet> Sets
@@ -27,13 +37,16 @@ namespace IPTables.Net.Iptables.IpSet
         /// </summary>
         /// <param name="sync"></param>
         /// <param name="canDeleteSet"></param>
-        public void Sync(IIPSetSync sync,
-            Func<IpSetSet, bool> canDeleteSet = null)
+        public void Sync(IpTablesSystem system, IIPSetSync sync,
+            Func<IpSetSet, bool> canDeleteSet = null, bool transactional = true)
         {
-            //Start transaction
-            _system.SetAdapter.StartTransaction();
+            if (transactional)
+            {
+                //Start transaction
+                _adapter.StartTransaction();
+            }
 
-            var systemSets = _system.SetAdapter.SaveSets();
+            var systemSets = _adapter.SaveSets(system);
 
             foreach (var set in _sets)
             {
@@ -41,8 +54,8 @@ namespace IPTables.Net.Iptables.IpSet
                 if (systemSet == null)
                 {
                     //Add
-                    _system.SetAdapter.CreateSet(set);
-                    systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, _system, set.SyncMode);
+                    _adapter.CreateSet(set);
+                    systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, system, set.SyncMode);
                 }
                 else
                 {
@@ -57,7 +70,7 @@ namespace IPTables.Net.Iptables.IpSet
                         var systemEntry = systemSet.Entries.FirstOrDefault((a) => a.KeyEquals(entry));
                         if (systemEntry == null)
                         {
-                            _system.SetAdapter.AddEntry(entry);
+                            _adapter.AddEntry(entry);
                         }
                     }
 
@@ -67,7 +80,7 @@ namespace IPTables.Net.Iptables.IpSet
                         var memEntry = set.Entries.FirstOrDefault(((a) => a.KeyEquals(entry1)));
                         if (memEntry == null)
                         {
-                            _system.SetAdapter.DeleteEntry(entry);
+                            _adapter.DeleteEntry(entry);
                         }
                     }
                 }
@@ -79,13 +92,16 @@ namespace IPTables.Net.Iptables.IpSet
                 {
                     if (_sets.FirstOrDefault((a) => a.Name == set.Name) == null && canDeleteSet(set))
                     {
-                        _system.SetAdapter.DestroySet(set.Name);
+                        _adapter.DestroySet(set.Name);
                     }
                 }
             }
 
-            //End Transaction: COMMIT
-            _system.SetAdapter.EndTransactionCommit();
+            if (transactional)
+            {
+                //End Transaction: COMMIT
+                _adapter.EndTransactionCommit();
+            }
         }
 
         public IpSetSet GetSetByName(string name)
@@ -96,6 +112,30 @@ namespace IPTables.Net.Iptables.IpSet
         public void AddSet(IpSetSet set)
         {
             _sets.Add(set);
+        }
+
+        public void Accept(String line, IpTablesSystem iptables)
+        {
+            String[] split = line.Split(new char[] { ' ' });
+
+            if (split.Length == 0)
+            {
+                return;
+            }
+
+            var command = split[0];
+            var options = String.Join(" ", split.Skip(1).ToArray());
+
+            switch (command)
+            {
+                case "create":
+                    var set = IpSetSet.Parse(options, iptables);
+                    AddSet(set);
+                    break;
+                case "add":
+                    IpSetEntry.Parse(options, this);
+                    break;
+            }
         }
     }
 }

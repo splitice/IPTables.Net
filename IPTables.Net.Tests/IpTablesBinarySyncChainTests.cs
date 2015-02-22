@@ -34,7 +34,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { rulesNew.Chains.First().Rules[2].GetActionCommandParamters() };
 
-            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands);
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { };
 
-            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands);
         }
 
         [Test]
@@ -76,7 +76,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { };
 
-            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands);
         }
 
         [Test]
@@ -98,7 +98,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { rulesNew.Chains.First().Rules[2].GetActionCommandParamters() };
 
-            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands);
         }
 
         [Test]
@@ -119,7 +119,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { "-D INPUT 2" };
 
-            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands);
         }
 
         [Test]
@@ -141,7 +141,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { "-D INPUT 1", "-D INPUT 2" };
 
-            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands);
         }
 
         [Test]
@@ -169,7 +169,7 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[2].GetActionCommandParamters()
                                             };
 
-            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock);
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands);
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[1].GetActionCommandParamters("-R")
                                             };
 
-            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock, CommentComparer);
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, CommentComparer);
         }
 
         [Test]
@@ -236,7 +236,7 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[0].GetActionCommandParamters("-R")
                                             };
 
-            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock, CommentComparer);
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, CommentComparer);
         }
 
         [Test]
@@ -263,7 +263,7 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[1].GetActionCommandParamters("-R")
                                             };
 
-            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, mock, CommentComparer);
+            mock.TestSync(rulesOriginal, rulesNew, expectedCommands, CommentComparer);
         }
     }
 }

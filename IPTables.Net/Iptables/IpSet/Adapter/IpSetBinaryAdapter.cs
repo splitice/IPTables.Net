@@ -14,7 +14,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
     {
         private const String BinaryName = "ipset";
 
-        private readonly NetfilterSystem _system;
+        private readonly ISystemFactory _system;
 
         private List<String> _transactionCommands = null;
 
@@ -23,14 +23,14 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             get { return _transactionCommands != null; }
         }
 
-        public IpSetBinaryAdapter(NetfilterSystem system)
+        public IpSetBinaryAdapter(ISystemFactory system)
         {
             _system = system;
         }
         private bool ExecuteTransaction()
         {
             //ipset save
-            ISystemProcess process = _system.System.StartProcess(BinaryName, "restore");
+            ISystemProcess process = _system.StartProcess(BinaryName, "restore");
             if (WriteStrings(_transactionCommands, process.StandardInput))
             {
                 process.StandardInput.Flush();
@@ -50,7 +50,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
         public bool RestoreSets(IEnumerable<IpSetSet> sets)
         {
             //ipset save
-            ISystemProcess process = _system.System.StartProcess(BinaryName, "restore");
+            ISystemProcess process = _system.StartProcess(BinaryName, "restore");
             if (WriteSets(sets,process.StandardInput))
             {
                 process.StandardInput.Flush();
@@ -103,35 +103,16 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             return true;
         }
 
-        public IpSetSets SaveSets()
+        public virtual IpSetSets SaveSets(IpTablesSystem iptables)
         {
-            ISystemProcess process = _system.System.StartProcess(BinaryName, "save");
+            ISystemProcess process = _system.StartProcess(BinaryName, "save");
 
-            IpSetSets sets = new IpSetSets((IpTablesSystem)_system);
+            IpSetSets sets = new IpSetSets(this);
 
             while(process.StandardOutput.BaseStream.CanRead)
             {
                 String line = process.StandardOutput.ReadLine();
-                String[] split = line.Split(new char[] {' '});
-
-                if (split.Length == 0)
-                {
-                    continue;
-                }
-
-                var command = split[0];
-                var options = String.Join(" ", split.Skip(1).ToArray());
-
-                switch (command)
-                {
-                    case "create":
-                        var set = IpSetSet.Parse(options, (IpTablesSystem)_system);
-                        sets.AddSet(set);
-                        break;
-                    case "add":
-                        IpSetEntry.Parse(options, sets);
-                        break;
-                }
+                sets.Accept(line, iptables);
             }
 
             process.WaitForExit();
@@ -149,7 +130,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             }
             else
             {
-                var process = _system.System.StartProcess(BinaryName, command);
+                var process = _system.StartProcess(BinaryName, command);
                 process.WaitForExit();
 
                 if (process.ExitCode != 0)
@@ -186,7 +167,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             }
             else
             {
-                var process = _system.System.StartProcess(BinaryName, command);
+                var process = _system.StartProcess(BinaryName, command);
                 process.WaitForExit();
 
                 if (process.ExitCode != 0)
@@ -207,7 +188,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             }
             else
             {
-                var process = _system.System.StartProcess(BinaryName, command);
+                var process = _system.StartProcess(BinaryName, command);
                 process.WaitForExit();
 
                 if (process.ExitCode != 0)
@@ -228,7 +209,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             }
             else
             {
-                var process = _system.System.StartProcess(BinaryName, command);
+                var process = _system.StartProcess(BinaryName, command);
                 process.WaitForExit();
 
                 if (process.ExitCode != 0)

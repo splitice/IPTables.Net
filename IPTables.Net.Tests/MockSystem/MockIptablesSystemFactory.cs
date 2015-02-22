@@ -19,7 +19,7 @@ namespace IPTables.Net.Tests.MockSystem
             return new MockIptablesSystemProcess();
         }
 
-        public void TestSync(IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, MockIptablesSystemFactory mock, Func<IpTablesRule, IpTablesRule, bool> commentComparer = null)
+        public void TestSync(IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, Func<IpTablesRule, IpTablesRule, bool> commentComparer = null)
         {
             IpTablesChain chain = rulesOriginal.Chains.First();
 
@@ -31,9 +31,9 @@ namespace IPTables.Net.Tests.MockSystem
                 chain.Sync(rulesNew.Chains.First().Rules, sync);
         }
 
-        public void TestSync(IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, List<string> expectedCommands, MockIptablesSystemFactory mock, Func<IpTablesRule, IpTablesRule, bool> commentComparer = null)
+        public void TestSync(IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, List<string> expectedCommands, Func<IpTablesRule, IpTablesRule, bool> commentComparer = null)
         {
-            TestSync(rulesOriginal, rulesNew, mock, commentComparer);
+            TestSync(rulesOriginal, rulesNew, commentComparer);
 
             CollectionAssert.AreEqual(expectedCommands, Commands.Select(a => a.Value).ToList());
         }
