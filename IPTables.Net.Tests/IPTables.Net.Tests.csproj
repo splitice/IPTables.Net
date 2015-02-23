@@ -59,7 +59,7 @@
     <Compile Include="MockSystem\MockIpsetSystemFactory.cs" />
     <Compile Include="MockSystem\MockIptablesSystemFactory.cs" />
     <Compile Include="MockSystem\MockIptablesSystemProcess.cs" />
-    <Compile Include="PortRangeCompressionTests.cs" />
+    <Compile Include="PortRangeHelpersTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleBuilderNestedTests.cs" />
     <Compile Include="RuleBuilderMultiportTests.cs" />

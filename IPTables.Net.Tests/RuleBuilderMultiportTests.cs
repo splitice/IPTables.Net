@@ -23,7 +23,7 @@ namespace IPTables.Net.Tests
             IpTablesChainSet chains = new IpTablesChainSet();
 
             MultiportAggregator<IPAddress> ma = new MultiportAggregator<IPAddress>("INPUT", "filter", extractSrcIp, extractSrcPort,
-                MultiportAggregator<IPAddress>.SourcePortSetter, setSourceIp, "_");
+                MultiportAggregator<IPAddress>.SourcePortSetter, setSourceIp, "_", null, (a,b)=>a.GetModule<CoreModule>("core").Source = new ValueOrNot<IpCidr>(new IpCidr(b)));
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.1 -m udp --sport 1 -j ACCEPT", system, chains));
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.1 -m udp --sport 2 -j ACCEPT", system, chains));
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.2 -m udp --sport 3 -j ACCEPT", system, chains));

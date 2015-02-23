@@ -38,7 +38,7 @@ namespace IPTables.Net.Tests
         private MultiportAggregator<IPAddress> nestedGenerator(string arg1, string arg2)
         {
             return new MultiportAggregator<IPAddress>(arg1, arg2, extractSrcIp, extractSrcPort,
-                MultiportAggregator<IPAddress>.SourcePortSetter, setSourceIp, "_");
+                MultiportAggregator<IPAddress>.SourcePortSetter, setSourceIp, "_", null, (a, b) => a.GetModule<CoreModule>("core").Source = new ValueOrNot<IpCidr>(new IpCidr(b)));
         }
 
         private void setter(IpTablesRule arg1, String arg2)

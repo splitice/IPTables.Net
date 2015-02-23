@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Helpers;
@@ -39,11 +40,12 @@ namespace IPTables.Net.Iptables.RuleGenerator
         private string _commentPrefix;
         private Action<IpTablesRule, TKey> _setJump;
         private string _baseRule;
+        private Action<IpTablesRule, TKey> _setKey;
 
         public MultiportAggregator(String chain, String table, Func<IpTablesRule, TKey> extractKey, 
             Func<IpTablesRule, PortOrRange> extractPort, Action<IpTablesRule, List<PortOrRange>> setPort, 
             Action<IpTablesRule, TKey> setJump, String commentPrefix,
-            String baseRule = null)
+            String baseRule = null, Action<IpTablesRule, TKey> setKey = null)
         {
             _chain = chain;
             _table = table;
@@ -57,6 +59,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 baseRule = "-A "+chain+" -t "+table;
             }
             _baseRule = baseRule;
+            _setKey = setKey;
         }
 
         public static void DestinationPortSetter(IpTablesRule rule, List<PortOrRange> ranges)
@@ -105,7 +108,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
             }
         }
 
-        private IpTablesRule OutputRulesForGroup(IpTablesRuleSet ruleSet, IpTablesSystem system, List<IpTablesRule> rules, string chainName)
+        private IpTablesRule OutputRulesForGroup(IpTablesRuleSet ruleSet, IpTablesSystem system, List<IpTablesRule> rules, string chainName, TKey key)
         {
             if (rules.Count == 0)
             {
@@ -126,6 +129,8 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 }
 
                 rule1 = IpTablesRule.Parse(_baseRule, system, ruleSet.Chains);
+
+                //Core Module
                 var ruleCore = rule1.GetModuleOrLoad<CoreModule>("core");
                 ruleCore.Protocol = firstCore.Protocol;
                 if (firstCore.TargetMode == TargetMode.Goto && !String.IsNullOrEmpty(firstCore.Goto))
@@ -136,73 +141,33 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 {
                     ruleCore.Jump = firstCore.Jump;
                 }
+
+                //Comment Module
                 var ruleComment = rule1.GetModuleOrLoad<CommentModule>("comment");
                 ruleComment.CommentText = _commentPrefix + "|" + chainName + "|" + ruleIdx;
-                if (ruleCount == 0)
+
+                // Create just one rule if there is only one set of multiports
+                if (ruleCount == 1 && _setKey != null)
                 {
+                    _setKey(rule1, key);
                     rule1.Chain = ruleSet.Chains.GetChainOrDefault(_chain, _table);
                 }
                 else
                 {
                     rule1.Chain = ruleSet.Chains.GetChainOrDefault(chainName, _table);
                 }
+
                 _setPort(rule1, new List<PortOrRange>(ranges));
                 ruleSet.AddRule(rule1);
                 ruleIdx++;
             };
 
-            List<PortOrRange> exceptions = new List<PortOrRange>();
-            foreach (var rule in rules)
-            {
-                exceptions.Add(_extractPort(rule));
-            }
-
-            exceptions.Sort((a, b) =>
-            {
-                if (a.IsRange() && b.IsRange() || !a.IsRange() && !b.IsRange())
-                {
-                    if (a.LowerPort < b.LowerPort)
-                    {
-                        return -1;
-                    }
-                    return 1;
-                }
-                if (a.IsRange()) return -1;
-                return 1;
-            });
-
-            exceptions = PortRangeCompression.CompressRanges(exceptions);
-
-            for (var i=0;i<exceptions.Count;i++)
-            {
-                var e = exceptions[i];
-                if (e.IsRange())
-                {
-                    count += 2;
-                }
-                else
-                {
-                    count++;
-                }
-
-
-                if (i + 1 < exceptions.Count)
-                {
-                    if (count == 14 && exceptions[i+1].IsRange())
-                    {
-                        ruleCount++;
-                        continue;
-                    }
-                }
-
-                if (count == 15)
-                {
-                    ruleCount++;
-                }
-            }
-            count = 0;
-
-            foreach (var e in exceptions)
+            List<PortOrRange> ports = rules.Select(rule => _extractPort(rule)).ToList();
+            PortRangeHelpers.SortRangeFirstLowHigh(ports);
+            ports = PortRangeHelpers.CompressRanges(ports);
+            ruleCount = PortRangeHelpers.CountRequiredMultiports(ports);
+            
+            foreach (var e in ports)
             {
                 if (count == 14 && e.IsRange() || count == 15)
                 {
@@ -222,13 +187,10 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 }
             }
 
-            /*if (ranges.Count == 0)
+            if (ranges.Count != 0)
             {
-                Debug.Assert(count == 0);
-                return rule1;
-            }*/
-
-            buildRule();
+                buildRule();
+            }
 
             if (ruleCount != 0)
             {
@@ -275,7 +237,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 var chain = ruleSet.Chains.GetChainOrAdd(chainName, _table, system);
 
                 //Nested output
-                var singleRule = OutputRulesForGroup(ruleSet, system, p.Value, chainName);
+                var singleRule = OutputRulesForGroup(ruleSet, system, p.Value, chainName, p.Key);
                 if (singleRule == null)
                 {
                     if (chain.Rules.Count != 0)

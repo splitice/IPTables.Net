@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Helpers
 {
-    public class PortRangeCompression
+    public class PortRangeHelpers
     {
         public static List<PortOrRange> CompressRanges(List<PortOrRange> ranges)
         {
@@ -49,6 +49,54 @@ namespace IPTables.Net.Iptables.Helpers
                 ret.Add(new PortOrRange((uint)previousLower,(uint)previous));
             }
             return ret;
-        } 
+        }
+
+        public static int CountRequiredMultiports(List<PortOrRange> ports)
+        {
+            SortRangeFirstLowHigh(ports);
+
+            int count = 0, ruleCount = ports.Count != 0 ? 1 : 0;
+            for (var i = 0; i < ports.Count; i++)
+            {
+                if (count == 14 && ports[i].IsRange())
+                {
+                    ruleCount++;
+                    count = 0;
+                }
+                if (count == 15)
+                {
+                    ruleCount++;
+                    count = 0;
+                }
+
+                var e = ports[i];
+                if (e.IsRange())
+                {
+                    count += 2;
+                }
+                else
+                {
+                    count++;
+                }
+            }
+            return ruleCount;
+        }
+
+        public static void SortRangeFirstLowHigh(List<PortOrRange> ports)
+        {
+            ports.Sort((a, b) =>
+            {
+                if (a.IsRange() && b.IsRange() || !a.IsRange() && !b.IsRange())
+                {
+                    if (a.LowerPort < b.LowerPort)
+                    {
+                        return -1;
+                    }
+                    return 1;
+                }
+                if (a.IsRange()) return -1;
+                return 1;
+            });
+        }
     }
 }
