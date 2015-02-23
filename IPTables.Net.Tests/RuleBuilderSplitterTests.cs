@@ -35,11 +35,11 @@ namespace IPTables.Net.Tests
             Assert.AreEqual(2, rules.Chains.First().Rules.Count);
             Assert.AreEqual(2, rules.Chains.Skip(1).First().Rules.Count);
             Assert.AreEqual(1, rules.Chains.Skip(2).First().Rules.Count);
-            Assert.AreEqual("-A INPUT -s 8.1.1.1 -j INPUT_8.1.1.1 -m comment --comment '_|FS|INPUT_8.1.1.1'",
+            Assert.AreEqual("-A INPUT -s 8.1.1.1 -j QGkTSfSaLIaS4B/kr3WQ -m comment --comment '_|FS|INPUT_8.1.1.1'",
                 rules.Chains.First().Rules.First().GetActionCommandParamters());
-            Assert.AreEqual("-A INPUT -s 8.1.1.2 -j INPUT_8.1.1.2 -m comment --comment '_|FS|INPUT_8.1.1.2'",
+            Assert.AreEqual("-A INPUT -s 8.1.1.2 -j ciE0aMcfwN36u0sNiC6w -m comment --comment '_|FS|INPUT_8.1.1.2'",
                 rules.Chains.First().Rules.Skip(1).First().GetActionCommandParamters());
-            Assert.AreEqual("-A INPUT_8.1.1.1 -j ACCEPT -m udp --sport 1",
+            Assert.AreEqual("-A QGkTSfSaLIaS4B/kr3WQ -j ACCEPT -m udp --sport 1",
                 rules.Chains.Skip(1).First().Rules.First().GetActionCommandParamters());
         }
 

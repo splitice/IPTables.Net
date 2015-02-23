@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using IPTables.Net.Exceptions;
+using IPTables.Net.Iptables.Helpers;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.Modules.Core;
 
@@ -53,7 +54,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
             TKey key = _extractor(rule);
             if (!_protocols.ContainsKey(key))
             {
-                _protocols.Add(key, _nestedGenerator(_chain + "_" + key, _table));
+                _protocols.Add(key, _nestedGenerator(ShortHash.HexHash(_chain + "_" + key), _table));
             }
 
             var gen = _protocols[key];
@@ -65,7 +66,8 @@ namespace IPTables.Net.Iptables.RuleGenerator
         {
             foreach (var p in _protocols)
             {
-                String chainName = _chain + "_" + p.Key;
+                var description = _chain + "_" + p.Key;
+                String chainName = ShortHash.HexHash(description);
                 if(ruleSet.Chains.HasChain(chainName, _table))
                 {
                     throw new IpTablesNetException(String.Format("Duplicate feature split: {0}", chainName));
@@ -75,7 +77,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 var chain = ruleSet.Chains.GetChainOrAdd(_chain, _table, system);
                 IpTablesRule jumpRule = new IpTablesRule(system, chain);
                 jumpRule.GetModuleOrLoad<CoreModule>("core").Jump = chainName;
-                jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix+"|FS|"+chainName;
+                jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix + "|FS|" + description;
                 _setter(jumpRule, p.Key);
                 ruleSet.AddRule(jumpRule);
 

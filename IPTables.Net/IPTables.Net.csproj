@@ -48,6 +48,7 @@
     <Compile Include="Exceptions\IpTablesParserException.cs" />
     <Compile Include="Iptables\Helpers\PortRangeHelpers.cs" />
     <Compile Include="Iptables\Helpers\RulePortHelper.cs" />
+    <Compile Include="Iptables\Helpers\ShortHash.cs" />
     <Compile Include="Iptables\IpSet\Adapter\IpSetBinaryAdapter.cs" />
     <Compile Include="Iptables\IpSet\IpSetEntry.cs" />
     <Compile Include="Iptables\IpSet\Parser\IpSetEntryParser.cs" />

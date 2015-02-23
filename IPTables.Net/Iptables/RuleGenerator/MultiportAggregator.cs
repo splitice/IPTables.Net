@@ -40,12 +40,11 @@ namespace IPTables.Net.Iptables.RuleGenerator
         private string _commentPrefix;
         private Action<IpTablesRule, TKey> _setJump;
         private string _baseRule;
-        private Action<IpTablesRule, TKey> _setKey;
 
         public MultiportAggregator(String chain, String table, Func<IpTablesRule, TKey> extractKey, 
             Func<IpTablesRule, PortOrRange> extractPort, Action<IpTablesRule, List<PortOrRange>> setPort, 
             Action<IpTablesRule, TKey> setJump, String commentPrefix,
-            String baseRule = null, Action<IpTablesRule, TKey> setKey = null)
+            String baseRule = null)
         {
             _chain = chain;
             _table = table;
@@ -59,7 +58,6 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 baseRule = "-A "+chain+" -t "+table;
             }
             _baseRule = baseRule;
-            _setKey = setKey;
         }
 
         public static void DestinationPortSetter(IpTablesRule rule, List<PortOrRange> ranges)
@@ -147,9 +145,9 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 ruleComment.CommentText = _commentPrefix + "|" + chainName + "|" + ruleIdx;
 
                 // Create just one rule if there is only one set of multiports
-                if (ruleCount == 1 && _setKey != null)
+                if (ruleCount == 1 && _setJump != null)
                 {
-                    _setKey(rule1, key);
+                    _setJump(rule1, key);
                     rule1.Chain = ruleSet.Chains.GetChainOrDefault(_chain, _table);
                 }
                 else
@@ -225,9 +223,11 @@ namespace IPTables.Net.Iptables.RuleGenerator
 
         public void Output(IpTablesSystem system, IpTablesRuleSet ruleSet)
         {
+            Console.WriteLine("CC:"+_rules.Count);
             foreach (var p in _rules)
             {
-                String chainName = _chain + "_" + p.Key;
+                var description = _chain + "_" + p.Key;
+                String chainName = ShortHash.HexHash(description);
                 if (ruleSet.Chains.HasChain(chainName, _table))
                 {
                     throw new IpTablesNetException(String.Format("Duplicate feature split: {0}", chainName));
@@ -246,7 +246,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                         _setJump(jumpRule, p.Key);
                         jumpRule.GetModuleOrLoad<CoreModule>("core").Jump = chainName;
                         jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix + "|MA|" +
-                                                                                         chainName;
+                                                                                         description;
                         ruleSet.AddRule(jumpRule);
                     }
                 }
