@@ -36,5 +36,20 @@ namespace IPTables.Net.Tests
 
             Assert.AreEqual(irule2, irule);
         }
+
+        [Test]
+        public void TestDifficultCharacters()
+        {
+            String rule = "-A kY9xlwGhPJW6N1QCHoRg -t mangle -p tcp -d 107.1.107.1 -g x_ComPlex -m comment --comment 'ABC||+sPeC14l=|1' -m tcp --dport 81";
+            IpTablesChainSet chains = new IpTablesChainSet();
+
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+
+            Assert.AreEqual(rule, irule.GetActionCommandParamters());
+
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
+
+            Assert.AreEqual(irule2, irule);
+        }
     }
 }
