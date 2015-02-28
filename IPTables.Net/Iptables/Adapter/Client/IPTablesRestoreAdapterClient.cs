@@ -79,7 +79,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.DeleteRule(rule);
             }
 
-            String command = rule.GetActionCommandParamters("-D", false);
+            String command = rule.GetActionCommand("-D", false);
             _builder.AddCommand(rule.Chain.Table, command);
         }
 
@@ -92,7 +92,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.InsertRule(rule);
             }
 
-            String command = rule.GetActionCommandParamters("-I", false);
+            String command = rule.GetActionCommand("-I", false);
             _builder.AddCommand(rule.Chain.Table, command);
         }
 
@@ -105,7 +105,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.ReplaceRule(rule);
             }
 
-            String command = rule.GetActionCommandParamters("-R", false);
+            String command = rule.GetActionCommand("-R", false);
             _builder.AddCommand(rule.Chain.Table, command);
         }
 
@@ -118,7 +118,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.AddRule(rule);
             }
 
-            String command = rule.GetActionCommandParamters("-A", false);
+            String command = rule.GetActionCommand("-A", false);
             _builder.AddCommand(rule.Chain.Table, command);
         }
 

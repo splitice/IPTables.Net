@@ -16,7 +16,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
-            Assert.AreEqual(rule, irule.GetActionCommandParamters());
+            Assert.AreEqual(rule, irule.GetActionCommand());
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace IPTables.Net.Tests
             IpTablesRule irule1 = IpTablesRule.Parse(rule1, null, chains);
             irule1.SetComment("this is a test rule");
 
-            Assert.AreEqual(rule2, irule1.GetActionCommandParamters());
+            Assert.AreEqual(rule2, irule1.GetActionCommand());
         }
     }
 }

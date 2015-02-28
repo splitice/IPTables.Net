@@ -229,7 +229,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 else
                 {
                     _setJump(singleRule, p.Key);
-                    ruleSet.AddRule(singleRule);
+                    //ruleSet.AddRule(singleRule);
                 }
 
                 if(chain.Rules.Count == 0)

@@ -143,7 +143,7 @@ namespace IPTables.Net.Iptables
         /// </summary>
         /// <param name="incTable"></param>
         /// <returns></returns>
-        public String GetCommandParamters(bool incTable = true)
+        public String GetCommand(bool incTable = true)
         {
             String command = "";
             if (incTable && Chain.Table != "filter")
@@ -167,12 +167,12 @@ namespace IPTables.Net.Iptables
         }
 
         /// <summary>
-        /// Get the paramters that would be necessary to call IPTables with to execute a specific action (add, insert, remove, etc)
+        /// Get the parameters that would be necessary to call IPTables with to execute a specific action (add, insert, remove, etc)
         /// </summary>
         /// <param name="opt"></param>
         /// <param name="incTable"></param>
         /// <returns></returns>
-        public String GetActionCommandParamters(String opt = "-A", bool incTable = true)
+        public String GetActionCommand(String opt = "-A", bool incTable = true)
         {
             String command = opt + " " + Chain.Name + " ";
 
@@ -195,7 +195,7 @@ namespace IPTables.Net.Iptables
                     command += position + " ";
                 }
             }
-            command += GetCommandParamters(incTable);
+            command += GetCommand(incTable);
             return command;
         }
 

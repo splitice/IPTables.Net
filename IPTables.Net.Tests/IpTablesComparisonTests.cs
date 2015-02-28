@@ -30,7 +30,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
-            Assert.AreEqual(rule, irule.GetActionCommandParamters());
+            Assert.AreEqual(rule, irule.GetActionCommand());
 
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
 
@@ -45,7 +45,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
-            Assert.AreEqual(rule, irule.GetActionCommandParamters());
+            Assert.AreEqual(rule, irule.GetActionCommand());
 
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
 

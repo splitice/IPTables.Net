@@ -55,7 +55,7 @@ namespace IPTables.Net.Tests
                                                    "-A INPUT -d 1.2.3.4/16 -j DROP"
                                                }, system);
 
-            List<String> expectedCommands = new List<String> { "*filter", rulesNew.Chains.First().Rules[2].GetActionCommandParamters(), "COMMIT" };
+            List<String> expectedCommands = new List<String> { "*filter", rulesNew.Chains.First().Rules[2].GetActionCommand(), "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew);
             CollectionAssert.AreEqual((system.TableAdapter as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands);
@@ -122,7 +122,7 @@ namespace IPTables.Net.Tests
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                }, system);
 
-            List<String> expectedCommands = new List<String>() { "*filter", rulesNew.Chains.First().Rules[2].GetActionCommandParamters(), "COMMIT" };
+            List<String> expectedCommands = new List<String>() { "*filter", rulesNew.Chains.First().Rules[2].GetActionCommand(), "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew);
             CollectionAssert.AreEqual((system.TableAdapter as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands); ;
@@ -195,8 +195,8 @@ namespace IPTables.Net.Tests
                                             {
                                                 "*filter", 
                                                 "-D INPUT 2",
-                                                rulesNew.Chains.First().Rules[1].GetActionCommandParamters(),
-                                                rulesNew.Chains.First().Rules[2].GetActionCommandParamters(), "COMMIT" };
+                                                rulesNew.Chains.First().Rules[1].GetActionCommand(),
+                                                rulesNew.Chains.First().Rules[2].GetActionCommand(), "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew);
             CollectionAssert.AreEqual((system.TableAdapter as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands);
@@ -238,7 +238,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>()
                                             {
-                                                "*filter", rulesNew.Chains.First().Rules[1].GetActionCommandParamters("-R"), "COMMIT" };
+                                                "*filter", rulesNew.Chains.First().Rules[1].GetActionCommand("-R"), "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew, CommentComparer);
             CollectionAssert.AreEqual((system.TableAdapter as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands);
@@ -263,7 +263,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>()
                                             {
-                                                "*filter", rulesNew.Chains.First().Rules[0].GetActionCommandParamters("-R"), "COMMIT" };
+                                                "*filter", rulesNew.Chains.First().Rules[0].GetActionCommand("-R"), "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew, CommentComparer);
             CollectionAssert.AreEqual((system.TableAdapter as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands);
@@ -290,7 +290,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>()
                                             {
-                                                "*filter", rulesNew.Chains.First().Rules[1].GetActionCommandParamters("-R"), "COMMIT" };
+                                                "*filter", rulesNew.Chains.First().Rules[1].GetActionCommand("-R"), "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew, CommentComparer);
             CollectionAssert.AreEqual((system.TableAdapter as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands);
