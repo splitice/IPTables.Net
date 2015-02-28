@@ -32,8 +32,8 @@ namespace IPTables.Net.Tests
             ma.Output(system, rules);
 
             Assert.AreEqual(3, rules.Chains.Count());
-            Assert.AreEqual(4, rules.Chains.Skip(1).First().Rules.Count);
-            Assert.AreEqual(2, rules.Chains.Skip(2).First().Rules.Count);
+            Assert.AreEqual(2, rules.Chains.Skip(1).First().Rules.Count);
+            Assert.AreEqual(1, rules.Chains.Skip(2).First().Rules.Count);
         }
 
         private MultiportAggregator<IPAddress> nestedGenerator(string arg1, string arg2)
