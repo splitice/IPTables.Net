@@ -41,6 +41,11 @@ namespace IPTables.Net.Iptables.RuleGenerator
         private Action<IpTablesRule, TKey> _setJump;
         private string _baseRule;
 
+        public IDictionary<TKey, List<IpTablesRule>> Rules
+        {
+            get { return _rules; }
+        }
+
         public MultiportAggregator(String chain, String table, Func<IpTablesRule, TKey> extractKey, 
             Func<IpTablesRule, PortOrRange> extractPort, Action<IpTablesRule, List<PortOrRange>> setPort, 
             Action<IpTablesRule, TKey> setJump, String commentPrefix,
@@ -60,52 +65,15 @@ namespace IPTables.Net.Iptables.RuleGenerator
             _baseRule = baseRule;
         }
 
-        public static void DestinationPortSetter(IpTablesRule rule, List<PortOrRange> ranges)
-        {
-            var protocol = rule.GetModule<CoreModule>("core").Protocol;
-            if (ranges.Count == 1 && !protocol.Null && !protocol.Not)
-            {
-                if (protocol.Value == "tcp")
-                {
-                    var tcp = rule.GetModuleOrLoad<TcpModule>("tcp");
-                    tcp.DestinationPort = new ValueOrNot<PortOrRange>(ranges[0]);
-                }
-                else
-                {
-                    var tcp = rule.GetModuleOrLoad<UdpModule>("udp");
-                    tcp.DestinationPort = new ValueOrNot<PortOrRange>(ranges[0]);
-                }
-            }
-            else
-            {
-                var multiport = rule.GetModuleOrLoad<MultiportModule>("multiport");
-                multiport.DestinationPorts = new ValueOrNot<IEnumerable<PortOrRange>>(ranges);
-            }
-        }
-
-        public static void SourcePortSetter(IpTablesRule rule, List<PortOrRange> ranges)
-        {
-            var protocol = rule.GetModule<CoreModule>("core").Protocol;
-            if (ranges.Count == 1 && !protocol.Null && !protocol.Not)
-            {
-                if (protocol.Value == "tcp")
-                {
-                    var tcp = rule.GetModuleOrLoad<TcpModule>("tcp");
-                    tcp.SourcePort = new ValueOrNot<PortOrRange>(ranges[0]);
-                }
-                else
-                {
-                    var tcp = rule.GetModuleOrLoad<UdpModule>("udp");
-                    tcp.SourcePort = new ValueOrNot<PortOrRange>(ranges[0]);
-                }
-            }
-            else
-            {
-                var multiport = rule.GetModuleOrLoad<MultiportModule>("multiport");
-                multiport.SourcePorts = new ValueOrNot<IEnumerable<PortOrRange>>(ranges);
-            }
-        }
-
+        /// <summary>
+        /// Add the rules
+        /// </summary>
+        /// <param name="ruleSet"></param>
+        /// <param name="system"></param>
+        /// <param name="rules"></param>
+        /// <param name="chainName"></param>
+        /// <param name="key"></param>
+        /// <returns>an IPTables rule if the output is singular</returns>
         private IpTablesRule OutputRulesForGroup(IpTablesRuleSet ruleSet, IpTablesSystem system, List<IpTablesRule> rules, string chainName, TKey key)
         {
             if (rules.Count == 0)
@@ -121,6 +89,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
 
             Action buildRule = () =>
             {
+                //Console.WriteLine("t2");
                 if (ranges.Count == 0)
                 {
                     throw new IpTablesNetException("this should not happen");
@@ -145,7 +114,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 ruleComment.CommentText = _commentPrefix + "|" + chainName + "|" + ruleIdx;
 
                 // Create just one rule if there is only one set of multiports
-                if (ruleCount == 1 && _setJump != null)
+                if (ruleCount == 1 && ranges.Count == 1 && _setJump != null)
                 {
                     _setJump(rule1, key);
                     rule1.Chain = ruleSet.Chains.GetChainOrDefault(_chain, _table);
@@ -154,6 +123,8 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 {
                     rule1.Chain = ruleSet.Chains.GetChainOrDefault(chainName, _table);
                 }
+
+                //Console.WriteLine(rule1.GetActionCommandParamters());
 
                 _setPort(rule1, new List<PortOrRange>(ranges));
                 ruleSet.AddRule(rule1);
@@ -190,7 +161,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 buildRule();
             }
 
-            if (ruleCount != 0)
+            if (ruleCount != 1 || ranges.Count != 1)
             {
                 return null;
             }
@@ -223,37 +194,44 @@ namespace IPTables.Net.Iptables.RuleGenerator
 
         public void Output(IpTablesSystem system, IpTablesRuleSet ruleSet)
         {
-            Console.WriteLine("CC:"+_rules.Count);
+            //foreach group => rules
             foreach (var p in _rules)
             {
+                //The new chain
                 var description = _chain + "_" + p.Key;
                 String chainName = ShortHash.HexHash(description);
                 if (ruleSet.Chains.HasChain(chainName, _table))
                 {
                     throw new IpTablesNetException(String.Format("Duplicate feature split: {0}", chainName));
                 }
-
-                //Jump to chain
                 var chain = ruleSet.Chains.GetChainOrAdd(chainName, _table, system);
 
                 //Nested output
                 var singleRule = OutputRulesForGroup(ruleSet, system, p.Value, chainName, p.Key);
+                //Console.WriteLine("Is Single Rule: {0}", singleRule == null ? "NO" : "YES");
                 if (singleRule == null)
                 {
                     if (chain.Rules.Count != 0)
                     {
                         IpTablesRule jumpRule = IpTablesRule.Parse(_baseRule, system, ruleSet.Chains);
                         _setJump(jumpRule, p.Key);
+                        //jumpRule.
                         jumpRule.GetModuleOrLoad<CoreModule>("core").Jump = chainName;
                         jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix + "|MA|" +
                                                                                          description;
                         ruleSet.AddRule(jumpRule);
                     }
+                    else
+                    {
+                        //Console.WriteLine(String.Format("No rules in the chain \"{0}\", skipping jump from {1}.", chainName, _chain));
+                    }
                 }
                 else
                 {
                     _setJump(singleRule, p.Key);
+                    ruleSet.AddRule(singleRule);
                 }
+
                 if(chain.Rules.Count == 0)
                 {
                     ruleSet.Chains.RemoveChain(chain);

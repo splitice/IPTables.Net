@@ -78,6 +78,28 @@ namespace IPTables.Net.Tests
         }
 
         [TestCase]
+        public void TestCompress7()
+        {
+            List<PortOrRange> input = new List<PortOrRange> { new PortOrRange(80) };
+            List<PortOrRange> output = new List<PortOrRange> { new PortOrRange(80) };
+
+            List<PortOrRange> actual = PortRangeHelpers.CompressRanges(input);
+
+            CollectionAssert.AreEqual(output, actual);
+        }
+
+        [TestCase]
+        public void TestCompress8()
+        {
+            List<PortOrRange> input = new List<PortOrRange> { new PortOrRange(80, 90) };
+            List<PortOrRange> output = new List<PortOrRange> { new PortOrRange(80, 90) };
+
+            List<PortOrRange> actual = PortRangeHelpers.CompressRanges(input);
+
+            CollectionAssert.AreEqual(output, actual);
+        }
+
+        [TestCase]
         public void TestRangeCount1()
         {
             List<PortOrRange> input = new List<PortOrRange> { new PortOrRange(80), new PortOrRange(81), new PortOrRange(82, 83), new PortOrRange(85), new PortOrRange(86, 90) };

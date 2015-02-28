@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
+using IPTables.Net.Iptables.Modules.Core;
+using IPTables.Net.Iptables.Modules.Multiport;
+using IPTables.Net.Iptables.Modules.Tcp;
+using IPTables.Net.Iptables.Modules.Udp;
 
 namespace IPTables.Net.Iptables.Helpers
 {
@@ -55,7 +59,7 @@ namespace IPTables.Net.Iptables.Helpers
         {
             SortRangeFirstLowHigh(ports);
 
-            int count = 0, ruleCount = ports.Count != 0 ? 1 : 0;
+            int count = 0, ruleCount = ports.Count == 0 ? 0 : 1;
             for (var i = 0; i < ports.Count; i++)
             {
                 if (count == 14 && ports[i].IsRange())
@@ -97,6 +101,54 @@ namespace IPTables.Net.Iptables.Helpers
                 if (a.IsRange()) return -1;
                 return 1;
             });
+        }
+
+
+
+        public static void DestinationPortSetter(IpTablesRule rule, List<PortOrRange> ranges)
+        {
+            var protocol = rule.GetModule<CoreModule>("core").Protocol;
+            if (ranges.Count == 1 && !protocol.Null && !protocol.Not)
+            {
+                if (protocol.Value == "tcp")
+                {
+                    var tcp = rule.GetModuleOrLoad<TcpModule>("tcp");
+                    tcp.DestinationPort = new ValueOrNot<PortOrRange>(ranges[0]);
+                }
+                else
+                {
+                    var tcp = rule.GetModuleOrLoad<UdpModule>("udp");
+                    tcp.DestinationPort = new ValueOrNot<PortOrRange>(ranges[0]);
+                }
+            }
+            else
+            {
+                var multiport = rule.GetModuleOrLoad<MultiportModule>("multiport");
+                multiport.DestinationPorts = new ValueOrNot<IEnumerable<PortOrRange>>(ranges);
+            }
+        }
+
+        public static void SourcePortSetter(IpTablesRule rule, List<PortOrRange> ranges)
+        {
+            var protocol = rule.GetModule<CoreModule>("core").Protocol;
+            if (ranges.Count == 1 && !protocol.Null && !protocol.Not)
+            {
+                if (protocol.Value == "tcp")
+                {
+                    var tcp = rule.GetModuleOrLoad<TcpModule>("tcp");
+                    tcp.SourcePort = new ValueOrNot<PortOrRange>(ranges[0]);
+                }
+                else
+                {
+                    var tcp = rule.GetModuleOrLoad<UdpModule>("udp");
+                    tcp.SourcePort = new ValueOrNot<PortOrRange>(ranges[0]);
+                }
+            }
+            else
+            {
+                var multiport = rule.GetModuleOrLoad<MultiportModule>("multiport");
+                multiport.SourcePorts = new ValueOrNot<IEnumerable<PortOrRange>>(ranges);
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.DataTypes;
+using IPTables.Net.Iptables.Helpers;
 using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Udp;
 using IPTables.Net.Iptables.RuleGenerator;
@@ -31,14 +32,14 @@ namespace IPTables.Net.Tests
             ma.Output(system, rules);
 
             Assert.AreEqual(3, rules.Chains.Count());
-            Assert.AreEqual(2, rules.Chains.Skip(1).First().Rules.Count);
-            Assert.AreEqual(1, rules.Chains.Skip(2).First().Rules.Count);
+            Assert.AreEqual(4, rules.Chains.Skip(1).First().Rules.Count);
+            Assert.AreEqual(2, rules.Chains.Skip(2).First().Rules.Count);
         }
 
         private MultiportAggregator<IPAddress> nestedGenerator(string arg1, string arg2)
         {
             return new MultiportAggregator<IPAddress>(arg1, arg2, extractSrcIp, extractSrcPort,
-                MultiportAggregator<IPAddress>.SourcePortSetter, setSourceIp, "_", null);
+                PortRangeHelpers.SourcePortSetter, setSourceIp, "_", null);
         }
 
         private void setter(IpTablesRule arg1, String arg2)

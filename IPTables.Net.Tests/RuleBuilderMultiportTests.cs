@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.DataTypes;
+using IPTables.Net.Iptables.Helpers;
 using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Udp;
 using IPTables.Net.Iptables.RuleGenerator;
@@ -23,7 +24,7 @@ namespace IPTables.Net.Tests
             IpTablesChainSet chains = new IpTablesChainSet();
 
             MultiportAggregator<IPAddress> ma = new MultiportAggregator<IPAddress>("INPUT", "filter", extractSrcIp, extractSrcPort,
-                MultiportAggregator<IPAddress>.SourcePortSetter, setSourceIp, "_", null);
+                PortRangeHelpers.SourcePortSetter, setSourceIp, "_", null);
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.1 -m udp --sport 1 -j ACCEPT", system, chains));
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.1 -m udp --sport 2 -j ACCEPT", system, chains));
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.2 -m udp --sport 3 -j ACCEPT", system, chains));
@@ -45,7 +46,7 @@ namespace IPTables.Net.Tests
             IpTablesChainSet chains = new IpTablesChainSet();
 
             MultiportAggregator<IPAddress> ma = new MultiportAggregator<IPAddress>("INPUT", "filter", extractSrcIp, extractSrcPort,
-                MultiportAggregator<IPAddress>.SourcePortSetter, setSourceIp, "_");
+                PortRangeHelpers.SourcePortSetter, setSourceIp, "_");
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.1 -m udp --sport 10 -j ACCEPT", system, chains));
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.1 -m udp --sport 20 -j ACCEPT", system, chains));
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.1 -m udp --sport 30 -j ACCEPT", system, chains));
