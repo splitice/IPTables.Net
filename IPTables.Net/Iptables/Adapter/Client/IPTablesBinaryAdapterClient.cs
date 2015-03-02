@@ -1,5 +1,6 @@
 ﻿using System;
 using SystemInteract;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Helpers;
 using IPTables.Net.Netfilter;
 
@@ -51,7 +52,16 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override bool HasChain(string table, string chainName)
         {
-            throw new NotImplementedException();
+            String command = String.Format("-L {0} -t {1}", chainName, table);
+            try
+            {
+                ExecutionHelper.ExecuteIptables(_system, command);
+                return true;
+            }
+            catch (IpTablesNetException)
+            {
+                return false;
+            }
         }
 
         public override void AddChain(string table, string chainName)
