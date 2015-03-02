@@ -22,6 +22,7 @@ using IPTables.Net.Iptables.Modules.Recent;
 using IPTables.Net.Iptables.Modules.Snat;
 using IPTables.Net.Iptables.Modules.State;
 using IPTables.Net.Iptables.Modules.StringMatch;
+using IPTables.Net.Iptables.Modules.SynProxy;
 using IPTables.Net.Iptables.Modules.Tcp;
 using IPTables.Net.Iptables.Modules.TcpMss;
 using IPTables.Net.Iptables.Modules.Udp;
@@ -57,6 +58,7 @@ namespace IPTables.Net.Iptables.Modules
             NflogModule.GetModuleEntry,
             NfqueueModule.GetModuleEntry,
             StringModule.GetModuleEntry,
+            SynProxyModule.GetModuleEntry,
             PolyfillModule.GetModuleEntry
         };
 
