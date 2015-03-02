@@ -122,6 +122,12 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _builder.AddCommand(rule.Chain.Table, command);
         }
 
+        public Version GetIptablesVersion()
+        {
+            IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_system);
+            return binaryClient.GetIptablesVersion();
+        }
+
         public override bool HasChain(string table, string chainName)
         {
             if (_inTransaction)

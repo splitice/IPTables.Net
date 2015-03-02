@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using SystemInteract;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Helpers;
@@ -48,6 +49,19 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             String command = rule.GetActionCommand();
             ExecutionHelper.ExecuteIptables(_system, command);
+        }
+
+        public Version GetIptablesVersion()
+        {
+            var versionProcess = ExecutionHelper.ExecuteIptables(_system, "-V");
+            var versionOutput = versionProcess.StandardOutput.ReadToEnd();
+            Regex r = new Regex(@"iptables v([0-9]+\.[0-9]+\.[0-9]+)");
+            if (!r.IsMatch(versionOutput))
+            {
+                throw new IpTablesNetException("Unable to get version string");
+            }
+            var match = r.Match(versionOutput);
+            return new Version(match.Groups[1].Value);
         }
 
         public override bool HasChain(string table, string chainName)
