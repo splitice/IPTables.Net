@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
   <TopNode>[0-1000]C:\Users\splitice\Documents\GitHub\IPTables.Net\Testing.nunit</TopNode>
-  <SelectedNode>[0-1084]IPTables.Net.Tests.RuleBuilderMultiportTests.TestSingular</SelectedNode>
+  <SelectedNode>[0-1158]IPTables.Net.Tests</SelectedNode>
   <ExcludeCategories>false</ExcludeCategories>
   <Nodes>
     <Node UniqueName="[0-1000]C:\Users\splitice\Documents\GitHub\IPTables.Net\Testing.nunit" Expanded="true" />
-    <Node UniqueName="[0-1154]C:\Users\splitice\Documents\GitHub\IPTables.Net\IPTables.Net.Tests\bin\Release\IPTables.Net.Tests.dll" Expanded="true" />
-    <Node UniqueName="[0-1155]IPTables" Expanded="true" />
-    <Node UniqueName="[0-1156]IPTables.Net" Expanded="true" />
-    <Node UniqueName="[0-1157]IPTables.Net.Tests" Expanded="true" />
-    <Node UniqueName="[0-1054]IPTables.Net.Tests.PortRangeHelpersTests" Expanded="true" />
-    <Node UniqueName="[0-1083]IPTables.Net.Tests.RuleBuilderMultiportTests" Expanded="true" />
-    <Node UniqueName="[0-1081]IPTables.Net.Tests.RuleBuilderNestedTests" Expanded="true" />
+    <Node UniqueName="[0-1155]C:\Users\splitice\Documents\GitHub\IPTables.Net\IPTables.Net.Tests\bin\Release\IPTables.Net.Tests.dll" Expanded="true" />
+    <Node UniqueName="[0-1156]IPTables" Expanded="true" />
+    <Node UniqueName="[0-1157]IPTables.Net" Expanded="true" />
+    <Node UniqueName="[0-1158]IPTables.Net.Tests" Expanded="true" />
+    <Node UniqueName="[0-1084]IPTables.Net.Tests.RuleBuilderMultiportTests" Expanded="true" />
+    <Node UniqueName="[0-1082]IPTables.Net.Tests.RuleBuilderNestedTests" Expanded="true" />
   </Nodes>
 </VisualState>

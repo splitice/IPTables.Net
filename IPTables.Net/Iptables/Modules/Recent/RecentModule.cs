@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
 
@@ -18,6 +19,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
         private const String OptionReapLong = "--reap";
         private const String OptionHitcountLong = "--hitcount";
         private const String OptionRttlLong = "--rttl";
+        private const String OptionMaskLong = "--mask";
         public int? HitCount;
 
         public ValueOrNot<RecentMode> Mode = new ValueOrNot<RecentMode>();
@@ -28,6 +30,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
 
         public bool Rttl;
         public int? Seconds = null;
+        public IPAddress Mask = IPAddress.Any;
 
         public bool Rdest
         {
@@ -41,7 +44,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
             if (ReferenceEquals(this, other)) return true;
             return Equals(Mode, other.Mode) && string.Equals(Name, other.Name) && Rsource.Equals(other.Rsource) &&
                    Seconds == other.Seconds && Reap.Equals(other.Reap) && HitCount == other.HitCount &&
-                   Rttl.Equals(other.Rttl);
+                   Rttl.Equals(other.Rttl) && Mask.Equals(other.Mask);
         }
 
         public bool NeedsLoading
@@ -86,6 +89,9 @@ namespace IPTables.Net.Iptables.Modules.Recent
                 case OptionRttlLong:
                     Rttl = true;
                     return 0;
+                case OptionMaskLong:
+                    Mask = IPAddress.Parse(parser.GetNextArg());
+                    return 1;
             }
 
             return 0;
@@ -124,6 +130,15 @@ namespace IPTables.Net.Iptables.Modules.Recent
                 sb.Append(OptionNameLong);
                 sb.Append(" ");
                 sb.Append(Name);
+            }
+
+            if (!(Equals(Mask, IPAddress.Any)))
+            {
+                if (sb.Length != 0)
+                    sb.Append(" ");
+                sb.Append(OptionMaskLong);
+                sb.Append(" ");
+                sb.Append(Mask);
             }
 
             if (Rdest)
@@ -182,7 +197,8 @@ namespace IPTables.Net.Iptables.Modules.Recent
                 OptionSecondsLong,
                 OptionReapLong,
                 OptionHitcountLong,
-                OptionRttlLong
+                OptionRttlLong,
+                OptionMaskLong
             };
             return options;
         }
@@ -210,7 +226,8 @@ namespace IPTables.Net.Iptables.Modules.Recent
                 hashCode = (hashCode*397) ^ Seconds.GetHashCode();
                 hashCode = (hashCode*397) ^ Reap.GetHashCode();
                 hashCode = (hashCode*397) ^ HitCount.GetHashCode();
-                hashCode = (hashCode*397) ^ Rttl.GetHashCode();
+                hashCode = (hashCode * 397) ^ Rttl.GetHashCode();
+                hashCode = (hashCode * 397) ^ Mask.GetHashCode();
                 return hashCode;
             }
         }
