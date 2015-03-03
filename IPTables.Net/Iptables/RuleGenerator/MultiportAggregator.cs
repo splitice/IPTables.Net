@@ -199,7 +199,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
             {
                 //The new chain
                 var description = _chain + "_" + p.Key;
-                String chainName = ShortHash.HexHash(description);
+                String chainName = ShortHash.HexHash(description+"|"+_table);
                 if (ruleSet.Chains.HasChain(chainName, _table))
                 {
                     throw new IpTablesNetException(String.Format("Duplicate feature split: {0}", chainName));
