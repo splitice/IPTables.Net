@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using SystemInteract;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Adapter.Client;
 
 namespace IPTables.Net.Iptables.Helpers
@@ -36,9 +37,14 @@ namespace IPTables.Net.Iptables.Helpers
         public static bool KernelSupported(ISystemFactory system)
         {
             var process = system.StartProcess("uname", "-r");
+            process.WaitForExit();
+            if (process.ExitCode != 0)
+            {
+                throw new IpTablesNetException("Unable to execute uname and retreive the kenel version");
+            }
             var regex = new Regex(@"([0-9]+)\.([0-9]+)\.([0-9]+)\-([0-9]+)");
             var output = process.StandardOutput.ReadToEnd();
-            if (!regex.IsMatch(output))
+            if (regex.IsMatch(output))
             {
                 var match = regex.Match(output);
                 var version = new Version(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value),
