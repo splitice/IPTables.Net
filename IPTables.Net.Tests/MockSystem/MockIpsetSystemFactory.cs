@@ -22,7 +22,7 @@ namespace IPTables.Net.Tests.MockSystem
 
         public void TestSync(IpSetSets rulesNew)
         {
-            rulesNew.Sync(null, null, (a)=>true, false);
+            rulesNew.Sync((a)=>true, false);
         }
 
         public void TestSync(IpSetSets rulesNew, List<string> expectedCommands)

@@ -107,12 +107,20 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
         {
             ISystemProcess process = _system.StartProcess(BinaryName, "save");
 
-            IpSetSets sets = new IpSetSets(this);
+            IpSetSets sets = new IpSetSets(iptables);
 
-            while(process.StandardOutput.BaseStream.CanRead)
-            {
-                String line = process.StandardOutput.ReadLine();
-                sets.Accept(line, iptables);
+            String[] all = process.StandardOutput.ReadToEnd().Split(new string[]{"\r\n","\n"}, StringSplitOptions.RemoveEmptyEntries);
+            foreach(String line in all){
+                
+                if (String.IsNullOrEmpty(line))
+                {
+                    break;
+                }
+                var trimmed = line.Trim();
+                if (trimmed.Length != 0)
+                {
+                    sets.Accept(trimmed, iptables);
+                }
             }
 
             process.WaitForExit();

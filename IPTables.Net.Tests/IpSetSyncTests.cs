@@ -63,5 +63,85 @@ namespace IPTables.Net.Tests
                 "destroy test"
             });
         }
+
+        [Test]
+        public void TestSyncEntryAdd()
+        {
+            var systemFactory = new MockIpsetSystemFactory();
+            var system = new MockIpsetBinaryAdapter(systemFactory);
+            var iptables = new IpTablesSystem(systemFactory, null, system);
+
+            IpSetSets rulesOriginal = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip"
+            }, iptables);
+
+            system.SetSets(rulesOriginal);
+
+            IpSetSets rulesNew = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip",
+                "add test 8.8.8.8"
+            }, iptables);
+
+            systemFactory.TestSync(rulesNew, new List<string>
+            {
+                "add test 8.8.8.8"
+            });
+        }
+
+        [Test]
+        public void TestSyncEntryDelete()
+        {
+            var systemFactory = new MockIpsetSystemFactory();
+            var system = new MockIpsetBinaryAdapter(systemFactory);
+            var iptables = new IpTablesSystem(systemFactory, null, system);
+
+            IpSetSets rulesOriginal = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip",
+                "add test 8.8.8.8"
+            }, iptables);
+
+            system.SetSets(rulesOriginal);
+
+            IpSetSets rulesNew = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip"
+            }, iptables);
+
+            systemFactory.TestSync(rulesNew, new List<string>
+            {
+                "del test 8.8.8.8"
+            });
+        }
+
+        [Test]
+        public void TestSyncEntryNotValues()
+        {
+            var systemFactory = new MockIpsetSystemFactory();
+            var system = new MockIpsetBinaryAdapter(systemFactory);
+            var iptables = new IpTablesSystem(systemFactory, null, system);
+
+            IpSetSets rulesOriginal = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip",
+                "add test 8.8.8.8"
+            }, iptables);
+
+
+            system.SetSets(rulesOriginal);
+
+            IpSetSets rulesNew = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip"
+            }, iptables);
+
+            rulesNew.Sets.FirstOrDefault().SyncMode = IpSetSyncMode.SetOnly;
+
+            systemFactory.TestSync(rulesNew, new List<string>
+            {
+            });
+        }
     }
 }

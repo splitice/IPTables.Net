@@ -59,7 +59,6 @@
     <Compile Include="Iptables\IpSet\IpSetSyncMode.cs" />
     <Compile Include="Iptables\IpSet\IpSetType.cs" />
     <Compile Include="Iptables\IpSet\IpSetTypeHelper.cs" />
-    <Compile Include="Iptables\IpSet\Sync\IIPSetSync.cs" />
     <Compile Include="Iptables\IpTablesRuleDefinition.cs" />
     <Compile Include="Iptables\IPTablesTables.cs" />
     <Compile Include="Iptables\Libiptc\IptcInterface.cs" />
