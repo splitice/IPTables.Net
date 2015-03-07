@@ -53,7 +53,7 @@ namespace IPTables.Net.Tests
             sets.AddSet(set);
 
 
-            String toParse = "test_set 8.8.8.8,80";
+            String toParse = "test_set 8.8.8.8,tcp:80";
             var entry = IpSetEntry.Parse(toParse, sets);
 
             Assert.AreEqual("test_set", entry.Set.Name);

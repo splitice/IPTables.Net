@@ -58,12 +58,8 @@ namespace IPTables.Net.Iptables.IpSet.Parser
             {
                 var type = _entry.Set.Type;
                 var typeComponents = IpSetTypeHelper.TypeComponents(IpSetTypeHelper.TypeToString(type)).ToArray();
-                var optionComponents = option.Split(new char[] {','});
+                var optionComponents = option.Split(new char[] {',', ':'});
 
-                if (typeComponents.Length != optionComponents.Length)
-                {
-                    throw new IpTablesNetException("Missmatch in ipset entry component parts");
-                }
 
                 for (int i = 0; i < optionComponents.Length; i++)
                 {
@@ -73,13 +69,12 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                             _entry.Cidr = IpCidr.Parse(optionComponents[i]);
                             break;
                         case "port":
+                            _entry.Protocol = optionComponents[i];
+                            i++;
                             _entry.Port = ushort.Parse(optionComponents[i]);
                             break;
                         case "mac":
                             _entry.Mac = optionComponents[i];
-                            break;
-                        case "protocol":
-                            _entry.Protocol = optionComponents[i];
                             break;
                     }
                 }

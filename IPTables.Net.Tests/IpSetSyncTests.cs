@@ -125,7 +125,7 @@ namespace IPTables.Net.Tests
 
             IpSetSets rulesOriginal = new IpSetSets(new List<String>()
             {
-                "create test hash:ip",
+                "create test hash:ip family inet hashsize 1024 maxelem 65536",
                 "add test 8.8.8.8"
             }, iptables);
 
