@@ -9,6 +9,7 @@ using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Ct;
 using IPTables.Net.Iptables.Modules.Dnat;
 using IPTables.Net.Iptables.Modules.Helper;
+using IPTables.Net.Iptables.Modules.IpSet;
 using IPTables.Net.Iptables.Modules.Length;
 using IPTables.Net.Iptables.Modules.Limit;
 using IPTables.Net.Iptables.Modules.Log;
@@ -59,6 +60,7 @@ namespace IPTables.Net.Iptables.Modules
             NfqueueModule.GetModuleEntry,
             StringModule.GetModuleEntry,
             SynProxyModule.GetModuleEntry,
+            IpSetModule.GetModuleEntry,
             PolyfillModule.GetModuleEntry
         };
 

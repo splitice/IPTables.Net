@@ -63,6 +63,7 @@
     <Compile Include="Iptables\IPTablesTables.cs" />
     <Compile Include="Iptables\Libiptc\IptcInterface.cs" />
     <Compile Include="Iptables\Modules\Ct\CtTargetModule.cs" />
+    <Compile Include="Iptables\Modules\IpSet\HelperModule.cs" />
     <Compile Include="Iptables\Modules\Helper\HelperModule.cs" />
     <Compile Include="Iptables\Modules\Length\LengthModule.cs" />
     <Compile Include="Iptables\Modules\Nfqueue\NfqueueModule.cs" />

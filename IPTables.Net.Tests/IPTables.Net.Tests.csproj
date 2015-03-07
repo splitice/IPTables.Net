@@ -68,6 +68,7 @@
     <Compile Include="SingleCommentRuleParseTests.cs" />
     <Compile Include="SingleDnatRuleParseTests.cs" />
     <Compile Include="SingleConnmarkRuleParseTests.cs" />
+    <Compile Include="SingleIpSetRuleParseTests.cs" />
     <Compile Include="SingleHelperRuleParseTests.cs" />
     <Compile Include="SingleLengthRuleParseTests.cs" />
     <Compile Include="SingleSynProxyRuleParseTests.cs" />
