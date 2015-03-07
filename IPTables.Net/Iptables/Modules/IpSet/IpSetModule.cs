@@ -29,6 +29,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         private const String OptionBytesGt = "--bytes-gt";
 
         public ValueOrNot<String> MatchSet;
+        public String MatchSetFlags;
         public bool ReturnNoMatch;
         public bool UpdateCounters = true;
         public bool UpdateSubCounters = true;
@@ -67,7 +68,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return MatchSet.Equals(other.MatchSet);
+            return Equals(MatchSet, other.MatchSet) && string.Equals(MatchSetFlags, other.MatchSetFlags) && ReturnNoMatch.Equals(other.ReturnNoMatch) && UpdateCounters.Equals(other.UpdateCounters) && UpdateSubCounters.Equals(other.UpdateSubCounters) && _packetsValue == other._packetsValue && PacketsMatch == other.PacketsMatch && _bytesValue == other._bytesValue && BytesMatch == other.BytesMatch;
         }
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
@@ -76,7 +77,8 @@ namespace IPTables.Net.Iptables.Modules.IpSet
             {
                 case OptionMatchSet:
                     MatchSet = new ValueOrNot<String>(parser.GetNextArg(), not);
-                    return 1;
+                    MatchSetFlags = parser.GetNextArg(2);
+                    return 2;
                 case OptionNoMatch:
                     ReturnNoMatch = !not;
                     break;
@@ -142,6 +144,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
             StringBuilder sb = new StringBuilder();
             
             sb.Append(MatchSet.ToOption(OptionMatchSet));
+            sb.Append(" " + MatchSetFlags);
 
             if (ReturnNoMatch)
             {
@@ -198,13 +201,25 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((IpSetModule)obj);
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((IpSetModule) obj);
         }
 
         public override int GetHashCode()
         {
-            return MatchSet.GetHashCode();
+            unchecked
+            {
+                int hashCode = (MatchSet != null ? MatchSet.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (MatchSetFlags != null ? MatchSetFlags.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ ReturnNoMatch.GetHashCode();
+                hashCode = (hashCode*397) ^ UpdateCounters.GetHashCode();
+                hashCode = (hashCode*397) ^ UpdateSubCounters.GetHashCode();
+                hashCode = (hashCode*397) ^ _packetsValue;
+                hashCode = (hashCode*397) ^ (int) PacketsMatch;
+                hashCode = (hashCode*397) ^ _bytesValue;
+                hashCode = (hashCode*397) ^ (int) BytesMatch;
+                return hashCode;
+            }
         }
     }
 }

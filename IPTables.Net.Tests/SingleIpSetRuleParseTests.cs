@@ -10,7 +10,7 @@ namespace IPTables.Net.Tests
         [Test]
         public void Test1()
         {
-            String rule = "-A FORWARD -m set --match-set test";
+            String rule = "-A FORWARD -m set --match-set test src";
             IpTablesChainSet chains = new IpTablesChainSet();
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
@@ -21,7 +21,7 @@ namespace IPTables.Net.Tests
         [Test]
         public void Test2()
         {
-            String rule = "-A FORWARD -m set --match-set test --return-nomatch ! --update-counters --packets-lt 3 ! --bytes-eq 1";
+            String rule = "-A FORWARD -m set --match-set test src --return-nomatch ! --update-counters --packets-lt 3 ! --bytes-eq 1";
             IpTablesChainSet chains = new IpTablesChainSet();
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
