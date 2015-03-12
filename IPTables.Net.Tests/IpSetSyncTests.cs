@@ -162,7 +162,7 @@ namespace IPTables.Net.Tests
 
             IpSetSets rulesNew = new IpSetSets(new List<String>()
             {
-                "create test hash:ip"
+                "create test bitmap:port"
             }, iptables);
 
             rulesNew.Sets.FirstOrDefault().SyncMode = IpSetSyncMode.SetOnly;
