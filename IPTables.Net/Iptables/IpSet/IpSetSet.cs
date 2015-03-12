@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using IPTables.Net.Iptables.IpSet.Parser;
 using IPTables.Net.Netfilter;
@@ -91,7 +92,20 @@ namespace IPTables.Net.Iptables.IpSet
         public String GetCommand()
         {
             String type = IpSetTypeHelper.TypeToString(_type);
-            String command = String.Format("{0} {1} family inet hashsize {2} maxelem {3}", _name, type, _hashSize, _maxElem);
+            String command = String.Format("{0} {1}", _name, type);
+
+            if (_type == IpSetType.HashIp || _type == IpSetType.HashIpPort)
+            {
+                command += " family inet";
+            }
+            else if (_type == IpSetType.BitmapPort)
+            {
+                command += " range 1-65535";
+            }
+            if (_type == IpSetType.HashIp || _type == IpSetType.HashIpPort)
+            {
+                command += String.Format(" hashsize {0} maxelem {1}", _hashSize, _maxElem);
+            }
             return command;
         }
 
@@ -124,6 +138,12 @@ namespace IPTables.Net.Iptables.IpSet
             }
 
             return set;
+        }
+
+        public bool SetEquals(IpSetSet set)
+        {
+            return set.HashSize == HashSize && set.MaxElem == MaxElem && set.Name == Name && set.Timeout == Timeout &&
+                   set.Type == Type;
         }
     }
 }

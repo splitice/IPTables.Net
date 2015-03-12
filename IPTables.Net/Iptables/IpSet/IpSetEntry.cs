@@ -19,7 +19,7 @@ namespace IPTables.Net.Iptables.IpSet
         #region Fields
         private IpCidr _cidr;
         private String _protocol;
-        private ushort _port;
+        private int _port;
         private String _mac;
         private IpSetSet _set;
         #endregion
@@ -38,7 +38,7 @@ namespace IPTables.Net.Iptables.IpSet
             set { _protocol = value; }
         }
 
-        public ushort Port
+        public int Port
         {
             get { return _port; }
             set { _port = value; }
@@ -59,7 +59,7 @@ namespace IPTables.Net.Iptables.IpSet
 
         #region Constructor
 
-        public IpSetEntry(IpSetSet set, IpCidr? cidr = null, string protocol = null, ushort port = 0, string mac = null)
+        public IpSetEntry(IpSetSet set, IpCidr? cidr = null, string protocol = null, int port = -1, string mac = null)
         {
             _set = set;
             _cidr = cidr.HasValue?cidr.Value:IpCidr.Any;
@@ -73,7 +73,7 @@ namespace IPTables.Net.Iptables.IpSet
         public String GetKeyCommand()
         {
             List<String> parts = new List<string>();
-            if (_cidr != null)
+            if (_cidr.Cidr != 0)
             {
                 parts.Add(_cidr.ToString());
             }
@@ -81,9 +81,14 @@ namespace IPTables.Net.Iptables.IpSet
             {
                 parts.Add(_mac);
             }
-            if (_protocol != null && _port != null)
+            if (_port != -1)
             {
-                parts.Add(_protocol + ":" + _port);
+                String prefix = "";
+                if (_protocol != null)
+                {
+                    prefix = _protocol + ":";
+                }
+                parts.Add(prefix + _port);
             }
             if (parts.Count == 0)
             {

@@ -69,8 +69,11 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                             _entry.Cidr = IpCidr.Parse(optionComponents[i]);
                             break;
                         case "port":
-                            _entry.Protocol = optionComponents[i];
-                            i++;
+                            if (i != 0)
+                            {
+                                _entry.Protocol = optionComponents[i];
+                                i++;
+                            }
                             _entry.Port = ushort.Parse(optionComponents[i]);
                             break;
                         case "mac":

@@ -40,6 +40,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
         private string _commentPrefix;
         private Action<IpTablesRule, TKey> _setJump;
         private string _baseRule;
+        private bool _ipset;
 
         public IDictionary<TKey, List<IpTablesRule>> Rules
         {
@@ -49,7 +50,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
         public MultiportAggregator(String chain, String table, Func<IpTablesRule, TKey> extractKey, 
             Func<IpTablesRule, PortOrRange> extractPort, Action<IpTablesRule, List<PortOrRange>> setPort, 
             Action<IpTablesRule, TKey> setJump, String commentPrefix,
-            String baseRule = null)
+            String baseRule = null, bool ipset = false)
         {
             _chain = chain;
             _table = table;
@@ -63,6 +64,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 baseRule = "-A "+chain+" -t "+table;
             }
             _baseRule = baseRule;
+            _ipset = ipset;
         }
 
         /// <summary>
@@ -138,7 +140,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
             
             foreach (var e in ports)
             {
-                if (count == 14 && e.IsRange() || count == 15)
+                if (!_ipset && (count == 14 && e.IsRange() || count == 15))
                 {
                     buildRule();
                     count = 0;

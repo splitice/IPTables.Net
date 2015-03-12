@@ -143,5 +143,33 @@ namespace IPTables.Net.Tests
             {
             });
         }
+
+        [Test]
+        public void TestBitmapPort()
+        {
+            var systemFactory = new MockIpsetSystemFactory();
+            var system = new MockIpsetBinaryAdapter(systemFactory);
+            var iptables = new IpTablesSystem(systemFactory, null, system);
+
+            IpSetSets rulesOriginal = new IpSetSets(new List<String>()
+            {
+                "create test bitmap:port family inet",
+                "add test 80"
+            }, iptables);
+
+
+            system.SetSets(rulesOriginal);
+
+            IpSetSets rulesNew = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip"
+            }, iptables);
+
+            rulesNew.Sets.FirstOrDefault().SyncMode = IpSetSyncMode.SetOnly;
+
+            systemFactory.TestSync(rulesNew, new List<string>
+            {
+            });
+        }
     }
 }

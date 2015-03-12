@@ -35,9 +35,11 @@ namespace IPTables.Net.Iptables.IpSet
         /// Sync with an IPTables system
         /// </summary>
         /// <param name="canDeleteSet"></param>
+        /// <param name="transactional"></param>
         public void Sync(
             Func<IpSetSet, bool> canDeleteSet = null, bool transactional = true)
         {
+            transactional = false;//TODO: not yet supported
             if (transactional)
             {
                 //Start transaction
@@ -58,7 +60,12 @@ namespace IPTables.Net.Iptables.IpSet
                 else
                 {
                     //Update if applicable
-                    //TODO: update
+                    if (!systemSet.SetEquals(set))
+                    {
+                        _system.SetAdapter.DestroySet(set.Name);
+                        _system.SetAdapter.CreateSet(set);
+                        systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, _system, set.SyncMode);
+                    }
                 }
 
                 if (set.SyncMode == IpSetSyncMode.SetAndEntries)

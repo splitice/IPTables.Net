@@ -89,7 +89,8 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
                 {
                     return false;
                 }
-                standardInput.WriteLine(set.GetCommand());
+                var command = set.GetCommand();
+                standardInput.WriteLine(command);
                 foreach (var entry in set.GetEntryCommands())
                 {
                     if (!standardInput.BaseStream.CanWrite)

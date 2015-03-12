@@ -28,6 +28,7 @@ namespace IPTables.Net.Iptables.IpSet
 
     public enum IpSetType
     {
+        BitmapPort, //bitmap:port
         HashIp, //hash:ip
         HashIpPort //hash:ip,port
     }

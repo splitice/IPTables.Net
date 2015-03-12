@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
+using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.IpSet
 {
@@ -142,8 +143,8 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         public String GetRuleString()
         {
             StringBuilder sb = new StringBuilder();
-            
-            sb.Append(MatchSet.ToOption(OptionMatchSet));
+
+            sb.Append((MatchSet.Not ? "! ":"") + OptionMatchSet + " " + ShellHelper.EscapeArguments(MatchSet.Value));
             sb.Append(" " + MatchSetFlags);
 
             if (ReturnNoMatch)

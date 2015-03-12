@@ -59,7 +59,10 @@ namespace IPTables.Net.Netfilter.TableSync
                 //Delete any extra rules
                 if (i == len)
                 {
-                    cR.DeleteRule();
+                    if (_shouldDelete(cR))
+                    {
+                        cR.DeleteRule();
+                    }
                     continue;
                 }
 

@@ -62,6 +62,7 @@
     <Compile Include="Iptables\IpTablesRuleDefinition.cs" />
     <Compile Include="Iptables\IPTablesTables.cs" />
     <Compile Include="Iptables\Libiptc\IptcInterface.cs" />
+    <Compile Include="Iptables\Modules\Bpf\BpfModule.cs" />
     <Compile Include="Iptables\Modules\Ct\CtTargetModule.cs" />
     <Compile Include="Iptables\Modules\IpSet\IpSetModule.cs" />
     <Compile Include="Iptables\Modules\Helper\HelperModule.cs" />

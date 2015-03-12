@@ -5,10 +5,10 @@
   <ExcludeCategories>false</ExcludeCategories>
   <Nodes>
     <Node UniqueName="[0-1000]C:\Users\splitice\Documents\GitHub\IPTables.Net\Testing.nunit" Expanded="true" />
-    <Node UniqueName="[0-1160]C:\Users\splitice\Documents\GitHub\IPTables.Net\IPTables.Net.Tests\bin\Release\IPTables.Net.Tests.dll" Expanded="true" />
-    <Node UniqueName="[0-1161]IPTables" Expanded="true" />
-    <Node UniqueName="[0-1162]IPTables.Net" Expanded="true" />
-    <Node UniqueName="[0-1163]IPTables.Net.Tests" Expanded="true" />
+    <Node UniqueName="[0-1164]C:\Users\splitice\Documents\GitHub\IPTables.Net\IPTables.Net.Tests\bin\Release\IPTables.Net.Tests.dll" Expanded="true" />
+    <Node UniqueName="[0-1165]IPTables" Expanded="true" />
+    <Node UniqueName="[0-1166]IPTables.Net" Expanded="true" />
+    <Node UniqueName="[0-1167]IPTables.Net.Tests" Expanded="true" />
     <Node UniqueName="[0-1006]IPTables.Net.Tests.IpSetSyncTests" Expanded="true" />
   </Nodes>
 </VisualState>
