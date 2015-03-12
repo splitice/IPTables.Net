@@ -7,7 +7,7 @@ namespace IPTables.Net.Iptables.Modules.Bpf
 {
     public class BpfModule : ModuleBase, IEquatable<BpfModule>, IIpTablesModuleGod
     {
-        private const String OptionCommentLong = "--bytecode";
+        private const String OptionBytecode = "--bytecode";
 
         public String ByteCode;
 
@@ -22,7 +22,7 @@ namespace IPTables.Net.Iptables.Modules.Bpf
         {
             switch (parser.GetCurrentArg())
             {
-                case OptionCommentLong:
+                case OptionBytecode:
                     ByteCode = parser.GetNextArg();
                     return 1;
             }
@@ -52,7 +52,7 @@ namespace IPTables.Net.Iptables.Modules.Bpf
         {
             var options = new List<string>
             {
-                OptionCommentLong
+                OptionBytecode
             };
             return options;
         }
