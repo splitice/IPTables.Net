@@ -8,7 +8,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
     class IptcInterface
     {
         private IntPtr _handle;
-        public const String Library = "libiptc.so";
+        public const String Library = "libip4tc.so";
         public const String Helper = "libipthelper.so";
         public const int StringLabelLength = 32;
 
