@@ -19,7 +19,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	extern EXPORT const char* output_rule4(const struct ipt_entry *e, struct xtc_handle *h, const char *chain, int counters);
+	extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const char *chain, int counters);
 #ifdef __cplusplus
 }
 #endif
