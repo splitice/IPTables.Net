@@ -6,8 +6,8 @@ install:
  
 script:
   - cd ipthelper
-  - make Release
-  - make Debug
+  - CONFIG="Release" make
+  - CONFIG="Debug" make
   - cd ..
   - export EnableNuGetPackageRestore=true
   - mozroots --import --sync
