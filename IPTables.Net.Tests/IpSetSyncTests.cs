@@ -171,5 +171,38 @@ namespace IPTables.Net.Tests
             {
             });
         }
+
+        [Test]
+        public void TestBitmapPortNoChange()
+        {
+            var systemFactory = new MockIpsetSystemFactory();
+            var system = new MockIpsetBinaryAdapter(systemFactory);
+            var iptables = new IpTablesSystem(systemFactory, null, system);
+
+            IpSetSets rulesOriginal = new IpSetSets(new List<String>()
+            {
+                "create test bitmap:port range 1-65535",
+                "add test 80",
+                "add test 81"
+            }, iptables);
+
+            rulesOriginal.Sets.FirstOrDefault().SyncMode = IpSetSyncMode.SetAndEntries;
+
+
+            system.SetSets(rulesOriginal);
+
+            IpSetSets rulesNew = new IpSetSets(new List<String>()
+            {
+                "create test bitmap:port bitmap:port range 1-65535",
+                "add test 81",
+                "add test 80"
+            }, iptables);
+
+            rulesNew.Sets.FirstOrDefault().SyncMode = IpSetSyncMode.SetAndEntries;
+
+            systemFactory.TestSync(rulesNew, new List<string>
+            {
+            });
+        }
     }
 }

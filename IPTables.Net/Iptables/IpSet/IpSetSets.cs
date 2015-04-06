@@ -72,10 +72,19 @@ namespace IPTables.Net.Iptables.IpSet
                 {
                     foreach (var entry in set.Entries)
                     {
-                        var systemEntry = systemSet.Entries.FirstOrDefault((a) => a.KeyEquals(entry));
-                        if (systemEntry == null)
+                        try
                         {
-                            _system.SetAdapter.AddEntry(entry);
+                            var systemEntry = systemSet.Entries.FirstOrDefault((a) => a.KeyEquals(entry));
+                            if (systemEntry == null)
+                            {
+                                _system.SetAdapter.AddEntry(entry);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(entry.Port);
+                            Console.WriteLine(systemSet.Entries.Count);
+                            throw;
                         }
                     }
 

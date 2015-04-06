@@ -146,7 +146,14 @@ namespace IPTables.Net.Iptables.IpSet
 
         public bool KeyEquals(IpSetEntry other)
         {
-            return _cidr.Equals(other._cidr) && string.Equals(_protocol, other._protocol) && _port == other._port && string.Equals(_mac, other._mac);
+            bool r = _cidr.Equals(other._cidr) && _port == other._port && string.Equals(_mac, other._mac);
+            if (!r)
+            {
+                return false;
+            }
+
+            return string.Equals(_protocol, other._protocol) ||
+                   (String.IsNullOrEmpty(_protocol) && String.IsNullOrEmpty(other._protocol));
         }
 
         public string GetFullCommand(String command = "add")
