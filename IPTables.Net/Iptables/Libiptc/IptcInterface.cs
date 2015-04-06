@@ -9,6 +9,7 @@ namespace IPTables.Net.Iptables.Libiptc
     /* TODO: for the future */
     class IptcInterface
     {
+        private IntPtr _handle;
         public const String Library = "libiptc.so";
         public const int StringLabelLength = 32;
 
@@ -204,5 +205,22 @@ namespace IPTables.Net.Iptables.Libiptc
         /* Translates errno numbers into more human-readable form than strerror. */
         [DllImport(Library, SetLastError = true)]
         static extern String iptc_strerror(int err);
+
+        public IptcInterface(String table)
+        {
+            _handle = iptc_init(table);
+        }
+
+        public List<IntPtr> GetRules(String chain)
+        {
+            List<IntPtr> ret = new List<IntPtr>();
+            var rule = iptc_first_rule(chain, _handle);
+            do
+            {
+                ret.Add(rule);
+                rule = iptc_next_rule(rule, _handle);
+            } while (rule != IntPtr.Zero);
+            return ret;
+        }
     }
 }
