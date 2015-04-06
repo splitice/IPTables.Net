@@ -9,6 +9,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
     {
         private IntPtr _handle;
         public const String Library = "libiptc.so";
+        public const String Helper = "libipthelper.so";
         public const int StringLabelLength = 32;
 
         public const String IPTC_LABEL_ACCEPT = "ACCEPT";
@@ -204,7 +205,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         [DllImport(Library, SetLastError = true)]
         static extern String iptc_strerror(int err);
 
-        [DllImport(Library, SetLastError = true)]
+        [DllImport(Helper, SetLastError = true)]
         static extern String output_rule4(IntPtr e, IntPtr h, String chain, int counters);
 
         public IptcInterface(String table)
@@ -225,9 +226,14 @@ namespace IPTables.Net.Iptables.NativeLibrary
         }
 
 
-        public String GetString(String chain, IntPtr rule, bool counters = false)
+        public String GetRuleString(String chain, IntPtr rule, bool counters = false)
         {
             return output_rule4(rule, _handle, chain, counters ? 1 : 0);
+        }
+
+        public void Insert(String chain, IntPtr entry, uint at)
+        {
+            iptc_insert_entry(chain, entry, at, _handle);
         }
 
 
