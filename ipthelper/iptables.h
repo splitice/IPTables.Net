@@ -6,6 +6,8 @@
 #include <libiptc/libiptc.h>
 //#include <iptables/internal.h>
 
+typedef char xt_chainlabel[32];
+
 /* Your shared library should call one of these. */
 extern int do_command4(int argc, char *argv[], char **table,
 		      struct xtc_handle **handle);
