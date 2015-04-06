@@ -304,7 +304,7 @@ static void print_proto(uint16_t proto, int invert)
 
 /* We want this to be readable, so only print out neccessary fields.
 * Because that's the kind of world I want to live in.  */
-EXPORT const char* output_rule4(const struct ipt_entry *e, struct xtc_handle *h, const char *chain, int counters)
+extern EXPORT const char* output_rule4(const struct ipt_entry *e, struct xtc_handle *h, const char *chain, int counters)
 {
 	const struct xt_entry_target *t;
 	const char *target_name;
