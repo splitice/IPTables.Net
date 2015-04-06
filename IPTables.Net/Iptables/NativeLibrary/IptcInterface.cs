@@ -217,11 +217,11 @@ namespace IPTables.Net.Iptables.NativeLibrary
         {
             List<IntPtr> ret = new List<IntPtr>();
             var rule = iptc_first_rule(chain, _handle);
-            do
+            while (rule != IntPtr.Zero)
             {
                 ret.Add(rule);
                 rule = iptc_next_rule(rule, _handle);
-            } while (rule != IntPtr.Zero);
+            };
             return ret;
         }
 
