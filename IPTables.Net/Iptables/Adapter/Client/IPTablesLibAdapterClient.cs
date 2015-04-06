@@ -34,15 +34,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
             return _system.System.StartProcess(binary, arguments);
         }
 
-        public void CheckBinary()
-        {
-            var process = StartProcess(_iptablesRestoreBinary, "--help");
-            process.WaitForExit();
-            if (!process.StandardError.ReadToEnd().Contains(NoClearOption))
-            {
-                throw new IpTablesNetException("iptables-restore client is not compiled from patched source (patch-iptables-restore.diff)");
-            }
-        }
 
         public override void DeleteRule(String table, String chainName, int position)
         {
@@ -160,10 +151,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override IpTablesChainSet ListRules(String table)
         {
-            ISystemProcess process = StartProcess(_iptablesSaveBinary, String.Format("-c -t {0}", table));
-            String toEnd = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
-            return Helper.IPTablesSaveParser.GetRulesFromOutput(_system, toEnd, table);
+            return null;
         }
 
         public override void StartTransaction()
@@ -182,7 +170,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 return;
             }
 
-            ISystemProcess process = StartProcess(_iptablesRestoreBinary, NoFlushOption + " " + NoClearOption);
+            /*ISystemProcess process = StartProcess(_iptablesRestoreBinary, NoFlushOption + " " + NoClearOption);
             if (_builder.WriteOutput(process.StandardInput))
             {
                 process.StandardInput.Flush();
@@ -245,7 +233,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             catch
             {
                 
-            }
+            }*/
             
 
             _inTransaction = false;
@@ -257,7 +245,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _inTransaction = false;
         }
 
-        ~IPTablesRestoreAdapterClient()
+        ~IPTablesLibAdapterClient()
         {
             if (_inTransaction)
             {

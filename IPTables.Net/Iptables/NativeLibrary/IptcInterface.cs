@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 
-namespace IPTables.Net.Iptables.Libiptc
+namespace IPTables.Net.Iptables.NativeLibrary
 {
     /* TODO: for the future */
     class IptcInterface
@@ -206,6 +204,9 @@ namespace IPTables.Net.Iptables.Libiptc
         [DllImport(Library, SetLastError = true)]
         static extern String iptc_strerror(int err);
 
+        [DllImport(Library, SetLastError = true)]
+        static extern String output_rule4(IntPtr e, IntPtr h, String chain, int counters);
+
         public IptcInterface(String table)
         {
             _handle = iptc_init(table);
@@ -221,6 +222,22 @@ namespace IPTables.Net.Iptables.Libiptc
                 rule = iptc_next_rule(rule, _handle);
             } while (rule != IntPtr.Zero);
             return ret;
+        }
+
+
+        public String GetString(String chain, IntPtr rule, bool counters = false)
+        {
+            return output_rule4(rule, _handle, chain, counters ? 1 : 0);
+        }
+
+
+        ~IptcInterface()
+        {
+            if (_handle != IntPtr.Zero)
+            {
+                iptc_free(_handle);
+                _handle = IntPtr.Zero;
+            }
         }
     }
 }
