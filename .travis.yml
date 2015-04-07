@@ -6,14 +6,11 @@ install:
  
 script:
   - cd ipthelper
-  - CONFIG="Release" make
   - CONFIG="Debug" make
+  - sudo bash install.sh
   - cd ..
   - export EnableNuGetPackageRestore=true
   - mozroots --import --sync
   - xbuild CI.proj
   - iptables -V
-  - cp ./ipthelper/Debug/libipthelper.so ./IPTables.Net.Tests/bin/Debug/libipthelper.so
-  - cp ./ipthelper/Debug/libipthelper.so ./
-  - cp ./ipthelper/Release/libipthelper.so ./IPTables.Net.Tests/bin/Release/libipthelper.so
   - sudo nunit-console ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll -exclude Integration,NotWorkingOnMono
