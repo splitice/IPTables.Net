@@ -501,30 +501,34 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 		const struct xtables_target *target =
 			xtables_find_target(t->u.user.name, XTF_TRY_LOAD);
 
-		if (!target) {
+		//Removed: the target might not be installed yet if it is a chain!
+		/*if (!target) {
 			fprintf(stderr, "Can't find library for target `%s'\n",
 				t->u.user.name);
 			return NULL;
-		}
+		}*/
 
-		if (target->save){
-			memset(buf, 0, sizeof(buf));
-			switchStdout("/dev/null");
-			setbuf(stdout, buf);
-			target->save(&e->ip, t);
-			setbuf(stdout, NULL);
-			revertStdout();
-			ptr += sprintf(ptr, "%s", buf);
-		} else {
-			/* If the target size is greater than xt_entry_target
-			* there is something to be saved, we just don't know
-			* how to print it */
-			if (t->u.target_size !=
-				sizeof(struct xt_entry_target)) {
-				fprintf(stderr, "Target `%s' is missing "
-					"save function\n",
-					t->u.user.name);
-				return NULL;
+		if (target){
+			if (target->save){
+				memset(buf, 0, sizeof(buf));
+				switchStdout("/dev/null");
+				setbuf(stdout, buf);
+				target->save(&e->ip, t);
+				setbuf(stdout, NULL);
+				revertStdout();
+				ptr += sprintf(ptr, "%s", buf);
+			}
+			else {
+				/* If the target size is greater than xt_entry_target
+				* there is something to be saved, we just don't know
+				* how to print it */
+				if (t->u.target_size !=
+					sizeof(struct xt_entry_target)) {
+					fprintf(stderr, "Target `%s' is missing "
+						"save function\n",
+						t->u.user.name);
+					return NULL;
+				}
 			}
 		}
 	}
