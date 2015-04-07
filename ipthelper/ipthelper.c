@@ -374,6 +374,7 @@ static int print_match_save(const struct xt_entry_match *e,
 			switchStdout("/dev/null");
 			setbuf(stdout, buf);
 			match->save(ip, e);
+			fflush(stdout);
 			setbuf(stdout, NULL);
 			revertStdout();
 			ptr += sprintf(ptr, "%s", buf);
@@ -514,6 +515,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 				switchStdout("/dev/null");
 				setbuf(stdout, buf);
 				target->save(&e->ip, t);
+				fflush(stdout);
 				setbuf(stdout, NULL);
 				revertStdout();
 				ptr += sprintf(ptr, "%s", buf);
