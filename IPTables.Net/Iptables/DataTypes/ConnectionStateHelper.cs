@@ -44,7 +44,7 @@ namespace IPTables.Net.Iptables.DataTypes
                     return ConnectionState.Untracked;
             }
 
-            throw new IpTablesNetException("Unknown connection stat: " + state);
+            throw new IpTablesNetException("Unknown connection state: " + state);
         }
     }
 }
