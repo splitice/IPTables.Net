@@ -25,6 +25,9 @@
     <ClInclude Include="iptables.h">
       <Filter>Header files</Filter>
     </ClInclude>
+    <ClInclude Include="xshared.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
@@ -37,6 +40,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ipthelper.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="iptables.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="xshared.c">
       <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -63,6 +63,7 @@
   <ItemGroup>
     <ClInclude Include="iptables.h" />
     <ClInclude Include="ipthelper.h" />
+    <ClInclude Include="xshared.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="debug.mak" />
@@ -70,7 +71,9 @@
     <None Include="release.mak" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="iptables.c" />
     <ClCompile Include="ipthelper.c" />
+    <ClCompile Include="xshared.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
