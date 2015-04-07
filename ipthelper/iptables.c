@@ -91,7 +91,9 @@ static const char optflags[]
 
 #define OPT_FRAGMENT    0x00800U
 
-static struct option* opts = NULL;
+void iptables_exit_error(enum xtables_exittype status, const char *msg, ...) __attribute__((noreturn, format(printf, 2, 3)));
+
+#define opts iptables_globals.opts
 static struct option original_opts[] = {
 	{ .name = "append", .has_arg = 1, .val = 'A' },
 	{ .name = "delete", .has_arg = 1, .val = 'D' },
@@ -130,6 +132,31 @@ static struct option original_opts[] = {
 	{ .name = "ipv6", .has_arg = 0, .val = '6' },
 	{ NULL },
 };
+
+struct xtables_globals iptables_globals = {
+	.option_offset = 0,
+	.program_version = "1.1.1",
+	.orig_opts = original_opts,
+	.exit_err = iptables_exit_error,
+	.program_name = "IPTables.Net(adapter)"
+};
+
+void
+iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
+{
+	va_list args;
+
+	va_start(args, msg);
+	vfprintf(stderr, msg, args);
+	va_end(args);
+	fprintf(stderr, "\n");
+	if (status == VERSION_PROBLEM)
+		fprintf(stderr,
+		"Perhaps iptables or your kernel needs to be upgraded.\n");
+	/* On error paths, make sure that we don't leak memory */
+	xtables_free_opts(1);
+	exit(status);
+}
 
 /* Primitive headers... */
 /* defined in netinet/in.h */
@@ -883,11 +910,11 @@ static void command_jump(struct iptables_command_state *cs)
 	xs_init_target(cs->target);
 
 	if (cs->target->x6_options != NULL)
-		opts = xtables_options_xfrm(original_opts, opts,
+		opts = xtables_options_xfrm(iptables_globals.orig_opts, opts,
 					    cs->target->x6_options,
 					    &cs->target->option_offset);
 	else
-		opts = xtables_merge_options(original_opts, opts,
+		opts = xtables_merge_options(iptables_globals.orig_opts, opts,
 					     cs->target->extra_opts,
 					     &cs->target->option_offset);
 	if (opts == NULL)
@@ -914,10 +941,10 @@ static void command_match(struct iptables_command_state *cs)
 		return;
 	/* Merge options for non-cloned matches */
 	if (m->x6_options != NULL)
-		opts = xtables_options_xfrm(original_opts, opts,
+		opts = xtables_options_xfrm(iptables_globals.orig_opts, opts,
 					    m->x6_options, &m->option_offset);
 	else if (m->extra_opts != NULL)
-		opts = xtables_merge_options(original_opts, opts,
+		opts = xtables_merge_options(iptables_globals.orig_opts, opts,
 					     m->extra_opts, &m->option_offset);
 	if (opts == NULL)
 		xtables_error(OTHER_PROBLEM, "can't alloc memory!");
@@ -965,7 +992,7 @@ int do_command4(int argc, char *argv[], char **table, void **handle)
            demand-load a protocol. */
 	opterr = 0;
 
-	opts = original_opts;
+	opts = iptables_globals.orig_opts;
 	while ((cs.c = getopt_long(argc, argv,
 	   "-:A:C:D:R:I:L::S::M:F::Z::N:X::E:P:Vh::o:p:s:d:j:i:fbvnt:m:xc:g:46",
 					   opts, NULL)) != -1) {

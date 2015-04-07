@@ -7,6 +7,7 @@
 //#include <iptables/internal.h>
 
 typedef char xt_chainlabel[32];
+extern struct xtables_globals iptables_globals;
 
 /* Your shared library should call one of these. */
 int do_command4(int argc, char *argv[], char **table,

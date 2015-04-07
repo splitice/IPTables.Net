@@ -42,6 +42,7 @@
 #include <fcntl.h>
 #include <assert.h>
 #include "ipthelper.h"
+#include "iptables.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -503,7 +504,12 @@ EXPORT int execute_command(const char* rule, void *h){
 	char* table = "filter";
 	char** newargv = split_commandline(rule, &newargc);
 	int ret = do_command4(newargc, newargv,
-		&table, h);
+		&table, &h);
 	free(newargv);
 	return ret;
+}
+
+EXPORT int init_helper(void){
+	int c = xtables_init_all(&iptables_globals, NFPROTO_IPV4);
+	return c;
 }
