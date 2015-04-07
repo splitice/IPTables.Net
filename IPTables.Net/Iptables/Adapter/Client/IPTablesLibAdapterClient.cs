@@ -152,7 +152,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
             if (!GetInterface(table).AddChain(chainName))
             {
-                throw new IpTablesNetException(String.Format("Failed to add chain \"{0}\" due to error: \"{1}\"", chainName, GetInterface(table).GetErrorString()));
+                throw new IpTablesNetException(String.Format("Failed to add chain \"{0}\" to table \"{1}\" due to error: \"{2}\"", chainName, table, GetInterface(table).GetErrorString()));
             }
         }
 
