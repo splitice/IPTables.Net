@@ -158,7 +158,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override void DeleteChain(string table, string chainName, bool flush = false)
         {
-            Console.WriteLine("Delete Chain: "+ chainName);
             if (_inTransaction)
             {
                 GetInterface(table).DeleteChain(chainName);
