@@ -506,14 +506,14 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 			return NULL;
 		}
 
-		if (target->save)
+		if (target->save){
 			switchStdout("/dev/null");
 			setbuf(stdout, buf);
 			target->save(&e->ip, t);
 			setbuf(stdout, NULL);
 			revertStdout();
 			ptr += sprintf(ptr, "%s", buf);
-		else {
+		} else {
 			/* If the target size is greater than xt_entry_target
 			* there is something to be saved, we just don't know
 			* how to print it */
