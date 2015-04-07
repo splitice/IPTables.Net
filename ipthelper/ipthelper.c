@@ -380,7 +380,6 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 			}
 		}
 	}
-	ptr += sprintf(ptr,"\n");
 
 	ptr = NULL;
 
