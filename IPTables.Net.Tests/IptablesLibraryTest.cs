@@ -62,12 +62,12 @@ namespace IPTables.Net.Tests
             {
                 IptcInterface iptc = new IptcInterface("filter");
 
-                var status = iptc.ExecuteCommand("iptables -A test2 -d 1.1.1.1 -m comment --comment \"C\" -j ACCEPT");
-                Assert.AreEqual(1, status);
+                var status = iptc.ExecuteCommand("iptables -A test2 -d 1.1.1.1 -p tcp -m tcp --dport 80 -j ACCEPT");
+                Assert.AreEqual(1, status, "Expected OK return value");
 
                 var rules = iptc.GetRules("test2");
                 Assert.AreEqual(1, rules.Count);
-                Assert.AreEqual("-A test2 -d 1.1.1.1/32 -m comment --comment \"C\" -j ACCEPT", iptc.GetRuleString("test2", rules[0]));
+                Assert.AreEqual("-A test2 -d 1.1.1.1 -p tcp -m tcp --dport 80 -j ACCEPT", iptc.GetRuleString("test2", rules[0]));
             }
         }
     }
