@@ -448,6 +448,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 {
 	const struct xt_entry_target *t;
 	const char *target_name;
+	char buf[BUFSIZ];
 
 	/* print counters for iptables-save */
 	if (counters > 0)
@@ -506,7 +507,12 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 		}
 
 		if (target->save)
+			switchStdout("/dev/null");
+			setbuf(stdout, buf);
 			target->save(&e->ip, t);
+			setbuf(stdout, NULL);
+			revertStdout();
+			ptr += sprintf(ptr, "%s", buf);
 		else {
 			/* If the target size is greater than xt_entry_target
 			* there is something to be saved, we just don't know
