@@ -1281,7 +1281,10 @@ int do_command4(int argc, char *argv[], char **table, void **handle)
 			return (2);
 
 		default:
-			return 3;
+			if (command_default(&cs, &iptables_globals) == 1)
+				/* cf. ip6tables.c */
+				continue;
+			break;
 		}
 		cs.invert = FALSE;
 	}
