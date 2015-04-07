@@ -965,7 +965,7 @@ int do_command4(int argc, char *argv[], char **table, void **handle)
            demand-load a protocol. */
 	opterr = 0;
 
-	opts = xt_params->orig_opts;
+	opts = original_opts;
 	while ((cs.c = getopt_long(argc, argv,
 	   "-:A:C:D:R:I:L::S::M:F::Z::N:X::E:P:Vh::o:p:s:d:j:i:fbvnt:m:xc:g:46",
 					   opts, NULL)) != -1) {
