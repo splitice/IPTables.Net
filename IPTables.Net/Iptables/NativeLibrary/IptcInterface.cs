@@ -206,7 +206,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         static extern String iptc_strerror(int err);
 
         [DllImport(Helper, SetLastError = true)]
-        static extern String output_rule4(IntPtr e, IntPtr h, String chain, int counters);
+        static extern IntPtr output_rule4(IntPtr e, IntPtr h, String chain, int counters);
 
         public IptcInterface(String table)
         {
@@ -228,7 +228,8 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public String GetRuleString(String chain, IntPtr rule, bool counters = false)
         {
-            return output_rule4(rule, _handle, chain, counters ? 1 : 0);
+            var ptr = output_rule4(rule, _handle, chain, counters ? 1 : 0);
+            return Marshal.PtrToStringAnsi(ptr);
         }
 
         public void Insert(String chain, IntPtr entry, uint at)
