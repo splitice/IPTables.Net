@@ -89,7 +89,7 @@ namespace IPTables.Net.Tests
         }
 
         [Test]
-        public void TestListChains()
+        public void TestListChainsSimple()
         {
             if (IsLinux)
             {
@@ -97,6 +97,21 @@ namespace IPTables.Net.Tests
 
                 var chains = iptc.GetChains();
                 Assert.AreNotEqual(0, chains.Count, "Expected atleast one chain");
+            }
+        }
+
+        [Test]
+        public void TestListChainsMangle()
+        {
+            if (IsLinux)
+            {
+                IptcInterface iptc = new IptcInterface("mangle");
+
+                var chains = iptc.GetChains();
+                Assert.AreNotEqual(0, chains.Count, "Expected atleast one chain");
+
+                List<String> expectedChains = new List<string>{"PREROUTING", "INPUT", "FORWARD", "OUTPUT", "POSTROUTING"};
+                CollectionAssert.AreEqual(expectedChains, iptc.GetChains());
             }
         }
     }
