@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using SystemInteract;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Adapter.Client.Helper;
+using IPTables.Net.Iptables.NativeLibrary;
 using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Adapter.Client
@@ -14,24 +15,23 @@ namespace IPTables.Net.Iptables.Adapter.Client
     {
         private readonly NetfilterSystem _system;
         private bool _inTransaction = false;
-        protected IPTablesRestoreTableBuilder _builder = new IPTablesRestoreTableBuilder();
+        protected Dictionary<String, IptcInterface> _interfaces = new Dictionary<string, IptcInterface>();
 
         public IPTablesLibAdapterClient(NetfilterSystem system)
         {
             _system = system;
         }
 
-        private ISystemProcess StartProcess(String binary, String arguments)
+        private IptcInterface GetInterface(String table)
         {
-            binary = binary.TrimStart();
-            //-1 or 0
-            if (binary.IndexOf(" ") > 0)
+            if (_interfaces.ContainsKey(table))
             {
-                var splitBinary = binary.Split(new char[] { ' ' });
-                binary = splitBinary[0];
-                arguments = String.Join(" ",splitBinary.Skip(1).ToArray()) + " " + arguments;
+                return _interfaces[table];
             }
-            return _system.System.StartProcess(binary, arguments);
+
+            var i = new IptcInterface(table);
+            _interfaces.Add(table, i);
+            return i;
         }
 
 
@@ -46,7 +46,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
             String command = "-D " + chainName + " " + position;
 
-            _builder.AddCommand(table, command);
+            GetInterface(table).ExecuteCommand(command);
         }
 
         INetfilterChainSet INetfilterAdapterClient.ListRules(string table)
@@ -64,7 +64,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             }
 
             String command = rule.GetActionCommand("-D", false);
-            _builder.AddCommand(rule.Chain.Table, command);
+            GetInterface(rule.Chain.Table).ExecuteCommand(command);
         }
 
         public override void InsertRule(IpTablesRule rule)
@@ -77,7 +77,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             }
 
             String command = rule.GetActionCommand("-I", false);
-            _builder.AddCommand(rule.Chain.Table, command);
+            GetInterface(rule.Chain.Table).ExecuteCommand(command);
         }
 
         public override void ReplaceRule(IpTablesRule rule)
@@ -90,7 +90,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             }
 
             String command = rule.GetActionCommand("-R", false);
-            _builder.AddCommand(rule.Chain.Table, command);
+            GetInterface(rule.Chain.Table).ExecuteCommand(command);
         }
 
         public override void AddRule(IpTablesRule rule)
@@ -103,7 +103,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             }
 
             String command = rule.GetActionCommand("-A", false);
-            _builder.AddCommand(rule.Chain.Table, command);
+            GetInterface(rule.Chain.Table).ExecuteCommand(command);
         }
 
         public Version GetIptablesVersion()
@@ -116,7 +116,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             if (_inTransaction)
             {
-                if (_builder.HasChain(table, chainName))
+                if (GetInterface(table).HasChain(chainName))
                 {
                     return true;
                 }
@@ -135,22 +135,45 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.AddChain(table, chainName);
             }
 
-            _builder.AddChain(table, chainName);
+            GetInterface(table).AddChain(chainName);
         }
 
         public override void DeleteChain(string table, string chainName, bool flush = false)
         {
             if (_inTransaction)
             {
-                _builder.DeleteChain(table, chainName);
+                GetInterface(table).DeleteChain(chainName);
             }
             
             IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_system);
             binaryClient.DeleteChain(table, chainName);
         }
 
+        public List<IpTablesRule> ListRulesInChain(String table, String chain)
+        {
+            List<IpTablesRule> ret = new List<IpTablesRule>();
+
+            var ipc = GetInterface(table);
+
+            foreach (var ipc_rule in ipc.GetRules(chain))
+            {
+                ret.Add(IpTablesRule.Parse(ipc.GetRuleString(chain, ipc_rule),_system,null,table));
+            }
+
+            return ret;
+        } 
+
         public override IpTablesChainSet ListRules(String table)
         {
+            IpTablesChainSet chains = new IpTablesChainSet();
+            
+            var ipc = GetInterface(table);
+
+            foreach (String chain in ipc.GetChains())
+            {
+                chains.AddChain(new IpTablesChain(chain, table, _system, ListRulesInChain(table, chain)));
+            }
+
             return null;
         }
 
@@ -170,70 +193,11 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 return;
             }
 
-            /*ISystemProcess process = StartProcess(_iptablesRestoreBinary, NoFlushOption + " " + NoClearOption);
-            if (_builder.WriteOutput(process.StandardInput))
+            foreach (var kv in _interfaces)
             {
-                process.StandardInput.Flush();
-                process.StandardInput.Close();
-                process.WaitForExit();
-
-                //OK
-                if (process.ExitCode != 0)
-                {
-                    //ERR: INVALID COMMAND LINE
-                    if (process.ExitCode == 2)
-                    {
-                        MemoryStream ms = new MemoryStream();
-                        var sw = new StreamWriter(ms);
-                        _builder.WriteOutput(sw);
-                        sw.Flush();
-                        ms.Seek(0, SeekOrigin.Begin);
-                        var sr = new StreamReader(ms);
-                        Console.WriteLine(sr.ReadToEnd());
-                        throw new IpTablesNetException("IpTables-Restore execution failed: Invalid Command Line - " + process.StandardError.ReadToEnd());
-                    }
-
-                    //ERR: GENERAL ERROR
-                    if (process.ExitCode == 1)
-                    {
-                        String error = process.StandardError.ReadToEnd();
-                        Console.WriteLine(error);
-
-                        MemoryStream ms = new MemoryStream();
-                        var sw = new StreamWriter(ms);
-                        _builder.WriteOutput(sw);
-                        sw.Flush();
-                        ms.Seek(0, SeekOrigin.Begin);
-                        var sr = new StreamReader(ms);
-                        var rules = sr.ReadToEnd();
-
-                        var r = new Regex("line ([0-9]+) failed");
-                        if (r.IsMatch(error))
-                        {
-                            var m = r.Match(error);
-                            var g = m.Groups[1];
-                            var i = int.Parse(g.Value);
-
-                            throw new IpTablesNetException("IpTables-Restore failed to parse rule: " +
-                                                rules.Split(new char[] { '\n' }).Skip(i - 1).FirstOrDefault());
-                        }
-
-                        throw new IpTablesNetException("IpTables-Restore execution failed: Error");
-                    }
-
-                    //ERR: UNKNOWN
-                    throw new IpTablesNetException("IpTables-Restore execution failed: Unknown Error");
-                }
+                kv.Value.Commit();
             }
-
-            try
-            {
-                process.Close();
-            }
-            catch
-            {
-                
-            }*/
+            _interfaces.Clear();
             
 
             _inTransaction = false;
@@ -241,7 +205,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override void EndTransactionRollback()
         {
-            _builder.Clear();
+            _interfaces.Clear();
             _inTransaction = false;
         }
 

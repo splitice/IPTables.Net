@@ -31,9 +31,9 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         /* Iterator functions to run through the chains.  Returns NULL at end. */
         [DllImport(Library, SetLastError = true)]
-        static extern String iptc_first_chain(IntPtr handle);
+        static extern IntPtr iptc_first_chain(IntPtr handle);
         [DllImport(Library, SetLastError = true)]
-        static extern String iptc_next_chain(IntPtr handle);
+        static extern IntPtr iptc_next_chain(IntPtr handle);
 
         /* Get first rule in the given chain: NULL for empty chain. */
         [DllImport(Library, SetLastError = true)]
@@ -240,7 +240,20 @@ namespace IPTables.Net.Iptables.NativeLibrary
             {
                 ret.Add(rule);
                 rule = iptc_next_rule(rule, _handle);
-            };
+            }
+            return ret;
+        }
+
+
+        public List<string> GetChains()
+        {
+            List<string> ret = new List<string>();
+            var chain = iptc_first_chain(_handle);
+            while (chain != IntPtr.Zero)
+            {
+                ret.Add(Marshal.PtrToStringAnsi(chain));
+                chain = iptc_next_chain(_handle);
+            }
             return ret;
         }
 
@@ -259,6 +272,26 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public int ExecuteCommand(string command)
         {
             return execute_command(command, _handle);
+        }
+
+        public void Commit()
+        {
+            iptc_commit(_handle);
+        }
+
+        public bool HasChain(string chainName)
+        {
+            return iptc_is_chain(chainName, _handle) != 0;
+        }
+
+        public void AddChain(string chainName)
+        {
+            iptc_create_chain(chainName, _handle);
+        }
+
+        public void DeleteChain(string chainName)
+        {
+            iptc_delete_chain(chainName, _handle);
         }
     }
 }

@@ -87,5 +87,17 @@ namespace IPTables.Net.Tests
                 Assert.AreEqual("-A test2 -d 1.1.1.1/32 -p tcp -m tcp --dport 80 -j ACCEPT", iptc.GetRuleString("test2", rules[0]));
             }
         }
+
+        [Test]
+        public void TestListChains()
+        {
+            if (IsLinux)
+            {
+                IptcInterface iptc = new IptcInterface("filter");
+
+                var chains = iptc.GetChains();
+                Assert.AreNotEqual(0, chains.Count, "Expected atleast one chain");
+            }
+        }
     }
 }
