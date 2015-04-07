@@ -203,7 +203,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         /* Translates errno numbers into more human-readable form than strerror. */
         [DllImport(Library, SetLastError = true)]
-        static extern String iptc_strerror(int err);
+        static extern IntPtr iptc_strerror(int err);
 
         [DllImport(Helper, SetLastError = true)]
         static extern IntPtr output_rule4(IntPtr e, IntPtr h, String chain, int counters);
@@ -264,7 +264,9 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public String GetErrorString()
         {
-            return iptc_strerror(GetLastError());
+            int lastError = GetLastError();
+            var error = iptc_strerror(lastError);
+            return String.Format("({0}) {1}",lastError,Marshal.PtrToStringAnsi(error));
         }
 
 

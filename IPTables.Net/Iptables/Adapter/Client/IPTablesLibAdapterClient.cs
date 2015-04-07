@@ -48,7 +48,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
             if (GetInterface(table).ExecuteCommand(command) != 1)
             {
-                throw new IpTablesNetException(String.Format("Failed to delete rule \"{0}\" due to error: \"{1}\"", command, GetInterface(table).GetLastError()));
+                throw new IpTablesNetException(String.Format("Failed to delete rule \"{0}\" due to error: \"{1}\"", command, GetInterface(table).GetErrorString()));
             }
         }
 
@@ -69,7 +69,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             String command = rule.GetActionCommand("-D", false);
             if (GetInterface(rule.Chain.Table).ExecuteCommand(command) != 1)
             {
-                throw new IpTablesNetException(String.Format("Failed to delete rule \"{0}\" due to error: \"{1}\"", command, GetInterface(rule.Chain.Table).GetLastError()));
+                throw new IpTablesNetException(String.Format("Failed to delete rule \"{0}\" due to error: \"{1}\"", command, GetInterface(rule.Chain.Table).GetErrorString()));
             }
         }
 
@@ -85,7 +85,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             String command = rule.GetActionCommand("-I", false); 
             if (GetInterface(rule.Chain.Table).ExecuteCommand(command) != 1)
             {
-                throw new IpTablesNetException(String.Format("Failed to insert rule \"{0}\" due to error: \"{1}\"", command, GetInterface(rule.Chain.Table).GetLastError()));
+                throw new IpTablesNetException(String.Format("Failed to insert rule \"{0}\" due to error: \"{1}\"", command, GetInterface(rule.Chain.Table).GetErrorString()));
             }
         }
 
@@ -101,7 +101,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             String command = rule.GetActionCommand("-R", false);
             if (GetInterface(rule.Chain.Table).ExecuteCommand(command) != 1)
             {
-                throw new IpTablesNetException(String.Format("Failed to replace rule \"{0}\" due to error: \"{1}\"", command, GetInterface(rule.Chain.Table).GetLastError()));
+                throw new IpTablesNetException(String.Format("Failed to replace rule \"{0}\" due to error: \"{1}\"", command, GetInterface(rule.Chain.Table).GetErrorString()));
             }
         }
 
@@ -117,7 +117,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             String command = rule.GetActionCommand("-A", false);
             if (GetInterface(rule.Chain.Table).ExecuteCommand(command) != 1)
             {
-                throw new IpTablesNetException(String.Format("Failed to add rule \"{0}\" due to error: \"{1}\"", command, GetInterface(rule.Chain.Table).GetLastError()));
+                throw new IpTablesNetException(String.Format("Failed to add rule \"{0}\" due to error: \"{1}\"", command, GetInterface(rule.Chain.Table).GetErrorString()));
             }
         }
 
@@ -152,7 +152,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
             if (!GetInterface(table).AddChain(chainName))
             {
-                throw new IpTablesNetException(String.Format("Failed to add chain \"{0}\" due to error: \"{1}\"", chainName, GetInterface(table).GetLastError()));
+                throw new IpTablesNetException(String.Format("Failed to add chain \"{0}\" due to error: \"{1}\"", chainName, GetInterface(table).GetErrorString()));
             }
         }
 
@@ -167,7 +167,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             binaryClient.DeleteChain(table, chainName);
         }
 
-        public List<IpTablesRule> ListRulesInChain(String table, String chain)
+        public List<IpTablesRule> ListRulesInChain(String table, String chain, IpTablesChainSet chainSet)
         {
             List<IpTablesRule> ret = new List<IpTablesRule>();
 
@@ -175,7 +175,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
             foreach (var ipc_rule in ipc.GetRules(chain))
             {
-                ret.Add(IpTablesRule.Parse(ipc.GetRuleString(chain, ipc_rule),_system,null,table));
+                ret.Add(IpTablesRule.Parse(ipc.GetRuleString(chain, ipc_rule), _system, chainSet, table, true));
             }
 
             return ret;
@@ -189,10 +189,10 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
             foreach (String chain in ipc.GetChains())
             {
-                chains.AddChain(new IpTablesChain(chain, table, _system, ListRulesInChain(table, chain)));
+                ListRulesInChain(table, chain, chains);
             }
 
-            return null;
+            return chains;
         }
 
         public override void StartTransaction()
