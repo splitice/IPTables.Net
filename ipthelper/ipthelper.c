@@ -370,6 +370,7 @@ static int print_match_save(const struct xt_entry_match *e,
 
 		/* some matches don't provide a save function */
 		if (match->save){
+			memset(buf, 0, sizeof(buf));
 			switchStdout("/dev/null");
 			setbuf(stdout, buf);
 			match->save(ip, e);
@@ -507,6 +508,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 		}
 
 		if (target->save){
+			memset(buf, 0, sizeof(buf));
 			switchStdout("/dev/null");
 			setbuf(stdout, buf);
 			target->save(&e->ip, t);
