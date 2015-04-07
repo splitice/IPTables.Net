@@ -498,7 +498,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 	return buffer;
 }
 
-EXPORT int execute_command(const char* rule, struct xtc_handle *h){
+EXPORT int execute_command(const char* rule, void *h){
 	int newargc;
 	char* table = "filter";
 	char** newargv = split_commandline(rule, &newargc);
