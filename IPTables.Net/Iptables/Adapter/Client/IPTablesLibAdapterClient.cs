@@ -167,20 +167,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
             binaryClient.DeleteChain(table, chainName);
         }
 
-        public List<IpTablesRule> ListRulesInChain(String table, String chain, IpTablesChainSet chainSet)
-        {
-            List<IpTablesRule> ret = new List<IpTablesRule>();
-
-            var ipc = GetInterface(table);
-
-            foreach (var ipc_rule in ipc.GetRules(chain))
-            {
-                ret.Add(IpTablesRule.Parse(ipc.GetRuleString(chain, ipc_rule), _system, chainSet, table, true));
-            }
-
-            return ret;
-        } 
-
         public override IpTablesChainSet ListRules(String table)
         {
             IpTablesChainSet chains = new IpTablesChainSet();
@@ -189,7 +175,10 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
             foreach (String chain in ipc.GetChains())
             {
-                ListRulesInChain(table, chain, chains);
+                foreach (var ipc_rule in ipc.GetRules(chain))
+                {
+                    chains.AddRule(IpTablesRule.Parse(ipc.GetRuleString(chain, ipc_rule), _system, chains, table, true));
+                }
             }
 
             return chains;
