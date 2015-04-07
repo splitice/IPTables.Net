@@ -6,7 +6,7 @@ install:
  
 script:
   - cd ipthelper
-  - CFLAGS="-DOLD_IPTABLES" sudo bash install.sh
+  - CFLAGS="-DOLD_IPTABLES" sudo -E bash install.sh
   - cd ..
   - export EnableNuGetPackageRestore=true
   - mozroots --import --sync
