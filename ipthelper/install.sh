@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CONFIG="Release" make
+CONFIG="Release" CFLAGS="$CFLAGS" make
 cp Release/libipthelper.so /usr/lib/
 ldconfig -n /usr/lib
 
