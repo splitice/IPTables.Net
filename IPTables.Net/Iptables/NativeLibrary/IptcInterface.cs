@@ -208,9 +208,21 @@ namespace IPTables.Net.Iptables.NativeLibrary
         [DllImport(Helper, SetLastError = true)]
         static extern IntPtr output_rule4(IntPtr e, IntPtr h, String chain, int counters);
 
+        [DllImport(Helper, SetLastError = true)]
+        static extern int execute_command(String command, IntPtr h);
+
         public IptcInterface(String table)
         {
             _handle = iptc_init(table);
+        }
+
+        ~IptcInterface()
+        {
+            if (_handle != IntPtr.Zero)
+            {
+                iptc_free(_handle);
+                _handle = IntPtr.Zero;
+            }
         }
 
         public List<IntPtr> GetRules(String chain)
@@ -237,14 +249,9 @@ namespace IPTables.Net.Iptables.NativeLibrary
             iptc_insert_entry(chain, entry, at, _handle);
         }
 
-
-        ~IptcInterface()
+        public int ExecuteCommand(string command)
         {
-            if (_handle != IntPtr.Zero)
-            {
-                iptc_free(_handle);
-                _handle = IntPtr.Zero;
-            }
+            return execute_command(command, _handle);
         }
     }
 }

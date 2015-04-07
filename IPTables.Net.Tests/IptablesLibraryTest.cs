@@ -25,6 +25,7 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
+                Process.Start("/sbin/iptables", "-N test2").WaitForExit();
                 Process.Start("/sbin/iptables", "-N test").WaitForExit();
                 Process.Start("/sbin/iptables", "-A test -j ACCEPT").WaitForExit();
             }
@@ -37,6 +38,8 @@ namespace IPTables.Net.Tests
             {
                 Process.Start("/sbin/iptables", "-D test -j ACCEPT").WaitForExit();
                 Process.Start("/sbin/iptables", "-X test").WaitForExit();
+                Process.Start("/sbin/iptables", "-D test2 -j ACCEPT").WaitForExit();
+                Process.Start("/sbin/iptables", "-X test2").WaitForExit();
             }
         }
 
@@ -50,6 +53,21 @@ namespace IPTables.Net.Tests
                 Assert.AreEqual(1,rules.Count);
                 Assert.AreEqual("-A test -j ACCEPT", iptc.GetRuleString("test",rules[0]));
             }   
+        }
+
+        [Test]
+        public void TestRuleInput()
+        {
+            if (IsLinux)
+            {
+                IptcInterface iptc = new IptcInterface("filter");
+                var status = iptc.ExecuteCommand("-A test2 -d 1.1.1.1 -j ACCEPT");
+                Assert.AreEqual(0, status);
+
+                var rules = iptc.GetRules("test2");
+                Assert.AreEqual(1, rules.Count);
+                Assert.AreEqual("-A test2 -d 1.1.1.1 -j ACCEPT", iptc.GetRuleString("test2", rules[0]));
+            }
         }
     }
 }
