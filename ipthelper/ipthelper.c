@@ -366,13 +366,17 @@ static int print_match_save(const struct xt_entry_match *e,
 		xtables_find_match(e->u.user.name, XTF_TRY_LOAD, NULL);
 
 	if (match) {
+#ifdef OLD_IPTABLES
 		ptr += sprintf(ptr," -m %s", e->u.user.name);
+#else
+		ptr += sprintf(ptr, " -m %s", match->alias ? match->alias(e) : e->u.user.name);
+#endif
 
 		/* some matches don't provide a save function */
 		if (match->save){
 			memset(buf, 0, sizeof(buf));
 			switchStdout("/dev/null");
-			setbuf(stdout, buf);
+			setvbuf(stdout, buf, _IOLBF, BUFSIZ);
 			match->save(ip, e);
 			fflush(stdout);
 			setbuf(stdout, NULL);
@@ -513,7 +517,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 			if (target->save){
 				memset(buf, 0, sizeof(buf));
 				switchStdout("/dev/null");
-				setbuf(stdout, buf);
+				setvbuf(stdout, buf, _IOLBF, BUFSIZ);
 				target->save(&e->ip, t);
 				fflush(stdout);
 				setbuf(stdout, NULL);

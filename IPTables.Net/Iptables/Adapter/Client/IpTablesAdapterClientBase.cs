@@ -67,5 +67,10 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             return ListRules(table);
         }
+
+        public virtual List<string> GetChains(String table)
+        {
+            return ListRules(table).Chains.Select((a)=>a.Name).ToList();
+        }
     }
 }

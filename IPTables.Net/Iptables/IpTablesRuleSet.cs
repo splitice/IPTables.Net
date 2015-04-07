@@ -97,6 +97,8 @@ namespace IPTables.Net.Iptables
             //Start transaction
             _system.TableAdapter.StartTransaction();
             
+            //Load all chains, figure out what to add
+            List<IpTablesChain> chainsToAdd = new List<IpTablesChain>();
             var tableChains = new Dictionary<string, List<IpTablesChain>>();
             foreach (IpTablesChain chain in Chains)
             {
@@ -107,11 +109,19 @@ namespace IPTables.Net.Iptables
                 }
                 if (tableChains[chain.Table].FirstOrDefault(a => a.Name == chain.Name && a.Table == chain.Table) == null)
                 {
-                    //Chain doesnt exist create
-                    tableChains[chain.Table].Add(_system.AddChain(chain));
+                    //Chain doesnt exist, to create
+                    chainsToAdd.Add(chain);
                 }
             }
 
+            //Add the new chains / rules
+            foreach (var chain in chainsToAdd)
+            {
+                tableChains[chain.Table].Add(_system.AddChain(chain));
+            }
+            chainsToAdd.Clear();
+
+            //Update chains with differing rules
             foreach (IpTablesChain chain in Chains)
             {
                 IpTablesChain realChain =
@@ -123,8 +133,15 @@ namespace IPTables.Net.Iptables
                 }
             }
 
+            //End Transaction: COMMIT
+            _system.TableAdapter.EndTransactionCommit();
+
             if (canDeleteChain != null)
             {
+                //Start transaction
+                //Needs new transaction, bug in libiptc?
+                _system.TableAdapter.StartTransaction();
+
                 foreach (string table in Chains.Select(a => a.Table).Distinct())
                 {
                     foreach (IpTablesChain chain in _system.GetChains(table))
@@ -135,10 +152,10 @@ namespace IPTables.Net.Iptables
                         }
                     }
                 }
-            }
 
-            //End Transaction: COMMIT
-            _system.TableAdapter.EndTransactionCommit();
+                //End Transaction: COMMIT
+                _system.TableAdapter.EndTransactionCommit();
+            }
         }
 
         #endregion

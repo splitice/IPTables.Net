@@ -5,6 +5,7 @@ using System.Linq;
 using SystemInteract;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
+using IPTables.Net.Iptables.Adapter.Client;
 using IPTables.Net.Iptables.IpSet.Adapter;
 using IPTables.Net.Netfilter;
 
@@ -24,5 +25,11 @@ namespace IPTables.Net
         {
             return base.GetChains(table).Cast<IpTablesChain>();
         }
+
+        public List<String> GetChainNames(String table)
+        {
+            var adapter = TableAdapter as IIPTablesAdapterClient;
+            return adapter.GetChains(table);
+        } 
     }
 }

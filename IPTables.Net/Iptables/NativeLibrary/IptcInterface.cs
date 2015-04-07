@@ -214,12 +214,18 @@ namespace IPTables.Net.Iptables.NativeLibrary
         [DllImport(Helper, SetLastError = true)]
         static extern int init_helper();
 
+        private static bool HelperInit = false;
+
         public IptcInterface(String table)
         {
             _handle = iptc_init(table);
-            if (init_helper() < 0)
+            if (!HelperInit)
             {
-                throw new Exception("Failed to initialize the helper / xtables");
+                if (init_helper() < 0)
+                {
+                    throw new Exception("Failed to initialize the helper / xtables");
+                }
+                HelperInit = true;
             }
         }
 

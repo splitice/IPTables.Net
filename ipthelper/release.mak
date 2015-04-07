@@ -7,7 +7,7 @@ BINARYDIR := Release
 #Toolchain
 CC := gcc
 CXX := gcc
-LD := $(CXX)
+LD := $(CC)
 AR := ar
 OBJCOPY := objcopy
 

@@ -194,6 +194,17 @@ namespace IPTables.Net.Iptables.Adapter.Client
             return chains;
         }
 
+        public override List<string> GetChains(String table)
+        {
+            var ipc = GetInterface(table);
+            List<String> ret = new List<string>();
+            foreach (String chain in ipc.GetChains())
+            {
+                ret.Add(chain);
+            }
+            return ret;
+        }
+
         public override void StartTransaction()
         {
             if (_inTransaction)
@@ -212,7 +223,11 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
             foreach (var kv in _interfaces)
             {
-                kv.Value.Commit();
+                Console.WriteLine("Commiting: "+kv.Key);
+                if (!kv.Value.Commit())
+                {
+                    throw new IpTablesNetException(String.Format("Failed commit to table \"{0}\" due to error: \"{1}\"", kv.Key, kv.Value.GetErrorString()));
+                }
             }
             _interfaces.Clear();
             

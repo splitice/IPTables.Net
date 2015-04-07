@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Adapter.Client
@@ -11,5 +12,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
         void ReplaceRule(IpTablesRule rule);
         void AddRule(IpTablesRule rule);
         Version GetIptablesVersion();
+        List<String> GetChains(String table);
     }
 }
