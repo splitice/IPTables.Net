@@ -338,9 +338,30 @@ int invert)
 	}
 }
 
+static int fd;
+static fpos_t pos;
+
+void switchStdout(const char *newStream)
+{
+	fflush(stdout);
+	fgetpos(stdout, &pos);
+	fd = dup(fileno(stdout));
+	freopen(newStream, "w", stdout);
+}
+
+void revertStdout()
+{
+	fflush(stdout);
+	dup2(fd, fileno(stdout));
+	close(fd);
+	clearerr(stdout);
+	fsetpos(stdout, &pos);
+}
+
 static int print_match_save(const struct xt_entry_match *e,
 	const struct ipt_ip *ip)
 {
+	char buf[BUFSIZ];
 	const struct xtables_match *match =
 		xtables_find_match(e->u.user.name, XTF_TRY_LOAD, NULL);
 
@@ -348,8 +369,14 @@ static int print_match_save(const struct xt_entry_match *e,
 		ptr += sprintf(ptr," -m %s", e->u.user.name);
 
 		/* some matches don't provide a save function */
-		if (match->save)
+		if (match->save){
+			switchStdout("/dev/null");
+			setbuf(stdout, buf);
 			match->save(ip, e);
+			setbuf(stdout, NULL);
+			revertStdout();
+			ptr += sprintf(ptr, "%s", buf);
+		}
 	}
 	else {
 		if (e->u.match_size) {
