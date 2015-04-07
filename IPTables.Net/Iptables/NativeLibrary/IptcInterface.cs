@@ -257,6 +257,16 @@ namespace IPTables.Net.Iptables.NativeLibrary
             return ret;
         }
 
+        public int GetLastError()
+        {
+            return Marshal.GetLastWin32Error();
+        }
+
+        public String GetErrorString()
+        {
+            return iptc_strerror(GetLastError());
+        }
+
 
         public String GetRuleString(String chain, IntPtr rule, bool counters = false)
         {
@@ -264,34 +274,65 @@ namespace IPTables.Net.Iptables.NativeLibrary
             return Marshal.PtrToStringAnsi(ptr);
         }
 
-        public void Insert(String chain, IntPtr entry, uint at)
+        /// <summary>
+        /// Insert a rule
+        /// </summary>
+        /// <param name="chain"></param>
+        /// <param name="entry"></param>
+        /// <param name="at"></param>
+        /// <returns></returns>
+        public bool Insert(String chain, IntPtr entry, uint at)
         {
-            iptc_insert_entry(chain, entry, at, _handle);
+            return iptc_insert_entry(chain, entry, at, _handle) == 1;
         }
 
+        /// <summary>
+        /// Execute an IPTables command (add, remove, delete insert)
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns>returns 1 for sucess, error code otherwise</returns>
         public int ExecuteCommand(string command)
         {
             return execute_command(command, _handle);
         }
 
-        public void Commit()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>if sucessful</returns>
+        public bool Commit()
         {
-            iptc_commit(_handle);
+            return iptc_commit(_handle) == 1;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="chainName"></param>
+        /// <returns>if chain exists</returns>
         public bool HasChain(string chainName)
         {
-            return iptc_is_chain(chainName, _handle) != 0;
+            return iptc_is_chain(chainName, _handle) == 1;
         }
 
-        public void AddChain(string chainName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="chainName"></param>
+        /// <returns>if sucessful</returns>
+        public bool AddChain(string chainName)
         {
-            iptc_create_chain(chainName, _handle);
+            return iptc_create_chain(chainName, _handle) == 1;
         }
 
-        public void DeleteChain(string chainName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="chainName"></param>
+        /// <returns>if sucessful</returns>
+        public bool DeleteChain(string chainName)
         {
-            iptc_delete_chain(chainName, _handle);
+            return iptc_delete_chain(chainName, _handle) == 1;
         }
     }
 }
