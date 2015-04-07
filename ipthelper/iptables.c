@@ -923,7 +923,7 @@ static void command_match(struct iptables_command_state *cs)
 		xtables_error(OTHER_PROBLEM, "can't alloc memory!");
 }
 
-int do_command4(int argc, char *argv[], char **table, struct xtc_handle **handle)
+int do_command4(int argc, char *argv[], char **table, void **handle)
 {
 	struct iptables_command_state cs;
 	struct ipt_entry *e = NULL;
