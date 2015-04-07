@@ -223,7 +223,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
             foreach (var kv in _interfaces)
             {
-                Console.WriteLine("Commiting: "+kv.Key);
                 if (!kv.Value.Commit())
                 {
                     throw new IpTablesNetException(String.Format("Failed commit to table \"{0}\" due to error: \"{1}\"", kv.Key, kv.Value.GetErrorString()));
