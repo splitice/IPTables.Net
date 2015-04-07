@@ -111,7 +111,10 @@ namespace IPTables.Net.Tests
                 Assert.AreNotEqual(0, chains.Count, "Expected atleast one chain");
 
                 List<String> expectedChains = new List<string>{"PREROUTING", "INPUT", "FORWARD", "OUTPUT", "POSTROUTING"};
-                CollectionAssert.AreEqual(expectedChains, iptc.GetChains());
+                CollectionAssert.AreEqual(expectedChains, iptc.GetChains(), "first table chain test");
+
+                //Test repeatable
+                CollectionAssert.AreEqual(expectedChains, iptc.GetChains(), "second table chain test");
             }
         }
     }
