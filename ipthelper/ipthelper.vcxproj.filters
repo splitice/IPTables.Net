@@ -39,13 +39,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ipthelper.c">
+    <ClCompile Include="iptables.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
-    <ClCompile Include="iptables.c">
+    <ClCompile Include="ipthelper.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
-    <ClCompile Include="xshared.c">
+    <ClCompile Include="xshared.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>

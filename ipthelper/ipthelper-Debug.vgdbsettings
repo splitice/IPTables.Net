@@ -7,14 +7,14 @@
       <PathStyle>RemoteUnix</PathStyle>
     </CustomSourceDirectories>
     <BuildHost>
-      <HostName>192.168.1.123</HostName>
+      <HostName>192.168.1.104</HostName>
       <Transport>SSH</Transport>
       <UserName>root</UserName>
     </BuildHost>
     <MainSourceTransferCommand>
       <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>
       <RemoteHost>
-        <HostName>192.168.1.123</HostName>
+        <HostName>192.168.1.104</HostName>
         <Transport>SSH</Transport>
         <UserName>root</UserName>
       </RemoteHost>
@@ -76,7 +76,7 @@
     <MakeCommandTemplate>
       <SkipWhenRunningCommandList>false</SkipWhenRunningCommandList>
       <RemoteHost>
-        <HostName>192.168.1.123</HostName>
+        <HostName>192.168.1.104</HostName>
         <Transport>SSH</Transport>
         <UserName>root</UserName>
       </RemoteHost>

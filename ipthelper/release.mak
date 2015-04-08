@@ -6,7 +6,7 @@ BINARYDIR := Release
 
 #Toolchain
 CC := gcc
-CXX := gcc
+CXX := g++
 LD := $(CC)
 AR := ar
 OBJCOPY := objcopy
@@ -20,8 +20,8 @@ ADDITIONAL_LINKER_INPUTS :=
 MACOS_FRAMEWORKS := 
 LINUX_PACKAGES := 
 
-CFLAGS := -ggdb -ffunction-sections -O3 -fpermissive -fpic $(ADDITIONAL_CFLAGS)
-CXXFLAGS := -ggdb -ffunction-sections -O3 -fpermissive -fpic
+CFLAGS := -ggdb -ffunction-sections -O3 -fpic $(ADDITIONAL_CFLAGS)
+CXXFLAGS := -ggdb -ffunction-sections -O3 -fpermissive -fpic -std=c++11 $(ADDITIONAL_CFLAGS)
 ASFLAGS := 
 LDFLAGS := -Wl,-gc-sections
 COMMONFLAGS := 

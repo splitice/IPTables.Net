@@ -63,6 +63,8 @@ struct iptables_command_state {
 	char **argv;
 };
 
+#define typeof decltype
+
 typedef int(*mainfunc_t)(int, char **);
 
 struct subcommand {

@@ -40,6 +40,9 @@
 #include <xtables.h>
 #include <fcntl.h>
 #include <assert.h>
+#include <stdexcept>
+#include <string>
+#include "ipthelper.h"
 #include "xshared.h"
 
 #ifndef TRUE
@@ -93,52 +96,52 @@ static const char optflags[]
 
 void iptables_exit_error(enum xtables_exittype status, const char *msg, ...) __attribute__((noreturn, format(printf, 2, 3)));
 
-#define opts iptables_globals.opts
 static struct option original_opts[] = {
-	{ .name = "append", .has_arg = 1, .val = 'A' },
-	{ .name = "delete", .has_arg = 1, .val = 'D' },
-	{ .name = "check", .has_arg = 1, .val = 'C' },
-	{ .name = "insert", .has_arg = 1, .val = 'I' },
-	{ .name = "replace", .has_arg = 1, .val = 'R' },
-	{ .name = "list", .has_arg = 2, .val = 'L' },
-	{.name = "list-rules",    .has_arg = 2, .val = 'S'},
-	{.name = "flush",         .has_arg = 2, .val = 'F'},
-	{.name = "zero",          .has_arg = 2, .val = 'Z'},
-	{.name = "new-chain",     .has_arg = 1, .val = 'N'},
-	{.name = "delete-chain",  .has_arg = 2, .val = 'X'},
-	{.name = "rename-chain",  .has_arg = 1, .val = 'E'},
-	{.name = "policy",        .has_arg = 1, .val = 'P'},
-	{ .name = "source", .has_arg = 1, .val = 's' },
-	{ .name = "destination", .has_arg = 1, .val = 'd' },
-	{ .name = "src", .has_arg = 1, .val = 's' }, /* synonym */
-	{ .name = "dst", .has_arg = 1, .val = 'd' }, /* synonym */
-	{ .name = "protocol", .has_arg = 1, .val = 'p' },
-	{ .name = "in-interface", .has_arg = 1, .val = 'i' },
-	{ .name = "jump", .has_arg = 1, .val = 'j' },
-	{ .name = "table", .has_arg = 1, .val = 't' },
-	{ .name = "match", .has_arg = 1, .val = 'm' },
-	{ .name = "numeric", .has_arg = 0, .val = 'n' },
-	{ .name = "out-interface", .has_arg = 1, .val = 'o' },
-	{ .name = "verbose", .has_arg = 0, .val = 'v' },
-	{ .name = "exact", .has_arg = 0, .val = 'x' },
-	{ .name = "fragments", .has_arg = 0, .val = 'f' },
-	{ .name = "version", .has_arg = 0, .val = 'V' },
-	{ .name = "help", .has_arg = 2, .val = 'h' },
-	{ .name = "line-numbers", .has_arg = 0, .val = '0' },
-	{ .name = "modprobe", .has_arg = 1, .val = 'M' },
-	{ .name = "set-counters", .has_arg = 1, .val = 'c' },
-	{ .name = "goto", .has_arg = 1, .val = 'g' },
-	{ .name = "ipv4", .has_arg = 0, .val = '4' },
-	{ .name = "ipv6", .has_arg = 0, .val = '6' },
+	{ .name = "append", .has_arg = 1, .flag=0, .val = 'A' },
+	{ .name = "delete", .has_arg = 1, .flag = 0, .val = 'D' },
+	{ .name = "check", .has_arg = 1, .flag = 0, .val = 'C' },
+	{ .name = "insert", .has_arg = 1, .flag = 0, .val = 'I' },
+	{ .name = "replace", .has_arg = 1, .flag = 0, .val = 'R' },
+	{ .name = "list", .has_arg = 2, .flag = 0, .val = 'L' },
+	{ .name = "list-rules", .has_arg = 2, .flag = 0, .val = 'S' },
+	{ .name = "flush", .has_arg = 2, .flag = 0, .val = 'F' },
+	{ .name = "zero", .has_arg = 2, .flag = 0, .val = 'Z' },
+	{ .name = "new-chain", .has_arg = 1, .flag = 0, .val = 'N' },
+	{ .name = "delete-chain", .has_arg = 2, .flag = 0, .val = 'X' },
+	{ .name = "rename-chain", .has_arg = 1, .flag = 0, .val = 'E' },
+	{ .name = "policy", .has_arg = 1, .flag = 0, .val = 'P' },
+	{ .name = "source", .has_arg = 1, .flag = 0, .val = 's' },
+	{ .name = "destination", .has_arg = 1, .flag = 0, .val = 'd' },
+	{ .name = "src", .has_arg = 1, .flag = 0, .val = 's' }, /* synonym */
+	{ .name = "dst", .has_arg = 1, .flag = 0, .val = 'd' }, /* synonym */
+	{ .name = "protocol", .has_arg = 1, .flag = 0, .val = 'p' },
+	{ .name = "in-interface", .has_arg = 1, .flag = 0, .val = 'i' },
+	{ .name = "jump", .has_arg = 1, .flag = 0, .val = 'j' },
+	{ .name = "table", .has_arg = 1, .flag = 0, .val = 't' },
+	{ .name = "match", .has_arg = 1, .flag = 0, .val = 'm' },
+	{ .name = "numeric", .has_arg = 0, .flag = 0, .val = 'n' },
+	{ .name = "out-interface", .has_arg = 1, .flag = 0, .val = 'o' },
+	{ .name = "verbose", .has_arg = 0, .flag = 0, .val = 'v' },
+	{ .name = "exact", .has_arg = 0, .flag = 0, .val = 'x' },
+	{ .name = "fragments", .has_arg = 0, .flag = 0, .val = 'f' },
+	{ .name = "version", .has_arg = 0, .flag = 0, .val = 'V' },
+	{ .name = "help", .has_arg = 2, .flag = 0, .val = 'h' },
+	{ .name = "line-numbers", .has_arg = 0, .flag = 0, .val = '0' },
+	{ .name = "modprobe", .has_arg = 1, .flag = 0, .val = 'M' },
+	{ .name = "set-counters", .has_arg = 1, .flag = 0, .val = 'c' },
+	{ .name = "goto", .has_arg = 1, .flag = 0, .val = 'g' },
+	{ .name = "ipv4", .has_arg = 0, .flag = 0, .val = '4' },
+	{ .name = "ipv6", .has_arg = 0, .flag = 0, .val = '6' },
 	{ NULL },
 };
 
 struct xtables_globals iptables_globals = {
 	.option_offset = 0,
+	.program_name = "IPTables.Net(adapter)",
 	.program_version = "1.1.1",
 	.orig_opts = original_opts,
-	.exit_err = iptables_exit_error,
-	.program_name = "IPTables.Net(adapter)"
+	.opts = NULL,
+	.exit_err = iptables_exit_error
 };
 
 void
@@ -155,7 +158,9 @@ iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 		"Perhaps iptables or your kernel needs to be upgraded.\n");
 	/* On error paths, make sure that we don't leak memory */
 	xtables_free_opts(1);
-	exit(status);
+
+	//This WILL leak memory.
+	throw std::runtime_error(std::string(msg));
 }
 
 /* Primitive headers... */
@@ -925,14 +930,14 @@ static void command_jump(struct iptables_command_state *cs)
 	xs_init_target(cs->target);
 
 	if (cs->target->x6_options != NULL)
-		opts = xtables_options_xfrm(iptables_globals.orig_opts, opts,
+		iptables_globals.opts = xtables_options_xfrm(iptables_globals.orig_opts, iptables_globals.opts,
 					    cs->target->x6_options,
 					    &cs->target->option_offset);
 	else
-		opts = xtables_merge_options(iptables_globals.orig_opts, opts,
+		iptables_globals.opts = xtables_merge_options(iptables_globals.orig_opts, iptables_globals.opts,
 					     cs->target->extra_opts,
 					     &cs->target->option_offset);
-	if (opts == NULL)
+	if (iptables_globals.opts == NULL)
 		xtables_error(OTHER_PROBLEM, "can't alloc memory!");
 }
 
@@ -971,16 +976,16 @@ static void command_match(struct iptables_command_state *cs)
 		return;
 	/* Merge options for non-cloned matches */
 	if (m->x6_options != NULL)
-		opts = xtables_options_xfrm(iptables_globals.orig_opts, opts,
+		iptables_globals.opts = xtables_options_xfrm(iptables_globals.orig_opts, iptables_globals.opts,
 					    m->x6_options, &m->option_offset);
 	else if (m->extra_opts != NULL)
-		opts = xtables_merge_options(iptables_globals.orig_opts, opts,
+		iptables_globals.opts = xtables_merge_options(iptables_globals.orig_opts, iptables_globals.opts,
 					     m->extra_opts, &m->option_offset);
-	if (opts == NULL)
+	if (iptables_globals.opts == NULL)
 		xtables_error(OTHER_PROBLEM, "can't alloc memory!");
 }
 
-void* init_handle(const char* table){
+EXPORT void* init_handle(const char* table){
 	void* handle = iptc_init(table);
 
 	/* try to insmod the module if iptc_init failed */
@@ -1058,10 +1063,10 @@ int do_command4(int argc, char *argv[], char **table, void **handle)
            demand-load a protocol. */
 	opterr = 0;
 
-	opts = iptables_globals.orig_opts;
+	iptables_globals.opts = iptables_globals.orig_opts;
 	while ((cs.c = getopt_long(argc, argv,
 	   "-:A:C:D:R:I:L::S::M:F::Z::N:X::E:P:Vh::o:p:s:d:j:i:fbvnt:m:xc:g:46",
-					   opts, NULL)) != -1) {
+	   iptables_globals.opts, NULL)) != -1) {
 		switch (cs.c) {
 			/*
 			 * Command selection
