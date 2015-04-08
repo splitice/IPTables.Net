@@ -493,11 +493,13 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 
 	/* Print target name */
 	target_name = iptc_get_target(e, h);
+#ifdef OLD_IPTABLES
 	if (target_name && (*target_name != '\0'))
 #ifdef IPT_F_GOTO
 		ptr += sprintf(ptr," -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
 #else
 		ptr += sprintf(ptr," -j %s", target_name);
+#endif
 #endif
 
 	/* Print targinfo part */
@@ -506,12 +508,15 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 		const struct xtables_target *target =
 			xtables_find_target(t->u.user.name, XTF_TRY_LOAD);
 
-		//Removed: the target might not be installed yet if it is a chain!
-		/*if (!target) {
+		if (!target) {
 			fprintf(stderr, "Can't find library for target `%s'\n",
 				t->u.user.name);
 			return NULL;
-		}*/
+		}
+		
+#ifndef OLD_IPTABLES
+		printf(" -j %s", target->alias ? target->alias(t) : target_name);
+#endif
 
 		if (target){
 			if (target->save){
@@ -537,6 +542,15 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 				}
 			}
 		}
+#ifndef OLD_IPTABLES
+		else if (target_name && (*target_name != '\0')){
+#ifdef IPT_F_GOTO
+			printf(" -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
+#else
+			printf(" -j %s", target_name);
+#endif
+		}
+#endif
 	}
 
 	*ptr = '\0';
