@@ -215,6 +215,9 @@ namespace IPTables.Net.Iptables.NativeLibrary
         [DllImport(Helper, SetLastError = true)]
         static extern int init_helper();
 
+        [DllImport(Helper, SetLastError = true)]
+        static extern IntPtr init_handle(String table);
+
         private static bool HelperInit = false;
 
         public IptcInterface(String table)
@@ -259,7 +262,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
             {
                 throw new IpTablesNetException("A table is already open, commit or discard first");
             }
-            _handle = iptc_init(table);
+            _handle = init_handle(table);
         }
 
         public List<IntPtr> GetRules(String chain)
