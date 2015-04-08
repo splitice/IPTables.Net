@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define DEBUG_NATIVE_IPTCP
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using IPTables.Net.Exceptions;

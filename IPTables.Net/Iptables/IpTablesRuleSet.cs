@@ -125,7 +125,6 @@ namespace IPTables.Net.Iptables
             //Special case
             if (_system.TableAdapter is IPTablesLibAdapterClient)
             {
-                Console.WriteLine("1");
                 //Sync chain adds before starting rule adds
                 _system.TableAdapter.EndTransactionCommit();
                 _system.TableAdapter.StartTransaction();
@@ -143,7 +142,6 @@ namespace IPTables.Net.Iptables
                 }
             }
 
-            Console.WriteLine("2");
             //End Transaction: COMMIT
             _system.TableAdapter.EndTransactionCommit();
 
@@ -166,7 +164,6 @@ namespace IPTables.Net.Iptables
 
                 //End Transaction: COMMIT
                 _system.TableAdapter.EndTransactionCommit();
-                Console.WriteLine("3");
             }
         }
 

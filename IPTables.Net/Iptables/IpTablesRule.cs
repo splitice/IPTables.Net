@@ -125,7 +125,18 @@ namespace IPTables.Net.Iptables
         /// <returns></returns>
         public bool Equals(IpTablesRule rule)
         {
-            return Chain.Equals(rule.Chain) && _moduleData.DictionaryEqual(rule.ModuleDataInternal);
+            bool chainEquals = Chain.Equals(rule.Chain);
+            bool moduleEquals = _moduleData.DictionaryEqual(rule.ModuleDataInternal);
+            /*
+            if (!(chainEquals && moduleEquals))
+            {
+                Console.WriteLine("1: " + this.GetActionCommand());
+                Console.WriteLine("2: " + rule.GetActionCommand());
+                Console.WriteLine(String.Format("Equality (Rule): {0}, {1} ({2})", chainEquals, moduleEquals,
+                    _moduleData.DictionaryDiffering(rule.ModuleDataInternal)));
+                Console.WriteLine("====");
+            }*/
+            return chainEquals && moduleEquals;
         }
 
 

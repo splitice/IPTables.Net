@@ -97,6 +97,7 @@ namespace IPTables.Net.Iptables
 
         public bool Equals(IpTablesChain other)
         {
+            //Console.WriteLine(String.Format("Equality: {0},{1},{2}", string.Equals(_name, other._name), string.Equals(_table, other._table), Equals(_system, other._system)));
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return string.Equals(_name, other._name) && string.Equals(_table, other._table) && Equals(_system, other._system);
