@@ -952,7 +952,7 @@ static void command_match(struct iptables_command_state *cs)
 	
 	//OLD --
 #ifdef OLD_IPTABLES
-	//strcpy(m->m->u.user.name, m->name);
+	strcpy(m->m->u.user.name, m->name);
 #else
 	if (m->real_name == NULL) {
 		strcpy(m->m->u.user.name, m->name);

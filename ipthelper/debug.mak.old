@@ -7,12 +7,12 @@ BINARYDIR := Debug
 #Toolchain
 CC := gcc
 CXX := gcc
-LD := $(CXX)
+LD := $(CC)
 AR := ar
 OBJCOPY := objcopy
 
 #Additional flags
-PREPROCESSOR_MACROS := DEBUG
+PREPROCESSOR_MACROS := DEBUG OLD_IPTABLES
 INCLUDE_DIRS := .
 LIBRARY_DIRS := 
 LIBRARY_NAMES := 
@@ -20,8 +20,8 @@ ADDITIONAL_LINKER_INPUTS :=
 MACOS_FRAMEWORKS := 
 LINUX_PACKAGES := 
 
-CFLAGS := -ggdb -ffunction-sections -O0
-CXXFLAGS := -ggdb -ffunction-sections -O0
+CFLAGS := -ggdb -ffunction-sections -O0 -fpermissive $(ADDITIONAL_CFLAGS)
+CXXFLAGS := -ggdb -ffunction-sections -O0 -fpermissive
 ASFLAGS := 
 LDFLAGS := -Wl,-gc-sections
 COMMONFLAGS := 
