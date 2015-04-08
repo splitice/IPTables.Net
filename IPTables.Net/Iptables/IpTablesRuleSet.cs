@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IPTables.Net.Iptables.Adapter.Client;
 using IPTables.Net.Netfilter.TableSync;
 
 namespace IPTables.Net.Iptables
@@ -121,6 +122,15 @@ namespace IPTables.Net.Iptables
             }
             chainsToAdd.Clear();
 
+            //Special case
+            if (_system.TableAdapter is IPTablesLibAdapterClient)
+            {
+                Console.WriteLine("1");
+                //Sync chain adds before starting rule adds
+                _system.TableAdapter.EndTransactionCommit();
+                _system.TableAdapter.StartTransaction();
+            }
+
             //Update chains with differing rules
             foreach (IpTablesChain chain in Chains)
             {
@@ -133,6 +143,7 @@ namespace IPTables.Net.Iptables
                 }
             }
 
+            Console.WriteLine("2");
             //End Transaction: COMMIT
             _system.TableAdapter.EndTransactionCommit();
 
@@ -155,6 +166,7 @@ namespace IPTables.Net.Iptables
 
                 //End Transaction: COMMIT
                 _system.TableAdapter.EndTransactionCommit();
+                Console.WriteLine("3");
             }
         }
 

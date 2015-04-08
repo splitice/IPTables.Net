@@ -241,6 +241,17 @@ namespace IPTables.Net.Iptables.NativeLibrary
             }
         }
 
+#if DEBUG_NATIVE_IPTCP
+        private List<String> _debugEntries = new List<string>(); 
+#endif
+
+        private void DebugEntry(string message)
+        {
+#if DEBUG_NATIVE_IPTCP
+            _debugEntries.Add(message);
+#endif
+        }
+
         private void RequireHandle()
         {
             if (_handle == IntPtr.Zero)
@@ -332,6 +343,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         /// <returns>returns 1 for sucess, error code otherwise</returns>
         public int ExecuteCommand(string command)
         {
+            DebugEntry(command);
             RequireHandle();
             return execute_command(command, _handle);
         }
@@ -343,6 +355,13 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public bool Commit()
         {
             RequireHandle();
+#if DEBUG_NATIVE_IPTCP
+            Console.WriteLine("Commiting - ");
+            foreach (var c in _debugEntries)
+            {
+                Console.WriteLine(c);
+            }
+#endif
             bool status =  iptc_commit(_handle) == 1;
             if (!status)
             {
