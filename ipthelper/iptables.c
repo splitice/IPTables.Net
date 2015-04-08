@@ -40,8 +40,10 @@
 #include <xtables.h>
 #include <fcntl.h>
 #include <assert.h>
+#ifdef __cplusplus
 #include <stdexcept>
 #include <string>
+#endif
 #include "ipthelper.h"
 #include "xshared.h"
 
@@ -148,9 +150,15 @@ void
 iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 {
 	va_list args;
+#ifdef __cplusplus
+	char buffer[BUFSIZ];
+#endif
 
 	va_start(args, msg);
 	vfprintf(stderr, msg, args);
+#ifdef __cplusplus
+	vsprintf(buffer, msg, args);
+#endif
 	va_end(args);
 	fprintf(stderr, "\n");
 	if (status == VERSION_PROBLEM)
@@ -158,9 +166,10 @@ iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 		"Perhaps iptables or your kernel needs to be upgraded.\n");
 	/* On error paths, make sure that we don't leak memory */
 	xtables_free_opts(1);
-
+#ifdef __cplusplus
 	//This WILL leak memory.
-	throw std::runtime_error(std::string(msg));
+	throw std::runtime_error(std::string(buffer));
+#endif
 }
 
 /* Primitive headers... */

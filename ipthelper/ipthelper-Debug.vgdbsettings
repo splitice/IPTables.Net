@@ -29,6 +29,7 @@
         <string>*.mak</string>
         <string>Makefile</string>
         <string>*.sh</string>
+        <string>*.mak</string>
       </FileMasks>
       <TransferNewFilesOnly>false</TransferNewFilesOnly>
       <IncludeSubdirectories>true</IncludeSubdirectories>

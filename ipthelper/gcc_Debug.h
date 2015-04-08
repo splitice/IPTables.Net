@@ -6,6 +6,7 @@
 */
 #ifdef _MSC_VER
 #define __DBL_MIN_EXP__ (-1021)
+#define __cpp_attributes 200809
 #define __UINT_LEAST16_MAX__ 65535
 #define __ATOMIC_ACQUIRE 2
 #define __FLT_MIN__ 1.17549435082228750797e-38F
@@ -14,6 +15,7 @@
 #define __CHAR_BIT__ 8
 #define __UINT8_MAX__ 255
 #define __WINT_MAX__ 4294967295U
+#define __cpp_static_assert 200410
 #define __ORDER_LITTLE_ENDIAN__ 1234
 #define __SIZE_MAX__ 18446744073709551615UL
 #define __WCHAR_MAX__ 2147483647
@@ -29,6 +31,7 @@
 #define __cpp_binary_literals 201304
 #define __GCC_ATOMIC_CHAR32_T_LOCK_FREE 2
 #define __x86_64 1
+#define __cpp_variadic_templates 200704
 #define __UINT_FAST64_MAX__ 18446744073709551615UL
 #define __SIG_ATOMIC_TYPE__ int
 #define __DBL_MIN_10_EXP__ (-307)
@@ -77,15 +80,17 @@
 #define __SIZEOF_LONG_DOUBLE__ 16
 #define __BIGGEST_ALIGNMENT__ 16
 #define __DBL_MAX__ double(1.79769313486231570815e+308L)
+#define __cpp_raw_strings 200710
 #define __INT_FAST32_MAX__ 9223372036854775807L
 #define __DBL_HAS_INFINITY__ 1
 #define __INT64_MAX__ 9223372036854775807L
 #define __DEC32_MIN_EXP__ (-94)
 #define __INT_FAST16_TYPE__ long int
+#define __STRICT_ANSI__ 1
 #define __LDBL_HAS_DENORM__ 1
 //VS2005-2012 treats all files as C++, while VS2013+ can treat C files correctly.
 #if _MSC_VER < 1800 || defined(__cplusplus)
-#define __cplusplus 199711L
+#define __cplusplus 201103L
 #endif
 #define __DEC128_MAX__ 9.999999999999999999999999999999999E6144DL
 #define __INT_LEAST32_MAX__ 2147483647
@@ -102,10 +107,12 @@
 #define __GNUG__ 4
 #define __LONG_LONG_MAX__ 9223372036854775807LL
 #define __SIZEOF_SIZE_T__ 8
+#define __cpp_rvalue_reference 200610
 #define __SIZEOF_WINT_T__ 4
 #define __GCC_HAVE_DWARF2_CFI_ASM 1
 #define __GXX_ABI_VERSION 1002
 #define __FLT_MIN_EXP__ (-125)
+#define __cpp_lambdas 200907
 #define __INT_FAST64_TYPE__ long int
 #define __DBL_MIN__ double(2.22507385850720138309e-308L)
 #define __LP64__ 1
@@ -118,6 +125,7 @@
 #define __NO_INLINE__ 1
 #define __FLT_MANT_DIG__ 24
 #define __VERSION__ "4.9.2"
+#define __cpp_unicode_characters 200704
 #define _STDC_PREDEF_H 1
 #define __GCC_ATOMIC_INT_LOCK_FREE 2
 #define __FLOAT_WORD_ORDER__ __ORDER_LITTLE_ENDIAN__
@@ -127,7 +135,6 @@
 #define __DEC128_MIN_EXP__ (-6142)
 #define __INT_FAST32_TYPE__ long int
 #define __UINT_LEAST16_TYPE__ short unsigned int
-#define unix 1
 #define __INT16_MAX__ 32767
 #define __SIZE_TYPE__ long unsigned int
 #define __UINT64_MAX__ 18446744073709551615UL
@@ -151,6 +158,7 @@
 #define __LONG_MAX__ 9223372036854775807L
 #define __DEC128_SUBNORMAL_MIN__ 0.000000000000000000000000000000001E-6143DL
 #define __FLT_HAS_INFINITY__ 1
+#define __cpp_unicode_literals 200710
 #define __UINT_FAST16_TYPE__ long unsigned int
 #define __DEC64_MAX__ 9.999999999999999E384DD
 #define __CHAR16_TYPE__ short unsigned int
@@ -165,7 +173,6 @@
 #define __DEC32_MAX_EXP__ 97
 #define __INT_FAST8_MAX__ 127
 #define __INTPTR_MAX__ 9223372036854775807L
-#define linux 1
 #define __SSE2__ 1
 #define __EXCEPTIONS 1
 #define __LDBL_MANT_DIG__ 64
@@ -179,6 +186,7 @@
 #define __SIZEOF_FLOAT__ 4
 #define __UINTPTR_MAX__ 18446744073709551615UL
 #define __DEC64_MIN_EXP__ (-382)
+#define __cpp_decltype 200707
 #define __INT_FAST64_MAX__ 9223372036854775807L
 #define __GCC_ATOMIC_TEST_AND_SET_TRUEVAL 1
 #define __FLT_DIG__ 6
@@ -206,17 +214,19 @@
 #define __SIZEOF_WCHAR_T__ 4
 #define __UINT64_TYPE__ long unsigned int
 #define __INT_FAST8_TYPE__ signed char
+#define __GNUC_STDC_INLINE__ 1
 #define __DBL_DECIMAL_DIG__ 17
 #define __FXSR__ 1
 #define __DEC_EVAL_METHOD__ 2
 #define __INTMAX_MAX__ 9223372036854775807L
+#define __cpp_alias_templates 200704
 #define __BYTE_ORDER__ __ORDER_LITTLE_ENDIAN__
 #define __FLT_DENORM_MIN__ 1.40129846432481707092e-45F
-#define OLD_IPTABLES 1
 #define __INT8_MAX__ 127
 #define __UINT_FAST32_TYPE__ long unsigned int
 #define __CHAR32_TYPE__ unsigned int
 #define __FLT_MAX__ 3.40282346638528859812e+38F
+#define __cpp_constexpr 200704
 #define __INT32_TYPE__ int
 #define __SIZEOF_DOUBLE__ 8
 #define __INTMAX_TYPE__ long int
@@ -237,11 +247,11 @@
 #define __LDBL_MIN_10_EXP__ (-4931)
 #define __SSE_MATH__ 1
 #define __SIZEOF_LONG_LONG__ 8
+#define __cpp_user_defined_literals 200809
 #define __GCC_ATOMIC_LLONG_LOCK_FREE 2
 #define __LDBL_DIG__ 18
 #define __FLT_DECIMAL_DIG__ 9
 #define __UINT_FAST16_MAX__ 18446744073709551615UL
-#define __GNUC_GNU_INLINE__ 1
 #define __FLT_MIN_10_EXP__ (-37)
 #define __GCC_ATOMIC_SHORT_LOCK_FREE 2
 #define __UINT_FAST8_TYPE__ unsigned char
