@@ -1368,12 +1368,12 @@ int do_command4(int argc, char *argv[], char **table, void **handle)
 
 	generic_opt_check(command, cs.options);
 
-	if (!xtables_lock(false)) {
+	/*if (!xtables_lock(false)) {
 		fprintf(stderr, "Another app is currently holding the xtables lock. "
 			"Perhaps you want to use the -w option?\n");
 		xtables_free_opts(1);
 		return 4;
-	}
+	}*/
 
 	if (chain != NULL && strlen(chain) >= XT_EXTENSION_MAXNAMELEN)
 		xtables_error(PARAMETER_PROBLEM,
