@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.Iptables.NativeLibrary
 {
@@ -218,7 +219,6 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public IptcInterface(String table)
         {
-            _handle = iptc_init(table);
             if (!HelperInit)
             {
                 if (init_helper() < 0)
@@ -227,19 +227,44 @@ namespace IPTables.Net.Iptables.NativeLibrary
                 }
                 HelperInit = true;
             }
+            OpenTable(table);
         }
 
         ~IptcInterface()
         {
             if (_handle != IntPtr.Zero)
             {
-                iptc_free(_handle);
-                _handle = IntPtr.Zero;
+                Free();
             }
+        }
+
+        private void RequireHandle()
+        {
+            if (_handle == IntPtr.Zero)
+            {
+                throw new IpTablesNetException("No IP Table currently open");
+            }
+        }
+
+        public void Free()
+        {
+            RequireHandle();
+            iptc_free(_handle);
+            _handle = IntPtr.Zero;
+        }
+
+        public void OpenTable(String table)
+        {
+            if (_handle != IntPtr.Zero)
+            {
+                throw new IpTablesNetException("A table is already open, commit or discard first");
+            }
+            _handle = iptc_init(table);
         }
 
         public List<IntPtr> GetRules(String chain)
         {
+            RequireHandle();
             List<IntPtr> ret = new List<IntPtr>();
             var rule = iptc_first_rule(chain, _handle);
             while (rule != IntPtr.Zero)
@@ -253,6 +278,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public List<string> GetChains()
         {
+            RequireHandle();
             List<string> ret = new List<string>();
             var chain = iptc_first_chain(_handle);
             while (chain != IntPtr.Zero)
@@ -278,6 +304,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public String GetRuleString(String chain, IntPtr rule, bool counters = false)
         {
+            RequireHandle();
             var ptr = output_rule4(rule, _handle, chain, counters ? 1 : 0);
             return Marshal.PtrToStringAnsi(ptr);
         }
@@ -291,6 +318,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         /// <returns></returns>
         public bool Insert(String chain, IntPtr entry, uint at)
         {
+            RequireHandle();
             return iptc_insert_entry(chain, entry, at, _handle) == 1;
         }
 
@@ -301,6 +329,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         /// <returns>returns 1 for sucess, error code otherwise</returns>
         public int ExecuteCommand(string command)
         {
+            RequireHandle();
             return execute_command(command, _handle);
         }
 
@@ -310,7 +339,18 @@ namespace IPTables.Net.Iptables.NativeLibrary
         /// <returns>if sucessful</returns>
         public bool Commit()
         {
-            return iptc_commit(_handle) == 1;
+            RequireHandle();
+            bool status =  iptc_commit(_handle) == 1;
+            if (!status)
+            {
+                Free();
+            }
+            else
+            {
+                //Commit includes free
+                _handle = IntPtr.Zero;
+            }
+            return status;
         }
 
         /// <summary>
@@ -320,6 +360,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         /// <returns>if chain exists</returns>
         public bool HasChain(string chainName)
         {
+            RequireHandle();
             return iptc_is_chain(chainName, _handle) == 1;
         }
 
@@ -330,6 +371,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         /// <returns>if sucessful</returns>
         public bool AddChain(string chainName)
         {
+            RequireHandle();
             return iptc_create_chain(chainName, _handle) == 1;
         }
 
@@ -340,6 +382,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         /// <returns>if sucessful</returns>
         public bool DeleteChain(string chainName)
         {
+            RequireHandle();
             return iptc_delete_chain(chainName, _handle) == 1;
         }
     }
