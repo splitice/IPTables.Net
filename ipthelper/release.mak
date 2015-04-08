@@ -20,7 +20,6 @@ ADDITIONAL_LINKER_INPUTS :=
 MACOS_FRAMEWORKS := 
 LINUX_PACKAGES := 
 
-CFLAGS := -ggdb -ffunction-sections -O3 -fpermissive -fpic $ADDITIONAL_CFLAGS
 CXXFLAGS := -ggdb -ffunction-sections -O3 -fpermissive -fpic
 ASFLAGS := 
 LDFLAGS := -Wl,-gc-sections
