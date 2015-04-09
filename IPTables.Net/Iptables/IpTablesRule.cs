@@ -341,7 +341,7 @@ namespace IPTables.Net.Iptables
                     {
                         throw new IpTablesNetException(String.Format("Unable to find chain: {0}", parser.ChainName));
                     }
-                    chain = parser.CreateNewChain(system, chains.IpVersion);
+                    chain = parser.CreateNewChain(system, chains == null ? 4 : chains.IpVersion);
                 }
                 ipRule.Chain = chain;
             }
