@@ -9,9 +9,9 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
 {
     class IPTablesSaveParser
     {
-        public static IpTablesChainSet GetRulesFromOutput(NetfilterSystem system, String output, String table, bool ignoreErrors = false)
+        public static IpTablesChainSet GetRulesFromOutput(NetfilterSystem system, String output, String table, int ipVersion, bool ignoreErrors = false)
         {
-            var ret = new IpTablesChainSet();
+            var ret = new IpTablesChainSet(ipVersion);
             String ttable = null;
 
             foreach (string lineRaw in output.Split(new[] { '\n' }))
@@ -32,7 +32,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
 
                     case ':':
                         string[] split = line.Split(new[] { ' ' });
-                        ret.AddChain(new IpTablesChain(ttable, split[0].Substring(1), system));
+                        ret.AddChain(new IpTablesChain(ttable, split[0].Substring(1), ipVersion, system));
                         break;
 
                     //Byte & packet count

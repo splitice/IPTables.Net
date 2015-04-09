@@ -20,12 +20,12 @@ namespace IPTables.Net.Tests
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
-            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2"
                                                }, system);
-            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2",
@@ -42,12 +42,12 @@ namespace IPTables.Net.Tests
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
-            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2"
                                                }, system);
-            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2"
@@ -63,12 +63,12 @@ namespace IPTables.Net.Tests
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
-            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A PREROUTING -t nat -j DNAT -p tcp -m tcp --dport 80 --to-destination 99.99.99.99:80",
                                                    "-A PREROUTING -t nat -j SNAT --to-source 99.99.99.99:80"
                                                }, system);
-            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A PREROUTING -t nat -j DNAT -p tcp -m tcp --dport 80 --to-destination 99.99.99.99:80",
                                                    "-A PREROUTING -t nat -j SNAT --to-source 99.99.99.99:80"
@@ -84,12 +84,12 @@ namespace IPTables.Net.Tests
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
-            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2",
                                                }, system);
-            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2",
@@ -107,12 +107,12 @@ namespace IPTables.Net.Tests
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
 
-            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2"
                                                }, system);
-            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                }, system);
@@ -128,13 +128,13 @@ namespace IPTables.Net.Tests
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
 
-            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 5",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2"
                                                }, system);
-            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 5"
                                                }, system);
@@ -150,12 +150,12 @@ namespace IPTables.Net.Tests
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
 
-            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2"
                                                }, system);
-            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 5",
@@ -195,12 +195,12 @@ namespace IPTables.Net.Tests
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
 
-            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10 -m comment --comment \"ID1\"",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2 -m comment --comment \"ID2\""
                                                }, system);
-            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10 -m comment --comment \"ID1\"",
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 5 -m comment --comment \"ID2\"",
@@ -220,12 +220,12 @@ namespace IPTables.Net.Tests
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
 
-            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10 -m comment --comment \"ID1\"",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2 -m comment --comment \"ID2\""
                                                }, system);
-            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 10 -m comment --comment \"ID1\"",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2 -m comment --comment \"ID2\""
@@ -245,13 +245,13 @@ namespace IPTables.Net.Tests
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new IPTablesBinaryAdapter());
 
-            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10 -m comment --comment \"ID1\"",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2 -m comment --comment \"ID2\"",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2 -m comment --comment \"ID3\""
                                                }, system);
-            IpTablesRuleSet rulesNew = new IpTablesRuleSet(new List<String>()
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4,new List<String>()
                                                {
                                                    "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10 -m comment --comment \"ID1\"",
                                                    "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 28 -m comment --comment \"ID2\"",

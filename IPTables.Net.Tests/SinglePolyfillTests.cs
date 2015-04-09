@@ -11,7 +11,7 @@ namespace IPTables.Net.Tests
         public void TestPolyfillParse()
         {
             String rule = "-A INPUT -m unknown --unknown";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
@@ -22,7 +22,7 @@ namespace IPTables.Net.Tests
         public void TestPolyfillParseAdditionalOptionsAfter()
         {
             String rule = "-A INPUT -m unknown --unknown -p tcp -d 1.1.1.1 -m tcp --dport 80";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 

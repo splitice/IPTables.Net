@@ -42,9 +42,9 @@ namespace IPTables.Net.Iptables.Modules
             return _chainName;
         }
 
-        public IpTablesChain CreateNewChain(NetfilterSystem system)
+        public IpTablesChain CreateNewChain(NetfilterSystem system, int ipVersion)
         {
-            return new IpTablesChain(_tableName, _chainName, system);
+            return new IpTablesChain(_tableName, _chainName, ipVersion, system);
         }
 
         public string GetCurrentArg()

@@ -7,6 +7,6 @@ namespace IPTables.Net.Netfilter
 {
     public interface INetfilterAdapter
     {
-        INetfilterAdapterClient GetClient(NetfilterSystem system);
+        INetfilterAdapterClient GetClient(NetfilterSystem system, int ipVersion = 4);
     }
 }

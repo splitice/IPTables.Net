@@ -11,7 +11,7 @@ namespace IPTables.Net.Tests
         public void TestXmark()
         {
             String rule = "-A INPUT -j NFLOG --nflog-group 30";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 

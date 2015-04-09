@@ -16,10 +16,14 @@ namespace IPTables.Net.Iptables.Adapter.Client
         private readonly NetfilterSystem _system;
         private bool _inTransaction = false;
         protected Dictionary<String, IptcInterface> _interfaces = new Dictionary<string, IptcInterface>();
+        private string _iptablesBinary;
+        private int _ipVersion;
 
-        public IPTablesLibAdapterClient(NetfilterSystem system)
+        public IPTablesLibAdapterClient(int ipVersion, NetfilterSystem system, String iptablesBinary)
         {
             _system = system;
+            _iptablesBinary = iptablesBinary;
+            _ipVersion = ipVersion;
         }
 
         private IptcInterface GetInterface(String table)
@@ -40,7 +44,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             if (!_inTransaction)
             {
                 //Revert to using IPTables Binary if non transactional
-                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_system);
+                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.DeleteRule(table, chainName, position);
                 return;
             }
@@ -63,7 +67,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             if (!_inTransaction)
             {
                 //Revert to using IPTables Binary if non transactional
-                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_system);
+                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.DeleteRule(rule);
                 return;
             }
@@ -80,7 +84,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             if (!_inTransaction)
             {
                 //Revert to using IPTables Binary if non transactional
-                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_system);
+                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.InsertRule(rule);
                 return;
             }
@@ -97,7 +101,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             if (!_inTransaction)
             {
                 //Revert to using IPTables Binary if non transactional
-                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_system);
+                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.ReplaceRule(rule);
                 return;
             }
@@ -114,7 +118,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             if (!_inTransaction)
             {
                 //Revert to using IPTables Binary if non transactional
-                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_system);
+                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.AddRule(rule);
                 return;
             }
@@ -128,7 +132,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public Version GetIptablesVersion()
         {
-            IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_system);
+            IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
             return binaryClient.GetIptablesVersion();
         }
 
@@ -143,7 +147,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 return false;
             }
 
-            IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_system);
+            IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
             return binaryClient.HasChain(table, chainName);
         }
 
@@ -152,7 +156,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             if (!_inTransaction)
             {
                 //Revert to using IPTables Binary if non transactional
-                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_system);
+                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.AddChain(table, chainName);
                 return;
             }
@@ -170,14 +174,14 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 GetInterface(table).DeleteChain(chainName);
                 return;
             }
-            
-            IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_system);
+
+            IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
             binaryClient.DeleteChain(table, chainName);
         }
 
         public override IpTablesChainSet ListRules(String table)
         {
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(_ipVersion);
             
             var ipc = GetInterface(table);
 
@@ -195,7 +199,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                     {
                         throw new IpTablesNetException("Unable to get string version of rule");
                     }
-                    chains.AddRule(IpTablesRule.Parse(rule, _system, chains, table, false));
+                    chains.AddRule(IpTablesRule.Parse(rule, _system, chains, table));
                 }
             }
 

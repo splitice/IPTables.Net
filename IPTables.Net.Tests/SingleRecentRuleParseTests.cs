@@ -11,7 +11,7 @@ namespace IPTables.Net.Tests
         public void TestSet()
         {
             String rule = "-A ATTK_CHECK -m recent --set --name ATTK";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
@@ -22,7 +22,7 @@ namespace IPTables.Net.Tests
         public void TestUpdate()
         {
             String rule = "-A ATTK_CHECK -m recent --update --name ATTK --seconds 180 --hitcount 20 -j ATTACKED";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 

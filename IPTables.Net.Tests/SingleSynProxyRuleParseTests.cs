@@ -11,7 +11,7 @@ namespace IPTables.Net.Tests
         public void TestSingleRule()
         {
             String rule = "-A INPUT -p tcp -i eth0 -j SYNPROXY --mss 1460 --wscale 9 --sack-perm --timestamp -m state --state UNTRACKED,INVALID";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 

@@ -12,7 +12,7 @@ namespace IPTables.Net.Tests
         public void TestDropFragmentedTcpDnsWithComment()
         {
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53 -m comment --comment 'this is a test rule'";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
@@ -23,7 +23,7 @@ namespace IPTables.Net.Tests
         public void TestDropFragmentedTcpDnsWithCommentEquality()
         {
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53 -m comment --comment 'this is a test rule'";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
@@ -36,7 +36,7 @@ namespace IPTables.Net.Tests
         {
             String rule1 = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53";
             String rule2 = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53 -m comment --comment 'this is a test rule'";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule1 = IpTablesRule.Parse(rule1, null, chains);
             irule1.SetComment("this is a test rule");

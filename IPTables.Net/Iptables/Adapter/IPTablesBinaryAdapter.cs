@@ -9,9 +9,9 @@ namespace IPTables.Net.Iptables.Adapter
 {
     public class IPTablesBinaryAdapter : IPTablesAdapterBase
     {
-        public override IIPTablesAdapterClient GetClient(IpTablesSystem system)
+        public override IIPTablesAdapterClient GetClient(IpTablesSystem system, int ipVersion = 4)
         {
-            return new Client.IPTablesBinaryAdapterClient(system);
+            return new Client.IPTablesBinaryAdapterClient(ipVersion, system, ipVersion == 4 ? "iptables" : "ip6tables");
         }
     }
 }

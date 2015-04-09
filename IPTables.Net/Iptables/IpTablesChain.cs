@@ -13,21 +13,24 @@ namespace IPTables.Net.Iptables
         private readonly List<IpTablesRule> _rules;
         private readonly NetfilterSystem _system;
         private readonly String _table;
+        private readonly int _ipVersion;
 
-        public IpTablesChain(String table, String chainName, NetfilterSystem system, List<IpTablesRule> rules)
+        public IpTablesChain(String table, String chainName, int ipVersion, NetfilterSystem system, List<IpTablesRule> rules)
         {
             _name = chainName;
             _table = table;
             _system = system;
             _rules = rules;
+            _ipVersion = ipVersion;
         }
 
-        public IpTablesChain(String table, String chainName, NetfilterSystem system)
+        public IpTablesChain(String table, String chainName, int ipVersion, NetfilterSystem system)
         {
             _name = chainName;
             _table = table;
             _system = system;
             _rules = new List<IpTablesRule>();
+            _ipVersion = ipVersion;
         }
 
         public String Name
@@ -43,6 +46,11 @@ namespace IPTables.Net.Iptables
         public List<IpTablesRule> Rules
         {
             get { return _rules; }
+        }
+
+        public int IpVersion
+        {
+            get { return _ipVersion; }
         }
 
         public void AddRule(INetfilterRule rule)
@@ -67,16 +75,17 @@ namespace IPTables.Net.Iptables
         public void Sync(IEnumerable<IpTablesRule> with,
             INetfilterSync<IpTablesRule> sync)
         {
-            _system.TableAdapter.StartTransaction();
+            var tableAdapter = _system.GetTableAdapter(_ipVersion);
+            tableAdapter.StartTransaction();
 
             SyncInternal(with, sync);
 
-            _system.TableAdapter.EndTransactionCommit();
+            tableAdapter.EndTransactionCommit();
         }
 
         public void Delete(bool flush = false)
         {
-            _system.DeleteChain(_name, _table, flush);
+            _system.DeleteChain(_name, _table, _ipVersion, flush);
         }
 
         internal void SyncInternal(IEnumerable<IpTablesRule> with,

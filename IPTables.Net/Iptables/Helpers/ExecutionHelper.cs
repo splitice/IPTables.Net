@@ -10,9 +10,9 @@ namespace IPTables.Net.Iptables.Helpers
     /// </summary>
     internal static class ExecutionHelper
     {
-        public static ISystemProcess ExecuteIptables(NetfilterSystem system, String command)
+        public static ISystemProcess ExecuteIptables(NetfilterSystem system, String command, String iptablesBinary)
         {
-            ISystemProcess process = system.System.StartProcess("iptables", command);
+            ISystemProcess process = system.System.StartProcess(iptablesBinary, command);
             process.WaitForExit();
 
             //OK

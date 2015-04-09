@@ -11,7 +11,7 @@ namespace IPTables.Net.Tests
         public void TestNotHelper()
         {
             String rule = "-A INPUT -m helper ! --helper cba -j ACCEPT";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
@@ -22,7 +22,7 @@ namespace IPTables.Net.Tests
         public void TestHelper()
         {
             String rule = "-A INPUT -m helper ! --helper abc -j ACCEPT";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 

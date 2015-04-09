@@ -212,7 +212,7 @@ namespace IPTables.Net.Iptables
 
         public void AddRule()
         {
-            _system.TableAdapter.AddRule(this);
+            _system.GetTableAdapter(Chain.IpVersion).AddRule(this);
         }
 
         public void ReplaceRule(INetfilterRule with)
@@ -230,11 +230,11 @@ namespace IPTables.Net.Iptables
             if (usingPosition)
             {
                 var position = Chain.GetRulePosition(this);
-                _system.TableAdapter.DeleteRule(Chain.Table, Chain.Name, position);
+                _system.GetTableAdapter(Chain.IpVersion).DeleteRule(Chain.Table, Chain.Name, position);
             }
             else
             {
-                _system.TableAdapter.DeleteRule(this);
+                _system.GetTableAdapter(Chain.IpVersion).DeleteRule(this);
             }
             Chain.Rules.Remove(this);
         }
@@ -289,7 +289,7 @@ namespace IPTables.Net.Iptables
                         {
                             throw new IpTablesNetException(String.Format("Unable to find chain: {0}", parser.ChainName));
                         }
-                        chain = parser.CreateNewChain(_system);
+                        chain = parser.CreateNewChain(_system, Chain.IpVersion);
                     }
 
                     Chain = chain;
@@ -309,6 +309,7 @@ namespace IPTables.Net.Iptables
         /// <param name="chains"></param>
         /// <param name="defaultTable"></param>
         /// <param name="createChain"></param>
+        /// <param name="ipVersion"></param>
         /// <returns></returns>
         public static IpTablesRule Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
             String defaultTable = "filter", bool createChain = false)
@@ -340,7 +341,7 @@ namespace IPTables.Net.Iptables
                     {
                         throw new IpTablesNetException(String.Format("Unable to find chain: {0}", parser.ChainName));
                     }
-                    chain = parser.CreateNewChain(system);
+                    chain = parser.CreateNewChain(system, chains.IpVersion);
                 }
                 ipRule.Chain = chain;
             }
@@ -378,7 +379,7 @@ namespace IPTables.Net.Iptables
         public void ReplaceRule(IpTablesRule withRule)
         {
             int idx = Chain.Rules.IndexOf(this);
-            _system.TableAdapter.ReplaceRule(withRule);
+            _system.GetTableAdapter(Chain.IpVersion).ReplaceRule(withRule);
             Chain.Rules[idx] = withRule;
         }
 

@@ -9,10 +9,22 @@ namespace IPTables.Net.Iptables
 {
     public class IpTablesChainSet : NetfilterChainSet<IpTablesChain, IpTablesRule>, IEnumerable<IpTablesChain>
     {
+        private int _ipVersion;
+
+        public int IpVersion
+        {
+            get { return _ipVersion; }
+        }
+
         public IEnumerable<IpTablesChain> Chains
         {
             get { return _chains; }
-        } 
+        }
+
+        public IpTablesChainSet(int ipVersion)
+        {
+            _ipVersion = ipVersion;
+        }
 
         public void AddDefaultChains(NetfilterSystem system)
         {
@@ -20,13 +32,13 @@ namespace IPTables.Net.Iptables
             {
                 foreach (var chain in tablePair.Value)
                 {
-                    _chains.Add(new IpTablesChain(tablePair.Key, chain, system));
+                    _chains.Add(new IpTablesChain(tablePair.Key, chain, _ipVersion, system));
                 }
             }
         }
         protected override IpTablesChain CreateChain(string tableName, string chainName, NetfilterSystem system)
         {
-            return new IpTablesChain(tableName, chainName, system);
+            return new IpTablesChain(tableName, chainName, _ipVersion, system);
         }
 
         public void AddChain(String name, String table, NetfilterSystem system)
@@ -36,7 +48,7 @@ namespace IPTables.Net.Iptables
                 throw new IpTablesNetException("A chain with that name already exists");
             }
 
-            AddChain(new IpTablesChain(table, name, system));
+            AddChain(new IpTablesChain(table, name, _ipVersion, system));
         }
 
         public void RemoveChain(IpTablesChain chain)

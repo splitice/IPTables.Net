@@ -11,7 +11,7 @@ namespace IPTables.Net.Tests
         public void TestDropConnectionLimit()
         {
             String rule = "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
@@ -22,7 +22,7 @@ namespace IPTables.Net.Tests
         public void TestDropConnectionLimitEquality()
         {
             String rule = "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);

@@ -9,10 +9,10 @@ namespace IPTables.Net.Iptables.Adapter
 {
     public abstract class IPTablesAdapterBase: IIPTablesAdapter
     {
-        public abstract IIPTablesAdapterClient GetClient(IpTablesSystem system);
+        public abstract IIPTablesAdapterClient GetClient(IpTablesSystem system, int ipVersion = 4);
 
 
-        INetfilterAdapterClient INetfilterAdapter.GetClient(NetfilterSystem system)
+        INetfilterAdapterClient INetfilterAdapter.GetClient(NetfilterSystem system, int ipVersion = 4)
         {
             return GetClient(system as IpTablesSystem);
         }

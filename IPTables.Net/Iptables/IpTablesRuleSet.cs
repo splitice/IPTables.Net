@@ -15,27 +15,34 @@ namespace IPTables.Net.Iptables
         /// <summary>
         /// The chains in this set
         /// </summary>
-        private readonly IpTablesChainSet _chains = new IpTablesChainSet();
+        private readonly IpTablesChainSet _chains;
 
         /// <summary>
         /// The IPTables system
         /// </summary>
         private readonly IpTablesSystem _system;
+
+        private int _ipVersion;
+
         #endregion
 
         #region Constructors
-        public IpTablesRuleSet(IpTablesSystem system)
+        public IpTablesRuleSet(int ipVersion, IpTablesSystem system)
         {
             _system = system;
+            _ipVersion = ipVersion;
+            _chains = new IpTablesChainSet(ipVersion);
         }
 
-        public IpTablesRuleSet(IEnumerable<string> rules, IpTablesSystem system)
+        public IpTablesRuleSet(int ipVersion, IEnumerable<string> rules, IpTablesSystem system)
         {
             _system = system;
             foreach (string s in rules)
             {
                 AddRule(s);
             }
+            _ipVersion = ipVersion;
+            _chains = new IpTablesChainSet(ipVersion);
         }
         #endregion
 
@@ -95,8 +102,10 @@ namespace IPTables.Net.Iptables
         public void Sync(INetfilterSync<IpTablesRule> sync,
             Func<IpTablesChain, bool> canDeleteChain = null)
         {
+            var tableAdapter = _system.GetTableAdapter(_ipVersion);
+
             //Start transaction
-            _system.TableAdapter.StartTransaction();
+            tableAdapter.StartTransaction();
             
             //Load all chains, figure out what to add
             List<IpTablesChain> chainsToAdd = new List<IpTablesChain>();
@@ -105,7 +114,7 @@ namespace IPTables.Net.Iptables
             {
                 if (!tableChains.ContainsKey(chain.Table))
                 {
-                    var chains = _system.GetChains(chain.Table).ToList();
+                    var chains = _system.GetChains(chain.Table, _ipVersion).ToList();
                     tableChains.Add(chain.Table, chains);
                 }
                 if (tableChains[chain.Table].FirstOrDefault(a => a.Name == chain.Name && a.Table == chain.Table) == null)
@@ -123,11 +132,11 @@ namespace IPTables.Net.Iptables
             chainsToAdd.Clear();
 
             //Special case
-            if (_system.TableAdapter is IPTablesLibAdapterClient)
+            if (tableAdapter is IPTablesLibAdapterClient)
             {
                 //Sync chain adds before starting rule adds
-                _system.TableAdapter.EndTransactionCommit();
-                _system.TableAdapter.StartTransaction();
+                tableAdapter.EndTransactionCommit();
+                tableAdapter.StartTransaction();
             }
 
             //Update chains with differing rules
@@ -143,17 +152,17 @@ namespace IPTables.Net.Iptables
             }
 
             //End Transaction: COMMIT
-            _system.TableAdapter.EndTransactionCommit();
+            tableAdapter.EndTransactionCommit();
 
             if (canDeleteChain != null)
             {
                 //Start transaction
                 //Needs new transaction, bug in libiptc?
-                _system.TableAdapter.StartTransaction();
+                tableAdapter.StartTransaction();
 
                 foreach (string table in Chains.Select(a => a.Table).Distinct())
                 {
-                    foreach (IpTablesChain chain in _system.GetChains(table))
+                    foreach (IpTablesChain chain in _system.GetChains(table, _ipVersion))
                     {
                         if (!_chains.HasChain(chain.Name, chain.Table) && canDeleteChain(chain))
                         {
@@ -163,7 +172,7 @@ namespace IPTables.Net.Iptables
                 }
 
                 //End Transaction: COMMIT
-                _system.TableAdapter.EndTransactionCommit();
+                tableAdapter.EndTransactionCommit();
             }
         }
 

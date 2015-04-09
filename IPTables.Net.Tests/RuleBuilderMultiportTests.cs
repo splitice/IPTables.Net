@@ -21,7 +21,7 @@ namespace IPTables.Net.Tests
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             MultiportAggregator<IPAddress> ma = new MultiportAggregator<IPAddress>("INPUT", "filter", extractSrcIp, extractSrcPort,
                 PortRangeHelpers.SourcePortSetter, setSourceIp, "_", null);
@@ -29,7 +29,7 @@ namespace IPTables.Net.Tests
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.1 -m udp --sport 2 -j ACCEPT", system, chains));
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.2 -m udp --sport 3 -j ACCEPT", system, chains));
 
-            IpTablesRuleSet rules = new IpTablesRuleSet(system);
+            IpTablesRuleSet rules = new IpTablesRuleSet(4,system);
             ma.Output(system, rules);
 
             Assert.AreEqual(1, rules.Chains.Count());
@@ -43,7 +43,7 @@ namespace IPTables.Net.Tests
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             MultiportAggregator<IPAddress> ma = new MultiportAggregator<IPAddress>("INPUT", "filter", extractSrcIp, extractSrcPort,
                 PortRangeHelpers.SourcePortSetter, setSourceIp, "_");
@@ -67,7 +67,7 @@ namespace IPTables.Net.Tests
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.1 -m udp --sport 180 -j ACCEPT", system, chains));
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.1 -m udp --sport 190 -j ACCEPT", system, chains));
 
-            IpTablesRuleSet rules = new IpTablesRuleSet(system);
+            IpTablesRuleSet rules = new IpTablesRuleSet(4,system);
             ma.Output(system, rules);
 
             Assert.AreEqual(2, rules.Chains.Count());

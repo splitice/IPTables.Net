@@ -9,6 +9,6 @@ namespace IPTables.Net.Iptables.Adapter
 {
     public interface IIPTablesAdapter : INetfilterAdapter
     {
-        IIPTablesAdapterClient GetClient(IpTablesSystem system);
+        IIPTablesAdapterClient GetClient(IpTablesSystem system, int ipVersion = 4);
     }
 }

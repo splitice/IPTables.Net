@@ -23,9 +23,9 @@ namespace IPTables.Net
         {
         }
 
-        public new IEnumerable<NfTablesChain> GetChains(String table)
+        public new IEnumerable<NfTablesChain> GetChains(String table, int ipVersion)
         {
-            return base.GetChains(table).Cast<NfTablesChain>();
+            return base.GetChains(table, ipVersion).Cast<NfTablesChain>();
         }
     }
 }

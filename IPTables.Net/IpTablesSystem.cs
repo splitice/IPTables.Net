@@ -21,14 +21,15 @@ namespace IPTables.Net
         {
         }
 
-        public new IEnumerable<IpTablesChain> GetChains(String table)
+        public new IEnumerable<IpTablesChain> GetChains(String table, int ipVersion)
         {
-            return base.GetChains(table).Cast<IpTablesChain>();
+            return base.GetChains(table, ipVersion).Cast<IpTablesChain>();
         }
 
-        public List<String> GetChainNames(String table)
+        public List<String> GetChainNames(String table, int ipVersion)
         {
-            var adapter = TableAdapter as IIPTablesAdapterClient;
+            var tableAdapter = GetTableAdapter(ipVersion);
+            var adapter = tableAdapter as IIPTablesAdapterClient;
             return adapter.GetChains(table);
         } 
     }

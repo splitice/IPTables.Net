@@ -21,14 +21,14 @@ namespace IPTables.Net.Tests
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             FeatureSplitter<MultiportAggregator<IPAddress>, String> ma = new FeatureSplitter<MultiportAggregator<IPAddress>, String>("INPUT", "filter", extractor, setter, nestedGenerator, "_");
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.1 -i eth0 -m udp --sport 1 -j ACCEPT", system, chains));
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.1 -i eth1 -m udp --sport 2 -j ACCEPT", system, chains));
             ma.AddRule(IpTablesRule.Parse("-A INPUT -s 8.1.1.2 -i eth0 -m udp --sport 3 -j ACCEPT", system, chains));
 
-            IpTablesRuleSet rules = new IpTablesRuleSet(system);
+            IpTablesRuleSet rules = new IpTablesRuleSet(4,system);
             ma.Output(system, rules);
 
             Assert.AreEqual(3, rules.Chains.Count());

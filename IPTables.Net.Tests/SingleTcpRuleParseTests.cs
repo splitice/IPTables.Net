@@ -11,7 +11,7 @@ namespace IPTables.Net.Tests
         public void TestDropFragmentedTcpDns()
         {
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
@@ -22,7 +22,7 @@ namespace IPTables.Net.Tests
         public void TestDropFragmentedTcpDnsEquality()
         {
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
@@ -34,7 +34,7 @@ namespace IPTables.Net.Tests
         public void TestCoreSportEquality()
         {
             String rule = "-A INPUT -p tcp -j DROP -m tcp --sport 1";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
@@ -46,7 +46,7 @@ namespace IPTables.Net.Tests
         public void TestCoreSportZeroValue()
         {
             String rule = "-A INPUT -p tcp -j DROP -m tcp --sport 0";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
 

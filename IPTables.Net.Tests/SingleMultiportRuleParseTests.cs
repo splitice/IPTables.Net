@@ -11,7 +11,7 @@ namespace IPTables.Net.Tests
         public void TestMultiports()
         {
             String rule = "-A INPUT -p tcp -m multiport --ports 80,1000:1080";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
@@ -21,7 +21,7 @@ namespace IPTables.Net.Tests
         public void TestDestinationMultiports()
         {
             String rule = "-A INPUT -p tcp -m multiport --sports 80,1000:1080";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
@@ -31,7 +31,7 @@ namespace IPTables.Net.Tests
         public void TestSourceMultiports()
         {
             String rule = "-A INPUT -p tcp -m multiport --dports 80,1000:1080";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
@@ -42,7 +42,7 @@ namespace IPTables.Net.Tests
         public void TesNottMultiports()
         {
             String rule = "-A INPUT -p tcp -m multiport ! --ports 80,1000:1080";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
@@ -52,7 +52,7 @@ namespace IPTables.Net.Tests
         public void TestDestinationNotMultiports()
         {
             String rule = "-A INPUT -p tcp -m multiport ! --sports 80,1000:1080";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
@@ -62,7 +62,7 @@ namespace IPTables.Net.Tests
         public void TestSourceNotMultiports()
         {
             String rule = "-A INPUT -p tcp -m multiport ! --dports 80,1000:1080";
-            IpTablesChainSet chains = new IpTablesChainSet();
+            IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
