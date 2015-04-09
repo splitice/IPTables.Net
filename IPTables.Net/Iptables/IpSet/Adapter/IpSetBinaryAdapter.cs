@@ -153,7 +153,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
         public bool EndTransactionCommit()
         {
             bool ret = true;
-            if (_transactionCommands != null)
+            if (_transactionCommands != null && _transactionCommands.Count != 0)
             {
                 ret = ExecuteTransaction();
             }
