@@ -212,6 +212,10 @@ namespace IPTables.Net.Iptables
 
         public void AddRule()
         {
+            if (Chain == null)
+            {
+                throw new IpTablesNetException("Unknown Chain");
+            }
             _system.GetTableAdapter(Chain.IpVersion).AddRule(this);
         }
 
@@ -227,6 +231,11 @@ namespace IPTables.Net.Iptables
 
         public void DeleteRule(bool usingPosition = true)
         {
+
+            if (Chain == null)
+            {
+                throw new IpTablesNetException("Unknown Chain");
+            }
             if (usingPosition)
             {
                 var position = Chain.GetRulePosition(this);
@@ -289,7 +298,7 @@ namespace IPTables.Net.Iptables
                         {
                             throw new IpTablesNetException(String.Format("Unable to find chain: {0}", parser.ChainName));
                         }
-                        chain = parser.CreateNewChain(_system, Chain.IpVersion);
+                        chain = parser.CreateNewChain(_system, chain.IpVersion);
                     }
 
                     Chain = chain;
@@ -378,6 +387,10 @@ namespace IPTables.Net.Iptables
 
         public void ReplaceRule(IpTablesRule withRule)
         {
+            if (Chain == null)
+            {
+                throw new IpTablesNetException("Unknown Chain");
+            }
             int idx = Chain.Rules.IndexOf(this);
             _system.GetTableAdapter(Chain.IpVersion).ReplaceRule(withRule);
             Chain.Rules[idx] = withRule;

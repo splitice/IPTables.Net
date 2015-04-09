@@ -37,12 +37,13 @@ namespace IPTables.Net.Iptables
         public IpTablesRuleSet(int ipVersion, IEnumerable<string> rules, IpTablesSystem system)
         {
             _system = system;
+            _ipVersion = ipVersion;
+            _chains = new IpTablesChainSet(ipVersion);
+
             foreach (string s in rules)
             {
                 AddRule(s);
             }
-            _ipVersion = ipVersion;
-            _chains = new IpTablesChainSet(ipVersion);
         }
         #endregion
 

@@ -1,7 +1,7 @@
 ﻿<NUnitProject>
-  <Settings activeconfig="Debug" processModel="Default" domainUsage="Default" />
+  <Settings activeconfig="Debug" processModel="Default" domainUsage="Default" appbase="C:\Users\splitice\Documents\GitHub\IPTables.Net" />
   <Config name="Debug" binpathtype="Auto">
-    <assembly path="IPTables.Net.Tests\bin\Release\IPTables.Net.Tests.dll" />
+    <assembly path="IPTables.Net.Tests\bin\Debug\IPTables.Net.Tests.dll" />
   </Config>
   <Config name="Release" binpathtype="Auto" />
 </NUnitProject>
