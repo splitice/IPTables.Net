@@ -39,7 +39,6 @@ namespace IPTables.Net.Iptables.IpSet
         public void Sync(
             Func<IpSetSet, bool> canDeleteSet = null, bool transactional = true)
         {
-            transactional = false;//TODO: not yet supported
             if (transactional)
             {
                 //Start transaction
