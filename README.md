@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/splitice/IPTables.Net.png?branch=master)](https://travis-ci.org/splitice/IPTables.Net)
 
-A library for for interfacing with Linux the IPTables utility
+A library for for interfacing C# with Linux IPTables
 
 ## Features
 
