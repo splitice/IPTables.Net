@@ -57,6 +57,11 @@ namespace IPTables.Net.Iptables
         {
             get { return _chains.SelectMany((a) => a.Rules); }
         }
+
+        public int IpVersion
+        {
+            get { return _ipVersion; }
+        }
         #endregion
 
         #region Methods
