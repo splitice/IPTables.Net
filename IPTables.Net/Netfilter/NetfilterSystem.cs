@@ -95,7 +95,7 @@ namespace IPTables.Net.Netfilter
             }
             else
             {
-                chain = new IpTablesChain(chain.Table,chain.Name, chain.IpVersion,chain.System);
+                chain = new IpTablesChain(chain.Table,chain.Name, chain.IpVersion, chain.System);
             }
 
             return chain;
