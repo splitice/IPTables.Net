@@ -105,7 +105,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override IpTablesChainSet ListRules(String table)
         {
-            ISystemProcess process = _system.System.StartProcess("iptables-save", String.Format("-c -t {0}", table));
+            ISystemProcess process = _system.System.StartProcess(_iptablesBinary + "-save", String.Format("-c -t {0}", table));
             String output = "";
             do
             {
