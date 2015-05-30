@@ -5,6 +5,7 @@ VERSION=$(git describe --abbrev=0 --tags)
 REVISION=$(git log "$VERSION..HEAD" --oneline | wc -l)
 
 function update_ai {
+	f="$1"
 	lead='^\/\/ TRAVIS\-CI: START REMOVE$'
 	tail='^\/\/ TRAVIS\-CI: END REMOVE$'
 	C=$(sed -e "/$lead/,/$tail/{ /$lead/{p; r insert_file
