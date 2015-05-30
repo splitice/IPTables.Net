@@ -14,13 +14,10 @@ function update_ai {
 	echo "[assembly: AssemblyVersion(\"$VERSION_STR\")]" >> $f/Properties/AssemblyInfo.cs
 	echo "[assembly: AssemblyFileVersion(\"$VERSION_STR\")]" >> $f/Properties/AssemblyInfo.cs
 	
-	nuspec="$f/*.nuspec"
-	echo "$nuspec"
-	
-	if [[ -f $nuspec ]]; then
+	for nuspec in $f/*.nuspec; do
 		echo "Processing nuspec file: $nuspec"
 		sed -i.bak "s/\$version\$/$VERSION_STR/g" $nuspec
-	fi
+	done
 }
 
 re="([0-9]+\.[0-9]+\.[0-9]+)"
