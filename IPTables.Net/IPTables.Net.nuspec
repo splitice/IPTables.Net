@@ -14,6 +14,6 @@
 		<language>en-US</language>
 	</metadata>
 	<files>
-		<file src="**\*.*" target="" />
+		<file src="bin\Release\*.dll" target="lib" />
 	</files>
 </package>
