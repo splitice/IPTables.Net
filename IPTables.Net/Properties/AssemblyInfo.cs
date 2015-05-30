@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
+// The following GUID is for the ID of the typelib if this project is exposed to COM    
 
 [assembly: Guid("a3f7996c-1a8f-4e3f-af84-a016f77d0ee7")]
 
@@ -39,6 +39,6 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("IPTables.Net.TestFramework")]
 
 // TRAVIS-CI: START REMOVE
-[assembly: AssemblyVersion("0.0.0.*")]
+[assembly: AssemblyVersion("0.0.0.0")]
 [assembly: AssemblyFileVersion("0.0.0.*")]
 // TRAVIS-CI: END REMOVE
