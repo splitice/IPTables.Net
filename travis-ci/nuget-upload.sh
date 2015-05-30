@@ -3,7 +3,7 @@
 set -x
 set -e
 
-DIR=$(dirname "$0")
+DIR=$(realpath $(dirname "$0"))
 
 cd $DIR/../IPTables.Net
 
