@@ -18,4 +18,4 @@ script:
   - xbuild CI.proj
   - iptables -V
   - sudo nunit-console -framework=4.0 ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll -exclude Integration,NotWorkingOnMono
-  - bash travis-ci/nuget-upload.sh
+  - travis_retry bash travis-ci/nuget-upload.sh
