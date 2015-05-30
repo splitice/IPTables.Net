@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package >
+<package>
 	<metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
 		<id>IPTables.Net</id>
 		<version>$version$-beta</version>
