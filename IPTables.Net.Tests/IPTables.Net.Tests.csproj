@@ -43,6 +43,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckVersion.cs" />
     <Compile Include="CheckInternalTables.cs" />
     <Compile Include="EscapeHelperTests.cs" />
     <Compile Include="IpSetSyncTests.cs" />
