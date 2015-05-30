@@ -14,4 +14,3 @@ script:
   - xbuild CI.proj
   - iptables -V
   - sudo nunit-console ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll -exclude Integration,NotWorkingOnMono
-  - monodis --assembly ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll | grep Version
