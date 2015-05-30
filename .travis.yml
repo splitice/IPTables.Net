@@ -5,10 +5,8 @@ install:
   - sudo apt-get update
   - sudo apt-get -qq install mono-devel mono-gmcs mono-utils mono-complete libmono-system2.0-cil libmono-corlib2.0-cil mono-2.0-gac nunit-console iptables-dev
   
-before_script:
-  - bash travis-ci/autoversion.sh
- 
 script:
+  - bash travis-ci/autoversion.sh
   - cd ipthelper
   - ADDITIONAL_CFLAGS="-DOLD_IPTABLES" sudo -E bash install.sh
   - cd ..
