@@ -4,7 +4,7 @@ set -e
 
 DIR=$(dirname "$0")
 
-cd $DIR/../IPTables.net
+cd $DIR/../IPTables.Net
 
 mono ../.nuget/nuget pack IPTables.Net.csproj -Prop Configuration=Release
 
