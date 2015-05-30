@@ -12,10 +12,12 @@ script:
   - cd ipthelper
   - ADDITIONAL_CFLAGS="-DOLD_IPTABLES" sudo -E bash install.sh
   - cd ..
-  - bash travis-ci/autoversion.sh
+  - bash travis-ci/autoversion.sh IPTables.Net
+  - bash travis-ci/autoversion.sh IPTables.Net.Tests
+  - bash travis-ci/autoversion.sh IPTables.Net.TestFramework
   - export EnableNuGetPackageRestore=true
   - mozroots --import --sync
   - xbuild CI.proj
   - iptables -V
   - sudo nunit-console -framework=4.0 ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll -exclude Integration,NotWorkingOnMono
-  - travis_retry bash travis-ci/nuget-upload.sh
+  - travis_retry bash travis-ci/nuget-upload.sh IPTables.Net

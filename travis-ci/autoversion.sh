@@ -26,8 +26,6 @@ function update_ai {
 re="([0-9]+\.[0-9]+\.[0-9]+)"
 if [[ $VERSION =~ $re ]]; then
 	VERSION_STR="${BASH_REMATCH[1]}"
-	echo "Version is now: $VERSION_STR"
-	update_ai $DIR/../IPTables.Net
-	update_ai $DIR/../IPTables.Net.Tests
-	update_ai $DIR/../IPTables.Net.TestFramework
+	echo "Version of $1 is now: $VERSION_STR"
+	update_ai $DIR/../$1
 fi
