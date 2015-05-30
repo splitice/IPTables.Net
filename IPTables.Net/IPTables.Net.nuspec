@@ -1,18 +1,19 @@
 <?xml version="1.0"?>
 <package >
-  <metadata>
-    <id>IPTables.Net</id>
-    <version>$version$-beta</version>
-    <title>IPTables.Net</title>
-    <authors>SplitIce</authors>
-    <owners>SplitIce</owners>
-    <projectUrl>https://github.com/splitice/IPTables.Net</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>IPTables .Net Manipulation Interface</description>
-    <releaseNotes>Automatic Updates via GitHub</releaseNotes>
-    <copyright>Copyright Never</copyright>
-  </metadata>
+	<metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+		<id>IPTables.Net</id>
+		<version>$version$-beta</version>
+		<title>IPTables.Net</title>
+		<authors>SplitIce</authors>
+		<owners>SplitIce</owners>
+		<projectUrl>https://github.com/splitice/IPTables.Net</projectUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>IPTables .Net Manipulation Interface</description>
+		<releaseNotes>Automatic Updates via GitHub</releaseNotes>
+		<copyright>Copyright Never</copyright>
+		<language>en-US</language>
+	</metadata>
 	<files>
-		<file src=".\**\*.cs" target="" />
+		<file src="**\*.*" target="" />
 	</files>
 </package>
