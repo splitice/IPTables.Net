@@ -5,8 +5,9 @@ VERSION=$(git describe --abbrev=0 --tags)
 REVISION=$(git log "$VERSION..HEAD" --oneline | wc -l)
 
 re="([0-9]+\.[0-9]+\.[0-9]+)"
-if [[ $name =~ $re ]]; then
+if [[ $VERSION =~ $re ]]; then
 	VERSION_STR="${BASH_REMATCH[1]}.$REVISION"
+	echo "Version is now: $VERSION_STR"
 	
 	lead='^\/\/ TRAVIS\-CI: START REMOVE$'
 	tail='^\/\/ TRAVIS\-CI: END REMOVE$'
