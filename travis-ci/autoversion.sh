@@ -12,7 +12,7 @@ function update_ai {
 	echo "$C" > $f
 	echo "[assembly: AssemblyVersion(\"$VERSION_STR\")]" >> $f
 	echo "[assembly: AssemblyFileVersion(\"$VERSION_STR\")]" >> $f
-	cat $DIR/../IPTables.Net/Properties/AssemblyInfo.cs
+	cat $f
 }
 
 re="([0-9]+\.[0-9]+\.[0-9]+)"
