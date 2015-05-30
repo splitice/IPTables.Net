@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("IPTables.Net")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("IPTables Interface Library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("X4B.Net")]
 [assembly: AssemblyProduct("IPTables.Net")]
