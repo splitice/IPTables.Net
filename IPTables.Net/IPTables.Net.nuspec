@@ -8,7 +8,7 @@
     <owners>SplitIce</owners>
     <projectUrl>https://github.com/splitice/IPTables.Net</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>IPTables .Net Manipulation Interface</description>
     <releaseNotes>Automatic Updates via GitHub</releaseNotes>
     <copyright>Copyright Never</copyright>
   </metadata>
