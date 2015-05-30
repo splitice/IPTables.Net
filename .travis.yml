@@ -14,5 +14,5 @@ script:
   - bash travis-ci/autoversion.sh
   - xbuild CI.proj
   - iptables -V
-  - sudo nunit-console ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll -exclude Integration,NotWorkingOnMono
+  - sudo nunit-console -framework=4.0 ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll -exclude Integration,NotWorkingOnMono
   - bash travis-ci/nuget-upload.sh
