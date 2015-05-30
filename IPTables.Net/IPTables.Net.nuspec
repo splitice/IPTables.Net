@@ -2,7 +2,7 @@
 <package>
 	<metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
 		<id>IPTables.Net</id>
-		<version>$version$-beta</version>
+		<version>$version$</version>
 		<title>IPTables.Net</title>
 		<authors>SplitIce</authors>
 		<owners>SplitIce</owners>
