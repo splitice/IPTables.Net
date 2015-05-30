@@ -9,17 +9,24 @@ function update_ai {
 	lead='^\/\/ TRAVIS\-CI: START REMOVE$'
 	tail='^\/\/ TRAVIS\-CI: END REMOVE$'
 	C=$(sed -e "/$lead/,/$tail/{ /$lead/{p; r insert_file
-        }; /$tail/p; d }" $f)
-	echo "$C" > $f
-	echo "[assembly: AssemblyVersion(\"$VERSION_STR\")]" >> $f
-	echo "[assembly: AssemblyFileVersion(\"$VERSION_STR\")]" >> $f
+        }; /$tail/p; d }" $f/Properties/AssemblyInfo.cs)
+	echo "$C" > $f/Properties/AssemblyInfo.cs
+	echo "[assembly: AssemblyVersion(\"$VERSION_STR\")]" >> $f/Properties/AssemblyInfo.cs
+	echo "[assembly: AssemblyFileVersion(\"$VERSION_STR\")]" >> $f/Properties/AssemblyInfo.cs
+	
+	nuspec="$f/*.nuspec"
+	
+	if [[ -f $nuspec ]]; then
+		echo "Processing nuspec file: $nuspec"
+		sed -i.bak "s/\$version\$/$VERSION_STR/g" $nuspec
+	fi
 }
 
 re="([0-9]+\.[0-9]+\.[0-9]+)"
 if [[ $VERSION =~ $re ]]; then
 	VERSION_STR="${BASH_REMATCH[1]}.$REVISION"
 	echo "Version is now: $VERSION_STR"
-	update_ai $DIR/../IPTables.Net/Properties/AssemblyInfo.cs
-	update_ai $DIR/../IPTables.Net.Tests/Properties/AssemblyInfo.cs
-	update_ai $DIR/../IPTables.Net.TestFramework/Properties/AssemblyInfo.cs
+	update_ai $DIR/../IPTables.Net
+	update_ai $DIR/../IPTables.Net.Tests
+	update_ai $DIR/../IPTables.Net.TestFramework
 fi
