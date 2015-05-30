@@ -11,20 +11,20 @@ function update_ai {
 	C=$(sed -e "/$lead/,/$tail/{ /$lead/{p; r insert_file
         }; /$tail/p; d }" $f/Properties/AssemblyInfo.cs)
 	echo "$C" > $f/Properties/AssemblyInfo.cs
-	echo "[assembly: AssemblyVersion(\"$VERSION_STR\")]" >> $f/Properties/AssemblyInfo.cs
-	echo "[assembly: AssemblyFileVersion(\"$VERSION_STR\")]" >> $f/Properties/AssemblyInfo.cs
+	echo "[assembly: AssemblyVersion(\"$VERSION_STR.$REVISION\")]" >> $f/Properties/AssemblyInfo.cs
+	echo "[assembly: AssemblyFileVersion(\"$VERSION_STR.$REVISION\")]" >> $f/Properties/AssemblyInfo.cs
 	
 	for nuspec in $f/*.nuspec; do
 		if [[ -f "$nuspec" ]]; then
 			echo "Processing nuspec file: $nuspec"
-			sed -i.bak "s/\\\$version\\\$/$VERSION_STR/g" $nuspec
+			sed -i.bak "s/\\\$version\\\$/$VERSION_STR-beta+cibuild.$REVISION/g" $nuspec
 		fi
 	done
 }
 
 re="([0-9]+\.[0-9]+\.[0-9]+)"
 if [[ $VERSION =~ $re ]]; then
-	VERSION_STR="${BASH_REMATCH[1]}-beta+cibuild.$REVISION"
+	VERSION_STR="${BASH_REMATCH[1]}"
 	echo "Version is now: $VERSION_STR"
 	update_ai $DIR/../IPTables.Net
 	update_ai $DIR/../IPTables.Net.Tests
