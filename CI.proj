@@ -5,6 +5,7 @@
  
   <Target Name="Build">
     <MSBuild Projects="IPTables.Net.sln" Properties="Configuration=Debug;Platform=Any CPU" />
+    <MSBuild Projects="IPTables.Net.sln" Properties="Configuration=Release;Platform=Any CPU" />
   </Target>
  
 </Project>
