@@ -10,6 +10,7 @@ script:
   - cd ..
   - export EnableNuGetPackageRestore=true
   - mozroots --import --sync
+  - bash travis-ci/autoversion.sh
   - xbuild CI.proj
   - iptables -V
   - sudo nunit-console ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll -exclude Integration,NotWorkingOnMono
