@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
+    <id>IPTables.Net</id>
     <version>$version$-beta</version>
     <title>$title$</title>
     <authors>SplitIce</authors>
@@ -12,4 +12,7 @@
     <releaseNotes>Automatic Updates via GitHub</releaseNotes>
     <copyright>Copyright Never</copyright>
   </metadata>
+	<files>
+		<file src=".\**\*.cs" target="" />
+	</files>
 </package>
