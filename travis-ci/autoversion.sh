@@ -15,8 +15,10 @@ function update_ai {
 	echo "[assembly: AssemblyFileVersion(\"$VERSION_STR\")]" >> $f/Properties/AssemblyInfo.cs
 	
 	for nuspec in $f/*.nuspec; do
-		echo "Processing nuspec file: $nuspec"
-		sed -i.bak "s/\$version\$/$VERSION_STR/g" $nuspec
+		if [[ -f "$nuspec" ]]; then
+			echo "Processing nuspec file: $nuspec"
+			sed -i.bak "s/\$version\$/$VERSION_STR/g" $nuspec
+		fi
 	done
 }
 
