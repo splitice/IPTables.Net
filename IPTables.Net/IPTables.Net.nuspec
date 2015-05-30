@@ -3,7 +3,7 @@
   <metadata>
     <id>IPTables.Net</id>
     <version>$version$-beta</version>
-    <title>$title$</title>
+    <title>IPTables.Net</title>
     <authors>SplitIce</authors>
     <owners>SplitIce</owners>
     <projectUrl>https://github.com/splitice/IPTables.Net</projectUrl>
