@@ -1,5 +1,8 @@
 language: c
- 
+
+git:
+  depth: 300
+
 install:
   - sudo add-apt-repository ppa:directhex/ppa -y
   - sudo apt-get update
