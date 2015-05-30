@@ -3,7 +3,7 @@ language: c
 install:
   - sudo add-apt-repository ppa:directhex/ppa -y
   - sudo apt-get update
-  - sudo apt-get -qq install mono mono-tools cli-common nunit-console iptables-dev
+  - sudo apt-get -qq install mono-devel mono-gmcs mono-utils nunit-console iptables-dev
  
 script:
   - cd ipthelper
