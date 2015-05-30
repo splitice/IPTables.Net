@@ -1,5 +1,7 @@
 #!/bin/bash
 
+pwd
+
 DIR=$(dirname "$0")
 VERSION=$(git describe --abbrev=0 --tags)
 REVISION=$(git log "$VERSION..HEAD" --oneline | wc -l)
