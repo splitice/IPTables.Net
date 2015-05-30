@@ -17,7 +17,8 @@ function update_ai {
 	for nuspec in $f/*.nuspec; do
 		if [[ -f "$nuspec" ]]; then
 			echo "Processing nuspec file: $nuspec"
-			sed -i.bak "s/\\\$version\\\$/$VERSION_STR-beta+cibuild.$REVISION/g" $nuspec
+			padded=$(printf "%05d" $REVISION)
+			sed -i.bak "s/\\\$version\\\$/$VERSION_STR-cibuild$padded/g" $nuspec
 		fi
 	done
 }
