@@ -11,9 +11,9 @@ if [[ $VERSION =~ $re ]]; then
 	
 	lead='^\/\/ TRAVIS\-CI: START REMOVE$'
 	tail='^\/\/ TRAVIS\-CI: END REMOVE$'
-	sed -e "/$lead/,/$tail/{ /$lead/{p; r insert_file
-        }; /$tail/p; d }"  $DIR/../IPTables.Net/Properties/AssemblyInfo.cs
-	cat $DIR/../IPTables.Net/Properties/AssemblyInfo.cs
+	C=$(sed -e "/$lead/,/$tail/{ /$lead/{p; r insert_file
+        }; /$tail/p; d }"  $DIR/../IPTables.Net/Properties/AssemblyInfo.cs)
+	echo "$C" > $DIR/../IPTables.Net/Properties/AssemblyInfo.cs
 	echo "[assembly: AssemblyVersion(\"$VERSION_STR\")]" >> $DIR/../IPTables.Net/Properties/AssemblyInfo.cs
 	echo "[assembly: AssemblyFileVersion(\"$VERSION_STR\")]" >> $DIR/../IPTables.Net/Properties/AssemblyInfo.cs
 fi
