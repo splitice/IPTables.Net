@@ -6,8 +6,8 @@ using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Netfilter;
-using IPTables.Net.Tests.MockSystem;
-using IPTables.Net.Tests.MockSystem.IpTablesRestore;
+using IPTables.Net.TestFramework;
+using IPTables.Net.TestFramework.IpTablesRestore;
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests
@@ -34,7 +34,7 @@ namespace IPTables.Net.Tests
                                                    "-A INPUT -m comment --comment \"test space\"", "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew);
-            var output = (system.GetTableAdapter(4) as MockIpTablesRestoreAdapterClient).GetOutput();
+            var output = (system.GetTableAdapter(4) as IMockIpTablesRestoreGetOutput).GetOutput();
             CollectionAssert.AreEqual(output, expectedCommands);
         }
 
@@ -58,7 +58,7 @@ namespace IPTables.Net.Tests
             List<String> expectedCommands = new List<String> { "*filter", rulesNew.Chains.First().Rules[2].GetActionCommand(), "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew);
-            CollectionAssert.AreEqual((system.GetTableAdapter(4) as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands);
+            CollectionAssert.AreEqual((system.GetTableAdapter(4) as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace IPTables.Net.Tests
             List<String> expectedCommands = new List<String>() {};
 
             mock.TestSync(rulesOriginal, rulesNew);
-            CollectionAssert.AreEqual((system.GetTableAdapter(4) as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands);
+            CollectionAssert.AreEqual((system.GetTableAdapter(4) as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
         }
 
         [Test]
@@ -102,7 +102,7 @@ namespace IPTables.Net.Tests
             List<String> expectedCommands = new List<String>() { };
 
             mock.TestSync(rulesOriginal, rulesNew);
-            CollectionAssert.AreEqual((system.GetTableAdapter(4) as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands);
+            CollectionAssert.AreEqual((system.GetTableAdapter(4) as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
         }
 
         [Test]
@@ -125,7 +125,7 @@ namespace IPTables.Net.Tests
             List<String> expectedCommands = new List<String>() { "*filter", rulesNew.Chains.First().Rules[2].GetActionCommand(), "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew);
-            CollectionAssert.AreEqual((system.GetTableAdapter(4) as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands); ;
+            CollectionAssert.AreEqual((system.GetTableAdapter(4) as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands); ;
         }
 
         [Test]
@@ -147,7 +147,7 @@ namespace IPTables.Net.Tests
             List<String> expectedCommands = new List<String>() { "*filter", "-D INPUT 2", "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew);
-            CollectionAssert.AreEqual((system.GetTableAdapter(4) as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands); ;
+            CollectionAssert.AreEqual((system.GetTableAdapter(4) as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands); ;
         }
 
         [Test]
@@ -170,7 +170,7 @@ namespace IPTables.Net.Tests
             List<String> expectedCommands = new List<String>() { "*filter", "-D INPUT 1", "-D INPUT 2", "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew);
-            CollectionAssert.AreEqual((system.GetTableAdapter(4) as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands);
+            CollectionAssert.AreEqual((system.GetTableAdapter(4) as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
         }
 
         [Test]
@@ -199,7 +199,7 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[2].GetActionCommand(), "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew);
-            CollectionAssert.AreEqual((system.GetTableAdapter(4) as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands);
+            CollectionAssert.AreEqual((system.GetTableAdapter(4) as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
         }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace IPTables.Net.Tests
                                                 "*filter", rulesNew.Chains.First().Rules[1].GetActionCommand("-R"), "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew, CommentComparer);
-            CollectionAssert.AreEqual((system.GetTableAdapter(4) as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands);
+            CollectionAssert.AreEqual((system.GetTableAdapter(4) as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
         }
 
         [Test]
@@ -266,7 +266,7 @@ namespace IPTables.Net.Tests
                                                 "*filter", rulesNew.Chains.First().Rules[0].GetActionCommand("-R"), "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew, CommentComparer);
-            CollectionAssert.AreEqual((system.GetTableAdapter(4) as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands);
+            CollectionAssert.AreEqual((system.GetTableAdapter(4) as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
         }
 
         [Test]
@@ -293,7 +293,7 @@ namespace IPTables.Net.Tests
                                                 "*filter", rulesNew.Chains.First().Rules[1].GetActionCommand("-R"), "COMMIT" };
 
             mock.TestSync(rulesOriginal, rulesNew, CommentComparer);
-            CollectionAssert.AreEqual((system.GetTableAdapter(4) as MockIpTablesRestoreAdapterClient).GetOutput(), expectedCommands);
+            CollectionAssert.AreEqual((system.GetTableAdapter(4) as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
         }
     }
 }

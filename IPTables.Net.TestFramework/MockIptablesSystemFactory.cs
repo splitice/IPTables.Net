@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using SystemInteract;
 using IPTables.Net.Iptables;
-using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Netfilter.TableSync;
 using NUnit.Framework;
 
-namespace IPTables.Net.Tests.MockSystem
+namespace IPTables.Net.TestFramework
 {
-    class MockIptablesSystemFactory: ISystemFactory
+    public class MockIptablesSystemFactory : ISystemFactory
     {
         public List<KeyValuePair<String, String>> Commands = new List<KeyValuePair<string, string>>();
         public ISystemProcess StartProcess(string command, string arguments)
         {
             Commands.Add(new KeyValuePair<string, string>(command, arguments));
             return new MockIptablesSystemProcess();
+        }
+
+        public Stream Open(string path, FileMode mode, FileAccess access)
+        {
+            throw new NotImplementedException();
         }
 
         public void TestSync(IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, Func<IpTablesRule, IpTablesRule, bool> commentComparer = null)

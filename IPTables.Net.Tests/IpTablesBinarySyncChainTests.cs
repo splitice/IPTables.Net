@@ -7,7 +7,7 @@ using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Netfilter;
-using IPTables.Net.Tests.MockSystem;
+using IPTables.Net.TestFramework;
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests

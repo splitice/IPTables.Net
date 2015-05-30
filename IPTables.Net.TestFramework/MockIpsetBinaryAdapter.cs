@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SystemInteract;
-using IPTables.Net.Iptables.IpSet;
+﻿using IPTables.Net.Iptables.IpSet;
 using IPTables.Net.Iptables.IpSet.Adapter;
 
-namespace IPTables.Net.Tests.MockSystem
+namespace IPTables.Net.TestFramework
 {
-    class MockIpsetBinaryAdapter: IpSetBinaryAdapter
+    public class MockIpsetBinaryAdapter: IpSetBinaryAdapter
     {
         private IpSetSets _sets;
 

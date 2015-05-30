@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using IPTables.Net.Iptables.Adapter.Client;
-using IPTables.Net.Iptables.Adapter.Client.Helper;
 using IPTables.Net.Netfilter;
 
-namespace IPTables.Net.Tests.MockSystem.IpTablesRestore
+namespace IPTables.Net.TestFramework.IpTablesRestore
 {
-    class MockIpTablesRestoreAdapterClient: IPTablesRestoreAdapterClient
+    class MockIpTablesRestoreAdapterClient : IPTablesRestoreAdapterClient, IMockIpTablesRestoreGetOutput
     {
         private readonly MemoryStream _output = new MemoryStream();
 

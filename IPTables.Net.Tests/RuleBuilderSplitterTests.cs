@@ -7,8 +7,8 @@ using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.RuleGenerator;
-using IPTables.Net.Tests.MockSystem;
-using IPTables.Net.Tests.MockSystem.IpTablesRestore;
+using IPTables.Net.TestFramework;
+using IPTables.Net.TestFramework.IpTablesRestore;
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests

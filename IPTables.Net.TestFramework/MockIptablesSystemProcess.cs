@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using SystemInteract;
 
-namespace IPTables.Net.Tests.MockSystem
+namespace IPTables.Net.TestFramework
 {
-    class MockIptablesSystemProcess: ISystemProcess
+    public class MockIptablesSystemProcess : ISystemProcess
     {
         public bool CloseMainWindow()
         {

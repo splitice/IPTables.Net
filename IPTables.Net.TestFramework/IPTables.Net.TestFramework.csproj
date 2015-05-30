@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B4EE1115-2025-4276-8390-239E651E2A2B}</ProjectGuid>
+    <ProjectGuid>{579C614E-CF11-4606-B69A-2AAE4C52A166}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>IPTables.Net.Tests</RootNamespace>
-    <AssemblyName>IPTables.Net.Tests</AssemblyName>
+    <RootNamespace>IPTables.Net.TestFramework</RootNamespace>
+    <AssemblyName>IPTables.Net.TestFramework</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -26,63 +26,38 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
     <Reference Include="SystemInteract">
-      <HintPath>..\packages\SystemInteract.1.0.0-CI00002\lib\net35\SystemInteract.dll</HintPath>
+      <HintPath>..\packages\SystemInteract.1.0.0-CI00006\lib\net35\SystemInteract.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CheckInternalTables.cs" />
-    <Compile Include="EscapeHelperTests.cs" />
-    <Compile Include="IpSetSyncTests.cs" />
-    <Compile Include="IpSetParseTest.cs" />
-    <Compile Include="IpTablesComparisonTests.cs" />
-    <Compile Include="IptablesLibraryTest.cs" />
-    <Compile Include="IpTablesRestoreSyncTests.cs" />
-    <Compile Include="IpTablesRuleSetTests.cs" />
-    <Compile Include="IpTablesSaveReadingTests.cs" />
-    <Compile Include="IpTablesBinarySyncChainTests.cs" />
-    <Compile Include="LevensheteinSolutionTest.cs" />
-    <Compile Include="PortRangeHelpersTests.cs" />
+    <Compile Include="IpTablesRestore\IMockIpTablesRestoreGetOutput.cs" />
+    <Compile Include="IpTablesRestore\MockIpTablesRestoreAdapter.cs" />
+    <Compile Include="IpTablesRestore\MockIpTablesRestoreAdapterClient.cs" />
+    <Compile Include="MockIpsetBinaryAdapter.cs" />
+    <Compile Include="MockIpsetSystemFactory.cs" />
+    <Compile Include="MockIptablesSystemFactory.cs" />
+    <Compile Include="MockIptablesSystemProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RuleBuilderNestedTests.cs" />
-    <Compile Include="RuleBuilderMultiportTests.cs" />
-    <Compile Include="RuleBuilderSplitterTests.cs" />
-    <Compile Include="SingleConnlimitRuleParseTests.cs" />
-    <Compile Include="SingleCommentRuleParseTests.cs" />
-    <Compile Include="SingleDnatRuleParseTests.cs" />
-    <Compile Include="SingleConnmarkRuleParseTests.cs" />
-    <Compile Include="SingleIpSetRuleParseTests.cs" />
-    <Compile Include="SingleHelperRuleParseTests.cs" />
-    <Compile Include="SingleLengthRuleParseTests.cs" />
-    <Compile Include="SingleSynProxyRuleParseTests.cs" />
-    <Compile Include="SingleNqueueRuleParseTests.cs" />
-    <Compile Include="SingleNflogRuleParseTests.cs" />
-    <Compile Include="SingleMultiportRuleParseTests.cs" />
-    <Compile Include="SingleLogRuleParseTests.cs" />
-    <Compile Include="SingleSnatRuleParseTests.cs" />
-    <Compile Include="SingleRecentRuleParseTests.cs" />
-    <Compile Include="SinglePolyfillTests.cs" />
-    <Compile Include="SingleMarkRuleParseTests.cs" />
-    <Compile Include="SingleTcpRuleParseTests.cs" />
-    <Compile Include="SingleCoreRuleParseTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IPTables.Net.TestFramework\IPTables.Net.TestFramework.csproj">
-      <Project>{579c614e-cf11-4606-b69a-2aae4c52a166}</Project>
-      <Name>IPTables.Net.TestFramework</Name>
-    </ProjectReference>
     <ProjectReference Include="..\IPTables.Net\IPTables.Net.csproj">
       <Project>{9efde056-106c-4618-acfa-9f67133341c8}</Project>
       <Name>IPTables.Net</Name>
@@ -93,6 +68,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
