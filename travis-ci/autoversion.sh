@@ -16,4 +16,5 @@ if [[ $VERSION =~ $re ]]; then
 	echo "$C" > $DIR/../IPTables.Net/Properties/AssemblyInfo.cs
 	echo "[assembly: AssemblyVersion(\"$VERSION_STR\")]" >> $DIR/../IPTables.Net/Properties/AssemblyInfo.cs
 	echo "[assembly: AssemblyFileVersion(\"$VERSION_STR\")]" >> $DIR/../IPTables.Net/Properties/AssemblyInfo.cs
+	cat $DIR/../IPTables.Net/Properties/AssemblyInfo.cs
 fi
