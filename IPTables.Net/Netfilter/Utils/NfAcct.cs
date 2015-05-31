@@ -74,9 +74,13 @@ namespace IPTables.Net.Netfilter.Utils
             var output = process.StandardOutput.ReadToEnd();
         }
 
-        public List<NfAcctUsage> List()
+        public List<NfAcctUsage> List(bool reset = false)
         {
             String cmd = "list xml";
+            if (reset)
+            {
+                cmd += " reset";
+            }
             var process = _system.StartProcess("/usr/sbin/nfacct", cmd);
             process.WaitForExit();
             var output = process.StandardOutput.ReadToEnd();
