@@ -10,6 +10,13 @@ namespace IPTables.Net.Netfilter.Utils
 {
     public class NfAcct
     {
+        private ISystemFactory _system;
+
+        public NfAcct(ISystemFactory system)
+        {
+            _system = system;
+        }
+
         private NfAcctUsage FromXml(String output, String name)
         {
             XDocument doc;
@@ -28,7 +35,7 @@ namespace IPTables.Net.Netfilter.Utils
             return usages.FirstOrDefault();
         }
 
-        public NfAcctUsage Get(String name, ISystemFactory system, bool reset = false)
+        public NfAcctUsage Get(String name, bool reset = false)
         {
             String cmd = "get {0} xml";
             if (reset)
@@ -36,7 +43,7 @@ namespace IPTables.Net.Netfilter.Utils
                 cmd += " reset";
             }
 
-            var process = system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name));
+            var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name));
             process.WaitForExit();
             var output = process.StandardOutput.ReadToEnd();
             if (output.Trim().Length == 0)
@@ -46,31 +53,31 @@ namespace IPTables.Net.Netfilter.Utils
             return FromXml(output, name);
         }
 
-        public bool Exist(String name, ISystemFactory system)
+        public bool Exist(String name)
         {
-            return Get(name, system) != null;
+            return Get(name) != null;
         }
 
-        public void Add(String name, ISystemFactory system)
+        public void Add(String name)
         {
             String cmd = "add {0}";
-            var process = system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name));
+            var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name));
             process.WaitForExit();
             var output = process.StandardOutput.ReadToEnd();
         }
 
-        public void Delete(String name, ISystemFactory system)
+        public void Delete(String name)
         {
             String cmd = "del {0}";
-            var process = system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name));
+            var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name));
             process.WaitForExit();
             var output = process.StandardOutput.ReadToEnd();
         }
 
-        public List<NfAcctUsage> List(ISystemFactory system)
+        public List<NfAcctUsage> List()
         {
             String cmd = "list xml";
-            var process = system.StartProcess("/usr/sbin/nfacct", cmd);
+            var process = _system.StartProcess("/usr/sbin/nfacct", cmd);
             process.WaitForExit();
             var output = process.StandardOutput.ReadToEnd();
 
