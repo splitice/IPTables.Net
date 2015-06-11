@@ -233,17 +233,25 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 return;
             }
 
+            IpTablesNetExceptionErrno ex = null;
             foreach (var kv in _interfaces)
             {
                 if (!kv.Value.Commit())
                 {
                     var errno = kv.Value.GetLastError();
-                    throw new IpTablesNetExceptionErrno(String.Format("Failed commit to table \"{0}\" due to error: \"{1}\"", kv.Key, kv.Value.GetErrorString()), errno);
+                    //Attempt to complete all commits
+                    ex = new IpTablesNetExceptionErrno(
+                        String.Format("Failed commit to table \"{0}\" due to error: \"{1}\"", kv.Key,
+                            kv.Value.GetErrorString()), errno);
                 }
             }
             _interfaces.Clear();
-            
             _inTransaction = false;
+
+            if (ex != null)
+            {
+                throw ex;
+            }
         }
 
         public override void EndTransactionRollback()
