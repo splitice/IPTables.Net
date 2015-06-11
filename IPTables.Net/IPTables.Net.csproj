@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\IpTablesNetException.cs" />
+    <Compile Include="Exceptions\IpTablesNetExceptionErrno.cs" />
     <Compile Include="Exceptions\IpTablesParserException.cs" />
     <Compile Include="Iptables\Adapter\Client\IPTablesLibAdapterClient.cs" />
     <Compile Include="Iptables\Adapter\IPTablesLibAdapter.cs" />

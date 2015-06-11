@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Adapter.Client;
 using IPTables.Net.Netfilter.TableSync;
 
@@ -105,81 +107,107 @@ namespace IPTables.Net.Iptables
         /// </summary>
         /// <param name="sync"></param>
         /// <param name="canDeleteChain"></param>
+        /// <param name="maxRetries"></param>
         public void Sync(INetfilterSync<IpTablesRule> sync,
-            Func<IpTablesChain, bool> canDeleteChain = null)
+            Func<IpTablesChain, bool> canDeleteChain = null, int maxRetries = 10)
         {
             var tableAdapter = _system.GetTableAdapter(_ipVersion);
-
-            //Start transaction
-            tableAdapter.StartTransaction();
-            
-            //Load all chains, figure out what to add
             List<IpTablesChain> chainsToAdd = new List<IpTablesChain>();
-            var tableChains = new Dictionary<string, List<IpTablesChain>>();
-            foreach (IpTablesChain chain in Chains)
+            bool needed;
+            int retries = maxRetries;
+
+            do
             {
-                if (!tableChains.ContainsKey(chain.Table))
+                try
                 {
-                    var chains = _system.GetChains(chain.Table, _ipVersion).ToList();
-                    tableChains.Add(chain.Table, chains);
-                }
-                if (tableChains[chain.Table].FirstOrDefault(a => a.Name == chain.Name && a.Table == chain.Table) == null)
-                {
-                    //Chain doesnt exist, to create
-                    chainsToAdd.Add(chain);
-                }
-            }
+                    //Start transaction
+                    tableAdapter.StartTransaction();
 
-            //Add the new chains / rules
-            foreach (var chain in chainsToAdd)
-            {
-                tableChains[chain.Table].Add(_system.AddChain(chain));
-            }
-            chainsToAdd.Clear();
-
-            //Special case
-            if (tableAdapter is IPTablesLibAdapterClient)
-            {
-                //Sync chain adds before starting rule adds
-                tableAdapter.EndTransactionCommit();
-                tableAdapter.StartTransaction();
-            }
-
-            //Update chains with differing rules
-            foreach (IpTablesChain chain in Chains)
-            {
-                IpTablesChain realChain =
-                    tableChains[chain.Table].First(a => a.Name == chain.Name && a.Table == chain.Table);
-                if (realChain != null)
-                {
-                    //Update chain
-                    realChain.SyncInternal(chain.Rules, sync);
-                }
-            }
-
-            //End Transaction: COMMIT
-            tableAdapter.EndTransactionCommit();
-
-            if (canDeleteChain != null)
-            {
-                //Start transaction
-                //Needs new transaction, bug in libiptc?
-                tableAdapter.StartTransaction();
-
-                foreach (string table in Chains.Select(a => a.Table).Distinct())
-                {
-                    foreach (IpTablesChain chain in _system.GetChains(table, _ipVersion))
+                    //Load all chains, figure out what to add
+                    var tableChains = new Dictionary<string, List<IpTablesChain>>();
+                    foreach (IpTablesChain chain in Chains)
                     {
-                        if (!_chains.HasChain(chain.Name, chain.Table) && canDeleteChain(chain))
+                        if (!tableChains.ContainsKey(chain.Table))
                         {
-                            chain.Delete();
+                            var chains = _system.GetChains(chain.Table, _ipVersion).ToList();
+                            tableChains.Add(chain.Table, chains);
+                        }
+                        if (
+                            tableChains[chain.Table].FirstOrDefault(a => a.Name == chain.Name && a.Table == chain.Table) ==
+                            null)
+                        {
+                            //Chain doesnt exist, to create
+                            chainsToAdd.Add(chain);
                         }
                     }
-                }
 
-                //End Transaction: COMMIT
-                tableAdapter.EndTransactionCommit();
-            }
+                    //Add the new chains / rules
+                    foreach (var chain in chainsToAdd)
+                    {
+                        tableChains[chain.Table].Add(_system.AddChain(chain));
+                    }
+                    chainsToAdd.Clear();
+
+                    //Special case
+                    if (tableAdapter is IPTablesLibAdapterClient)
+                    {
+                        //Sync chain adds before starting rule adds
+                        tableAdapter.EndTransactionCommit();
+                        tableAdapter.StartTransaction();
+                    }
+
+                    //Update chains with differing rules
+                    foreach (IpTablesChain chain in Chains)
+                    {
+                        IpTablesChain realChain =
+                            tableChains[chain.Table].First(a => a.Name == chain.Name && a.Table == chain.Table);
+                        if (realChain != null)
+                        {
+                            //Update chain
+                            realChain.SyncInternal(chain.Rules, sync);
+                        }
+                    }
+
+                    //End Transaction: COMMIT
+                    tableAdapter.EndTransactionCommit();
+
+                    if (canDeleteChain != null)
+                    {
+                        //Start transaction
+                        //Needs new transaction, bug in libiptc?
+                        tableAdapter.StartTransaction();
+
+                        foreach (string table in Chains.Select(a => a.Table).Distinct())
+                        {
+                            foreach (IpTablesChain chain in _system.GetChains(table, _ipVersion))
+                            {
+                                if (!_chains.HasChain(chain.Name, chain.Table) && canDeleteChain(chain))
+                                {
+                                    chain.Delete();
+                                }
+                            }
+                        }
+
+                        //End Transaction: COMMIT
+                        tableAdapter.EndTransactionCommit();
+                    }
+
+                    needed = false;
+                }
+                catch (IpTablesNetExceptionErrno ex)
+                {
+                    if (ex.Errno == 11 && retries != 0)//Resource Temporarily unavailable
+                    {
+                        Thread.Sleep(100 * (maxRetries - retries));
+                        retries--;
+                        needed = true;
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            } while (needed);
         }
 
         #endregion

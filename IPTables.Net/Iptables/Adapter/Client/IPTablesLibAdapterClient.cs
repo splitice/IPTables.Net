@@ -237,7 +237,8 @@ namespace IPTables.Net.Iptables.Adapter.Client
             {
                 if (!kv.Value.Commit())
                 {
-                    throw new IpTablesNetException(String.Format("Failed commit to table \"{0}\" due to error: \"{1}\"", kv.Key, kv.Value.GetErrorString()));
+                    var errno = kv.Value.GetLastError();
+                    throw new IpTablesNetExceptionErrno(String.Format("Failed commit to table \"{0}\" due to error: \"{1}\"", kv.Key, kv.Value.GetErrorString()), errno);
                 }
             }
             _interfaces.Clear();

@@ -20,6 +20,7 @@ namespace IPTables.Net.Exceptions
         {
         }
 
+
         protected IpTablesNetException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
