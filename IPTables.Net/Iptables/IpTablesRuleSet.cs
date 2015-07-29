@@ -196,6 +196,7 @@ namespace IPTables.Net.Iptables
                 }
                 catch (IpTablesNetExceptionErrno ex)
                 {
+                    tableAdapter.EndTransactionRollback();
                     if (ex.Errno == 11 && retries != 0)//Resource Temporarily unavailable
                     {
                         Thread.Sleep(100 * (maxRetries - retries));
