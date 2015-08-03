@@ -5,9 +5,9 @@ using System.Text;
 
 namespace IPTables.Net.Supporting
 {
-    internal class ArgumentHelper
+    public class ArgumentHelper
     {
-        internal static string[] SplitArguments(string commandLine)
+        public static string[] SplitArguments(string commandLine)
         {
             char[] parmChars = commandLine.ToCharArray();
             bool inSingleQuote = false;
