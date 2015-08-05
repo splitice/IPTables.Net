@@ -123,6 +123,13 @@ namespace IPTables.Net.Iptables.IpSet
             }
         }
 
+        public static IpSetEntry ParseFromParts(IpSetSet set, String value)
+        {
+            var entry = new IpSetEntry(set);
+            IpSetEntryParser.ParseEntry(entry, value);
+            return entry;
+        }
+
         public static IpSetEntry Parse(String command, IpSetSets sets)
         {
             var parts = command.Split(new char[] {' '});

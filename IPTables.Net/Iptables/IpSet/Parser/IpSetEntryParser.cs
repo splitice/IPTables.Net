@@ -35,6 +35,40 @@ namespace IPTables.Net.Iptables.IpSet.Parser
         }
 
         /// <summary>
+        /// Parse an entry for type
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <param name="value"></param>
+        public static void ParseEntry(IpSetEntry entry, String value)
+        {
+            var type = entry.Set.Type;
+            var typeComponents = IpSetTypeHelper.TypeComponents(IpSetTypeHelper.TypeToString(type)).ToArray();
+            var optionComponents = value.Split(new char[] { ',', ':' });
+
+
+            for (int i = 0; i < optionComponents.Length; i++)
+            {
+                switch (typeComponents[i])
+                {
+                    case "ip":
+                        entry.Cidr = IpCidr.Parse(optionComponents[i]);
+                        break;
+                    case "port":
+                        if (i != 0)
+                        {
+                            entry.Protocol = optionComponents[i];
+                            i++;
+                        }
+                        entry.Port = ushort.Parse(optionComponents[i]);
+                        break;
+                    case "mac":
+                        entry.Mac = optionComponents[i];
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
         /// Consume arguments
         /// </summary>
         /// <param name="position">Rhe position to parse</param>
@@ -56,32 +90,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
             }
             else
             {
-                var type = _entry.Set.Type;
-                var typeComponents = IpSetTypeHelper.TypeComponents(IpSetTypeHelper.TypeToString(type)).ToArray();
-                var optionComponents = option.Split(new char[] {',', ':'});
-
-
-                for (int i = 0; i < optionComponents.Length; i++)
-                {
-                    switch (typeComponents[i])
-                    {
-                        case "ip":
-                            _entry.Cidr = IpCidr.Parse(optionComponents[i]);
-                            break;
-                        case "port":
-                            if (i != 0)
-                            {
-                                _entry.Protocol = optionComponents[i];
-                                i++;
-                            }
-                            _entry.Port = ushort.Parse(optionComponents[i]);
-                            break;
-                        case "mac":
-                            _entry.Mac = optionComponents[i];
-                            break;
-                    }
-                }
-
+                ParseEntry(_entry,option);
             }
             return 0;
         }
