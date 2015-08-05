@@ -15,7 +15,7 @@
             if (string.IsNullOrEmpty(original))
                 return original;
 
-            if (original.IndexOfAny(new[] {'|', ' ', '\\', '"', '\''}) == -1)
+            if (original.IndexOfAny(new[] {'|', ' ', '\\', '"', '\'', '>', '&'}) == -1)
                 return original;
 
             return "'" + original.Replace("\\", "\\\\").Replace("'", "\\'") + "'";

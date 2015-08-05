@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.Polyfill
 {
@@ -13,7 +14,8 @@ namespace IPTables.Net.Iptables.Modules.Polyfill
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return _data.SequenceEqual(other._data);
+            if (_data.Count != other._data.Count || _data.Keys.Except(other._data.Keys).Any()) return false;
+            return _data.All(thisPair => thisPair.Value.SequenceEqual(other._data[thisPair.Key]));
         }
 
         public bool NeedsLoading
@@ -47,7 +49,7 @@ namespace IPTables.Net.Iptables.Modules.Polyfill
                 sb.Append(" ");
                 foreach (string a in pair.Value)
                 {
-                    sb.Append(a);
+                    sb.Append(ShellHelper.EscapeArguments(a));
                     sb.Append(" ");
                 }
             }

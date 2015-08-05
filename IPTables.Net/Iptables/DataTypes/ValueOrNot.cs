@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
@@ -89,7 +90,7 @@ namespace IPTables.Net.Iptables.DataTypes
 
             if (!String.IsNullOrEmpty(value))
             {
-                built += " " + Value;
+                built += " " + ShellHelper.EscapeArguments(value);
             }
             return built;
         }

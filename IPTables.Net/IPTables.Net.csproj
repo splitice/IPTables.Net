@@ -51,6 +51,7 @@
     <Compile Include="Exceptions\IpTablesParserException.cs" />
     <Compile Include="Iptables\Adapter\Client\IPTablesLibAdapterClient.cs" />
     <Compile Include="Iptables\Adapter\IPTablesLibAdapter.cs" />
+    <Compile Include="Iptables\DataTypes\HashLimitMode.cs" />
     <Compile Include="Iptables\Helpers\PortRangeHelpers.cs" />
     <Compile Include="Iptables\Helpers\RulePortHelper.cs" />
     <Compile Include="Iptables\Helpers\ShortHash.cs" />

@@ -356,6 +356,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         /// <returns>returns 1 for sucess, error code otherwise</returns>
         public int ExecuteCommand(string command)
         {
+            Console.WriteLine(command);
             DebugEntry(command);
             RequireHandle();
             return execute_command(command, _handle);
