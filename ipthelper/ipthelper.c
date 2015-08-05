@@ -564,6 +564,9 @@ EXPORT int execute_command(const char* rule, void *h){
 	int newargc;
 	char* table = "filter";
 	char** newargv = split_commandline(rule, &newargc);
+	if (newargv == NULL){
+		return 4;
+	}
 	int ret = do_command4(newargc, newargv,
 		&table, &h);
 	free(newargv);
