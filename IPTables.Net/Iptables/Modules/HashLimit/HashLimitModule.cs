@@ -40,9 +40,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return LimitRate == other.LimitRate && Unit == other.Unit && Burst == other.Burst && Name == other.Name && LimitMode == other.LimitMode
-                && Mode == other.Mode && SrcMask == other.SrcMask && DstMask == other.DstMask && HtableSize == other.HtableSize && HtableMax == other.HtableMax
-                && HtableExpire == other.HtableExpire && HtableGcInterval == other.HtableGcInterval;
+            return Burst == other.Burst && string.Equals(Name, other.Name) && LimitRate == other.LimitRate && Unit == other.Unit && LimitMode == other.LimitMode && string.Equals(Mode, other.Mode) && SrcMask == other.SrcMask && DstMask == other.DstMask && HtableSize == other.HtableSize && HtableMax == other.HtableMax && HtableExpire == other.HtableExpire && HtableGcInterval == other.HtableGcInterval;
         }
 
         public bool NeedsLoading
@@ -79,9 +77,9 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
 
                 case OptionHashLimitName:
                     Name = parser.GetNextArg();
-                    if (Name.Length > 18)
+                    if (Name.Length > 15)
                     {
-                        Name = Name.Substring(0, 18);
+                        Name = Name.Substring(0, 15);
                     }
                     return 1;
 
@@ -184,12 +182,10 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                 case "sec":
                 case "second":
                     return LimitUnit.Second;
-                    break;
                 case "m":
                 case "min":
                 case "minute":
                     return LimitUnit.Minute;
-                    break;
                 case "h":
                 case "hour":
                     return LimitUnit.Hour;
@@ -249,7 +245,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
+            if (obj.GetType() != this.GetType()) return false;
             return Equals((HashLimitModule) obj);
         }
 
@@ -257,11 +253,21 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         {
             unchecked
             {
-                int hashCode = LimitRate;
-                hashCode = (hashCode*397) ^ (int) Unit;
-                hashCode = (hashCode*397) ^ Burst;
+                int hashCode = Burst;
+                hashCode = (hashCode * 397) ^ (Name != null ? Name.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ LimitRate;
+                hashCode = (hashCode * 397) ^ (int)Unit;
+                hashCode = (hashCode * 397) ^ (int)LimitMode;
+                hashCode = (hashCode * 397) ^ (Mode != null ? Mode.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ SrcMask;
+                hashCode = (hashCode * 397) ^ DstMask;
+                hashCode = (hashCode * 397) ^ HtableSize;
+                hashCode = (hashCode * 397) ^ HtableMax;
+                hashCode = (hashCode * 397) ^ HtableExpire;
+                hashCode = (hashCode * 397) ^ HtableGcInterval;
                 return hashCode;
             }
         }
+
     }
 }

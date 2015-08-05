@@ -28,5 +28,14 @@ namespace IPTables.Net.Tests
 
             Assert.AreEqual(rule, irule.GetActionCommand());
         }
+
+        [Test]
+        public void TestCompare1()
+        {
+            String rule = "-A ATTK_CHECK -m recent --rcheck --name BANNED --seconds 180 --reap --rttl -j ATTACKED";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains), IpTablesRule.Parse(rule, null, chains));
+        }
     }
 }

@@ -3,16 +3,16 @@ using System.Globalization;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
-    internal class FlexibleInt
+    internal class FlexibleUInt32
     {
-        public static int Parse(String number)
+        public static uint Parse(String number)
         {
             if (number.Length > 2 && number.Substring(0, 2) == "0x")
             {
-                return Int32.Parse(number.Substring(2), NumberStyles.HexNumber);
+                return UInt32.Parse(number.Substring(2), NumberStyles.HexNumber);
             }
 
-            return Int32.Parse(number);
+            return UInt32.Parse(number);
         }
     }
 }

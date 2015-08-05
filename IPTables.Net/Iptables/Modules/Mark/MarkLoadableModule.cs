@@ -30,10 +30,10 @@ namespace IPTables.Net.Iptables.Modules.Mark
             {
                 case OptionMarkLong:
                     var s = parser.GetNextArg().Split(new char[] {'/'});
-                    Mark.Set(not, FlexibleInt.Parse(s[0]));
+                    Mark.Set(not, FlexibleInt32.Parse(s[0]));
                     if (s.Length != 1)
                     {
-                        Mask = FlexibleInt.Parse(s[1]);
+                        Mask = FlexibleInt32.Parse(s[1]);
                     }
                     return 1;
             }

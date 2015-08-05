@@ -51,6 +51,7 @@
     <Compile Include="Exceptions\IpTablesParserException.cs" />
     <Compile Include="Iptables\Adapter\Client\IPTablesLibAdapterClient.cs" />
     <Compile Include="Iptables\Adapter\IPTablesLibAdapter.cs" />
+    <Compile Include="Iptables\DataTypes\FlexibleUInt32.cs" />
     <Compile Include="Iptables\DataTypes\HashLimitMode.cs" />
     <Compile Include="Iptables\Helpers\PortRangeHelpers.cs" />
     <Compile Include="Iptables\Helpers\RulePortHelper.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Iptables\IpSet\IpSetTypeHelper.cs" />
     <Compile Include="Iptables\IpTablesRuleDefinition.cs" />
     <Compile Include="Iptables\IPTablesTables.cs" />
+    <Compile Include="Iptables\Modules\U32\U32Module.cs" />
     <Compile Include="Iptables\NativeLibrary\IptcInterface.cs" />
     <Compile Include="Iptables\Modules\Bpf\BpfModule.cs" />
     <Compile Include="Iptables\Modules\Ct\CtTargetModule.cs" />
@@ -83,6 +85,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Iptables\RuleGenerator\RuleOutputter.cs" />
+    <Compile Include="Iptables\U32\U32AndTestStatement.cs" />
+    <Compile Include="Iptables\U32\U32Expression.cs" />
+    <Compile Include="Iptables\U32\U32Location.cs" />
+    <Compile Include="Iptables\U32\U32Range.cs" />
+    <Compile Include="Iptables\U32\U32Statement.cs" />
+    <Compile Include="Iptables\U32\U32TestStatement.cs" />
     <Compile Include="Netfilter\Utils\NfAcct.cs" />
     <Compile Include="Netfilter\Utils\NfAcctUsage.cs" />
     <Compile Include="NfTablesSystem.cs" />
@@ -127,7 +135,7 @@
     <Compile Include="Iptables\DataTypes\ConnectionStateHelper.cs" />
     <Compile Include="Iptables\DataTypes\ConnectionStateSet.cs" />
     <Compile Include="Iptables\DataTypes\CounterPacketsAndBytes.cs" />
-    <Compile Include="Iptables\DataTypes\FlexibleInt.cs" />
+    <Compile Include="Iptables\DataTypes\FlexibleInt32.cs" />
     <Compile Include="Iptables\DataTypes\IPPortOrRange.cs" />
     <Compile Include="Iptables\Helpers\ShellHelper.cs" />
     <Compile Include="Iptables\DataTypes\LimitUnit.cs" />

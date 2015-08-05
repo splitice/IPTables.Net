@@ -68,30 +68,30 @@ namespace IPTables.Net.Iptables.Modules.Mark
             switch (parser.GetCurrentArg())
             {
                 case OptionSetXorMarkLong:
-                    bits = FlexibleInt.Parse(parser.GetNextArg());
+                    bits = FlexibleInt32.Parse(parser.GetNextArg());
                     SetXorMark(bits);
                     return 1;
 
                 case OptionSetAndMarkLong:
-                    bits = FlexibleInt.Parse(parser.GetNextArg());
+                    bits = FlexibleInt32.Parse(parser.GetNextArg());
                     SetAndMark(bits);
                     return 1;
 
                 case OptionSetOrMarkLong:
-                    bits = FlexibleInt.Parse(parser.GetNextArg());
+                    bits = FlexibleInt32.Parse(parser.GetNextArg());
                     SetOrMark(bits);
                     return 1;
 
                 case OptionSetMarkLong:
                     var s1 = parser.GetNextArg().Split('/');
 
-                    SetMark(FlexibleInt.Parse(s1[0]), s1.Length == 1?DefaultMask:FlexibleInt.Parse(s1[1]));
+                    SetMark(FlexibleInt32.Parse(s1[0]), s1.Length == 1?DefaultMask:FlexibleInt32.Parse(s1[1]));
                     return 1;
 
                 case OptionSetXMarkLong:
                     var s2 = parser.GetNextArg().Split('/');
 
-                    SetXMark(FlexibleInt.Parse(s2[0]), s2.Length == 1?DefaultMask:FlexibleInt.Parse(s2[1]));
+                    SetXMark(FlexibleInt32.Parse(s2[0]), s2.Length == 1?DefaultMask:FlexibleInt32.Parse(s2[1]));
                     return 1;
             }
 

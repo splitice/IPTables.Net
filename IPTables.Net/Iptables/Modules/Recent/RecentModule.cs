@@ -42,7 +42,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(Mode, other.Mode) && string.Equals(Name, other.Name) && Rsource.Equals(other.Rsource) &&
+            return Mode.Equals(other.Mode) && string.Equals(Name, other.Name) && Rsource.Equals(other.Rsource) &&
                    Seconds == other.Seconds && Reap.Equals(other.Reap) && HitCount == other.HitCount &&
                    Rttl.Equals(other.Rttl) && Mask.Equals(other.Mask);
         }

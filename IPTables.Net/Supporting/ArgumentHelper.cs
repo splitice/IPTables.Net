@@ -17,17 +17,17 @@ namespace IPTables.Net.Supporting
                 if (parmChars[index] == '"' && !inSingleQuote)
                 {
                     inDoubleQuote = !inDoubleQuote;
-                    parmChars[index] = '\n';
+                    parmChars[index] = '\x00';
                 }
                 if (parmChars[index] == '\'' && !inDoubleQuote)
                 {
                     inSingleQuote = !inSingleQuote;
-                    parmChars[index] = '\n';
+                    parmChars[index] = '\x00';
                 }
                 if (!inSingleQuote && !inDoubleQuote && parmChars[index] == ' ')
-                    parmChars[index] = '\n';
+                    parmChars[index] = '\x01';
             }
-            return (new string(parmChars)).Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            return (new string(parmChars)).Replace("\x00", "").Split(new[] { '\x01' }, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }

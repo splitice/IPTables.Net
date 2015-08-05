@@ -28,6 +28,7 @@ using IPTables.Net.Iptables.Modules.StringMatch;
 using IPTables.Net.Iptables.Modules.SynProxy;
 using IPTables.Net.Iptables.Modules.Tcp;
 using IPTables.Net.Iptables.Modules.TcpMss;
+using IPTables.Net.Iptables.Modules.U32;
 using IPTables.Net.Iptables.Modules.Udp;
 
 namespace IPTables.Net.Iptables.Modules
@@ -65,6 +66,7 @@ namespace IPTables.Net.Iptables.Modules
             SynProxyModule.GetModuleEntry,
             IpSetModule.GetModuleEntry,
             BpfModule.GetModuleEntry,
+            U32Module.GetModuleEntry,
             PolyfillModule.GetModuleEntry
         };
 
