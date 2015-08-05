@@ -80,6 +80,7 @@
     <Compile Include="SingleMarkRuleParseTests.cs" />
     <Compile Include="SingleTcpRuleParseTests.cs" />
     <Compile Include="SingleCoreRuleParseTests.cs" />
+    <Compile Include="U32ParserTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IPTables.Net.TestFramework\IPTables.Net.TestFramework.csproj">

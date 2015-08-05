@@ -69,7 +69,7 @@ namespace IPTables.Net.Iptables.U32
 
         public static U32Location Parse(ref String expr)
         {
-            Regex r = new Regex(@"^(0x[a-f0-9]+|[0-9]+)(?:\(\&|\<\<|\>\>|\@)(0x[a-f0-9]+|[0-9]+))");
+            Regex r = new Regex(@"^(0x[a-f0-9]+|[0-9]+)(?:(\&|\<\<|\>\>|\@)(0x[a-f0-9]+|[0-9]+))");
             var match = r.Match(expr);
             expr = expr.Substring(match.Length);
             if (match.Groups.Count == 2)
