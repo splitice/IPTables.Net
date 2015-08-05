@@ -89,7 +89,7 @@
     <Compile Include="Iptables\U32\U32Expression.cs" />
     <Compile Include="Iptables\U32\U32Location.cs" />
     <Compile Include="Iptables\U32\U32Range.cs" />
-    <Compile Include="Iptables\U32\U32Statement.cs" />
+    <Compile Include="Iptables\U32\IU32Statement.cs" />
     <Compile Include="Iptables\U32\U32TestStatement.cs" />
     <Compile Include="Netfilter\Utils\NfAcct.cs" />
     <Compile Include="Netfilter\Utils\NfAcctUsage.cs" />

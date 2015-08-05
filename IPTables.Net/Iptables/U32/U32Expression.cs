@@ -21,6 +21,7 @@ namespace IPTables.Net.Iptables.U32
 
         public static U32Expression Parse(String strExpr)
         {
+            strExpr = strExpr.Replace(" ", "");
             List<IU32Statement> statements = new List<IU32Statement>();
             while (strExpr.Length!=0)
             {

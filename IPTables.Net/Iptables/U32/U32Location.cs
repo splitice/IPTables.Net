@@ -50,6 +50,23 @@ namespace IPTables.Net.Iptables.U32
             throw new Exception("Invalid Operator");
         }
 
+        public static Operator OpStr(String op)
+        {
+            switch (op)
+            {
+                case "&":
+                    return Operator.And;
+                case "<<":
+                    return Operator.Left;
+                case ">>":
+                    return Operator.Right;
+                case "@":
+                    return Operator.Move;
+            }
+
+            throw new Exception("Invalid Operator");
+        }
+
         public static U32Location Parse(ref String expr)
         {
             Regex r = new Regex(@"^(0x[a-f0-9]+|[0-9]+)(?:\(\&|\<\<|\>\>|\@)(0x[a-f0-9]+|[0-9]+))");
@@ -61,7 +78,7 @@ namespace IPTables.Net.Iptables.U32
             }
             else
             {
-                return new U32Location(FlexibleUInt32.Parse(match.Groups[1].Value), Operator.And, FlexibleUInt32.Parse(match.Groups[3].Value));
+                return new U32Location(FlexibleUInt32.Parse(match.Groups[1].Value), OpStr(match.Groups[2].Value), FlexibleUInt32.Parse(match.Groups[3].Value));
             }
         }
     }
