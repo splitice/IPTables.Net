@@ -15,8 +15,9 @@ script:
   - bash travis-ci/autoversion.sh IPTables.Net
   - bash travis-ci/autoversion.sh IPTables.Net.Tests
   - bash travis-ci/autoversion.sh IPTables.Net.TestFramework
-  - export EnableNuGetPackageRestore=true
+  - export EnableNuGetPackageRestore=false
   - mozroots --import --sync
+  - travis_retry nuget restore IPTables.Net.sln
   - xbuild CI.proj
   - iptables -V
   - sudo nunit-console -framework=4.0 ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll -exclude Integration,NotWorkingOnMono
