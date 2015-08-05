@@ -37,8 +37,8 @@ namespace IPTables.Net.Iptables.DataTypes
         public override String ToString()
         {
             String ret = "";
-            ret += Comparing.Select(f => GetFlag(f)).Aggregate((current, next) => current + "," + next);
-            ret += " " + MustHave.Select(f => GetFlag(f)).Aggregate((current, next) => current + "," + next);
+            ret += Comparing.Select(GetFlag).Aggregate((current, next) => current + "," + next);
+            ret += " " + MustHave.Select(GetFlag).Aggregate((current, next) => current + "," + next);
             return ret;
         }
 
