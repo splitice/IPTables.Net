@@ -33,8 +33,8 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         public int DstMask = 32;
         public int HtableSize = 65000;
         public int HtableMax = 30000;
-        public int HtableExpire = 600;
-        public int HtableGcInterval = 600;
+        public int HtableExpire = 10000;
+        public int HtableGcInterval = 1000;
 
         public HashLimitModule(int version) : base(version)
         {
