@@ -199,7 +199,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                     {
                         throw new IpTablesNetException("Unable to get string version of rule");
                     }
-                    chains.AddRule(IpTablesRule.Parse(rule, _system, chains, table));
+                    chains.AddRule(IpTablesRule.Parse(rule, _system, chains, 4, table));
                 }
             }
 

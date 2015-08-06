@@ -13,7 +13,7 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -d 1.2.3.4/16 -j DROP";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(rule, irule.GetActionCommand());
         }
@@ -24,7 +24,7 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -i eth0 -j DROP";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(rule, irule.GetActionCommand());
         }
@@ -35,7 +35,7 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -s 1.2.3.4 -j DROP";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(rule, irule.GetActionCommand());
         }
@@ -46,7 +46,7 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -p udp -j DROP";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(rule, irule.GetActionCommand());
         }
@@ -57,7 +57,7 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT ! -f -j test";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(rule, irule.GetActionCommand());
         }
@@ -68,8 +68,8 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -d 1.2.3.4/16 -j DROP";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
-            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(irule1, irule2);
         }
@@ -80,8 +80,8 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -i eth0 -j DROP";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
-            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(irule1, irule2);
         }
@@ -92,8 +92,8 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -s 1.2.3.4 -j DROP";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
-            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(irule1, irule2);
         }
@@ -104,8 +104,8 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -p udp -j DROP";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
-            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(irule1, irule2);
         }
@@ -116,8 +116,8 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT ! -f -j test";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
-            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(irule1, irule2);
         }

@@ -13,7 +13,7 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -j LOG --log-prefix 'IPTABLES (Rule ATTACKED): ' --log-level 7";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(rule, irule.GetActionCommand());
         }

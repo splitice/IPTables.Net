@@ -12,6 +12,10 @@ namespace IPTables.Net.Iptables.Modules.Mark
         public ValueOrNot<int> Mark = new ValueOrNot<int>();
         public int Mask = unchecked ((int)0xFFFFFFFF);
 
+        public MarkLoadableModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(MarkLoadableModule other)
         {
             if (ReferenceEquals(null, other)) return false;

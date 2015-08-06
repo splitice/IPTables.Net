@@ -5,6 +5,11 @@ namespace IPTables.Net.Iptables.Modules
 {
     public abstract class ModuleBase
     {
+        protected ModuleBase(int version)
+        {
+            
+        }
+
         protected internal static ModuleEntry GetModuleEntryInternal(String moduleName, Type moduleType,
             Func<IEnumerable<String>> options, bool preloaded = false)
         {

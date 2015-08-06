@@ -33,6 +33,10 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
         public NotationTypes Notation = NotationTypes.Plain;
         public ValueOrNot<string> Pattern;
 
+        public StringModule(int version) : base(version)
+        {
+        }
+
         public void SetHexString(byte[] pattern, bool not = false)
         {
             StringBuilder hex = new StringBuilder();

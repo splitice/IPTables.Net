@@ -97,7 +97,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                     throw new IpTablesNetException("this should not happen");
                 }
 
-                rule1 = IpTablesRule.Parse(_baseRule, system, ruleSet.Chains);
+                rule1 = IpTablesRule.Parse(_baseRule, system, ruleSet.Chains, ruleSet.IpVersion);
 
                 //Core Module
                 var ruleCore = rule1.GetModuleOrLoad<CoreModule>("core");
@@ -215,7 +215,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 {
                     if (chain.Rules.Count != 0)
                     {
-                        IpTablesRule jumpRule = IpTablesRule.Parse(_baseRule, system, ruleSet.Chains);
+                        IpTablesRule jumpRule = IpTablesRule.Parse(_baseRule, system, ruleSet.Chains, ruleSet.IpVersion);
                         _setJump(jumpRule, p.Key);
                         //jumpRule.
                         jumpRule.GetModuleOrLoad<CoreModule>("core").Jump = chainName;

@@ -19,6 +19,10 @@ namespace IPTables.Net.Iptables.Modules.SynProxy
         public bool Sack = false;
         public bool Timestamp = false;
 
+        public SynProxyModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(SynProxyModule other)
         {
             if (ReferenceEquals(null, other)) return false;

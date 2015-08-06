@@ -15,6 +15,10 @@ namespace IPTables.Net.Iptables.Modules.Nfqueue
         public bool Bypass = false;
 
 
+        public NfqueueModule(int version) : base(version)
+        {
+        }
+
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())

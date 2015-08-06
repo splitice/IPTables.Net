@@ -87,7 +87,7 @@ namespace IPTables.Net.Iptables
         /// <returns></returns>
         public IpTablesRule AddRule(String rawRule)
         {
-            IpTablesRule rule = IpTablesRule.Parse(rawRule, _system, _chains);
+            IpTablesRule rule = IpTablesRule.Parse(rawRule, _system, _chains, _ipVersion);
             AddRule(rule);
             return rule;
         }

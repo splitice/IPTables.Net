@@ -19,6 +19,10 @@ namespace IPTables.Net.Iptables.Modules.Nflog
         public int LogThreshold = 1;
 
 
+        public NflogModule(int version) : base(version)
+        {
+        }
+
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())

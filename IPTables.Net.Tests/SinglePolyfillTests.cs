@@ -13,7 +13,7 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -m unknown --unknown";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(rule, irule.GetActionCommand());
         }
@@ -24,7 +24,7 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -m unknown --unknown -p tcp -d 1.1.1.1 -m tcp --dport 80";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(rule, irule.GetActionCommand());
         }
@@ -35,7 +35,7 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -m unknown --unknown --unknown-2 1111 -p tcp -d 1.1.1.1 -m tcp --dport 80";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains), IpTablesRule.Parse(rule, null, chains));
+            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains, 4), IpTablesRule.Parse(rule, null, chains, 4));
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace IPTables.Net.Tests
                 "-A INPUT -m unknown --unknown --unknown-2 1111 -m unknown2 --unknown2 -p tcp -d 1.1.1.1 -m tcp --dport 80";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains), IpTablesRule.Parse(rule, null, chains));
+            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains, 4), IpTablesRule.Parse(rule, null, chains, 4));
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace IPTables.Net.Tests
                 "-A INPUT -m unknown2 --unknown2 -m unknown --unknown --unknown-2 1111 -p tcp -d 1.1.1.1 -m tcp --dport 80";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains), IpTablesRule.Parse(rule2, null, chains));
+            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains, 4), IpTablesRule.Parse(rule2, null, chains));
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace IPTables.Net.Tests
                 "-A INPUT -m unknown2 --unknown2 -m unknown --unknown --unknown-2 \'this has spaces & a symbol\' -p tcp -d 1.1.1.1 -m tcp --dport 80";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains), IpTablesRule.Parse(rule2, null, chains));
+            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains, 4), IpTablesRule.Parse(rule2, null, chains));
         }
 
         public void TestPolyfillArgumentsComparison5()
@@ -77,7 +77,7 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -m unknown --unknown \'6&0xFF=0x6&&0>>22&0x33@12&0xFFFF=12333\' -g TEST";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains), IpTablesRule.Parse(rule, null, chains));
+            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains, 4), IpTablesRule.Parse(rule, null, chains, 4));
         }
     }
 }

@@ -11,7 +11,7 @@ namespace IPTables.Net.Tests
         public void TestDefaultChain()
         {
             IpTablesChainSet chains = new IpTablesChainSet(4);
-            var rule = IpTablesRule.Parse("-A PREROUTING -s 1.1.1.1 -j TEST", null, chains, "raw", true);
+            var rule = IpTablesRule.Parse("-A PREROUTING -s 1.1.1.1 -j TEST", null, chains, 4, "raw", true);
             Assert.AreEqual("raw", rule.Chain.Table);
         }
     }

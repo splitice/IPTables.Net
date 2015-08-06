@@ -10,6 +10,10 @@ namespace IPTables.Net.Iptables.Modules.Core
 
         public String RejectWith = "";
 
+        public RejectTargetModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(RejectTargetModule other)
         {
             if (ReferenceEquals(null, other)) return false;

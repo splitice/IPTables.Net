@@ -16,6 +16,10 @@ namespace IPTables.Net.Iptables.Modules.Dnat
         public bool Random = false;
         public IPPortOrRange ToDestination = new IPPortOrRange(IPAddress.Any);
 
+        public DnatModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(DnatModule other)
         {
             if (ReferenceEquals(null, other)) return false;

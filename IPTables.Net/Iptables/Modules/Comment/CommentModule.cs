@@ -11,6 +11,10 @@ namespace IPTables.Net.Iptables.Modules.Comment
 
         public String CommentText;
 
+        public CommentModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(CommentModule other)
         {
             if (ReferenceEquals(null, other)) return false;

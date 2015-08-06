@@ -15,6 +15,10 @@ namespace IPTables.Net.Iptables.Modules.Udp
         public ValueOrNot<PortOrRange> DestinationPort = new ValueOrNot<PortOrRange>();
         public ValueOrNot<PortOrRange> SourcePort = new ValueOrNot<PortOrRange>();
 
+        public UdpModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(UdpModule other)
         {
             if (ReferenceEquals(null, other)) return false;

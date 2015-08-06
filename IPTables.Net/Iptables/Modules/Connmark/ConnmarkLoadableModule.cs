@@ -12,6 +12,10 @@ namespace IPTables.Net.Iptables.Modules.Connmark
         public ValueOrNot<int> Mark = new ValueOrNot<int>();
         public int Mask = unchecked((int)0xFFFFFFFF);
 
+        public ConnmarkLoadableModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(ConnmarkLoadableModule other)
         {
             if (ReferenceEquals(null, other)) return false;

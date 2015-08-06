@@ -11,6 +11,10 @@ namespace IPTables.Net.Iptables.Modules.State
 
         public ConnectionStateSet State = null;
 
+        public StateModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(StateModule other)
         {
             if (ReferenceEquals(null, other)) return false;

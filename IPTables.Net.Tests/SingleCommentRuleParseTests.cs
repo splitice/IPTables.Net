@@ -14,7 +14,7 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53 -m comment --comment 'this is a test rule'";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(rule, irule.GetActionCommand());
         }
@@ -25,8 +25,8 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53 -m comment --comment 'this is a test rule'";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
-            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(irule1, irule2);
         }

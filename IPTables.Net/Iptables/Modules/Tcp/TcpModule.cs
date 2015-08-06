@@ -21,6 +21,10 @@ namespace IPTables.Net.Iptables.Modules.Tcp
         //--syn
         public ValueOrNot<int> TcpOption = new ValueOrNot<int>();
 
+        public TcpModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(TcpModule other)
         {
             if (ReferenceEquals(null, other)) return false;

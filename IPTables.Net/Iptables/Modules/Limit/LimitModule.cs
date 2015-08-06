@@ -15,11 +15,24 @@ namespace IPTables.Net.Iptables.Modules.Limit
         public int LimitRate = 3;
         public LimitUnit Unit = LimitUnit.Hour;
 
+        public LimitModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(LimitModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return LimitRate == other.LimitRate && Unit == other.Unit && Burst == other.Burst;
+            return CompareRate((UInt32)LimitRate, (UInt32)other.LimitRate) && Unit == other.Unit && Burst == other.Burst;
+        }
+
+
+        public static bool CompareRate(UInt32 a, UInt32 b)
+        {
+            a = (a / 10000);
+            b = (b / 10000);
+
+            return a == b;
         }
 
         public bool NeedsLoading

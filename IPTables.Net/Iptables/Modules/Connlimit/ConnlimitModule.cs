@@ -24,6 +24,10 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
         public int Mask = -1;
         public int Upto = -1;
 
+        public ConnlimitModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(ConnlimitModule other)
         {
             if (ReferenceEquals(null, other)) return false;

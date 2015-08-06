@@ -30,12 +30,20 @@ namespace IPTables.Net.Iptables.Modules.Recent
 
         public bool Rttl;
         public int? Seconds = null;
-        public IPAddress Mask = IPAddress.Any;
+        public IPAddress Mask = IPAddress.Broadcast;
 
         public bool Rdest
         {
             get { return !Rsource; }
             set { Rsource = !value; }
+        }
+
+        public RecentModule(int version) : base(version)
+        {
+            if (version == 6)
+            {
+                Mask = IPAddress.IPv6None;
+            }
         }
 
         public bool Equals(RecentModule other)
@@ -132,7 +140,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
                 sb.Append(Name);
             }
 
-            if (!(Equals(Mask, IPAddress.Any)))
+            if (!(Equals(Mask, IPAddress.Broadcast)))
             {
                 if (sb.Length != 0)
                     sb.Append(" ");

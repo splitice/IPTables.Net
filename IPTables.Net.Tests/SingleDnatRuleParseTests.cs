@@ -13,7 +13,7 @@ namespace IPTables.Net.Tests
             String rule = "-A PREROUTING -t nat -d 1.1.1.1/24 -j DNAT --to-destination 2.2.2.2";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(rule, irule.GetActionCommand());
         }
@@ -24,8 +24,8 @@ namespace IPTables.Net.Tests
             String rule = "-A POSTROUTING -t nat -d 1.1.1.1/24 -j DNAT --to-destination 2.2.2.1-2.2.2.250";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains);
-            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(irule1, irule2);
             Assert.AreEqual(rule, irule1.GetActionCommand());

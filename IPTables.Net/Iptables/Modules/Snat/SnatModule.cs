@@ -16,6 +16,10 @@ namespace IPTables.Net.Iptables.Modules.Snat
         public bool Random = false;
         public IPPortOrRange ToSource = new IPPortOrRange(IPAddress.Any);
 
+        public SnatModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(SnatModule other)
         {
             if (ReferenceEquals(null, other)) return false;

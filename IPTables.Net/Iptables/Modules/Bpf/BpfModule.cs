@@ -11,6 +11,10 @@ namespace IPTables.Net.Iptables.Modules.Bpf
 
         public String ByteCode;
 
+        public BpfModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(BpfModule other)
         {
             if (ReferenceEquals(null, other)) return false;

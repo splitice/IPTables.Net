@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IPTables.Net.Iptables.U32
 {
-    public class U32Expression
+    public class U32Expression : IEquatable<U32Expression>
     {
         private List<IU32Statement> _statements = new List<IU32Statement>();
 
@@ -35,6 +35,24 @@ namespace IPTables.Net.Iptables.U32
                 }
             }
             return new U32Expression(statements);
+        }
+
+        public bool Equals(U32Expression other)
+        {
+            return _statements.SequenceEqual(other._statements);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((U32Expression) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (_statements != null ? _statements.GetHashCode() : 0);
         }
     }
 }

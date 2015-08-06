@@ -11,6 +11,10 @@ namespace IPTables.Net.Iptables.Modules.Ct
 
         private String Helper;
 
+        public CtTargetModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(CtTargetModule other)
         {
             if (ReferenceEquals(null, other)) return false;

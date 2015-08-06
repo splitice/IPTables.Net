@@ -22,6 +22,10 @@ namespace IPTables.Net.Iptables.Modules.Connmark
         private int _value = 0;
         private int _mask = unchecked((int)0xFFFFFFFF);
 
+        public ConnmarkTargetModule(int version) : base(version)
+        {
+        }
+
         public void SetXMark(int value, int mask = unchecked ((int)0xFFFFFFFF))
         {
             _value = value;

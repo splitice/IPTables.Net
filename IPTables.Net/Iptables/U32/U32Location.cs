@@ -8,20 +8,21 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.U32
 {
-    public struct U32Location
+    public class U32Location : IEquatable<U32Location>
     {
         public enum Operator
         {
+            None,
             And,
             Left,
             Right,
             Move
         }
-        public uint Location;
+        public U32Location Location;
         public Operator Op;
         public uint Number;
 
-        public U32Location(uint location, Operator op, uint number)
+        public U32Location(U32Location location, Operator op, uint number)
         {
             Location = location;
             Op = op;
@@ -30,7 +31,11 @@ namespace IPTables.Net.Iptables.U32
 
         public override string ToString()
         {
-            return Location + "=" + StrOp(Op) + Number;
+            if (Op == Operator.None)
+            {
+                return Number.ToString();
+            }
+            return Location + StrOp(Op) + Number;
         }
 
         private string StrOp(Operator op)
@@ -69,16 +74,54 @@ namespace IPTables.Net.Iptables.U32
 
         public static U32Location Parse(ref String expr)
         {
-            Regex r = new Regex(@"^(0x[a-f0-9]+|[0-9]+)(?:(\&|\<\<|\>\>|\@)(0x[a-f0-9]+|[0-9]+))");
+            Regex r = new Regex(@"^(0x[a-f0-9A-F]+|[0-9]+)");
             var match = r.Match(expr);
             expr = expr.Substring(match.Length);
-            if (match.Groups.Count == 2)
+
+            U32Location loc = new U32Location(null, Operator.None, FlexibleUInt32.Parse(match.Groups[1].Value));
+
+            do
             {
-                return new U32Location(FlexibleUInt32.Parse(match.Groups[1].Value), Operator.And, UInt32.MaxValue);
-            }
-            else
+                r = new Regex(@"^(\&|\<\<|\>\>|\@)(0x[A-Fa-f0-9]+|[0-9]+)");
+                match = r.Match(expr);
+                if (!match.Success)
+                {
+                    break;
+                }
+                expr = expr.Substring(match.Length);
+
+                loc = new U32Location(
+                    loc,
+                    OpStr(match.Groups[1].Value),
+                    FlexibleUInt32.Parse(match.Groups[2].Value));
+            } while (true);
+
+            return loc;
+        }
+
+        public bool Equals(U32Location other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(Location, other.Location) && Op == other.Op && Number == other.Number;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((U32Location) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
             {
-                return new U32Location(FlexibleUInt32.Parse(match.Groups[1].Value), OpStr(match.Groups[2].Value), FlexibleUInt32.Parse(match.Groups[3].Value));
+                int hashCode = (Location != null ? Location.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (int) Op;
+                hashCode = (hashCode*397) ^ (int) Number;
+                return hashCode;
             }
         }
     }

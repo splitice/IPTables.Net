@@ -10,6 +10,10 @@ namespace IPTables.Net.Iptables.Modules.Helper
 
         public ValueOrNot<String> Helper;
 
+        public HelperModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(HelperModule other)
         {
             if (ReferenceEquals(null, other)) return false;

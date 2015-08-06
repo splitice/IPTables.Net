@@ -10,6 +10,10 @@ namespace IPTables.Net.Iptables.Modules.Polyfill
     {
         private readonly Dictionary<String, List<String>> _data = new Dictionary<String, List<String>>();
 
+        public PolyfillModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(PolyfillModule other)
         {
             if (ReferenceEquals(null, other)) return false;

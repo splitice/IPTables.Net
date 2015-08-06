@@ -37,6 +37,10 @@ namespace IPTables.Net.Iptables.Modules.Core
         public String Target = null;
         public TargetMode TargetMode = TargetMode.Jump;
 
+        public CoreModule(int version) : base(version)
+        {
+        }
+
         public String Jump
         {
             get { return TargetMode == TargetMode.Jump ? Target : null; }

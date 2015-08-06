@@ -47,7 +47,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
 
                         try
                         {
-                            rule = IpTablesRule.Parse(line, system, ret, ttable);
+                            rule = IpTablesRule.Parse(line, system, ret, ipVersion, ttable);
                         }
                         catch
                         {
@@ -63,7 +63,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
 
 
                     case '-':
-                        rule = IpTablesRule.Parse(line, system, ret, ttable);
+                        rule = IpTablesRule.Parse(line, system, ret, ipVersion, ttable);
                         ret.AddRule(rule);
                         break;
 

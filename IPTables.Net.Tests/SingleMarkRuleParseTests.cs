@@ -14,7 +14,7 @@ namespace IPTables.Net.Tests
             String ruleExpect = "-A INPUT -p tcp -j MARK --set-xmark 0xFF";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(ruleExpect, irule.GetActionCommand());
         }
@@ -27,7 +27,7 @@ namespace IPTables.Net.Tests
             String ruleExpect = "-A INPUT -p tcp -j MARK --set-xmark 0x0";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(ruleExpect, irule.GetActionCommand());
         }
@@ -40,7 +40,7 @@ namespace IPTables.Net.Tests
             String ruleExpect = "-A INPUT -p tcp -j MARK --set-xmark 0x" + mark.ToString("X") + "/0x" + mark.ToString("X");
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(ruleExpect, irule.GetActionCommand());
         }
@@ -53,7 +53,7 @@ namespace IPTables.Net.Tests
             String ruleExpect = "-A INPUT -p tcp -j MARK --set-xmark 0x" + mark.ToString("X") + "/0x0";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
             Assert.AreEqual(ruleExpect, irule.GetActionCommand());
         }

@@ -13,6 +13,10 @@ namespace IPTables.Net.Iptables.Modules.Length
 
         public ValueOrNot<PortOrRange> Length;
 
+        public LengthModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(LengthModule other)
         {
             if (ReferenceEquals(null, other)) return false;

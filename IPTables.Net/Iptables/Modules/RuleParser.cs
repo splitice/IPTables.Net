@@ -67,8 +67,9 @@ namespace IPTables.Net.Iptables.Modules
         /// </summary>
         /// <param name="position">Rhe position to parse</param>
         /// <param name="not"></param>
+        /// <param name="version"></param>
         /// <returns>number of arguments consumed</returns>
-        public int FeedToSkip(int position, bool not)
+        public int FeedToSkip(int position, bool not, int version)
         {
             Position = position;
             String option = GetCurrentArg();
@@ -98,7 +99,7 @@ namespace IPTables.Net.Iptables.Modules
                 {
                     if (m.Options.Contains(option))
                     {
-                        IIpTablesModuleGod module = _ipRule.GetModuleForParseInternal(m.Name, m.Module);
+                        IIpTablesModuleGod module = _ipRule.GetModuleForParseInternal(m.Name, m.Module, version);
                         return module.Feed(this, not);
                     }
                 }
@@ -107,7 +108,7 @@ namespace IPTables.Net.Iptables.Modules
             {
                 if (m.Polyfill)
                 {
-                    IIpTablesModuleGod module = _ipRule.GetModuleForParseInternal(m.Name, m.Module);
+                    IIpTablesModuleGod module = _ipRule.GetModuleForParseInternal(m.Name, m.Module, version);
                     return module.Feed(this, not);
                 }
             }
@@ -130,7 +131,7 @@ namespace IPTables.Net.Iptables.Modules
             }
             else
             {
-                entry = _moduleFactory.GetModule(getNextArg);
+                entry = _moduleFactory.GetModule(getNextArg, _ipRule.Chain.IpVersion);
             }
             _parsers.Add(entry);
         }

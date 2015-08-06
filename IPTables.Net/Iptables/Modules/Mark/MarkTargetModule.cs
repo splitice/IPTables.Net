@@ -21,6 +21,10 @@ namespace IPTables.Net.Iptables.Modules.Mark
         private int _mark = 0;
         private int _mask = unchecked((int)0xFFFFFFFF);
 
+        public MarkTargetModule(int version) : base(version)
+        {
+        }
+
         public void SetXMark(int value, int mask = unchecked ((int)0xFFFFFFFF))
         {
             _mark = value;

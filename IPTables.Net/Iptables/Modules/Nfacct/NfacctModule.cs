@@ -11,6 +11,10 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
 
         public String Name;
 
+        public NfacctModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(NfacctModule other)
         {
             if (ReferenceEquals(null, other)) return false;

@@ -14,6 +14,10 @@ namespace IPTables.Net.Iptables.Modules.Log
         public int LogLevel = 7;
         public String LogPrefix;
 
+        public LogModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(LogModule other)
         {
             if (ReferenceEquals(null, other)) return false;

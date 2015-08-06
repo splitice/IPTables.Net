@@ -7,7 +7,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.U32
 {
-    struct U32Range
+    struct U32Range: IEquatable<U32Range>
     {
         public uint From;
         public uint To;
@@ -29,11 +29,30 @@ namespace IPTables.Net.Iptables.U32
 
         public static U32Range Parse(ref String expr)
         {
-            Regex r = new Regex(@"^(0x[a-f0-9]+|[0-9]+)(?:\:(0x[a-f0-9]+|[0-9]+))?");
+            Regex r = new Regex(@"^(0x[A-Fa-f0-9]+|[0-9]+)(?:\:(0x[A-Fa-f0-9]+|[0-9]+))?");
             var match = r.Match(expr);
             expr = expr.Substring(match.Length);
             return new U32Range(FlexibleUInt32.Parse(match.Groups[1].Value), 
                 FlexibleUInt32.Parse(String.IsNullOrEmpty(match.Groups[2].Value) ? match.Groups[1].Value : match.Groups[2].Value));
+        }
+
+        public bool Equals(U32Range other)
+        {
+            return From == other.From && To == other.To;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            return obj is U32Range && Equals((U32Range) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((int) From*397) ^ (int) To;
+            }
         }
     }
 }

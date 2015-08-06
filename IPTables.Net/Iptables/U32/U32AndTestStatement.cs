@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IPTables.Net.Iptables.U32
 {
-    class U32AndTestStatement: U32TestStatement
+    class U32AndTestStatement: U32TestStatement, IEquatable<U32AndTestStatement>
     {
         public U32AndTestStatement(U32Location left, List<U32Range> right) : base(left, right)
         {
@@ -16,7 +16,7 @@ namespace IPTables.Net.Iptables.U32
             return "&& " + base.ToString();
         }
 
-        public static U32AndTestStatement Parse(ref string strExpr)
+        public new static U32AndTestStatement Parse(ref string strExpr)
         {
             if (strExpr.Length <= 2 || strExpr[0] != '&' || strExpr[1] != '&')
             {
@@ -27,6 +27,11 @@ namespace IPTables.Net.Iptables.U32
             var baseStatement = U32TestStatement.Parse(ref strExpr);
 
             return new U32AndTestStatement(baseStatement.Left, baseStatement.Right);
+        }
+
+        public bool Equals(U32AndTestStatement other)
+        {
+            return base.Equals(other);
         }
     }
 }

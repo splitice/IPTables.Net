@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using IPTables.Net.Iptables.Helpers;
+using IPTables.Net.Iptables.U32;
 
 namespace IPTables.Net.Iptables.Modules.U32
 {
@@ -9,13 +10,17 @@ namespace IPTables.Net.Iptables.Modules.U32
     {
         private const String OptionBytecode = "--u32";
 
-        public String ByteCode;
+        public U32Expression ByteCode;
+
+        public U32Module(int version) : base(version)
+        {
+        }
 
         public bool Equals(U32Module other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(ByteCode, other.ByteCode);
+            return ByteCode.Equals(other.ByteCode);
         }
 
         int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
@@ -23,7 +28,7 @@ namespace IPTables.Net.Iptables.Modules.U32
             switch (parser.GetCurrentArg())
             {
                 case OptionBytecode:
-                    ByteCode = parser.GetNextArg();
+                    ByteCode = U32Expression.Parse(parser.GetNextArg());
                     return 1;
             }
 
@@ -42,7 +47,7 @@ namespace IPTables.Net.Iptables.Modules.U32
             if (ByteCode != null)
             {
                 sb.Append("--u32 ");
-                sb.Append(ShellHelper.EscapeArguments(ByteCode));
+                sb.Append(ShellHelper.EscapeArguments(ByteCode.ToString()));
             }
 
             return sb.ToString();

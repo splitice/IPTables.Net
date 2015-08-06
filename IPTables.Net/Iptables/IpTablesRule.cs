@@ -241,14 +241,14 @@ namespace IPTables.Net.Iptables
             Chain.Rules.Remove(this);
         }
 
-        internal IIpTablesModuleGod GetModuleForParseInternal(string name, Type moduleType)
+        internal IIpTablesModuleGod GetModuleForParseInternal(string name, Type moduleType, int version)
         {
             if (_moduleData.ContainsKey(name))
             {
                 return _moduleData[name];
             }
 
-            var module = (IIpTablesModuleGod) Activator.CreateInstance(moduleType);
+            var module = (IIpTablesModuleGod)Activator.CreateInstance(moduleType, version);
             _moduleData.Add(name, module);
             return module;
         }
@@ -257,9 +257,10 @@ namespace IPTables.Net.Iptables
         /// Append extra options to an existing rule (via parsing)
         /// </summary>
         /// <param name="rule"></param>
+        /// <param name="version"></param>
         /// <param name="chains"></param>
         /// <param name="createChain"></param>
-        public void AppendToRule(String rule, IpTablesChainSet chains = null, bool createChain = false)
+        public void AppendToRule(String rule, int version, IpTablesChainSet chains = null, bool createChain = false)
         {
             string[] arguments = ArgumentHelper.SplitArguments(rule);
             int count = arguments.Length;
@@ -277,7 +278,7 @@ namespace IPTables.Net.Iptables
                         not = true;
                         continue;
                     }
-                    i += parser.FeedToSkip(i, not);
+                    i += parser.FeedToSkip(i, not, version);
                     not = false;
                 }
 
@@ -309,16 +310,16 @@ namespace IPTables.Net.Iptables
         /// <param name="rule"></param>
         /// <param name="system"></param>
         /// <param name="chains"></param>
+        /// <param name="version"></param>
         /// <param name="defaultTable"></param>
         /// <param name="createChain"></param>
-        /// <param name="ipVersion"></param>
         /// <returns></returns>
         public static IpTablesRule Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
-            String defaultTable = "filter", bool createChain = false)
+            int version = 4, String defaultTable = "filter", bool createChain = false)
         {
             string[] arguments = ArgumentHelper.SplitArguments(rule);
             int count = arguments.Length;
-            var ipRule = new IpTablesRule(system, null);
+            var ipRule = new IpTablesRule(system, new IpTablesChain(null, defaultTable, version, system));
 
             try
             {
@@ -332,7 +333,7 @@ namespace IPTables.Net.Iptables
                         not = true;
                         continue;
                     }
-                    i += parser.FeedToSkip(i, not);
+                    i += parser.FeedToSkip(i, not, version);
                     not = false;
                 }
 
@@ -375,7 +376,7 @@ namespace IPTables.Net.Iptables
         /// <returns></returns>
         public T GetModuleOrLoad<T>(string moduleName) where T : class, IIpTablesModule
         {
-            return GetModuleForParseInternal(moduleName, typeof(T)) as T;
+            return GetModuleForParseInternal(moduleName, typeof(T), Chain.IpVersion) as T;
         }
 
         public void ReplaceRule(IpTablesRule withRule)

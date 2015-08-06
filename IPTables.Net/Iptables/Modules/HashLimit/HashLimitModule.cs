@@ -36,11 +36,31 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         public int HtableExpire = 600;
         public int HtableGcInterval = 600;
 
+        public HashLimitModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(HashLimitModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Burst == other.Burst && string.Equals(Name, other.Name) && LimitRate == other.LimitRate && Unit == other.Unit && LimitMode == other.LimitMode && string.Equals(Mode, other.Mode) && SrcMask == other.SrcMask && DstMask == other.DstMask && HtableSize == other.HtableSize && HtableMax == other.HtableMax && HtableExpire == other.HtableExpire && HtableGcInterval == other.HtableGcInterval;
+            return Burst == other.Burst && string.Equals(Name, other.Name) && CompareRate((UInt32)LimitRate, (UInt32)other.LimitRate) && Unit == other.Unit && LimitMode == other.LimitMode && string.Equals(Mode, other.Mode) && SrcMask == other.SrcMask && DstMask == other.DstMask && HtableSize == other.HtableSize && HtableMax == other.HtableMax && HtableExpire == other.HtableExpire && HtableGcInterval == other.HtableGcInterval;
+        }
+
+        public static bool CompareRate(UInt32 a, UInt32 b)
+        {
+            if (a >= 5000)
+            {
+                a = 10000;
+            }
+            if (b >= 5000)
+            {
+                b = 10000;
+            }
+            a = (a/10000);
+            b = (b/10000);
+
+            return a == b;
         }
 
         public bool NeedsLoading

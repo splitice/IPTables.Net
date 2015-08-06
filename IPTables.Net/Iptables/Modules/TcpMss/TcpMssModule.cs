@@ -12,6 +12,10 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
         public int SetMss = 0;
         public bool ClampMssToPmtu = false;
 
+        public TcpMssModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(TcpMssModule other)
         {
             if (ReferenceEquals(null, other)) return false;

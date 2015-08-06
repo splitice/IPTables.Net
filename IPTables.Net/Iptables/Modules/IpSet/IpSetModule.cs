@@ -39,6 +39,10 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         private int _bytesValue;
         public MatchMode BytesMatch = MatchMode.None;
 
+        public IpSetModule(int version) : base(version)
+        {
+        }
+
         public int BytesValue
         {
             get { return _bytesValue; }

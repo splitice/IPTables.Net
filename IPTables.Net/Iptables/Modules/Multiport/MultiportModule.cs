@@ -18,6 +18,10 @@ namespace IPTables.Net.Iptables.Modules.Multiport
         public ValueOrNot<IEnumerable<PortOrRange>> Ports = new ValueOrNot<IEnumerable<PortOrRange>>();
         public ValueOrNot<IEnumerable<PortOrRange>> SourcePorts = new ValueOrNot<IEnumerable<PortOrRange>>();
 
+        public MultiportModule(int version) : base(version)
+        {
+        }
+
         public bool Equals(MultiportModule other)
         {
             if (ReferenceEquals(null, other)) return false;

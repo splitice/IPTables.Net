@@ -82,7 +82,7 @@ namespace IPTables.Net.Iptables.Modules
             }
         }
 
-        public ModuleEntry GetModule(String module, bool target = false, bool polyfill = true)
+        public ModuleEntry GetModule(String module, int version, bool target = false, bool polyfill = true)
         {
             if (!_modules.ContainsKey(module))
             {
