@@ -157,15 +157,24 @@ namespace IPTables.Net.Iptables
 
             foreach (var e in _moduleData)
             {
-                if (command.Length != 0)
-                {
-                    command += " ";
-                }
                 if (e.Value.NeedsLoading)
                 {
-                    command += "-m " + e.Key + " ";
+                    if (command.Length != 0)
+                    {
+                        command += " ";
+                    }
+
+                    command += "-m " + e.Key;
                 }
-                command += e.Value.GetRuleString();
+                var arguments = e.Value.GetRuleString();
+                if (arguments.Length != 0)
+                {
+                    if (command.Length != 0)
+                    {
+                        command += " ";
+                    }
+                    command += arguments;
+                }
             }
             return command;
         }
@@ -391,5 +400,10 @@ namespace IPTables.Net.Iptables
         }
 
         #endregion
+
+        internal void LoadModule(ModuleEntry entry)
+        {
+            GetModuleForParseInternal(entry.Name, entry.Module, Chain.IpVersion);
+        }
     }
 }

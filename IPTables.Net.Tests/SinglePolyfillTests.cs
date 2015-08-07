@@ -18,6 +18,18 @@ namespace IPTables.Net.Tests
             Assert.AreEqual(rule, irule.GetActionCommand());
         }
 
+
+        [Test]
+        public void TestPolyfillParseMultiple()
+        {
+            String rule = "-A INPUT -m unknown --unknown -m unknown2";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
+
+            Assert.AreEqual(rule, irule.GetActionCommand());
+        }
+
         [Test]
         public void TestPolyfillParseAdditionalOptionsAfter()
         {

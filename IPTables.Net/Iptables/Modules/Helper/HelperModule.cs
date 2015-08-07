@@ -43,9 +43,9 @@ namespace IPTables.Net.Iptables.Modules.Helper
             return Helper.ToOption(OptionHelperLong);
         }
 
-        public static IEnumerable<String> GetOptions()
+        public static HashSet<String> GetOptions()
         {
-            var options = new List<string>
+            var options = new HashSet<string>
             {
                 OptionHelperLong
             };

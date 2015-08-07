@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace IPTables.Net.Iptables.Modules
 {
@@ -21,6 +22,9 @@ namespace IPTables.Net.Iptables.Modules
                 Preloaded = preloaded,
                 IsTarget = false
             };
+
+            Debug.Assert(entry.Options != null, "Options null for " + moduleName);
+
             return entry;
         }
 
@@ -35,6 +39,9 @@ namespace IPTables.Net.Iptables.Modules
                 Preloaded = preloaded,
                 IsTarget = true
             };
+
+            Debug.Assert(entry.Options != null, "Options null for "+moduleName);
+
             return entry;
         }
 

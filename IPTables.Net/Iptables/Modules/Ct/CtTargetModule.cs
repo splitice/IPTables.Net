@@ -53,9 +53,9 @@ namespace IPTables.Net.Iptables.Modules.Ct
             return sb.ToString();
         }
 
-        public static IEnumerable<String> GetOptions()
+        public static HashSet<String> GetOptions()
         {
-            var options = new List<string>
+            var options = new HashSet<string>
             {
                 OptionHelperLong
             };

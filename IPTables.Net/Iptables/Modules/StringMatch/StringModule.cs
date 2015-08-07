@@ -130,9 +130,9 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
             return ret;
         }
 
-        public static IEnumerable<string> GetOptions()
+        public static HashSet<String> GetOptions()
         {
-            var options = new List<string>
+            var options = new HashSet<string>
             {
                 OptionAlgorithmLong,
                 OptionFromLong,

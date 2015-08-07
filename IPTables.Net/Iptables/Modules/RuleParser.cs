@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
@@ -17,6 +18,7 @@ namespace IPTables.Net.Iptables.Modules
 
         private String _chainName;
         private String _tableName;
+        private ModuleEntry? _polyfill = null;
 
         public RuleParser(string[] arguments, IpTablesRule ipRule, IpTablesChainSet chains, String defaultTable)
         {
@@ -95,33 +97,28 @@ namespace IPTables.Net.Iptables.Modules
             }
             foreach (ModuleEntry m in _parsers)
             {
-                if (!m.Polyfill)
-                {
-                    if (m.Options.Contains(option))
-                    {
-                        IIpTablesModuleGod module = _ipRule.GetModuleForParseInternal(m.Name, m.Module, version);
-                        return module.Feed(this, not);
-                    }
-                }
-            }
-            foreach (ModuleEntry m in _parsers.Reverse<ModuleEntry>())
-            {
-                if (m.Polyfill)
+                if (m.Options.Contains(option))
                 {
                     IIpTablesModuleGod module = _ipRule.GetModuleForParseInternal(m.Name, m.Module, version);
                     return module.Feed(this, not);
                 }
             }
 
-            throw new IpTablesNetException("Unknown option: " + option);
+            if (_polyfill != null)
+            {
+                IIpTablesModuleGod module = _ipRule.GetModuleForParseInternal(_polyfill.Value.Name, _polyfill.Value.Module, version);
+                return module.Feed(this, not);
+            }
+
+            throw new IpTablesNetException("Unknown option: \"" + option + "\"");
         }
 
-        private void LoadParserModule(string getNextArg, bool isTarget = false)
+        private void LoadParserModule(string name, bool isTarget = false)
         {
             ModuleEntry entry;
             if (isTarget)
             {
-                ModuleEntry? entryOrNull = _moduleFactory.GetModuleOrDefault(getNextArg, true);
+                ModuleEntry? entryOrNull = _moduleFactory.GetModuleOrDefault(name, true);
 
                 //Check if this target is loadable target
                 if (!entryOrNull.HasValue)
@@ -131,9 +128,17 @@ namespace IPTables.Net.Iptables.Modules
             }
             else
             {
-                entry = _moduleFactory.GetModule(getNextArg, _ipRule.Chain.IpVersion);
+                entry = _moduleFactory.GetModule(name, _ipRule.Chain.IpVersion);
+                if (entry.Polyfill)
+                {
+                    _polyfill = entry;
+                }
+                _ipRule.LoadModule(entry);
             }
-            _parsers.Add(entry);
+            if (!entry.Polyfill)
+            {
+                _parsers.Add(entry);
+            }
         }
     }
 }

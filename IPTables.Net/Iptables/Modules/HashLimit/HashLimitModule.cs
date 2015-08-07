@@ -236,9 +236,9 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             throw new IpTablesNetException("Invalid hashlimit unit");
         }
 
-        public static IEnumerable<String> GetOptions()
+        public static HashSet<String> GetOptions()
         {
-            var options = new List<string>
+            var options = new HashSet<string>
             {
                 OptionHashLimit,
                 OptionHashLimitAbove,

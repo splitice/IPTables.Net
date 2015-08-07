@@ -127,9 +127,9 @@ namespace IPTables.Net.Iptables.Modules.Limit
             throw new IpTablesNetException("Invalid limit unit");
         }
 
-        public static IEnumerable<String> GetOptions()
+        public static HashSet<String> GetOptions()
         {
-            var options = new List<string>
+            var options = new HashSet<string>
             {
                 OptionLimit,
                 OptionLimitBurst

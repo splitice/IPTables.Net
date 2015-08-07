@@ -66,8 +66,7 @@ namespace IPTables.Net.Iptables.Modules
             SynProxyModule.GetModuleEntry,
             IpSetModule.GetModuleEntry,
             BpfModule.GetModuleEntry,
-            U32Module.GetModuleEntry,
-            PolyfillModule.GetModuleEntry
+            U32Module.GetModuleEntry
         };
 
         private readonly Dictionary<String, ModuleEntry> _modules = new Dictionary<string, ModuleEntry>();
@@ -88,13 +87,9 @@ namespace IPTables.Net.Iptables.Modules
             {
                 if (polyfill)
                 {
-                    IEnumerable<ModuleEntry> pm = _modules.Select(a => a.Value).Where(a => a.Polyfill);
-                    if (pm.Count() != 0)
-                    {
-                        ModuleEntry moduleEntry = pm.FirstOrDefault();
-                        moduleEntry.Name = module;
-                        return moduleEntry;
-                    }
+                    ModuleEntry moduleEntry = PolyfillModule.GetModuleEntry();
+                    moduleEntry.Name = module;
+                    return moduleEntry;
                 }
                 throw new IpTablesNetException(String.Format("The factory could not find module: {0}", module));
             }

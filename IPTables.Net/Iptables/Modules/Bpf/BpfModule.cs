@@ -52,9 +52,9 @@ namespace IPTables.Net.Iptables.Modules.Bpf
             return sb.ToString();
         }
 
-        public static IEnumerable<String> GetOptions()
+        public static HashSet<String> GetOptions()
         {
-            var options = new List<string>
+            var options = new HashSet<string>
             {
                 OptionBytecode
             };

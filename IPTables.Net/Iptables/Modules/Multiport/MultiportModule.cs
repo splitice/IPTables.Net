@@ -142,9 +142,9 @@ namespace IPTables.Net.Iptables.Modules.Multiport
             return ret;
         }
 
-        public static IEnumerable<String> GetOptions()
+        public static HashSet<String> GetOptions()
         {
-            var options = new List<string>
+            var options = new HashSet<string>
             {
                 OptionDestinationPorts,
                 OptionDestinationPortsLong,
