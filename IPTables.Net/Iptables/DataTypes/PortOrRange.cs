@@ -2,7 +2,7 @@
 
 namespace IPTables.Net.Iptables.DataTypes
 {
-    public struct PortOrRange
+    public struct PortOrRange: IEquatable<PortOrRange>
     {
         public static PortOrRange Any = new PortOrRange(0, 0, ':');
         private readonly uint _lowerPort;
@@ -56,6 +56,25 @@ namespace IPTables.Net.Iptables.DataTypes
             }
 
             return new PortOrRange(uint.Parse(split[0]), uint.Parse(split[1]), splitChar);
+        }
+
+        public bool Equals(PortOrRange other)
+        {
+            return _lowerPort == other._lowerPort && _upperPort == other._upperPort;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            return obj is PortOrRange && Equals((PortOrRange) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((int) _lowerPort*397) ^ (int) _upperPort;
+            }
         }
     }
 }

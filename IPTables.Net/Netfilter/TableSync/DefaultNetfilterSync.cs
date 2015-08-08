@@ -74,17 +74,23 @@ namespace IPTables.Net.Netfilter.TableSync
                     //No need to make any changes
                     i++;
                 }
-                else if (_ruleComparerForUpdate(cR, withRule))
+                else 
                 {
-                    //Replace this rule
-                    cR.ReplaceRule(withRule);
-                    i++;
-                }
-                else
-                {
-                    if (_shouldDelete(cR))
+                    //Debug:
+                    //Console.WriteLine("A:"+withRule.ToString());
+                    //Console.WriteLine("B:"+cR.ToString());
+                    if (_ruleComparerForUpdate(cR, withRule))
                     {
-                        cR.DeleteRule();
+                        //Replace this rule
+                        cR.ReplaceRule(withRule);
+                        i++;
+                    }
+                    else
+                    {
+                        if (_shouldDelete(cR))
+                        {
+                            cR.DeleteRule();
+                        }
                     }
                 }
             }
