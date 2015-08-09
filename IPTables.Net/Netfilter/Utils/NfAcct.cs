@@ -85,6 +85,12 @@ namespace IPTables.Net.Netfilter.Utils
             process.WaitForExit();
             var output = process.StandardOutput.ReadToEnd();
 
+            //No XML returned for empty
+            if (output.Trim().Length == 0)
+            {
+                return new List<NfAcctUsage>();
+            }
+
             var doc = XDocument.Parse(output);
             var usages = from node in doc.Descendants("obj")
                          select new NfAcctUsage(node.Descendants("name").First().Value, ulong.Parse(node.Descendants("pkts").First().Value), ulong.Parse(node.Descendants("bytes").First().Value));
