@@ -109,3 +109,5 @@ UpgradeLog*.XML
 
 ipthelpertest/
 *.nupkg
+
+Testing.VisualState.xml
