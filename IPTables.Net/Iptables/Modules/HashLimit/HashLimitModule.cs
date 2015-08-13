@@ -7,7 +7,7 @@ using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.HashLimit
 {
-    public class HashLimitModule : ModuleBase, IIpTablesModuleGod, IEquatable<HashLimitModule>
+    public class HashLimitModule : ModuleBase, IIpTablesModule, IEquatable<HashLimitModule>
     {
         private const String OptionHashLimit = "--hashlimit";
         private const String OptionHashLimitUpto = "--hashlimit-upto";
@@ -68,7 +68,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             get { return true; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             String current = parser.GetCurrentArg();
             switch (current)

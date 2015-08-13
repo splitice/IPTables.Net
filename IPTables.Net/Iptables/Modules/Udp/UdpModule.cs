@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Udp
 {
-    public class UdpModule : ModuleBase, IIpTablesModuleGod, IEquatable<UdpModule>
+    public class UdpModule : ModuleBase, IIpTablesModule, IEquatable<UdpModule>
     {
         private const String OptionSourcePortLong = "--source-port";
         private const String OptionSourcePortShort = "--sport";
@@ -31,7 +31,7 @@ namespace IPTables.Net.Iptables.Modules.Udp
             get { return true; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

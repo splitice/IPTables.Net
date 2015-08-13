@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.Nfacct
 {
-    public class NfacctModule : ModuleBase, IEquatable<NfacctModule>, IIpTablesModuleGod
+    public class NfacctModule : ModuleBase, IEquatable<NfacctModule>, IIpTablesModule
     {
         private const String OptionNameLong = "--nfacct-name";
 
@@ -22,7 +22,7 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
             return string.Equals(Name, other.Name);
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

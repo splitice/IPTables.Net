@@ -7,7 +7,7 @@ using IPTables.Net.Iptables.Modules.Dnat;
 
 namespace IPTables.Net.Iptables.Modules.SynProxy
 {
-    public class SynProxyModule : ModuleBase, IIpTablesModuleGod, IEquatable<SynProxyModule>
+    public class SynProxyModule : ModuleBase, IIpTablesModule, IEquatable<SynProxyModule>
     {
         private const String OptionMss = "--mss";
         private const String OptionWscale = "--wscale";
@@ -36,7 +36,7 @@ namespace IPTables.Net.Iptables.Modules.SynProxy
             get { return false; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

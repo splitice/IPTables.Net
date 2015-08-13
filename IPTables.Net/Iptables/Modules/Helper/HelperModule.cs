@@ -4,7 +4,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Helper
 {
-    public class HelperModule : ModuleBase, IEquatable<HelperModule>, IIpTablesModuleGod
+    public class HelperModule : ModuleBase, IEquatable<HelperModule>, IIpTablesModule
     {
         private const String OptionHelperLong = "--helper";
 
@@ -21,7 +21,7 @@ namespace IPTables.Net.Iptables.Modules.Helper
             return Helper.Equals(other.Helper);
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

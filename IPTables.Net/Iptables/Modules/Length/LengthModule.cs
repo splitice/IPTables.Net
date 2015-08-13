@@ -7,7 +7,7 @@ using IPTables.Net.Iptables.Modules.Comment;
 
 namespace IPTables.Net.Iptables.Modules.Length
 {
-    public class LengthModule : ModuleBase, IEquatable<LengthModule>, IIpTablesModuleGod
+    public class LengthModule : ModuleBase, IEquatable<LengthModule>, IIpTablesModule
     {
         private const String OptionLengthLong = "--length";
 
@@ -24,7 +24,7 @@ namespace IPTables.Net.Iptables.Modules.Length
             return Length.Equals(other.Length);
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

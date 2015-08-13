@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.U32;
 
 namespace IPTables.Net.Iptables.Modules.U32
 {
-    public class U32Module : ModuleBase, IEquatable<U32Module>, IIpTablesModuleGod
+    public class U32Module : ModuleBase, IEquatable<U32Module>, IIpTablesModule
     {
         private const String OptionBytecode = "--u32";
 
@@ -23,7 +23,7 @@ namespace IPTables.Net.Iptables.Modules.U32
             return ByteCode.Equals(other.ByteCode);
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Tcp
 {
-    public class TcpModule : ModuleBase, IIpTablesModuleGod, IEquatable<TcpModule>
+    public class TcpModule : ModuleBase, IIpTablesModule, IEquatable<TcpModule>
     {
         private const String OptionSourcePortLong = "--source-port";
         private const String OptionSourcePortShort = "--sport";
@@ -38,7 +38,7 @@ namespace IPTables.Net.Iptables.Modules.Tcp
             get { return true; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

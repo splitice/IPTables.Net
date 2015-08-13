@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IPTables.Net.Iptables.Modules.Connlimit
 {
-    public class ConnlimitModule : ModuleBase, IIpTablesModuleGod, IEquatable<ConnlimitModule>
+    public class ConnlimitModule : ModuleBase, IIpTablesModule, IEquatable<ConnlimitModule>
     {
         public enum AddrMode
         {
@@ -40,7 +40,7 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
             get { return true; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

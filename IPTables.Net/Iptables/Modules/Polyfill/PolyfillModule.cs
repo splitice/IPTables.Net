@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.Polyfill
 {
-    public class PolyfillModule : ModuleBase, IIpTablesModuleGod, IEquatable<PolyfillModule>
+    public class PolyfillModule : ModuleBase, IIpTablesModule, IEquatable<PolyfillModule>
     {
         private readonly Dictionary<String, List<String>> _data = new Dictionary<String, List<String>>();
 
@@ -27,7 +27,7 @@ namespace IPTables.Net.Iptables.Modules.Polyfill
             get { return true; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             String current = parser.GetCurrentArg();
             _data.Add(current, new List<string>());

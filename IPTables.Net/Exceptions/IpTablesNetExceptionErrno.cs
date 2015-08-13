@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IPTables.Net.Exceptions
 {
-    class IpTablesNetExceptionErrno: IpTablesNetException
+    public class IpTablesNetExceptionErrno : IpTablesNetException
     {
         private int _errno;
         public IpTablesNetExceptionErrno(String message, int errno): base(message)

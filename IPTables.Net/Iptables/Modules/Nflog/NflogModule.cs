@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.Nflog
 {
-    public class NflogModule : ModuleBase, IEquatable<NflogModule>, IIpTablesModuleGod
+    public class NflogModule : ModuleBase, IEquatable<NflogModule>, IIpTablesModule
     {
         private const String OptionPrefixLong = "--nflog-prefix";
         private const String OptionGroupLong = "--nflog-group";
@@ -23,7 +23,7 @@ namespace IPTables.Net.Iptables.Modules.Nflog
         {
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

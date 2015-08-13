@@ -17,7 +17,7 @@ namespace IPTables.Net.Iptables
         /// <summary>
         /// Data stored for each IPTables module / extension (including "core")
         /// </summary>
-        private readonly OrderedDictionary<String, IIpTablesModuleGod> _moduleData = new OrderedDictionary<String, IIpTablesModuleGod>();
+        private readonly OrderedDictionary<String, IIpTablesModule> _moduleData = new OrderedDictionary<String, IIpTablesModule>();
 
         /// <summary>
         /// The System hosting this IPTables rule
@@ -57,7 +57,7 @@ namespace IPTables.Net.Iptables
             Chain = rule.Chain;
             foreach (var module in rule.ModuleDataInternal)
             {
-                _moduleData.Add(module.Key,module.Value.Clone() as IIpTablesModuleGod);
+                _moduleData.Add(module.Key,module.Value.Clone() as IIpTablesModule);
             }
         }
         #endregion
@@ -101,7 +101,7 @@ namespace IPTables.Net.Iptables
         /// <summary>
         /// The parameters for all modules used in the rule (internal)
         /// </summary>
-        internal OrderedDictionary<String, IIpTablesModuleGod> ModuleDataInternal
+        internal OrderedDictionary<String, IIpTablesModule> ModuleDataInternal
         {
             get { return _moduleData; }
         }
@@ -250,14 +250,14 @@ namespace IPTables.Net.Iptables
             Chain.Rules.Remove(this);
         }
 
-        internal IIpTablesModuleGod GetModuleForParseInternal(string name, Type moduleType, int version)
+        internal IIpTablesModule GetModuleForParseInternal(string name, Type moduleType, int version)
         {
             if (_moduleData.ContainsKey(name))
             {
                 return _moduleData[name];
             }
 
-            var module = (IIpTablesModuleGod)Activator.CreateInstance(moduleType, version);
+            var module = (IIpTablesModule)Activator.CreateInstance(moduleType, version);
             _moduleData.Add(name, module);
             return module;
         }

@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.Comment
 {
-    public class CommentModule : ModuleBase, IEquatable<CommentModule>, IIpTablesModuleGod
+    public class CommentModule : ModuleBase, IEquatable<CommentModule>, IIpTablesModule
     {
         private const String OptionCommentLong = "--comment";
 
@@ -22,7 +22,7 @@ namespace IPTables.Net.Iptables.Modules.Comment
             return string.Equals(CommentText, other.CommentText);
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

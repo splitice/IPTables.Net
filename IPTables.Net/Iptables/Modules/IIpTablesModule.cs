@@ -6,5 +6,6 @@ namespace IPTables.Net.Iptables.Modules
     {
         bool NeedsLoading { get; }
         String GetRuleString();
+        int Feed(RuleParser parser, bool not);
     }
 }

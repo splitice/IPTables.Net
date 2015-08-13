@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Core
 {
-    public class CoreModule : ModuleBase, IIpTablesModuleGod, IEquatable<CoreModule>
+    public class CoreModule : ModuleBase, IIpTablesModule, IEquatable<CoreModule>
     {
         private const String OptionProtocolLong = "--protocol";
         private const String OptionProtocolShort = "-p";
@@ -82,7 +82,7 @@ namespace IPTables.Net.Iptables.Modules.Core
             get { return false; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

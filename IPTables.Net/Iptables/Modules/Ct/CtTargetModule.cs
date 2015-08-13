@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Ct
 {
-    public class CtTargetModule : ModuleBase, IIpTablesModuleGod, IEquatable<CtTargetModule>
+    public class CtTargetModule : ModuleBase, IIpTablesModule, IEquatable<CtTargetModule>
     {
         private const String OptionHelperLong = "--helper";
 
@@ -27,7 +27,7 @@ namespace IPTables.Net.Iptables.Modules.Ct
             get { return false; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             int bits;
             switch (parser.GetCurrentArg())

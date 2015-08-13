@@ -7,7 +7,7 @@ using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    internal class RuleParser
+    public class RuleParser
     {
         private readonly string[] _arguments;
         private readonly IpTablesChainSet _chains;
@@ -99,14 +99,14 @@ namespace IPTables.Net.Iptables.Modules
             {
                 if (m.Options.Contains(option))
                 {
-                    IIpTablesModuleGod module = _ipRule.GetModuleForParseInternal(m.Name, m.Module, version);
+                    IIpTablesModule module = _ipRule.GetModuleForParseInternal(m.Name, m.Module, version);
                     return module.Feed(this, not);
                 }
             }
 
             if (_polyfill != null)
             {
-                IIpTablesModuleGod module = _ipRule.GetModuleForParseInternal(_polyfill.Value.Name, _polyfill.Value.Module, version);
+                IIpTablesModule module = _ipRule.GetModuleForParseInternal(_polyfill.Value.Name, _polyfill.Value.Module, version);
                 return module.Feed(this, not);
             }
 

@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Recent
 {
-    public class RecentModule : ModuleBase, IIpTablesModuleGod, IEquatable<RecentModule>
+    public class RecentModule : ModuleBase, IIpTablesModule, IEquatable<RecentModule>
     {
         private const String OptionNameLong = "--name";
         private const String OptionSetLong = "--set";
@@ -60,7 +60,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
             get { return true; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

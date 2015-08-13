@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.Nfqueue
 {
-    public class NfqueueModule : ModuleBase, IEquatable<NfqueueModule>, IIpTablesModuleGod
+    public class NfqueueModule : ModuleBase, IEquatable<NfqueueModule>, IIpTablesModule
     {
         private const String OptionQueueNumber = "--queue-num";
         private const String OptionQueueBypass = "--queue-bypass";
@@ -19,7 +19,7 @@ namespace IPTables.Net.Iptables.Modules.Nfqueue
         {
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

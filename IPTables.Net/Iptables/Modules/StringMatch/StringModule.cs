@@ -7,7 +7,7 @@ using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.StringMatch
 {
-    public class StringModule : ModuleBase, IEquatable<StringModule>, IIpTablesModuleGod
+    public class StringModule : ModuleBase, IEquatable<StringModule>, IIpTablesModule
     {
         public enum Strategy
         {
@@ -55,7 +55,7 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
             Notation = NotationTypes.Hex;
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Limit
 {
-    public class LimitModule : ModuleBase, IIpTablesModuleGod, IEquatable<LimitModule>
+    public class LimitModule : ModuleBase, IIpTablesModule, IEquatable<LimitModule>
     {
         private const String OptionLimit = "--limit";
         private const String OptionLimitBurst = "--limit-burst";
@@ -40,7 +40,7 @@ namespace IPTables.Net.Iptables.Modules.Limit
             get { return true; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

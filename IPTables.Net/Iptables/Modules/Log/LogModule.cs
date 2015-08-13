@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.Log
 {
-    public class LogModule : ModuleBase, IEquatable<LogModule>, IIpTablesModuleGod
+    public class LogModule : ModuleBase, IEquatable<LogModule>, IIpTablesModule
     {
         private const String OptionPrefixLong = "--log-prefix";
         private const String OptionLevelLong = "--log-level";
@@ -26,7 +26,7 @@ namespace IPTables.Net.Iptables.Modules.Log
         }
 
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IPTables.Net.Iptables.Modules.Core
 {
-    internal class RejectTargetModule : ModuleBase, IIpTablesModuleGod, IEquatable<RejectTargetModule>
+    internal class RejectTargetModule : ModuleBase, IIpTablesModule, IEquatable<RejectTargetModule>
     {
         private const String OptionRejectWith = "--reject-with";
 
@@ -26,7 +26,7 @@ namespace IPTables.Net.Iptables.Modules.Core
             get { return false; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

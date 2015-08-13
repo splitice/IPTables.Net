@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IPTables.Net.Iptables.Modules.TcpMss
 {
-    public class TcpMssModule : ModuleBase, IIpTablesModuleGod, IEquatable<TcpMssModule>
+    public class TcpMssModule : ModuleBase, IIpTablesModule, IEquatable<TcpMssModule>
     {
         private const String OptionSetMss= "--set-mss";
         private const String OptionClampMssToPmtuLong = "--clamp-mss-to-pmtu";
@@ -28,7 +28,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
             get { return false; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

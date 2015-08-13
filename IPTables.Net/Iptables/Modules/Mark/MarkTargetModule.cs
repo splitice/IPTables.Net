@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Mark
 {
-    public class MarkTargetModule : ModuleBase, IIpTablesModuleGod, IEquatable<MarkTargetModule>
+    public class MarkTargetModule : ModuleBase, IIpTablesModule, IEquatable<MarkTargetModule>
     {
         private const String OptionSetMarkLong = "--set-mark";
         private const String OptionSetXMarkLong = "--set-xmark";
@@ -66,7 +66,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
             get { return false; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             int bits;
             switch (parser.GetCurrentArg())

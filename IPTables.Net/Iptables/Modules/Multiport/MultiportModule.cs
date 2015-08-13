@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Multiport
 {
-    public class MultiportModule : ModuleBase, IIpTablesModuleGod, IEquatable<MultiportModule>
+    public class MultiportModule : ModuleBase, IIpTablesModule, IEquatable<MultiportModule>
     {
         private const String OptionPorts = "--ports";
         private const String OptionDestinationPorts = "--dports";
@@ -76,7 +76,7 @@ namespace IPTables.Net.Iptables.Modules.Multiport
             get { return true; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

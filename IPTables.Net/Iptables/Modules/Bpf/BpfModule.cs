@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.Bpf
 {
-    public class BpfModule : ModuleBase, IEquatable<BpfModule>, IIpTablesModuleGod
+    public class BpfModule : ModuleBase, IEquatable<BpfModule>, IIpTablesModule
     {
         private const String OptionBytecode = "--bytecode";
 
@@ -22,7 +22,7 @@ namespace IPTables.Net.Iptables.Modules.Bpf
             return string.Equals(ByteCode, other.ByteCode);
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

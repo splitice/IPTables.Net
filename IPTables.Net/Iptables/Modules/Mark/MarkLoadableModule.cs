@@ -5,7 +5,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Mark
 {
-    public class MarkLoadableModule : ModuleBase, IIpTablesModuleGod, IEquatable<MarkLoadableModule>
+    public class MarkLoadableModule : ModuleBase, IIpTablesModule, IEquatable<MarkLoadableModule>
     {
         private const String OptionMarkLong = "--mark";
 
@@ -28,7 +28,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
             get { return true; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Dnat
 {
-    public class DnatModule : ModuleBase, IIpTablesModuleGod, IEquatable<DnatModule>
+    public class DnatModule : ModuleBase, IIpTablesModule, IEquatable<DnatModule>
     {
         private const String OptionToDestination = "--to-destination";
         private const String OptionRandom = "--random";
@@ -33,7 +33,7 @@ namespace IPTables.Net.Iptables.Modules.Dnat
             get { return false; }
         }
 
-        int IIpTablesModuleInternal.Feed(RuleParser parser, bool not)
+        public int Feed(RuleParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {
