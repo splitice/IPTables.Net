@@ -33,9 +33,9 @@ using IPTables.Net.Iptables.Modules.Udp;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    internal class ModuleFactory
+    public class ModuleRegistry
     {
-        public static List<Func<ModuleEntry>> AllModules = new List<Func<ModuleEntry>>
+        public static List<Func<ModuleEntry>> IncludedModules = new List<Func<ModuleEntry>>
         {
             CoreModule.GetModuleEntry,
             RejectTargetModule.GetModuleEntry,
@@ -70,15 +70,24 @@ namespace IPTables.Net.Iptables.Modules
         };
 
         private readonly Dictionary<String, ModuleEntry> _modules = new Dictionary<string, ModuleEntry>();
+        private static ModuleRegistry _instance = new ModuleRegistry();
 
-        public ModuleFactory()
+        internal ModuleRegistry()
         {
-            foreach (var mFunc in AllModules)
+            foreach (var mFunc in IncludedModules)
             {
-                ModuleEntry m = mFunc();
-
-                _modules.Add(m.Name, m);
+                RegisterModule(mFunc());
             }
+        }
+
+        public void RegisterModule(ModuleEntry entry)
+        {
+            _modules.Add(entry.Name, entry);
+        }
+
+        public static ModuleRegistry Instance
+        {
+            get { return _instance; }
         }
 
         public ModuleEntry GetModule(String module, int version, bool target = false, bool polyfill = true)

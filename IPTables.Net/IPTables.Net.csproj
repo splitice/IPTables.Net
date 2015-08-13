@@ -170,7 +170,7 @@
     <Compile Include="Iptables\Modules\Multiport\MultiportModule.cs" />
     <Compile Include="Iptables\Modules\Udp\UdpModule.cs" />
     <Compile Include="Iptables\Modules\ModuleEntry.cs" />
-    <Compile Include="Iptables\Modules\ModuleFactory.cs" />
+    <Compile Include="Iptables\Modules\ModuleRegistry.cs" />
     <Compile Include="Iptables\Modules\RuleParser.cs" />
     <Compile Include="Iptables\Modules\Snat\SnatModule.cs" />
     <Compile Include="Iptables\Modules\Dnat\DnatModule.cs" />

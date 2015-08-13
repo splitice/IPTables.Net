@@ -12,7 +12,7 @@ namespace IPTables.Net.Iptables.Modules
         private readonly string[] _arguments;
         private readonly IpTablesChainSet _chains;
         private readonly IpTablesRule _ipRule;
-        private readonly ModuleFactory _moduleFactory = new ModuleFactory();
+        private readonly ModuleRegistry _moduleRegistry = ModuleRegistry.Instance;
         private readonly List<ModuleEntry> _parsers = new List<ModuleEntry>();
         public int Position = 0;
 
@@ -24,7 +24,7 @@ namespace IPTables.Net.Iptables.Modules
         {
             _arguments = arguments;
             _ipRule = ipRule;
-            _parsers.AddRange(_moduleFactory.GetPreloadModules());
+            _parsers.AddRange(_moduleRegistry.GetPreloadModules());
             _chains = chains;
             _tableName = defaultTable;
         }
@@ -118,7 +118,7 @@ namespace IPTables.Net.Iptables.Modules
             ModuleEntry entry;
             if (isTarget)
             {
-                ModuleEntry? entryOrNull = _moduleFactory.GetModuleOrDefault(name, true);
+                ModuleEntry? entryOrNull = _moduleRegistry.GetModuleOrDefault(name, true);
 
                 //Check if this target is loadable target
                 if (!entryOrNull.HasValue)
@@ -128,7 +128,7 @@ namespace IPTables.Net.Iptables.Modules
             }
             else
             {
-                entry = _moduleFactory.GetModule(name, _ipRule.Chain.IpVersion);
+                entry = _moduleRegistry.GetModule(name, _ipRule.Chain.IpVersion);
                 if (entry.Polyfill)
                 {
                     _polyfill = entry;
