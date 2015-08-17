@@ -33,6 +33,11 @@ namespace IPTables.Net.Iptables
             _ipVersion = ipVersion;
         }
 
+        public bool IsEmpty
+        {
+            get { return !_rules.Any(); }
+        }
+
         public String Name
         {
             get { return _name; }

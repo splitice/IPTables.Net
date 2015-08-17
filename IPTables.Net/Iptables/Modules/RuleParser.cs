@@ -34,9 +34,9 @@ namespace IPTables.Net.Iptables.Modules
             get { return _chainName; }
         }
 
-        public IpTablesChain GetChain(NetfilterSystem system)
+        public IpTablesChain GetChainFromSet()
         {
-            return _chains.GetChainOrAdd(_chainName, _tableName, system);
+            return _chains.GetChainOrDefault(_chainName, _tableName);
         }
 
         public String GetChainName()
@@ -44,9 +44,16 @@ namespace IPTables.Net.Iptables.Modules
             return _chainName;
         }
 
-        public IpTablesChain CreateNewChain(NetfilterSystem system, int ipVersion)
+        public IpTablesChain GetNewChain(NetfilterSystem system, int ipVersion)
         {
             return new IpTablesChain(_tableName, _chainName, ipVersion, system);
+        }
+
+        public IpTablesChain CreateChain(NetfilterSystem system, int ipVersion)
+        {
+            var chain = GetNewChain(system, ipVersion);
+            _chains.AddChain(chain);
+            return chain;
         }
 
         public string GetCurrentArg()

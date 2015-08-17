@@ -13,6 +13,13 @@ namespace IPTables.Net.Iptables
     /// </summary>
     public class IpTablesRule : IEquatable<IpTablesRule>, INetfilterRule
     {
+        public enum ChainCreateMode
+        {
+            CreateNewChainIfNeeded,
+            DontCreateErrorInstead,
+            ReturnNewChain
+        }
+
         #region Fields
         /// <summary>
         /// Data stored for each IPTables module / extension (including "core")
@@ -294,14 +301,14 @@ namespace IPTables.Net.Iptables
                 //Only replace the chain if a new one has been supplied
                 if (parser.GetChainName() != null)
                 {
-                    var chain = parser.GetChain(_system);
+                    var chain = parser.GetChainFromSet();
                     if (chain == null)
                     {
                         if (!createChain)
                         {
                             throw new IpTablesNetException(String.Format("Unable to find chain: {0}", parser.ChainName));
                         }
-                        chain = parser.CreateNewChain(_system, chain.IpVersion);
+                        chain = parser.GetNewChain(_system, chain.IpVersion);
                     }
 
                     Chain = chain;
@@ -324,7 +331,7 @@ namespace IPTables.Net.Iptables
         /// <param name="createChain"></param>
         /// <returns></returns>
         public static IpTablesRule Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
-            int version = 4, String defaultTable = "filter", bool createChain = false)
+            int version = 4, String defaultTable = "filter", ChainCreateMode createChain = ChainCreateMode.DontCreateErrorInstead)
         {
             string[] arguments = ArgumentHelper.SplitArguments(rule);
             int count = arguments.Length;
@@ -346,14 +353,22 @@ namespace IPTables.Net.Iptables
                     not = false;
                 }
 
-                var chain = parser.GetChain(system);
+                var chain = parser.GetChainFromSet();
                 if (chain == null)
                 {
-                    if (!createChain)
+                    if (createChain == ChainCreateMode.DontCreateErrorInstead)
                     {
                         throw new IpTablesNetException(String.Format("Unable to find chain: {0}", parser.ChainName));
                     }
-                    chain = parser.CreateNewChain(system, chains == null ? 4 : chains.IpVersion);
+
+                    if (createChain == ChainCreateMode.ReturnNewChain)
+                    {
+                        chain = parser.GetNewChain(system, chains == null ? 4 : chains.IpVersion);
+                    }
+                    else
+                    {
+                        chain = parser.CreateChain(system, chains == null ? 4 : chains.IpVersion);
+                    }
                 }
                 ipRule.Chain = chain;
             }
