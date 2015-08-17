@@ -331,7 +331,7 @@ namespace IPTables.Net.Iptables
         /// <param name="createChain"></param>
         /// <returns></returns>
         public static IpTablesRule Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
-            int version = 4, String defaultTable = "filter", ChainCreateMode createChain = ChainCreateMode.DontCreateErrorInstead)
+            int version = 4, String defaultTable = "filter", ChainCreateMode createChain = ChainCreateMode.CreateNewChainIfNeeded)
         {
             string[] arguments = ArgumentHelper.SplitArguments(rule);
             int count = arguments.Length;
