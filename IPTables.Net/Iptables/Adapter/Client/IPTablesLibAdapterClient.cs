@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -153,6 +154,11 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override void AddChain(string table, string chainName)
         {
+            Debug.Assert(chainName != null);
+            if (!IpTablesChain.ValidateChainName(chainName))
+            {
+                throw new IpTablesNetException(String.Format("Failed to add chain \"{0}\" to table \"{1}\" due to validation error", chainName, table));
+            }
             if (!_inTransaction)
             {
                 //Revert to using IPTables Binary if non transactional

@@ -93,6 +93,15 @@ namespace IPTables.Net.Iptables
             _system.DeleteChain(_name, _table, _ipVersion, flush);
         }
 
+        public static bool ValidateChainName(String chainName)
+        {
+            if (chainName.Length > 30)
+            {
+                return false;
+            }
+            return true;
+        }
+
         internal void SyncInternal(IEnumerable<IpTablesRule> with,
             INetfilterSync<IpTablesRule> sync)
         {
