@@ -106,10 +106,9 @@ namespace IPTables.Net.Iptables
 
         public bool Equals(IpTablesChain other)
         {
-            //Console.WriteLine(String.Format("Equality: {0},{1},{2}", string.Equals(_name, other._name), string.Equals(_table, other._table), Equals(_system, other._system)));
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(_name, other._name) && string.Equals(_table, other._table) && Equals(_system, other._system);
+            return string.Equals(_name, other._name) && string.Equals(_table, other._table) && Equals(_system, other._system) && _ipVersion == other._ipVersion;
         }
 
         public override bool Equals(object obj)
@@ -126,7 +125,8 @@ namespace IPTables.Net.Iptables
             {
                 int hashCode = (_name != null ? _name.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (_table != null ? _table.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (_system != null ? _system.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_system != null ? _system.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ _ipVersion.GetHashCode();
                 return hashCode;
             }
         }
