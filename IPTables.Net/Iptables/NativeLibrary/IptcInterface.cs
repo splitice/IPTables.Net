@@ -218,30 +218,41 @@ namespace IPTables.Net.Iptables.NativeLibrary
         [DllImport(Helper, SetLastError = true)]
         static extern IntPtr init_handle(String table);
 
-        private static bool HelperInit = false;
+        [DllImport(Helper)]
+        static extern String last_error();
 
-        public static bool DllExists()
+        private static bool _helperInit = false;
+
+        public static bool DllExists(out String msg)
         {
             try
             {
                 Marshal.PrelinkAll(typeof (IptcInterface));
             }
-            catch (DllNotFoundException)
+            catch (DllNotFoundException ex)
             {
+                msg = ex.Message;
                 return false;
             }
+            msg = null;
             return true;
+        }
+
+        public static bool DllExists()
+        {
+            String msg;
+            return DllExists(out msg);
         }
 
         public IptcInterface(String table)
         {
-            if (!HelperInit)
+            if (!_helperInit)
             {
                 if (init_helper() < 0)
                 {
                     throw new Exception("Failed to initialize the helper / xtables");
                 }
-                HelperInit = true;
+                _helperInit = true;
             }
             OpenTable(table);
         }
@@ -333,6 +344,10 @@ namespace IPTables.Net.Iptables.NativeLibrary
         {
             RequireHandle();
             var ptr = output_rule4(rule, _handle, chain, counters ? 1 : 0);
+            if (ptr == IntPtr.Zero)
+            {
+                throw new IpTablesNetException("IPTCH Error: " + last_error());
+            }
             return Marshal.PtrToStringAnsi(ptr);
         }
 
@@ -356,10 +371,16 @@ namespace IPTables.Net.Iptables.NativeLibrary
         /// <returns>returns 1 for sucess, error code otherwise</returns>
         public int ExecuteCommand(string command)
         {
-            Console.WriteLine(command);
             DebugEntry(command);
             RequireHandle();
-            return execute_command(command, _handle);
+            var ptr = execute_command(command, _handle);
+
+            if (ptr == 0)
+            {
+                throw new IpTablesNetException("IPTCH Error: "+last_error());
+            }
+
+            return ptr;
         }
 
         /// <summary>

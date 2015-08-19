@@ -49,6 +49,10 @@
 #else
 #include <wordexp.h>
 #endif
+#include <setjmp.h>
+
+char errbuffer[BUFSIZ];
+jmp_buf buf;
 
 char **split_commandline(const char *cmdline, int *argc)
 {
@@ -454,126 +458,145 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 {
 	const struct xt_entry_target *t;
 	const char *target_name;
-	char buf[BUFSIZ];
+	char cbuf[BUFSIZ];
+	
+	if ( ! setjmp(buf) ) {
+		/* print counters for iptables-save */
+		if (counters > 0)
+			ptr += sprintf(ptr,"[%llu:%llu] ", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
 
-	/* print counters for iptables-save */
-	if (counters > 0)
-		ptr += sprintf(ptr,"[%llu:%llu] ", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
+		/* print chain name */
+		ptr += sprintf(ptr,"-A %s", chain);
 
-	/* print chain name */
-	ptr += sprintf(ptr,"-A %s", chain);
+		/* Print IP part. */
+		print_ip("-s", e->ip.src.s_addr, e->ip.smsk.s_addr,
+			e->ip.invflags & IPT_INV_SRCIP);
 
-	/* Print IP part. */
-	print_ip("-s", e->ip.src.s_addr, e->ip.smsk.s_addr,
-		e->ip.invflags & IPT_INV_SRCIP);
+		print_ip("-d", e->ip.dst.s_addr, e->ip.dmsk.s_addr,
+			e->ip.invflags & IPT_INV_DSTIP);
 
-	print_ip("-d", e->ip.dst.s_addr, e->ip.dmsk.s_addr,
-		e->ip.invflags & IPT_INV_DSTIP);
+		print_iface('i', e->ip.iniface, e->ip.iniface_mask,
+			e->ip.invflags & IPT_INV_VIA_IN);
 
-	print_iface('i', e->ip.iniface, e->ip.iniface_mask,
-		e->ip.invflags & IPT_INV_VIA_IN);
+		print_iface('o', e->ip.outiface, e->ip.outiface_mask,
+			e->ip.invflags & IPT_INV_VIA_OUT);
 
-	print_iface('o', e->ip.outiface, e->ip.outiface_mask,
-		e->ip.invflags & IPT_INV_VIA_OUT);
+		print_proto(e->ip.proto, e->ip.invflags & XT_INV_PROTO);
 
-	print_proto(e->ip.proto, e->ip.invflags & XT_INV_PROTO);
+		if (e->ip.flags & IPT_F_FRAG)
+			ptr += sprintf(ptr,"%s -f",
+			e->ip.invflags & IPT_INV_FRAG ? " !" : "");
 
-	if (e->ip.flags & IPT_F_FRAG)
-		ptr += sprintf(ptr,"%s -f",
-		e->ip.invflags & IPT_INV_FRAG ? " !" : "");
-
-	/* Print matchinfo part */
-	if (e->target_offset) {
-		IPT_MATCH_ITERATE(e, print_match_save, &e->ip);
-	}
-
-	/* print counters for iptables -R */
-	if (counters < 0)
-		ptr += sprintf(ptr," -c %llu %llu", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
-
-	/* Print target name */
-	target_name = iptc_get_target(e, h);
-#ifdef OLD_IPTABLES
-	if (target_name && (*target_name != '\0'))
-#ifdef IPT_F_GOTO
-		ptr += sprintf(ptr," -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
-#else
-		ptr += sprintf(ptr," -j %s", target_name);
-#endif
-#endif
-
-	/* Print targinfo part */
-	t = ipt_get_target((struct ipt_entry *)e);
-	if (t->u.user.name[0]) {
-		const struct xtables_target *target =
-			xtables_find_target(t->u.user.name, XTF_TRY_LOAD);
-
-		if (!target) {
-			fprintf(stderr, "Can't find library for target `%s'\n",
-				t->u.user.name);
-			return NULL;
+		/* Print matchinfo part */
+		if (e->target_offset) {
+			IPT_MATCH_ITERATE(e, print_match_save, &e->ip);
 		}
-		
-#ifndef OLD_IPTABLES
-		ptr += sprintf(ptr, " -j %s", target->alias ? target->alias(t) : target_name);
-#endif
 
-		if (target){
-			if (target->save){
-				memset(buf, 0, sizeof(buf));
-				switchStdout("/dev/null");
-				setvbuf(stdout, buf, _IOLBF, BUFSIZ);
-				target->save(&e->ip, t);
-				fflush(stdout);
-				setbuf(stdout, NULL);
-				revertStdout();
-				ptr += sprintf(ptr, "%s", buf);
+		/* print counters for iptables -R */
+		if (counters < 0)
+			ptr += sprintf(ptr," -c %llu %llu", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
+
+		/* Print target name */
+		target_name = iptc_get_target(e, h);
+	#ifdef OLD_IPTABLES
+		if (target_name && (*target_name != '\0'))
+	#ifdef IPT_F_GOTO
+			ptr += sprintf(ptr," -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
+	#else
+			ptr += sprintf(ptr," -j %s", target_name);
+	#endif
+	#endif
+
+		/* Print targinfo part */
+		t = ipt_get_target((struct ipt_entry *)e);
+		if (t->u.user.name[0]) {
+			const struct xtables_target *target =
+				xtables_find_target(t->u.user.name, XTF_TRY_LOAD);
+
+			if (!target) {
+				xtables_error(PARAMETER_PROBLEM, "Can't find library for target `%s'\n",
+					t->u.user.name);
+				return NULL;
 			}
-			else {
-				/* If the target size is greater than xt_entry_target
-				* there is something to be saved, we just don't know
-				* how to print it */
-				if (t->u.target_size !=
-					sizeof(struct xt_entry_target)) {
-					fprintf(stderr, "Target `%s' is missing "
-						"save function\n",
-						t->u.user.name);
-					return NULL;
+			
+	#ifndef OLD_IPTABLES
+			ptr += sprintf(ptr, " -j %s", target->alias ? target->alias(t) : target_name);
+	#endif
+
+			if (target){
+				if (target->save){
+					memset(cbuf, 0, sizeof(cbuf));
+					switchStdout("/dev/null");
+					setvbuf(stdout, cbuf, _IOLBF, BUFSIZ);
+					target->save(&e->ip, t);
+					fflush(stdout);
+					setbuf(stdout, NULL);
+					revertStdout();
+					ptr += sprintf(ptr, "%s", cbuf);
+				}
+				else {
+					/* If the target size is greater than xt_entry_target
+					* there is something to be saved, we just don't know
+					* how to print it */
+					if (t->u.target_size !=
+						sizeof(struct xt_entry_target)) {
+						xtables_error(PARAMETER_PROBLEM, "Target `%s' is missing "
+							"save function\n",
+							t->u.user.name);
+						return NULL;
+					}
 				}
 			}
 		}
+
+	#ifndef OLD_IPTABLES
+		else if (target_name && (*target_name != '\0')){
+	#ifdef IPT_F_GOTO
+			ptr += sprintf(ptr, " -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
+	#else
+			ptr += sprintf(ptr, " -j %s", target_name);
+	#endif
+		}
+	#endif
+
+		*ptr = '\0';
+		ptr = buffer;
+
+		return buffer;
+	}else{
+		return NULL;
 	}
-
-#ifndef OLD_IPTABLES
-	else if (target_name && (*target_name != '\0')){
-#ifdef IPT_F_GOTO
-		ptr += sprintf(ptr, " -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
-#else
-		ptr += sprintf(ptr, " -j %s", target_name);
-#endif
-	}
-#endif
-
-	*ptr = '\0';
-	ptr = buffer;
-
-	return buffer;
 }
 
 EXPORT int execute_command(const char* rule, void *h){
 	int newargc;
+	int ret;
 	char* table = "filter";
 	char** newargv = split_commandline(rule, &newargc);
 	if (newargv == NULL){
 		return 4;
 	}
-	int ret = do_command4(newargc, newargv,
-		&table, &h);
+	
+	if ( ! setjmp(buf) ) {
+		ret = do_command4(newargc, newargv, &table, &h);
+	}else{
+		ret = 0;
+	}
+	
 	free(newargv);
 	return ret;
 }
 
 EXPORT int init_helper(void){
-	int c = xtables_init_all(&iptables_globals, NFPROTO_IPV4);
+	int c;
+	if ( ! setjmp(buf) ) {
+		c = xtables_init_all(&iptables_globals, NFPROTO_IPV4);
+	}else{
+		c = 0;
+	}
 	return c;
+}
+
+EXPORT char* last_error(void){
+	return errbuffer;
 }

@@ -46,6 +46,7 @@
 #endif
 #include "ipthelper.h"
 #include "xshared.h"
+#include <setjmp.h>
 
 #ifndef TRUE
 #define TRUE 1
@@ -95,6 +96,9 @@ static const char optflags[]
 #define NUMBER_OF_OPT	sizeof(optflags)
 
 #define OPT_FRAGMENT    0x00800U
+
+extern jmp_buf buf;
+extern char errbuffer[BUFSIZ];
 
 void iptables_exit_error(enum xtables_exittype status, const char *msg, ...) __attribute__((noreturn, format(printf, 2, 3)));
 
@@ -150,26 +154,21 @@ void
 iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 {
 	va_list args;
-#ifdef __cplusplus
-	char buffer[BUFSIZ];
-#endif
 
 	va_start(args, msg);
-	vfprintf(stderr, msg, args);
-#ifdef __cplusplus
-	vsprintf(buffer, msg, args);
-#endif
+	vsprintf(errbuffer, msg, args);
 	va_end(args);
-	fprintf(stderr, "\n");
-	if (status == VERSION_PROBLEM)
-		fprintf(stderr,
-		"Perhaps iptables or your kernel needs to be upgraded.\n");
+
+	if (status == VERSION_PROBLEM){
+		char* dup = strdup(errbuffer);
+		sprintf(errbuffer + strlen(errbuffer), "%s Note: %s", 
+		"Perhaps iptables or your kernel needs to be upgraded.");
+		free(dup);
+	}
 	/* On error paths, make sure that we don't leak memory */
 	xtables_free_opts(1);
-#ifdef __cplusplus
-	//This WILL leak memory.
-	throw std::runtime_error(std::string(buffer));
-#endif
+
+	longjmp(buf,1);
 }
 
 /* Primitive headers... */
@@ -960,6 +959,11 @@ static void command_match(struct iptables_command_state *cs)
 			   "unexpected ! flag before --match");
 
 	m = xtables_find_match(optarg, XTF_LOAD_MUST_SUCCEED, &cs->matches);
+	if(m == NULL){
+		xtables_error(PARAMETER_PROBLEM,
+			   "unable to load match module %s", optarg);
+	   return;
+	}
 	size = XT_ALIGN(sizeof(struct xt_entry_match)) + m->size;
 	m->m = xtables_calloc(1, size);
 	m->m->u.match_size = size;
