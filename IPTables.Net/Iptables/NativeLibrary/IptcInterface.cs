@@ -219,7 +219,12 @@ namespace IPTables.Net.Iptables.NativeLibrary
         static extern IntPtr init_handle(String table);
 
         [DllImport(Helper)]
-        static extern String last_error();
+        static extern IntPtr last_error();
+
+        public String LastError()
+        {
+            return Marshal.PtrToStringAnsi(last_error());
+        }
 
         private static bool _helperInit = false;
 
@@ -346,7 +351,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
             var ptr = output_rule4(rule, _handle, chain, counters ? 1 : 0);
             if (ptr == IntPtr.Zero)
             {
-                throw new IpTablesNetException("IPTCH Error: " + last_error());
+                throw new IpTablesNetException("IPTCH Error: " + LastError());
             }
             return Marshal.PtrToStringAnsi(ptr);
         }
@@ -377,7 +382,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
             if (ptr == 0)
             {
-                throw new IpTablesNetException("IPTCH Error: "+last_error());
+                throw new IpTablesNetException("IPTCH Error: " + LastError());
             }
 
             return ptr;

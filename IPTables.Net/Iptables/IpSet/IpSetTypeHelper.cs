@@ -19,6 +19,10 @@ namespace IPTables.Net.Iptables.IpSet
             {
                 case IpSetType.BitmapPort:
                     return "bitmap:port";
+                case IpSetType.HashNet:
+                    return "hash:net";
+                case IpSetType.HashNetPort:
+                    return "hash:net,port";
                 case IpSetType.HashIp:
                     return "hash:ip";
                 case IpSetType.HashIpPort:
@@ -39,6 +43,10 @@ namespace IPTables.Net.Iptables.IpSet
             {
                 case "bitmap:port":
                     return IpSetType.BitmapPort;
+                case "hash:net":
+                    return IpSetType.HashNet;
+                case "hash:net,port":
+                    return IpSetType.HashNetPort;
                 case "hash:ip":
                     return IpSetType.HashIp;
                 case "hash:ip,port":

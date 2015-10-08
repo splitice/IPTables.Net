@@ -51,6 +51,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                 switch (typeComponents[i])
                 {
                     case "ip":
+                    case "net":
                         entry.Cidr = IpCidr.Parse(optionComponents[i]);
                         break;
                     case "port":
