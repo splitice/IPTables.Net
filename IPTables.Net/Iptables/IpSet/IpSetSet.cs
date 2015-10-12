@@ -140,10 +140,19 @@ namespace IPTables.Net.Iptables.IpSet
             return set;
         }
 
-        public bool SetEquals(IpSetSet set)
+        public bool SetEquals(IpSetSet set, bool size = false)
         {
-            return set.HashSize == HashSize && set.MaxElem == MaxElem && set.Name == Name && set.Timeout == Timeout &&
-                   set.Type == Type;
+            if (!(set.MaxElem == MaxElem && set.Name == Name && set.Timeout == Timeout &&
+                  set.Type == Type))
+            {
+                return false;
+            }
+
+            if (size)
+            {
+                return set.HashSize == HashSize;
+            }
+            return true;
         }
     }
 }

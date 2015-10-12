@@ -43,6 +43,11 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
                     return true;
                 }
             }
+            else
+            {
+                throw new IpTablesNetException(String.Format("Failed to execute transaction: {0}",
+                    process.StandardError.ReadToEnd()));
+            }
 
             return false;
         }
@@ -75,7 +80,14 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
                 {
                     return false;
                 }
-                standardInput.WriteLine(set);
+                try
+                {
+                    standardInput.WriteLine(set);
+                }
+                catch (IOException)
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -90,14 +102,13 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
                     return false;
                 }
                 var command = set.GetCommand();
-                standardInput.WriteLine(command);
-                foreach (var entry in set.GetEntryCommands())
+                if (!WriteStrings(new List<string> {command}, standardInput))
                 {
-                    if (!standardInput.BaseStream.CanWrite)
-                    {
-                        return false;
-                    }
-                    standardInput.WriteLine(entry);
+                    return false;
+                }
+                if (!WriteStrings(set.GetEntryCommands(), standardInput))
+                {
+                    return false;
                 }
             }
 
