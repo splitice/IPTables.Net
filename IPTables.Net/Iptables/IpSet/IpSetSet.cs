@@ -94,7 +94,7 @@ namespace IPTables.Net.Iptables.IpSet
             String type = IpSetTypeHelper.TypeToString(_type);
             String command = String.Format("{0} {1}", _name, type);
 
-            if (_type == IpSetType.HashIp || _type == IpSetType.HashIpPort)
+            if (_type == IpSetType.HashIp || _type == IpSetType.HashIpPort || _type == IpSetType.HashNet || _type == IpSetType.HashNetPort)
             {
                 command += " family inet";
             }
@@ -102,7 +102,7 @@ namespace IPTables.Net.Iptables.IpSet
             {
                 command += " range 1-65535";
             }
-            if (_type == IpSetType.HashIp || _type == IpSetType.HashIpPort)
+            if (_type == IpSetType.HashIp || _type == IpSetType.HashIpPort || _type == IpSetType.HashNet || _type == IpSetType.HashNetPort)
             {
                 command += String.Format(" hashsize {0} maxelem {1}", _hashSize, _maxElem);
             }

@@ -204,5 +204,31 @@ namespace IPTables.Net.Tests
             {
             });
         }
+
+        [Test]
+        public void TestSyncCreateNet()
+        {
+            var systemFactory = new MockIpsetSystemFactory();
+            var system = new MockIpsetBinaryAdapter(systemFactory);
+            var iptables = new IpTablesSystem(systemFactory, null, system);
+
+            IpSetSets rulesOriginal = new IpSetSets(new List<String>()
+            {
+            }, iptables);
+
+            system.SetSets(rulesOriginal);
+
+            IpSetSets rulesNew = new IpSetSets(new List<String>()
+            {
+                "create test hash:net",
+                "add test 8.8.8.8/32"
+            }, iptables);
+
+            systemFactory.TestSync(rulesNew, new List<string>
+            {
+                "create test hash:net family inet hashsize 1024 maxelem 65536",
+                "add test 8.8.8.8"
+            });
+        }
     }
 }
