@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Supporting;
 using LukeSkywalker.IPNetwork;
 
@@ -36,9 +37,9 @@ namespace IPTables.Net.Iptables.DataTypes
             {
                 ip = IPAddress.Parse(p[0]);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Any;
+                throw new IpTablesNetException("Invalid IP Address: "+p[0], ex);
             }
 
             if (p.Length == 1)
@@ -46,13 +47,23 @@ namespace IPTables.Net.Iptables.DataTypes
                 return new IpCidr(ip, 32);
             }
 
+            if (Equals(ip, IPAddress.Any))
+            {
+                return new IpCidr(ip, 0);
+            }
+
             try
             {
-                return new IpCidr(ip, uint.Parse(p[1]));
+                uint cidrN = uint.Parse(p[1]);
+                if (cidrN > 32)
+                {
+                    throw new IpTablesNetException("Invalid CIDR number (>32) number: "+cidrN);
+                }
+                return new IpCidr(ip, cidrN);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return Any;
+                throw new IpTablesNetException("Invalid CIDR number component", ex);
             }
         }
 

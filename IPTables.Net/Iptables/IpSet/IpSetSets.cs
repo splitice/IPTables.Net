@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.IpSet.Adapter;
 
 namespace IPTables.Net.Iptables.IpSet
@@ -69,32 +70,39 @@ namespace IPTables.Net.Iptables.IpSet
 
                 if (set.SyncMode == IpSetSyncMode.SetAndEntries)
                 {
-                    foreach (var entry in set.Entries)
+                    try
                     {
-                        try
+                        foreach (var entry in set.Entries)
                         {
-                            var systemEntry = systemSet.Entries.FirstOrDefault((a) => a.KeyEquals(entry));
-                            if (systemEntry == null)
+                            try
                             {
-                                _system.SetAdapter.AddEntry(entry);
+                                var systemEntry = systemSet.Entries.FirstOrDefault((a) => a.KeyEquals(entry));
+                                if (systemEntry == null)
+                                {
+                                    _system.SetAdapter.AddEntry(entry);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(entry.Port);
+                                Console.WriteLine(systemSet.Entries.Count);
+                                throw;
                             }
                         }
-                        catch (Exception ex)
+
+                        foreach (var entry in systemSet.Entries)
                         {
-                            Console.WriteLine(entry.Port);
-                            Console.WriteLine(systemSet.Entries.Count);
-                            throw;
+                            IpSetEntry entry1 = entry;
+                            var memEntry = set.Entries.FirstOrDefault(((a) => a.KeyEquals(entry1)));
+                            if (memEntry == null)
+                            {
+                                _system.SetAdapter.DeleteEntry(entry);
+                            }
                         }
                     }
-
-                    foreach (var entry in systemSet.Entries)
+                    catch (Exception ex)
                     {
-                        IpSetEntry entry1 = entry;
-                        var memEntry = set.Entries.FirstOrDefault(((a) => a.KeyEquals(entry1)));
-                        if (memEntry == null)
-                        {
-                            _system.SetAdapter.DeleteEntry(entry);
-                        }
+                        throw new IpTablesNetException(String.Format("An exception occured while adding or removing on entries of set {0} message:{1}",set.Name,ex.Message),ex);
                     }
                 }
             }
