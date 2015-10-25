@@ -14,11 +14,18 @@ function update_ai {
 	echo "[assembly: AssemblyVersion(\"$VERSION_STR.$REVISION\")]" >> $f/Properties/AssemblyInfo.cs
 	echo "[assembly: AssemblyFileVersion(\"$VERSION_STR.$REVISION\")]" >> $f/Properties/AssemblyInfo.cs
 	
-	for nuspec in $f/*.nuspec; do
+	for nuspec in $f/../*.nuspec; do
 		if [[ -f "$nuspec" ]]; then
 			echo "Processing nuspec file: $nuspec"
-			padded=$(printf "%04d" $REVISION)
-			sed -i.bak "s/\\\$version\\\$/$VERSION_STR-cibuild$padded/g" $nuspec
+			if [[ $VERSION_STR =~ ^([1-9]) && $REVISION == "0" ]]; then
+				sed -i.bak "s/\\\$version\\\$/$VERSION_STR/g" $nuspec
+			else
+				LAST_PART=$(echo "$VERSION_STR" | sed 's/.\+\([0-9]\+\)$/\1/')
+				let LAST_PART=$LAST_PART+1
+				VERSION_STR=$(echo "$VERSION_STR" | sed 's/\.\([0-9]\+\)$/.'$LAST_PART'/')
+				padded=$(printf "%04d" $REVISION)
+				sed -i.bak "s/\\\$version\\\$/$VERSION_STR-cibuild$padded/g" $nuspec
+			fi
 		fi
 	done
 }
