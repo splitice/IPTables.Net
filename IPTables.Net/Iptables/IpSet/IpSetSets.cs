@@ -32,6 +32,11 @@ namespace IPTables.Net.Iptables.IpSet
             get { return _sets; }
         }
 
+        public IpTablesSystem System
+        {
+            get { return _system; }
+        }
+
         /// <summary>
         /// Sync with an IPTables system
         /// </summary>
@@ -43,10 +48,10 @@ namespace IPTables.Net.Iptables.IpSet
             if (transactional)
             {
                 //Start transaction
-                _system.SetAdapter.StartTransaction();
+                System.SetAdapter.StartTransaction();
             }
 
-            var systemSets = _system.SetAdapter.SaveSets(_system);
+            var systemSets = System.SetAdapter.SaveSets(System);
 
             foreach (var set in _sets)
             {
@@ -54,17 +59,17 @@ namespace IPTables.Net.Iptables.IpSet
                 if (systemSet == null)
                 {
                     //Add
-                    _system.SetAdapter.CreateSet(set);
-                    systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, _system, set.SyncMode);
+                    System.SetAdapter.CreateSet(set);
+                    systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, System, set.SyncMode);
                 }
                 else
                 {
                     //Update if applicable
                     if (!systemSet.SetEquals(set))
                     {
-                        _system.SetAdapter.DestroySet(set.Name);
-                        _system.SetAdapter.CreateSet(set);
-                        systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, _system, set.SyncMode);
+                        System.SetAdapter.DestroySet(set.Name);
+                        System.SetAdapter.CreateSet(set);
+                        systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, System, set.SyncMode);
                     }
                 }
 
@@ -79,7 +84,7 @@ namespace IPTables.Net.Iptables.IpSet
                                 var systemEntry = systemSet.Entries.FirstOrDefault((a) => a.KeyEquals(entry));
                                 if (systemEntry == null)
                                 {
-                                    _system.SetAdapter.AddEntry(entry);
+                                    System.SetAdapter.AddEntry(entry);
                                 }
                             }
                             catch (Exception ex)
@@ -96,7 +101,7 @@ namespace IPTables.Net.Iptables.IpSet
                             var memEntry = set.Entries.FirstOrDefault(((a) => a.KeyEquals(entry1)));
                             if (memEntry == null)
                             {
-                                _system.SetAdapter.DeleteEntry(entry);
+                                System.SetAdapter.DeleteEntry(entry);
                             }
                         }
                     }
@@ -113,7 +118,7 @@ namespace IPTables.Net.Iptables.IpSet
                 {
                     if (_sets.FirstOrDefault((a) => a.Name == set.Name) == null && canDeleteSet(set))
                     {
-                        _system.SetAdapter.DestroySet(set.Name);
+                        System.SetAdapter.DestroySet(set.Name);
                     }
                 }
             }
@@ -121,7 +126,7 @@ namespace IPTables.Net.Iptables.IpSet
             if (transactional)
             {
                 //End Transaction: COMMIT
-                _system.SetAdapter.EndTransactionCommit();
+                System.SetAdapter.EndTransactionCommit();
             }
         }
 
