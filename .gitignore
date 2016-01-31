@@ -2,6 +2,8 @@
 [Bb]in/
 [Oo]bj/
 
+Testing.VisualState.xml
+
 # mstest test results
 TestResults
 

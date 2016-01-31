@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
   <TopNode>[0-1000]C:\Users\splitice\Documents\GitHub\IPTables.Net\Testing.nunit</TopNode>
-  <SelectedNode>[0-1204]IPTables.Net.Tests</SelectedNode>
+  <SelectedNode>[0-1048]IPTables.Net.Tests.IpTablesSaveReadingTests.TestParseBlocklist</SelectedNode>
   <ExcludeCategories>false</ExcludeCategories>
   <Nodes>
     <Node UniqueName="[0-1000]C:\Users\splitice\Documents\GitHub\IPTables.Net\Testing.nunit" Expanded="true" />
-    <Node UniqueName="[0-1201]C:\Users\splitice\Documents\GitHub\IPTables.Net\IPTables.Net.Tests\bin\Debug\IPTables.Net.Tests.dll" Expanded="true" />
-    <Node UniqueName="[0-1202]IPTables" Expanded="true" />
-    <Node UniqueName="[0-1203]IPTables.Net" Expanded="true" />
-    <Node UniqueName="[0-1204]IPTables.Net.Tests" Expanded="true" />
+    <Node UniqueName="[0-1204]C:\Users\splitice\Documents\GitHub\IPTables.Net\IPTables.Net.Tests\bin\Debug\IPTables.Net.Tests.dll" Expanded="true" />
+    <Node UniqueName="[0-1205]IPTables" Expanded="true" />
+    <Node UniqueName="[0-1206]IPTables.Net" Expanded="true" />
+    <Node UniqueName="[0-1207]IPTables.Net.Tests" Expanded="true" />
     <Node UniqueName="[0-1008]IPTables.Net.Tests.IpSetSyncTests" Expanded="true" />
-    <Node UniqueName="[0-1131]IPTables.Net.Tests.IPTablesRuleTests" Expanded="true" />
-    <Node UniqueName="[0-1105]IPTables.Net.Tests.SingleCommentRuleParseTests" Expanded="true" />
-    <Node UniqueName="[0-1128]IPTables.Net.Tests.SingleHashlimitRuleParseTests" Expanded="true" />
-    <Node UniqueName="[0-1155]IPTables.Net.Tests.SinglePolyfillTests" Expanded="true" />
+    <Node UniqueName="[0-1047]IPTables.Net.Tests.IpTablesSaveReadingTests" Expanded="true" />
   </Nodes>
 </VisualState>

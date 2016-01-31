@@ -43,9 +43,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="SystemInteract">
-      <HintPath>..\packages\SystemInteract.1.0.0-CI00006\lib\net35\SystemInteract.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IpTablesRestore\IMockIpTablesRestoreGetOutput.cs" />
