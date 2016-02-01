@@ -1,12 +1,12 @@
-language: c
-
+language: csharp
+solution: IPTables.Net.sln
+mono:
+  - latest
 git:
   depth: 300
-
+sudo: true
 install:
-  - sudo add-apt-repository ppa:directhex/ppa -y
-  - sudo apt-get update
-  - sudo apt-get -qq install mono-devel mono-gmcs mono-utils mono-complete libmono-system2.0-cil libmono-corlib2.0-cil mono-2.0-gac nunit-console iptables-dev realpath
+  - sudo apt-get -qq install nunit-console iptables-dev realpath
   
 script:
   - cd ipthelper
@@ -17,8 +17,9 @@ script:
   - bash travis-ci/autoversion.sh IPTables.Net.TestFramework
   - export EnableNuGetPackageRestore=false
   - mozroots --import --sync
-  - travis_retry  mono .nuget/NuGet.exe restore IPTables.Net.sln
-  - xbuild CI.proj
+  - travis_retry mono .nuget/NuGet.exe restore IPTables.Net.sln
+  - xbuild /p:Configuration=Release IPTables.Net.sln
+  - xbuild /p:Configuration=Debug IPTables.Net.sln
   - iptables -V
   - sudo nunit-console -framework=4.0 ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll -exclude Integration,NotWorkingOnMono
   - travis_retry bash travis-ci/nuget-upload.sh IPTables.Net
