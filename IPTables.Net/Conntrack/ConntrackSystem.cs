@@ -35,22 +35,21 @@ namespace IPTables.Net.Conntrack
         {
             lock (_queryLock)
             {
-                if (qf != null || addressFamily != AddressFamily.Unspecified)
-                {
-                    ConntrackHelper.conditional_init((int)addressFamily, qf, qf.Length);
-                }
+                ConntrackHelper.conditional_init((int)addressFamily, qf, qf == null ? 0 : qf.Length);
 
                 try
                 {
                     byte[] buffer = new byte[1];
                     ConntrackHelper.CrImg img = new ConntrackHelper.CrImg();
                     ConntrackHelper.dump_nf_cts(expectationTable, ref img);
+                    Console.WriteLine("dump done");
                     try
                     {
                         IntPtr ptr = img.CrNode;
                         while (ptr != IntPtr.Zero)
                         {
                             int crsize = ConntrackHelper.cr_length(ptr);
+                            Console.WriteLine("len: " + crsize);
                             IntPtr newPtr = Marshal.ReadIntPtr(ptr);
                             crsize -= IntPtr.Size;
                             ptr = new IntPtr((int) ptr + IntPtr.Size);
