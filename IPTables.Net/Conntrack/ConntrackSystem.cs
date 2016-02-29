@@ -60,6 +60,7 @@ namespace IPTables.Net.Conntrack
                             }
                             Marshal.Copy(ptr, buffer, 0, crsize);
                             cb(buffer);
+                            ptr = newPtr;
                         }
                     }
                     finally
