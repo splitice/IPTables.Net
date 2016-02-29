@@ -113,5 +113,5 @@ ipthelpertest/
 *.nupkg
 
 Testing.VisualState.xml
-Testing.VisualState.xml
-Testing.VisualState.xml
+CodeDB/
+*.vgdbsettings

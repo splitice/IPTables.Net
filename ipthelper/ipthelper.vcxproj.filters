@@ -28,6 +28,15 @@
     <ClInclude Include="xshared.h">
       <Filter>Header files</Filter>
     </ClInclude>
+    <ClInclude Include="ct.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="libnetlink.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
@@ -46,6 +55,12 @@
       <Filter>Source files</Filter>
     </ClCompile>
     <ClCompile Include="xshared.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="ct.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="libnetlink.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -35,7 +35,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeIncludeSearchPath>$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.1.104\0000\include\c++\4.9;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.1.104\0000\include\x86_64-linux-gnu\c++\4.9;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.1.104\0000\include\c++\4.9\backward;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.1.104\0001\include;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.1.104\0003\include;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.1.104\0002\include-fixed;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.1.104\0000\include\x86_64-linux-gnu;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.1.104\0000\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath>$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.99.101\0000\include\libnl3;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.99.101\0000\include\c++\4.9;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.99.101\0000\include\x86_64-linux-gnu\c++\4.9;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.99.101\0000\include\c++\4.9\backward;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.99.101\0001\include;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.99.101\0003\include;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.99.101\0002\include-fixed;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.99.101\0000\include\x86_64-linux-gnu;$(LOCALAPPDATA)\VisualGDB\RemoteSourceCache\192.168.99.101\0000\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
     <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)" "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
@@ -61,8 +61,11 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="common.h" />
+    <ClInclude Include="ct.h" />
     <ClInclude Include="iptables.h" />
     <ClInclude Include="ipthelper.h" />
+    <ClInclude Include="libnetlink.h" />
     <ClInclude Include="xshared.h" />
   </ItemGroup>
   <ItemGroup>
@@ -71,8 +74,10 @@
     <None Include="release.mak" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ct.cpp" />
     <ClCompile Include="iptables.c" />
     <ClCompile Include="ipthelper.c" />
+    <ClCompile Include="libnetlink.cpp" />
     <ClCompile Include="xshared.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

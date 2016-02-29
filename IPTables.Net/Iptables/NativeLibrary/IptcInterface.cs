@@ -351,7 +351,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
             var ptr = output_rule4(rule, _handle, chain, counters ? 1 : 0);
             if (ptr == IntPtr.Zero)
             {
-                throw new IpTablesNetException("IPTCH Error: " + LastError());
+                throw new IpTablesNetException("IPTCH Error: " + LastError().Trim());
             }
             return Marshal.PtrToStringAnsi(ptr);
         }
@@ -382,7 +382,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
             if (ptr == 0)
             {
-                throw new IpTablesNetException("IPTCH Error: " + LastError());
+                throw new IpTablesNetException("IPTCH Error: " + LastError() + " with command: " + command);
             }
 
             return ptr;
