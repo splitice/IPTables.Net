@@ -17,7 +17,7 @@ namespace IPTables.Net.Conntrack
         }
 
         [DllImport(Helper)]
-        public static extern int dump_nf_cts(bool expectations, out CrImg img);
+        public static extern int dump_nf_cts(bool expectations, ref CrImg img);
 
         [DllImport(Helper)]
         public static extern int restore_nf_cts(bool expectations, byte[] data, Int32 data_length);

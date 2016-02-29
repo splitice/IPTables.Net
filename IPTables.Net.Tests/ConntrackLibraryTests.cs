@@ -31,5 +31,23 @@ namespace IPTables.Net.Tests
                 cts.Dump(false,list.Add);
             }
         }
+
+        /*[TestFixtureSetUp]
+        public void TestDumpFiltered()
+        {
+            if (IsLinux)
+            {
+                ConntrackQueryFilter[] qf = new ConntrackQueryFilter[]
+                {
+                    new ConntrackQueryFilter{Key = CTA_TUPLE_ORIG, Max = CTA_TUPLE_MAX, CompareLength = 0},
+		            new ConntrackQueryFilter{Key = CTA_TUPLE_IP, Max = CTA_IP_MAX, CompareLength = 0},
+		            new ConntrackQueryFilter{Key = CTA_IP_V4_DST, Max = 0, CompareLength = 4},
+                };
+
+                ConntrackSystem cts = new ConntrackSystem();
+                List<byte[]> list = new List<byte[]>();
+                cts.Dump(false, list.Add);
+            }
+        }*/
     }
 }

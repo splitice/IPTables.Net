@@ -28,7 +28,7 @@ namespace IPTables.Net.Conntrack
                 try
                 {
                     byte[] buffer = new byte[1];
-                    ConntrackHelper.CrImg img;
+                    ConntrackHelper.CrImg img = new ConntrackHelper.CrImg();
                     ConntrackHelper.dump_nf_cts(expectationTable, out img);
                     try
                     {
