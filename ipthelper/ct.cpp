@@ -225,13 +225,21 @@ void conditional_init(int address_family, cr_filter* filters, int filters_len)
 	{
 		conditional_free();
 	}
-	filter = filters;
-	for (int i = 0; i < filters_len; i++)
+	if (filters_len == 0)
 	{
-		if (filters[i].max != 0)
+		filter = NULL;
+	}
+	else
+	{
+		filter = filters;
+		for (int i = 0; i < filters_len; i++)
 		{
-			filters[i].internal = malloc(sizeof(nlattr *) * (filters[i].max + 1));
+			if (filters[i].max != 0)
+			{
+				filters[i].internal = malloc(sizeof(nlattr *) * (filters[i].max + 1));
+			}
 		}
+		
 	}
 	filter_len = filters_len;
 	filter_af = address_family;
