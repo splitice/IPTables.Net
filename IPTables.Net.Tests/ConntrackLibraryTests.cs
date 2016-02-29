@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using IPTables.Net.Conntrack;
 using IPTables.Net.Iptables.NativeLibrary;
@@ -21,7 +22,13 @@ namespace IPTables.Net.Tests
             }
         }
 
-        [TestFixtureSetUp]
+        [TestCase]
+        public void TestStructureSize()
+        {
+            Assert.AreEqual(16, Marshal.SizeOf(typeof(ConntrackQueryFilter)));
+        }
+
+        [TestCase]
         public void TestDump()
         {
             if (IsLinux)
@@ -32,7 +39,7 @@ namespace IPTables.Net.Tests
             }
         }
 
-        [TestFixtureSetUp]
+        [TestCase]
         public void TestDumpFiltered()
         {
             if (IsLinux)
