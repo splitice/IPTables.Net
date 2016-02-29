@@ -61,6 +61,9 @@ void conditional_init(int address_family, cr_filter* filters, int filters_len)
 }
 bool conditional_filter(struct nlmsghdr *nlh)
 {
+	struct nfgenmsg *msg;
+	msg = (nfgenmsg *)NLMSG_DATA(nlh);
+
 	if (filter_af != 0 && msg->nfgen_family != filter_af)
 		return false;
 
@@ -70,12 +73,9 @@ bool conditional_filter(struct nlmsghdr *nlh)
 	}
 	struct nlattr *tb[CTA_MAX + 1];
 	struct nlattr ** tb_cur;
-	struct nfgenmsg *msg;
 	int err;
 	char* data;
 	bool ret = true;
-	
-	msg = (nfgenmsg *)NLMSG_DATA(nlh);
 	
 	err = nlmsg_parse(nlh, sizeof(struct nfgenmsg), tb, CTA_MAX, NULL);
 	if (err < 0)
