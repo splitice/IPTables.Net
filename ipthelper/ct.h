@@ -16,15 +16,15 @@ extern "C"
 	
 	struct cr_filter
 	{
-		int key; /* e.g CTA_PROTOINFO */
-		int max; /* e.g CTA_PROTOINFO_MAX, or 0 if doing comparison */
+		uint16_t key; /* e.g CTA_PROTOINFO */
+		uint16_t max; /* e.g CTA_PROTOINFO_MAX, or 0 if doing comparison */
 		int compare_len; /* comparison length, only used if max == 0 */
 		union
 		{
 			char* compare; /* Value to compare with */
 			void* internal;
 		};
-	}  __attribute__((aligned(4))) __attribute__((packed));
+	}  __attribute__((aligned(8))) __attribute__((packed));
 
 	int dump_nf_cts(bool expectations, struct cr_img* out);
 	int restore_nf_cts(bool expectation, char* data, int data_len);

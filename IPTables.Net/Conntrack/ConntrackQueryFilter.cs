@@ -7,8 +7,8 @@ namespace IPTables.Net.Conntrack
 {
     public struct ConntrackQueryFilter
     {
-        public Int32 Key;
-        public Int32 Max;
+        public UInt16 Key;
+        public UInt16 Max;
         public Int32 CompareLength;
         public byte[] Compare;
     }
