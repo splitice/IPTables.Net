@@ -20,6 +20,8 @@ addons:
     - libnetfilter-conntrack3
     - libnfnetlink-dev
     - libnfnetlink0
+install:
+  - sudo modprobe ip_conntrack
 script:
   - cd ipthelper
   - CXX="g++-4.8" ADDITIONAL_CFLAGS="-DOLD_IPTABLES" sudo -E bash install.sh

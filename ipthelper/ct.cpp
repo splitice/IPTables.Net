@@ -27,7 +27,7 @@ uint32_t filter_ipv4;
 
 cr_filter* filter = NULL;
 int filter_len;
-int filter_af;
+int filter_af = 0;
 
 void conditional_free()
 {
@@ -61,6 +61,9 @@ void conditional_init(int address_family, cr_filter* filters, int filters_len)
 }
 bool conditional_filter(struct nlmsghdr *nlh)
 {
+	if (filter_af != 0 && msg->nfgen_family != filter_af)
+		return false;
+
 	if (filter == NULL)
 	{
 		return true;
@@ -73,9 +76,6 @@ bool conditional_filter(struct nlmsghdr *nlh)
 	bool ret = true;
 	
 	msg = (nfgenmsg *)NLMSG_DATA(nlh);
-
-	if (msg->nfgen_family != filter_af)
-		goto out;
 	
 	err = nlmsg_parse(nlh, sizeof(struct nfgenmsg), tb, CTA_MAX, NULL);
 	if (err < 0)

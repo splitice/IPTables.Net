@@ -51,6 +51,7 @@
     <Compile Include="IpSetSyncTests.cs" />
     <Compile Include="IpSetParseTest.cs" />
     <Compile Include="IpTablesComparisonTests.cs" />
+    <Compile Include="ConntrackLibraryTests.cs" />
     <Compile Include="IptablesLibraryTest.cs" />
     <Compile Include="IpTablesRestoreSyncTests.cs" />
     <Compile Include="IpTablesRuleSetTests.cs" />

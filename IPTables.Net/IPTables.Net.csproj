@@ -46,6 +46,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Conntrack\ConntrackHelper.cs" />
+    <Compile Include="Conntrack\ConntrackQueryFilter.cs" />
+    <Compile Include="Conntrack\ConntrackSystem.cs" />
     <Compile Include="Exceptions\IpTablesNetException.cs" />
     <Compile Include="Exceptions\IpTablesNetExceptionErrno.cs" />
     <Compile Include="Exceptions\IpTablesParserException.cs" />
