@@ -6,8 +6,8 @@ BINARYDIR := Release
 
 #Toolchain
 CC := gcc
-CXX := gcc
-LD := $(CXX)
+CXX := g++
+LD := $(CC)
 AR := ar
 OBJCOPY := objcopy
 
@@ -15,13 +15,13 @@ OBJCOPY := objcopy
 PREPROCESSOR_MACROS := NDEBUG RELEASE
 INCLUDE_DIRS := .
 LIBRARY_DIRS := 
-LIBRARY_NAMES := iptc ip4tc ip6tc dl xtables
+LIBRARY_NAMES := iptc ip4tc ip6tc dl xtables nl-3
 ADDITIONAL_LINKER_INPUTS := 
 MACOS_FRAMEWORKS := 
 LINUX_PACKAGES := 
 
-CFLAGS := -ggdb -ffunction-sections -O3 -fpermissive
-CXXFLAGS := -ggdb -ffunction-sections -O3 -fpermissive
+CFLAGS := -ggdb -ffunction-sections -O3 -fpic $(ADDITIONAL_CFLAGS)
+CXXFLAGS := -ggdb -ffunction-sections -O3 -fpermissive -fpic -std=c++11 $(ADDITIONAL_CFLAGS)
 ASFLAGS := 
 LDFLAGS := -Wl,-gc-sections
 COMMONFLAGS := 

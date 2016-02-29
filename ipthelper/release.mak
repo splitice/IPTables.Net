@@ -13,9 +13,9 @@ OBJCOPY := objcopy
 
 #Additional flags
 PREPROCESSOR_MACROS := NDEBUG RELEASE
-INCLUDE_DIRS := .
+INCLUDE_DIRS := . /usr/include/libnl3
 LIBRARY_DIRS := 
-LIBRARY_NAMES := iptc ip4tc ip6tc dl xtables
+LIBRARY_NAMES := iptc ip4tc ip6tc dl xtables nl-3
 ADDITIONAL_LINKER_INPUTS := 
 MACOS_FRAMEWORKS := 
 LINUX_PACKAGES := 
