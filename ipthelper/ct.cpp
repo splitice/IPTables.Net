@@ -33,7 +33,7 @@ struct cmp_str
 	}
 };
 
-static std::map<const char*, int, cmp_str> constants = {
+static std::map<const char*, uint16_t, cmp_str> constants = {
 	{ "CTA_UNSPEC", CTA_UNSPEC },
 	{ "CTA_TUPLE_ORIG", CTA_TUPLE_ORIG },
 	{ "CTA_TUPLE_REPLY", CTA_TUPLE_REPLY },
@@ -196,7 +196,7 @@ cr_filter* filter = NULL;
 int filter_len;
 int filter_af = 0;
 
-int cr_constant(const char* key)
+uint16_t cr_constant(const char* key)
 {
 	auto it = constants.find(key);
 	if (it == constants.begin())
