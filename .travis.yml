@@ -5,10 +5,18 @@ mono:
 git:
   depth: 300
 sudo: true
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-4.8
+    - g++-4.8
+    - nunit-console 
+    - iptables-dev
+    - realpath
+
 install:
-  - sudo apt-get -qq install nunit-console iptables-dev realpath
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get install -qq gcc-4.8
   - export CXX="g++-4.8"
   
 script:
