@@ -51,13 +51,13 @@ namespace IPTables.Net.Conntrack
                             int crsize = ConntrackHelper.cr_length(ptr);
                             Console.WriteLine("len: " + crsize);
                             IntPtr newPtr = Marshal.ReadIntPtr(ptr);
+                            Console.WriteLine("ptr: "+ptr+" newPtr: " + newPtr);
                             crsize -= IntPtr.Size;
-                            ptr = new IntPtr((int) ptr + IntPtr.Size);
                             if (buffer.Length != crsize)
                             {
                                 buffer = new byte[crsize];
                             }
-                            Marshal.Copy(ptr, buffer, 0, crsize);
+                            Marshal.Copy(new IntPtr((long) ptr + IntPtr.Size), buffer, 0, crsize);
                             cb(buffer);
                             ptr = newPtr;
                         }
