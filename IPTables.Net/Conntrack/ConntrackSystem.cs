@@ -58,7 +58,7 @@ namespace IPTables.Net.Conntrack
                             {
                                 buffer = new byte[crsize];
                             }
-                            Marshal.Copy(newPtr, buffer, 0, crsize);
+                            Marshal.Copy(ptr, buffer, 0, crsize);
                             cb(buffer);
                         }
                     }
