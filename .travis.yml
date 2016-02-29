@@ -15,13 +15,10 @@ addons:
     - nunit-console 
     - iptables-dev
     - realpath
-
-install:
-  - export CXX="g++-4.8"
   
 script:
   - cd ipthelper
-  - ADDITIONAL_CFLAGS="-DOLD_IPTABLES" sudo -E bash install.sh
+  - CXX="g++-4.8" ADDITIONAL_CFLAGS="-DOLD_IPTABLES" sudo -E bash install.sh
   - cd ..
   - bash travis-ci/autoversion.sh IPTables.Net
   - bash travis-ci/autoversion.sh IPTables.Net.Tests
