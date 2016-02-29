@@ -15,6 +15,7 @@ addons:
     - nunit-console 
     - iptables-dev
     - realpath
+    - libnl-3-dev
   
 script:
   - cd ipthelper
