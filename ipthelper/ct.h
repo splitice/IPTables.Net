@@ -24,7 +24,7 @@ extern "C"
 			char* compare; /* Value to compare with */
 			void* internal;
 		};
-	};
+	}  __attribute__((aligned(4))) __attribute__((packed));
 
 	int dump_nf_cts(bool expectations, struct cr_img* out);
 	int restore_nf_cts(bool expectation, char* data, int data_len);
