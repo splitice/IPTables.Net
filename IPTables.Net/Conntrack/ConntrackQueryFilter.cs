@@ -12,6 +12,6 @@ namespace IPTables.Net.Conntrack
         public UInt16 Key;
         public UInt16 Max;
         public Int32 CompareLength;
-        public byte[] Compare;
+        public IntPtr Compare;
     }
 }
