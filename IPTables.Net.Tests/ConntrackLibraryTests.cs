@@ -22,13 +22,13 @@ namespace IPTables.Net.Tests
             }
         }
 
-        [TestCase]
+        [Test]
         public void TestStructureSize()
         {
             Assert.AreEqual(16, Marshal.SizeOf(typeof(ConntrackQueryFilter)));
         }
 
-        [TestCase]
+        [Test]
         public void TestDump()
         {
             if (IsLinux)
@@ -39,7 +39,7 @@ namespace IPTables.Net.Tests
             }
         }
 
-        [TestCase]
+        [Test]
         public void TestDumpFiltered()
         {
             if (IsLinux)
