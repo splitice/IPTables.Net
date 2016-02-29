@@ -10,6 +10,18 @@ namespace IPTables.Net.Conntrack
     public class ConntrackSystem
     {
         private object _queryLock = new object();
+        private Dictionary<String, int> _constants = new Dictionary<string, int>();
+
+        public int GetConstant(String key)
+        {
+            int value;
+            if (!_constants.TryGetValue(key, out value))
+            {
+                value = ConntrackHelper.cr_constant(key);
+                _constants.Add(key, value);
+            }
+            return value;
+        }
 
         public void Restore(bool expectationsTable, byte[] data)
         {

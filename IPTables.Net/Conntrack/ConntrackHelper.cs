@@ -22,6 +22,8 @@ namespace IPTables.Net.Conntrack
         [DllImport(Helper)]
         public static extern int restore_nf_cts(bool expectations, byte[] data, Int32 data_length);
 
+        [DllImport(Helper)]
+        public static extern int cr_constant(string constant);
 
         [DllImport(Helper)]
         public static extern int cr_free(CrImg img);
