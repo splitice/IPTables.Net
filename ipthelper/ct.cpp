@@ -56,7 +56,10 @@ static std::map<const char*, int, cmp_str> constants = {
 	{ "CTA_ZONE", CTA_ZONE },
 	{ "CTA_SECCTX", CTA_SECCTX },
 	{ "CTA_TIMESTAMP", CTA_TIMESTAMP },
+		
+#ifndef OLD_IPTABLES
 	{ "CTA_MARK_MASK", CTA_MARK_MASK },
+#endif
 	{ "CTA_MAX", CTA_MAX },
 	{ "CTA_TUPLE_UNSPEC", CTA_TUPLE_UNSPEC },
 	{ "CTA_TUPLE_IP", CTA_TUPLE_IP },
@@ -112,6 +115,8 @@ static std::map<const char*, int, cmp_str> constants = {
 	{ "CTA_TIMESTAMP_STOP", CTA_TIMESTAMP_STOP },
 	{ "CTA_TIMESTAMP_MAX", CTA_TIMESTAMP_MAX },
 	{ "CTA_NAT_UNSPEC", CTA_NAT_UNSPEC },
+		
+#ifndef OLD_IPTABLES
 	{ "CTA_NAT_V4_MINIP", CTA_NAT_V4_MINIP },
 	{ "CTA_NAT_MINIP", CTA_NAT_MINIP },
 	{ "CTA_NAT_V4_MAXIP", CTA_NAT_V4_MAXIP },
@@ -119,6 +124,7 @@ static std::map<const char*, int, cmp_str> constants = {
 	{ "CTA_NAT_PROTO", CTA_NAT_PROTO },
 	{ "CTA_NAT_V6_MINIP", CTA_NAT_V6_MINIP },
 	{ "CTA_NAT_V6_MAXIP", CTA_NAT_V6_MAXIP },
+#endif
 	{ "CTA_NAT_MAX", CTA_NAT_MAX },
 	{ "CTA_PROTONAT_UNSPEC", CTA_PROTONAT_UNSPEC },
 	{ "CTA_PROTONAT_PORT_MIN", CTA_PROTONAT_PORT_MIN },
@@ -138,6 +144,7 @@ static std::map<const char*, int, cmp_str> constants = {
 	{ "CTA_EXPECT_HELP_NAME", CTA_EXPECT_HELP_NAME },
 	{ "CTA_EXPECT_ZONE", CTA_EXPECT_ZONE },
 	{ "CTA_EXPECT_FLAGS", CTA_EXPECT_FLAGS },
+#ifndef OLD_IPTABLES
 	{ "CTA_EXPECT_CLASS", CTA_EXPECT_CLASS },
 	{ "CTA_EXPECT_NAT", CTA_EXPECT_NAT },
 	{ "CTA_EXPECT_FN", CTA_EXPECT_FN },
@@ -146,13 +153,19 @@ static std::map<const char*, int, cmp_str> constants = {
 	{ "CTA_EXPECT_NAT_DIR", CTA_EXPECT_NAT_DIR },
 	{ "CTA_EXPECT_NAT_TUPLE", CTA_EXPECT_NAT_TUPLE },
 	{ "CTA_EXPECT_NAT_MAX", CTA_EXPECT_NAT_MAX },
+#endif
 	{ "CTA_HELP_UNSPEC", CTA_HELP_UNSPEC },
 	{ "CTA_HELP_NAME", CTA_HELP_NAME },
+		
+#ifndef OLD_IPTABLES
 	{ "CTA_HELP_INFO", CTA_HELP_INFO },
+#endif
 	{ "CTA_HELP_MAX", CTA_HELP_MAX },
 	{ "CTA_SECCTX_UNSPEC", CTA_SECCTX_UNSPEC },
 	{ "CTA_SECCTX_NAME", CTA_SECCTX_NAME },
 	{ "CTA_SECCTX_MAX", CTA_SECCTX_MAX },
+		
+#ifndef OLD_IPTABLES
 	{ "CTA_STATS_UNSPEC", CTA_STATS_UNSPEC },
 	{ "CTA_STATS_SEARCHED", CTA_STATS_SEARCHED },
 	{ "CTA_STATS_FOUND", CTA_STATS_FOUND },
@@ -176,6 +189,7 @@ static std::map<const char*, int, cmp_str> constants = {
 	{ "CTA_STATS_EXP_CREATE", CTA_STATS_EXP_CREATE },
 	{ "CTA_STATS_EXP_DELETE", CTA_STATS_EXP_DELETE },
 	{ "CTA_STATS_EXP_MAX", CTA_STATS_EXP_MAX }
+#endif
  };
 
 cr_filter* filter = NULL;
