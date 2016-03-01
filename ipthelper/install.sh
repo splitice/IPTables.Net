@@ -4,8 +4,12 @@ CONFIG=$(printenv CONFIG)
 if [[ -z "$CONFIG" ]]; then
 	CONFIG="Release"
 fi
+CXX=$(printenv CXX)
+if [[ -z "$CXX" ]]; then
+	CXX="g++"
+fi
 
-make ADDITIONAL_CFLAGS=$(printenv ADDITIONAL_CFLAGS) CXX=$(printenv CXX) CONFIG="$CONFIG" 
+make ADDITIONAL_CFLAGS=$(printenv ADDITIONAL_CFLAGS) CXX="$CXX" CONFIG="$CONFIG" 
 cp Release/libipthelper.so /usr/lib/
 ldconfig -n /usr/lib
 

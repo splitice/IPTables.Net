@@ -42,16 +42,13 @@ namespace IPTables.Net.Conntrack
                     byte[] buffer = new byte[1];
                     ConntrackHelper.CrImg img;
                     ConntrackHelper.dump_nf_cts(expectationTable, out img);
-                    Console.WriteLine("dump done");
                     try
                     {
                         IntPtr ptr = img.CrNode;
                         while (ptr != IntPtr.Zero)
                         {
                             int crsize = ConntrackHelper.cr_length(ptr);
-                            Console.WriteLine("len: " + crsize);
                             IntPtr newPtr = Marshal.ReadIntPtr(ptr);
-                            Console.WriteLine("ptr: "+ptr+" newPtr: " + newPtr);
                             crsize -= IntPtr.Size;
                             if (buffer.Length != crsize)
                             {
