@@ -201,8 +201,8 @@ static int filter_af = 0;
 static uint32_t restore_mark = 0, restore_mark_mask = -1;
 
 void restore_mark_init(uint32_t mark, uint32_t mark_mask){
-	restore_mark = mark;
-	restore_mark_mask = ~mark_mask;
+	restore_mark = htonl(mark);
+	restore_mark_mask = ~htonl(mark_mask);
 }
 void restore_mark_free(){
 	restore_mark_init(0,0);
@@ -336,7 +336,7 @@ static int ct_restore_callback(struct nlmsghdr *nlh)
 	if (err < 0)
 		return -1;
 	
-	if (restore_mark != 0 || restore_mark_mask != 0){
+	if (restore_mark != 0 || restore_mark_mask != -1){
 		uint32_t* mark = (uint32_t*)nla_data(tb[CTA_MARK]);
 		*mark = (*mark & restore_mark_mask) ^ restore_mark;
 	}
