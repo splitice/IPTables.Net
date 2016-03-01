@@ -360,18 +360,20 @@ static int ct_restore_callback(struct nlmsghdr *nlh)
 /*
 Restore from buffer
 */
-int restore_nf_cts(bool expectation, char* data, int data_len)
+int restore_nf_cts(bool expectation, char* data, int* data_len)
 {
 	struct nlmsghdr *nlh = NULL;
 	int exit_code = -1, sk;
+	int i = 0;
 
 	sk = socket(AF_NETLINK, SOCK_RAW, NETLINK_NETFILTER);
 	if (sk < 0) {
 		pr_perror("Can't open rtnl sock for net dump");
+		exit_code = sk;
 		goto out_img;
 	}
 
-	for(int i=0;i<data_len;) {
+	while(i<data_len) {
 		int ret;
 
 		nlh = (struct nlmsghdr *)&data[i];
@@ -382,14 +384,21 @@ int restore_nf_cts(bool expectation, char* data, int data_len)
 
 		nlh->nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK | NLM_F_CREATE;
 		ret = do_rtnl_req(sk, nlh, nlh->nlmsg_len, NULL, NULL, NULL);
-		if (ret)
+		if (ret){
+			exit_code = ret;
 			goto out;
+		}
 		
 		i += nlh->nlmsg_len;
 		assert(i <= data_len);
 	}
-
-	exit_code = 0;
+	
+	if(i == data_len){
+		exit_code = 0;
+	}else{
+		exit_code = data_len - i;
+	}
+	
 out:
 	close(sk);
 out_img:
