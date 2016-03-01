@@ -377,7 +377,7 @@ static int ct_restore_callback(struct nlmsghdr *nlh)
 /*
 Restore from buffer
 */
-int restore_nf_cts(bool expectation, char* data, int* data_len)
+int restore_nf_cts(bool expectation, char* data, int data_len)
 {
 	struct nlmsghdr *nlh = NULL;
 	int exit_code = -1, sk;
