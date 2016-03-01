@@ -17,6 +17,11 @@ namespace IPTables.Net.Conntrack
         }
 
         [DllImport(Helper)]
+        public static extern void restore_mark_init(UInt32 mark, UInt32 mark_mask);
+        [DllImport(Helper)]
+        public static extern void restore_mark_free();
+
+        [DllImport(Helper)]
         public static extern int dump_nf_cts(bool expectations, out CrImg img);
 
         [DllImport(Helper)]

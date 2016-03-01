@@ -26,9 +26,18 @@ namespace IPTables.Net.Conntrack
             }
         }
 
-        public void Restore(bool expectationsTable, byte[] data)
+        public void Restore(bool expectationsTable, byte[] data, UInt32 restoreMark = 0, UInt32 restoreMarkMask = 0)
         {
+            bool useRestoreMark = restoreMark != 0 || restoreMarkMask != 0;
+            if (useRestoreMark)
+            {
+                ConntrackHelper.restore_mark_init(restoreMark,restoreMarkMask);
+            }
             ConntrackHelper.restore_nf_cts(expectationsTable, data, data.Length);
+            if (useRestoreMark)
+            {
+                ConntrackHelper.restore_mark_free();
+            }
         }
 
         public void Dump(bool expectationTable, Action<byte[]> cb, ConntrackQueryFilter[] qf = null, AddressFamily addressFamily = AddressFamily.Unspecified)

@@ -59,7 +59,8 @@ static std::map<const char*, uint16_t, cmp_str> constants = {
 		
 #ifndef OLD_IPTABLES
 	{ "CTA_MARK_MASK", CTA_MARK_MASK },
-#endif
+#endif
+
 	{ "CTA_MAX", CTA_MAX },
 	{ "CTA_TUPLE_UNSPEC", CTA_TUPLE_UNSPEC },
 	{ "CTA_TUPLE_IP", CTA_TUPLE_IP },
@@ -124,7 +125,8 @@ static std::map<const char*, uint16_t, cmp_str> constants = {
 	{ "CTA_NAT_PROTO", CTA_NAT_PROTO },
 	{ "CTA_NAT_V6_MINIP", CTA_NAT_V6_MINIP },
 	{ "CTA_NAT_V6_MAXIP", CTA_NAT_V6_MAXIP },
-#endif
+#endif
+
 	{ "CTA_NAT_MAX", CTA_NAT_MAX },
 	{ "CTA_PROTONAT_UNSPEC", CTA_PROTONAT_UNSPEC },
 	{ "CTA_PROTONAT_PORT_MIN", CTA_PROTONAT_PORT_MIN },
@@ -153,7 +155,8 @@ static std::map<const char*, uint16_t, cmp_str> constants = {
 	{ "CTA_EXPECT_NAT_DIR", CTA_EXPECT_NAT_DIR },
 	{ "CTA_EXPECT_NAT_TUPLE", CTA_EXPECT_NAT_TUPLE },
 	{ "CTA_EXPECT_NAT_MAX", CTA_EXPECT_NAT_MAX },
-#endif
+#endif
+
 	{ "CTA_HELP_UNSPEC", CTA_HELP_UNSPEC },
 	{ "CTA_HELP_NAME", CTA_HELP_NAME },
 		
@@ -192,9 +195,18 @@ static std::map<const char*, uint16_t, cmp_str> constants = {
 #endif
  };
 
-cr_filter* filter = NULL;
-int filter_len;
-int filter_af = 0;
+static cr_filter* filter = NULL;
+static int filter_len;
+static int filter_af = 0;
+static uint32_t restore_mark = 0, restore_mark_mask = -1;
+
+void restore_mark_init(uint32_t mark, uint32_t mark_mask){
+	restore_mark = mark;
+	restore_mark_mask = ~mark_mask;
+}
+void restore_mark_free(){
+	restore_mark_init(0,0);
+}
 
 uint16_t cr_constant(const char* key)
 {
@@ -323,6 +335,11 @@ static int ct_restore_callback(struct nlmsghdr *nlh)
 	err = nlmsg_parse(nlh, sizeof(struct nfgenmsg), tb, CTA_MAX, NULL);
 	if (err < 0)
 		return -1;
+	
+	if (restore_mark != 0 || restore_mark_mask != 0){
+		uint32_t* mark = (uint32_t*)nla_data(tb[CTA_MARK]);
+		*mark = (*mark & restore_mark_mask) ^ restore_mark;
+	}
 
 	if (!tb[CTA_PROTOINFO])
 		return 0;

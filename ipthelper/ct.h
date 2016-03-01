@@ -26,6 +26,9 @@ extern "C"
 		};
 	}  __attribute__((aligned(8))) __attribute__((packed));
 
+	void restore_mark_init(uint32_t mark, uint32_t mark_mask);
+	void restore_mark_free();
+	
 	int dump_nf_cts(bool expectations, struct cr_img* out);
 	int restore_nf_cts(bool expectation, char* data, int data_len);
 	void cr_free(cr_img* img);
