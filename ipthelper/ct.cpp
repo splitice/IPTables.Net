@@ -193,19 +193,19 @@ static std::map<const char*, uint16_t, cmp_str> constants = {
 	{ "CTA_STATS_EXP_DELETE", CTA_STATS_EXP_DELETE },
 	{ "CTA_STATS_EXP_MAX", CTA_STATS_EXP_MAX }
 #endif
- };
+};
 
 static cr_filter* filter = NULL;
 static int filter_len;
 static int filter_af = 0;
 static uint32_t restore_mark = 0, restore_mark_mask = -1;
 
-void restore_mark_init(uint32_t mark, uint32_t mark_mask){
+void restore_mark_init(uint32_t mark, uint32_t mark_mask) {
 	restore_mark = htonl(mark);
 	restore_mark_mask = ~htonl(mark_mask);
 }
-void restore_mark_free(){
-	restore_mark_init(0,0);
+void restore_mark_free() {
+	restore_mark_init(0, 0);
 }
 
 uint16_t cr_constant(const char* key)
@@ -313,7 +313,7 @@ static int dump_one_nf(struct nlmsghdr *hdr, void *arg)
 	}
 
 	cr_node* node = (cr_node*)malloc(sizeof(cr_node*) + hdr->nlmsg_len);
-	memcpy(node->data,hdr,hdr->nlmsg_len);
+	memcpy(node->data, hdr, hdr->nlmsg_len);
 	
 	node->next = img->start;
 	img->start = node;
@@ -336,9 +336,11 @@ static int ct_restore_callback(struct nlmsghdr *nlh)
 	if (err < 0)
 		return -1;
 	
-	if (restore_mark != 0 || restore_mark_mask != -1){
+	if (restore_mark != 0 || restore_mark_mask != -1) {
 		uint32_t* mark = (uint32_t*)nla_data(tb[CTA_MARK]);
+		//printf("old mark: 0x%08x\n", ntohl(*mark));
 		*mark = (*mark & restore_mark_mask) ^ restore_mark;
+		//printf("new mark: 0x%08x\n", ntohl(*mark));
 	}
 
 	if (!tb[CTA_PROTOINFO])
@@ -390,10 +392,16 @@ int restore_nf_cts(bool expectation, char* data, int data_len)
 		goto out_img;
 	}
 
-	while(i<data_len) {
+	while (i < data_len) {
 		int ret;
 
 		nlh = (struct nlmsghdr *)&data[i];
+		
+		if (i + nlh->nlmsg_len > data_len)
+		{
+			break;
+		}
+		i += nlh->nlmsg_len;
 		
 		if (!expectation)
 			if (ct_restore_callback(nlh))
@@ -401,18 +409,18 @@ int restore_nf_cts(bool expectation, char* data, int data_len)
 
 		nlh->nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK | NLM_F_CREATE;
 		ret = do_rtnl_req(sk, nlh, nlh->nlmsg_len, NULL, NULL, NULL);
-		if (ret){
+		if (ret) {
 			exit_code = ret;
 			goto out;
 		}
 		
-		i += nlh->nlmsg_len;
 		assert(i <= data_len);
 	}
 	
-	if(i == data_len){
+	if (i == data_len) {
 		exit_code = 0;
-	}else{
+	}
+	else {
 		exit_code = data_len - i;
 	}
 	
