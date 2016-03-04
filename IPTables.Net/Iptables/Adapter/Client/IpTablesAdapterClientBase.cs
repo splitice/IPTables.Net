@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Common.Logging;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
 
@@ -9,6 +10,8 @@ namespace IPTables.Net.Iptables.Adapter.Client
 {
     abstract class IpTablesAdapterClientBase : INetfilterAdapterClient
     {
+        protected static readonly ILog Log = LogManager.GetLogger<INetfilterAdapterClient>();
+
         public abstract void StartTransaction();
 
         public abstract void EndTransactionCommit();

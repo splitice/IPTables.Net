@@ -89,8 +89,6 @@ namespace IPTables.Net.Iptables.IpSet
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(entry.Port);
-                                Console.WriteLine(systemSet.Entries.Count);
                                 throw;
                             }
                         }

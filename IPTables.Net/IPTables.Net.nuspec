@@ -12,6 +12,9 @@
 		<releaseNotes>Automatic Updates via GitHub</releaseNotes>
 		<copyright>Copyright Never</copyright>
 		<language>en-US</language>
+		<dependencies> 
+			<dependency id="Common.logging" />
+		</dependencies>
 	</metadata>
 	<files>
 		<file src="bin/Release/IPTables.Net.dll" target="lib" />

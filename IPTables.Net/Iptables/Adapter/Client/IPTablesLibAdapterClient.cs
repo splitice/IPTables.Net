@@ -34,7 +34,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 return _interfaces[table];
             }
 
-            var i = new IptcInterface(table);
+            var i = new IptcInterface(table, Log);
             _interfaces.Add(table, i);
             return i;
         }

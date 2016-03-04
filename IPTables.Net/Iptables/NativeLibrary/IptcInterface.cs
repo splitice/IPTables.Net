@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Common.Logging;
 using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.Iptables.NativeLibrary
@@ -249,8 +250,9 @@ namespace IPTables.Net.Iptables.NativeLibrary
             return DllExists(out msg);
         }
 
-        public IptcInterface(String table)
+        public IptcInterface(String table, ILog log = null)
         {
+            logger = log;
             if (!_helperInit)
             {
                 if (init_helper() < 0)
@@ -270,15 +272,15 @@ namespace IPTables.Net.Iptables.NativeLibrary
             }
         }
 
-#if DEBUG_NATIVE_IPTCP
-        private List<String> _debugEntries = new List<string>(); 
-#endif
+        private List<String> _debugEntries = new List<string>();
+        private ILog logger;
 
         private void DebugEntry(string message)
         {
-#if DEBUG_NATIVE_IPTCP
-            _debugEntries.Add(message);
-#endif
+            if (logger != null)
+            {
+                _debugEntries.Add(message);
+            }
         }
 
         private void RequireHandle()
@@ -395,13 +397,16 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public bool Commit()
         {
             RequireHandle();
-#if DEBUG_NATIVE_IPTCP
-            Console.WriteLine("Commiting - ");
-            foreach (var c in _debugEntries)
+
+            if (logger != null)
             {
-                Console.WriteLine(c);
+                foreach (var c in _debugEntries)
+                {
+                    logger.InfoFormat("IPTables Update: ", c);
+                }
+                _debugEntries.Clear();
             }
-#endif
+
             bool status =  iptc_commit(_handle) == 1;
             if (!status)
             {

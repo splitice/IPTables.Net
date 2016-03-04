@@ -77,8 +77,6 @@ namespace IPTables.Net.Netfilter.TableSync
                 else 
                 {
                     //Debug:
-                    //Console.WriteLine("A:"+withRule.ToString());
-                    //Console.WriteLine("B:"+cR.ToString());
                     if (_ruleComparerForUpdate(cR, withRule))
                     {
                         //Replace this rule

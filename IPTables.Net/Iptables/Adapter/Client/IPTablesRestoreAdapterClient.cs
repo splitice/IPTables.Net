@@ -218,7 +218,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                         sw.Flush();
                         ms.Seek(0, SeekOrigin.Begin);
                         var sr = new StreamReader(ms);
-                        Console.WriteLine(sr.ReadToEnd());
+                        Log.Error("Error invalid command line: " + sr.ReadToEnd());
                         throw new IpTablesNetException("IpTables-Restore execution failed: Invalid Command Line - " + process.StandardError.ReadToEnd());
                     }
 
@@ -226,7 +226,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                     if (process.ExitCode == 1)
                     {
                         String error = process.StandardError.ReadToEnd();
-                        Console.WriteLine(error);
+                        Log.Error("An General Error Occured: " + error);
 
                         MemoryStream ms = new MemoryStream();
                         var sw = new StreamWriter(ms);

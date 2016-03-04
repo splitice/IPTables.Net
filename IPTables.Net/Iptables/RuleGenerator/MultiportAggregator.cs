@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Common.Logging;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Helpers;
@@ -31,6 +32,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
     /// <typeparam name="TKey"></typeparam>
     public class MultiportAggregator<TKey> : IRuleGenerator
     {
+        protected static readonly ILog Log = LogManager.GetLogger<MultiportAggregator<TKey>>();
         private String _chain;
         private String _table;
         private Dictionary<TKey, List<IpTablesRule>> _rules = new Dictionary<TKey, List<IpTablesRule>>();
@@ -91,7 +93,6 @@ namespace IPTables.Net.Iptables.RuleGenerator
 
             Action buildRule = () =>
             {
-                //Console.WriteLine("t2");
                 if (ranges.Count == 0)
                 {
                     throw new IpTablesNetException("this should not happen");
@@ -125,8 +126,6 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 {
                     rule1.Chain = ruleSet.Chains.GetChainOrDefault(chainName, _table);
                 }
-
-                //Console.WriteLine(rule1.GetActionCommandParamters());
 
                 _setPort(rule1, new List<PortOrRange>(ranges));
                 ruleSet.AddRule(rule1);
@@ -210,7 +209,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
 
                 //Nested output
                 var singleRule = OutputRulesForGroup(ruleSet, system, p.Value, chainName, p.Key);
-                //Console.WriteLine("Is Single Rule: {0}", singleRule == null ? "NO" : "YES");
+                Log.Debug((a)=>a("Is Single Rule: {0}", singleRule == null ? "NO" : "YES"));
                 if (singleRule == null)
                 {
                     if (chain.Rules.Count != 0)
@@ -225,7 +224,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                     }
                     else
                     {
-                        //Console.WriteLine(String.Format("No rules in the chain \"{0}\", skipping jump from {1}.", chainName, _chain));
+                        Log.Debug((a)=>a("No rules in the chain \"{0}\", skipping jump from {1}.", chainName, _chain));
                     }
                 }
                 else
