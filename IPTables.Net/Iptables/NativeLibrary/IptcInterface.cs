@@ -402,7 +402,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
             {
                 foreach (var c in _debugEntries)
                 {
-                    logger.InfoFormat("IPTables Update: ", c);
+                    logger.InfoFormat("IPTables Update: {0}", c);
                 }
                 _debugEntries.Clear();
             }
