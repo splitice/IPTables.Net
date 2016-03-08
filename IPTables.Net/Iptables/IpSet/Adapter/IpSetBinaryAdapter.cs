@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using SystemInteract;
+using Common.Logging;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
 
@@ -13,6 +14,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
     public class IpSetBinaryAdapter
     {
         private const String BinaryName = "ipset";
+        private ILog _log = LogManager.GetLogger<IpSetBinaryAdapter>();
 
         private readonly ISystemFactory _system;
 
@@ -82,6 +84,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
                 }
                 try
                 {
+                    _log.InfoFormat("IPSet: {0}", set);
                     standardInput.WriteLine(set);
                 }
                 catch (IOException)
