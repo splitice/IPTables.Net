@@ -58,8 +58,8 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public Version GetIptablesVersion()
         {
-            var versionProcess = ExecutionHelper.ExecuteIptables(_system, "-V", _iptablesBinary);
-            var versionOutput = versionProcess.StandardOutput.ReadToEnd();
+            String versionOutput, error;
+            ExecutionHelper.ExecuteIptables(_system, "-V", _iptablesBinary, out versionOutput, out error);
             Regex r = new Regex(@"iptables v([0-9]+\.[0-9]+\.[0-9]+)");
             if (!r.IsMatch(versionOutput))
             {
@@ -106,12 +106,8 @@ namespace IPTables.Net.Iptables.Adapter.Client
         public override IpTablesChainSet ListRules(String table)
         {
             ISystemProcess process = _system.System.StartProcess(_iptablesBinary + "-save", String.Format("-c -t {0}", table));
-            String output = "";
-            do
-            {
-                output += process.StandardOutput.ReadToEnd();
-            } while (!process.HasExited);
-            process.WaitForExit();
+            String output, error;
+            ProcessHelper.ReadToEnd(process, out output, out error);
             return Helper.IPTablesSaveParser.GetRulesFromOutput(_system, output, table, _ipVersion);
         }
 

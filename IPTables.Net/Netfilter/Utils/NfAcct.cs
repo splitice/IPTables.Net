@@ -44,8 +44,10 @@ namespace IPTables.Net.Netfilter.Utils
             }
 
             var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name));
-            process.WaitForExit();
-            var output = process.StandardOutput.ReadToEnd();
+
+            String output, error;
+            ProcessHelper.ReadToEnd(process, out output, out error);
+
             if (output.Trim().Length == 0)
             {
                 return null;
@@ -62,16 +64,18 @@ namespace IPTables.Net.Netfilter.Utils
         {
             String cmd = "add {0}";
             var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name));
-            process.WaitForExit();
-            var output = process.StandardOutput.ReadToEnd();
+
+            String output, error;
+            ProcessHelper.ReadToEnd(process, out output, out error);
         }
 
         public void Delete(String name)
         {
             String cmd = "del {0}";
             var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name));
-            process.WaitForExit();
-            var output = process.StandardOutput.ReadToEnd();
+
+            String output, error;
+            ProcessHelper.ReadToEnd(process, out output, out error);
         }
 
         public List<NfAcctUsage> List(bool reset = false)
@@ -82,8 +86,9 @@ namespace IPTables.Net.Netfilter.Utils
                 cmd += " reset";
             }
             var process = _system.StartProcess("/usr/sbin/nfacct", cmd);
-            process.WaitForExit();
-            var output = process.StandardOutput.ReadToEnd();
+
+            String output, error;
+            ProcessHelper.ReadToEnd(process, out output, out error);
 
             //No XML returned for empty
             if (output.Trim().Length == 0)

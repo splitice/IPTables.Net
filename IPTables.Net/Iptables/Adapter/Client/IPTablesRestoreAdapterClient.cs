@@ -48,8 +48,9 @@ namespace IPTables.Net.Iptables.Adapter.Client
         public void CheckBinary()
         {
             var process = StartProcess(_iptablesRestoreBinary, "--help");
-            process.WaitForExit();
-            if (!process.StandardError.ReadToEnd().Contains(NoClearOption))
+            String output, error;
+            ProcessHelper.ReadToEnd(process, out output, out error);
+            if (!error.Contains(NoClearOption))
             {
                 throw new IpTablesNetException("iptables-restore client is not compiled from patched source (patch-iptables-restore.diff)");
             }
@@ -178,8 +179,8 @@ namespace IPTables.Net.Iptables.Adapter.Client
         public override IpTablesChainSet ListRules(String table)
         {
             ISystemProcess process = StartProcess(_iptablesSaveBinary, String.Format("-c -t {0}", table));
-            String toEnd = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
+            String toEnd, error;
+            ProcessHelper.ReadToEnd(process, out toEnd, out error);
             return Helper.IPTablesSaveParser.GetRulesFromOutput(_system, toEnd, table, _ipVersion);
         }
 
@@ -204,7 +205,8 @@ namespace IPTables.Net.Iptables.Adapter.Client
             {
                 process.StandardInput.Flush();
                 process.StandardInput.Close();
-                process.WaitForExit();
+                String output, error;
+                ProcessHelper.ReadToEnd(process, out output, out error);
 
                 //OK
                 if (process.ExitCode != 0)
@@ -225,7 +227,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
                     //ERR: GENERAL ERROR
                     if (process.ExitCode == 1)
                     {
-                        String error = process.StandardError.ReadToEnd();
                         Log.Error("An General Error Occured: " + error);
 
                         MemoryStream ms = new MemoryStream();

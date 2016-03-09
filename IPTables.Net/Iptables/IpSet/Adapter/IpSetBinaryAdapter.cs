@@ -33,11 +33,12 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
         {
             //ipset save
             ISystemProcess process = _system.StartProcess(BinaryName, "restore");
+
             if (WriteStrings(_transactionCommands, process.StandardInput))
             {
                 process.StandardInput.Flush();
                 process.StandardInput.Close();
-                process.WaitForExit();
+                ProcessHelper.WaitForExit(process);
 
                 //OK
                 if (process.ExitCode != 0)
@@ -47,8 +48,9 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             }
             else
             {
-                throw new IpTablesNetException(String.Format("Failed to execute transaction: {0}",
-                    process.StandardError.ReadToEnd()));
+                String output, error;
+                ProcessHelper.ReadToEnd(process, out output, out error);
+                throw new IpTablesNetException(String.Format("Failed to execute transaction: {0}", error));
             }
 
             return false;
@@ -62,7 +64,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             {
                 process.StandardInput.Flush();
                 process.StandardInput.Close();
-                process.WaitForExit();
+                ProcessHelper.WaitForExit(process);
 
                 //OK
                 if (process.ExitCode != 0)
@@ -124,7 +126,10 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
 
             IpSetSets sets = new IpSetSets(iptables);
 
-            String[] all = process.StandardOutput.ReadToEnd().Split(new string[]{"\r\n","\n"}, StringSplitOptions.RemoveEmptyEntries);
+            String output, error;
+            ProcessHelper.ReadToEnd(process, out output, out error);
+
+            String[] all = output.Split(new string[]{"\r\n","\n"}, StringSplitOptions.RemoveEmptyEntries);
             foreach(String line in all){
                 
                 if (String.IsNullOrEmpty(line))
@@ -137,8 +142,6 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
                     sets.Accept(trimmed, iptables);
                 }
             }
-
-            process.WaitForExit();
 
             return sets;
         }
@@ -154,12 +157,13 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             else
             {
                 var process = _system.StartProcess(BinaryName, command);
-                process.WaitForExit();
+
+                String output, error;
+                ProcessHelper.ReadToEnd(process, out output, out error);
 
                 if (process.ExitCode != 0)
                 {
-                    throw new IpTablesNetException(String.Format("Failed to destroy set: {0}",
-                        process.StandardError.ReadToEnd()));
+                    throw new IpTablesNetException(String.Format("Failed to destroy set: {0}", error));
                 }
             }
         }
@@ -191,12 +195,13 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             else
             {
                 var process = _system.StartProcess(BinaryName, command);
-                process.WaitForExit();
+
+                String output, error;
+                ProcessHelper.ReadToEnd(process, out output, out error);
 
                 if (process.ExitCode != 0)
                 {
-                    throw new IpTablesNetException(String.Format("Failed to create set: {0}",
-                        process.StandardError.ReadToEnd()));
+                    throw new IpTablesNetException(String.Format("Failed to create set: {0}", error));
                 }
             }
         }
@@ -212,12 +217,13 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             else
             {
                 var process = _system.StartProcess(BinaryName, command);
-                process.WaitForExit();
+
+                String output, error;
+                ProcessHelper.ReadToEnd(process, out output, out error);
 
                 if (process.ExitCode != 0)
                 {
-                    throw new IpTablesNetException(String.Format("Failed to add entry: {0}",
-                        process.StandardError.ReadToEnd()));
+                    throw new IpTablesNetException(String.Format("Failed to add entry: {0}", error));
                 }
             }
         }
@@ -233,12 +239,13 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             else
             {
                 var process = _system.StartProcess(BinaryName, command);
-                process.WaitForExit();
+
+                String output, error;
+                ProcessHelper.ReadToEnd(process, out output, out error);
 
                 if (process.ExitCode != 0)
                 {
-                    throw new IpTablesNetException(String.Format("Failed to delete entry: {0}",
-                        process.StandardError.ReadToEnd()));
+                    throw new IpTablesNetException(String.Format("Failed to delete entry: {0}", error));
                 }
             }
         }
