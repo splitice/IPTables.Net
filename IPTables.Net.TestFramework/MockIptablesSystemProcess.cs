@@ -7,6 +7,8 @@ namespace IPTables.Net.TestFramework
 {
     public class MockIptablesSystemProcess : ISystemProcess
     {
+        private ProcessStartInfo _startInfo = new ProcessStartInfo();
+
         public bool CloseMainWindow()
         {
             return true;
@@ -75,7 +77,13 @@ namespace IPTables.Net.TestFramework
         public IntPtr MainWindowHandle { get; private set; }
         public string MainWindowTitle { get; private set; }
         public string ProcessName { get; private set; }
-        public ProcessStartInfo StartInfo { get; set; }
+
+        public ProcessStartInfo StartInfo
+        {
+            get { return _startInfo; }
+            set { _startInfo = value; }
+        }
+
         public DateTime StartTime { get; private set; }
         public StreamWriter StandardInput { get; private set; }
         public StreamReader StandardOutput { get; private set; }
