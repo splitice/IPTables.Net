@@ -80,7 +80,7 @@ int do_rtnl_req(int nl,
 	struct msghdr msg;
 	struct sockaddr_nl nladdr;
 	struct iovec iov;
-	static char buf[16384];
+	static char buf[65536];
 	int err;
 
 	if (!error_callback)
