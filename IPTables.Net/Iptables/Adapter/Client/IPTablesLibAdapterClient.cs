@@ -250,6 +250,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                         String.Format("Failed commit to table \"{0}\" due to error: \"{1}\"", kv.Key,
                             kv.Value.GetErrorString()), errno);
                 }
+                kv.Value.Dispose();
             }
             _interfaces.Clear();
             _inTransaction = false;
@@ -262,6 +263,10 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override void EndTransactionRollback()
         {
+            foreach (var i in _interfaces)
+            {
+                i.Value.Dispose();
+            }
             _interfaces.Clear();
             _inTransaction = false;
         }

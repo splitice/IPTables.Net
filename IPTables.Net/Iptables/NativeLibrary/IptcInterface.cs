@@ -7,7 +7,7 @@ using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.Iptables.NativeLibrary
 {
-    public class IptcInterface
+    public class IptcInterface : IDisposable
     {
         private IntPtr _handle;
         public const String Library = "libip4tc.so";
@@ -266,6 +266,12 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         ~IptcInterface()
         {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+
             if (_handle != IntPtr.Zero)
             {
                 Free();
@@ -291,7 +297,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
             }
         }
 
-        public void Free()
+        private void Free()
         {
             RequireHandle();
             iptc_free(_handle);
