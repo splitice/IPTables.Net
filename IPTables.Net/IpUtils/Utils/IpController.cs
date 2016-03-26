@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using SystemInteract;
 
-namespace IPTables.Net.IpUtils
+namespace IPTables.Net.IpUtils.Utils
 {
     public abstract class IpController
     {
@@ -44,7 +44,7 @@ namespace IPTables.Net.IpUtils
             {
                 if (i != strs.Length)
                 {
-                    var v = strs[i + 1];
+                    var v = strs[i];
                     if (firstTrimChars != null)
                     {
                         v = v.TrimEnd(firstTrimChars);
