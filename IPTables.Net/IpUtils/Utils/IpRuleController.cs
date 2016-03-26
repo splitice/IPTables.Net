@@ -24,6 +24,18 @@ namespace IPTables.Net.IpUtils.Utils
                 }
             }
             return r;
-        } 
+        }
+
+        public override void Delete(IpObject obj)
+        {
+            if (obj.Pairs.ContainsKey("pref"))
+            {
+                var ipobj = new IpObject();
+                ipobj.Pairs.Add("pref",obj.Pairs["pref"]);
+                base.Delete(ipobj);
+                return;
+            }
+            base.Delete(obj);
+        }
     }
 }

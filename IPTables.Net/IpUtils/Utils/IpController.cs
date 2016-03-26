@@ -86,7 +86,7 @@ namespace IPTables.Net.IpUtils.Utils
             return new string[] { output.Trim(), error.Trim() };
         }
 
-        public void Add(params String[] args)
+        public virtual void Add(params String[] args)
         {
             var ret = Command("add", args);
             if (ret[0].Length != 0)
@@ -99,12 +99,12 @@ namespace IPTables.Net.IpUtils.Utils
             }
         }
 
-        public void Add(IpObject obj)
+        public virtual void Add(IpObject obj)
         {
             Add(ExportObject(obj));
         }
 
-        public void Delete(params String[] args)
+        public virtual void Delete(params String[] args)
         {
             var ret = Command("delete", args);
             if (ret[0].Length != 0)
@@ -117,7 +117,7 @@ namespace IPTables.Net.IpUtils.Utils
             }
         }
 
-        public void Delete(IpObject obj)
+        public virtual void Delete(IpObject obj)
         {
             Delete(ExportObject(obj));
         }

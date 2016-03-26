@@ -81,6 +81,24 @@ namespace IPTables.Net.Tests
         }
 
         [Test]
+        public void TestDeleteRuleId()
+        {
+            var systemFactory = new MockIptablesSystemFactory();
+            var ipUtils = new IpRuleController(systemFactory);
+            IpObject ipObject = new IpObject();
+            ipObject.Pairs.Add("pref","100");
+            ipObject.Pairs.Add("from","1.1.1.1");
+            ipUtils.Delete(ipObject);
+
+            var expected = new List<KeyValuePair<String, String>>
+            {
+                new KeyValuePair<string, string> ("ip","rule delete pref 100")
+            };
+
+            CollectionAssert.AreEqual(expected, systemFactory.ExecutionLog);
+        }
+
+        [Test]
         public void TestGetRules()
         {
             var systemFactory = new MockIptablesSystemFactory();
