@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using SystemInteract;
 
@@ -9,11 +11,21 @@ namespace IPTables.Net.TestFramework
     public class MockIptablesSystemProcess : ISystemProcess
     {
         private ProcessStartInfo _startInfo = new ProcessStartInfo();
+        private Thread _outputReader;
+        private Thread _errorReader;
 
         public MockIptablesSystemProcess(StreamReader output = null, StreamReader error = null)
         {
             StandardOutput = output;
+            if (output != null)
+            {
+                _startInfo.RedirectStandardOutput = true;
+            }
             StandardError = error;
+            if (error != null)
+            {
+                _startInfo.RedirectStandardError = true;
+            }
         }
 
         public bool CloseMainWindow()
@@ -53,7 +65,7 @@ namespace IPTables.Net.TestFramework
                     return true;
                 }
                 Thread.Sleep(100);
-            } while (tostop < DateTime.Now);
+            } while (tostop > DateTime.Now);
 
             return false;
         }
@@ -72,12 +84,37 @@ namespace IPTables.Net.TestFramework
             return true;
         }
 
+        private Thread StartReader(StreamReader reader, DataReceivedEventHandler handler)
+        {
+            return new Thread(() =>
+            {
+                while (!reader.EndOfStream)
+                {
+                    String line = reader.ReadLine();
+                    var arg =
+                    (DataReceivedEventArgs)
+                        Activator.CreateInstance(typeof (DataReceivedEventArgs),
+                            BindingFlags.NonPublic | BindingFlags.Instance, null, new object[] {line},
+                            CultureInfo.CurrentCulture);
+                    handler(this, arg);
+                }
+            });
+        }
+
         public void BeginOutputReadLine()
         {
+            if (OutputDataReceived == null || StandardOutput == null) return;
+            var thread = StartReader(StandardOutput, OutputDataReceived);
+            _outputReader = thread;
+            thread.Start();
         }
 
         public void BeginErrorReadLine()
         {
+            if (ErrorDataReceived == null || StandardError == null) return;
+            var thread = StartReader(StandardError, ErrorDataReceived);
+            _errorReader = thread;
+            thread.Start();
         }
 
         public void CancelOutputRead()

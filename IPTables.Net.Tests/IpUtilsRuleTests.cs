@@ -84,13 +84,13 @@ namespace IPTables.Net.Tests
         {
             var systemFactory = new MockIptablesSystemFactory();
             var output = "32766:  from all lookup main\n32767:  from all lookup default";
-            systemFactory.MockOutputs.Add(new KeyValuePair<string, string>("ip"," rule show"), new StreamReader[]{new StreamReader(new MemoryStream(Encoding.ASCII.GetBytes(output)))});
+            systemFactory.MockOutputs.Add(new KeyValuePair<string, string>("ip","rule show"), new StreamReader[]{new StreamReader(new MemoryStream(Encoding.ASCII.GetBytes(output)))});
             var ipUtils = new IpRuleController(systemFactory);
             var rules = ipUtils.GetAll();
 
             Assert.AreEqual(2, rules.Count);
-            Assert.AreEqual("from all lookup main", ipUtils.ExportObject(rules[0]));
-            Assert.AreEqual("from all lookup default", ipUtils.ExportObject(rules[1]));
+            Assert.AreEqual("from all lookup main", string.Join(" ",ipUtils.ExportObject(rules[0])));
+            Assert.AreEqual("from all lookup default", string.Join(" ",ipUtils.ExportObject(rules[1])));
         }
     }
 }

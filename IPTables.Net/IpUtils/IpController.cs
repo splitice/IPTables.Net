@@ -80,7 +80,7 @@ namespace IPTables.Net.IpUtils
         protected string[] Command(String command, params String[] args)
         {
             String cmd = String.Format("{0} {1} {2}", _module, command, String.Join(" ", args));
-            var process = _system.StartProcess("ip", cmd);
+            var process = _system.StartProcess("ip", cmd.TrimEnd());
             String output, error;
             ProcessHelper.ReadToEnd(process, out output, out error);
             return new string[] { output.Trim(), error.Trim() };
