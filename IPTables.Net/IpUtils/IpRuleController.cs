@@ -9,7 +9,7 @@ namespace IPTables.Net.IpUtils
         {
         }
 
-        protected override string[] ExportObject(IpObject obj)
+        internal override string[] ExportObject(IpObject obj)
         {
             obj = obj.Clone();
             obj.Pairs.Remove("id");

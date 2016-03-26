@@ -9,6 +9,12 @@ namespace IPTables.Net.TestFramework
     {
         private ProcessStartInfo _startInfo = new ProcessStartInfo();
 
+        public MockIptablesSystemProcess(StreamReader output = null, StreamReader error = null)
+        {
+            StandardOutput = output;
+            StandardError = error;
+        }
+
         public bool CloseMainWindow()
         {
             return true;

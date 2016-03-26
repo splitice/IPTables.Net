@@ -11,11 +11,26 @@ namespace IPTables.Net.TestFramework
 {
     public class MockIptablesSystemFactory : ISystemFactory
     {
-        public List<KeyValuePair<String, String>> Commands = new List<KeyValuePair<string, string>>();
+        public List<KeyValuePair<String, String>> ExecutionLog = new List<KeyValuePair<string, string>>();
+        public Dictionary<KeyValuePair<String, String>,StreamReader[]> MockOutputs = new Dictionary<KeyValuePair<string, string>, StreamReader[]>();
+
         public ISystemProcess StartProcess(string command, string arguments)
         {
-            Commands.Add(new KeyValuePair<string, string>(command, arguments));
-            return new MockIptablesSystemProcess();
+            var exe = new KeyValuePair<string, string>(command, arguments);
+            ExecutionLog.Add(exe);
+            StreamReader output = null, error = null;
+            if (MockOutputs.ContainsKey(exe))
+            {
+                if(MockOutputs[exe].Length >= 1)
+                {
+                    output = MockOutputs[exe][0];
+                }
+                if (MockOutputs[exe].Length >= 2)
+                {
+                    error = MockOutputs[exe][1];
+                }
+            }
+            return new MockIptablesSystemProcess(output,error);
         }
 
         public Stream Open(string path, FileMode mode, FileAccess access)
@@ -39,7 +54,7 @@ namespace IPTables.Net.TestFramework
         {
             TestSync(rulesOriginal, rulesNew, commentComparer);
 
-            CollectionAssert.AreEqual(expectedCommands, Commands.Select(a => a.Value).ToList());
+            CollectionAssert.AreEqual(expectedCommands, ExecutionLog.Select(a => a.Value).ToList());
         }
     }
 }

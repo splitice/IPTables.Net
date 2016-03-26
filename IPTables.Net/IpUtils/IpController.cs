@@ -20,7 +20,7 @@ namespace IPTables.Net.IpUtils
             return false;
         }
 
-        protected virtual String[] ExportObject(IpObject obj)
+        internal virtual String[] ExportObject(IpObject obj)
         {
             var ret = new List<string>(obj.Singles);
             foreach (var kv in obj.Pairs)
