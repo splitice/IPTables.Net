@@ -104,10 +104,11 @@
     <Compile Include="Iptables\U32\U32Range.cs" />
     <Compile Include="Iptables\U32\IU32Statement.cs" />
     <Compile Include="Iptables\U32\U32TestStatement.cs" />
-    <Compile Include="IpUtils\IpController.cs" />
-    <Compile Include="IpUtils\IpObject.cs" />
-    <Compile Include="IpUtils\IpRouteController.cs" />
-    <Compile Include="IpUtils\IpRuleController.cs" />
+    <Compile Include="IpUtils\Comparison\DefaultComparer.cs" />
+    <Compile Include="IpUtils\Utils\IpController.cs" />
+    <Compile Include="IpUtils\Utils\IpObject.cs" />
+    <Compile Include="IpUtils\Utils\IpRouteController.cs" />
+    <Compile Include="IpUtils\Utils\IpRuleController.cs" />
     <Compile Include="Netfilter\Utils\NfAcct.cs" />
     <Compile Include="Netfilter\Utils\NfAcctUsage.cs" />
     <Compile Include="NfTablesSystem.cs" />

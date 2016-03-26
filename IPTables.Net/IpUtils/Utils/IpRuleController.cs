@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using SystemInteract;
 
-namespace IPTables.Net.IpUtils
+namespace IPTables.Net.IpUtils.Utils
 {
     class IpRuleController: IpController
     {

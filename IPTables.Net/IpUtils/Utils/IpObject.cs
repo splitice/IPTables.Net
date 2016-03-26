@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace IPTables.Net.IpUtils
+namespace IPTables.Net.IpUtils.Utils
 {
     public class IpObject : IEquatable<IpObject>
     {
@@ -38,7 +38,7 @@ namespace IPTables.Net.IpUtils
         {
             unchecked
             {
-                return ((Pairs != null ? Pairs.GetHashCode() : 0)*397) ^ (Singles != null ? Singles.GetHashCode() : 0);
+                return Singles.OfType<object>().Union(Pairs.OfType<object>()).Aggregate(13, (current, m) => current*397 + m.GetHashCode());
             }
         }
     }

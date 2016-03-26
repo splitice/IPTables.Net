@@ -7,6 +7,7 @@ using System.Text;
 using IPTables.Net.Iptables.IpSet;
 using IPTables.Net.Iptables.IpSet.Adapter;
 using IPTables.Net.IpUtils;
+using IPTables.Net.IpUtils.Utils;
 using IPTables.Net.TestFramework;
 using NUnit.Framework;
 
