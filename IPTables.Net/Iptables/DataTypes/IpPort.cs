@@ -3,7 +3,7 @@ using System.Net;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
-    internal struct IpPort
+    public struct IpPort
     {
         public static IpPort Any = new IpPort(IPAddress.Any, 0);
         public IPAddress Address;

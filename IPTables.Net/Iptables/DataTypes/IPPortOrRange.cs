@@ -46,6 +46,11 @@ namespace IPTables.Net.Iptables.DataTypes
             get { return _upperAddress; }
         }
 
+        public PortOrRange Port
+        {
+            get { return _port; }
+        }
+
         private String PortStringRepresentation()
         {
             if (_port.LowerPort == 0 && _port.UpperPort == 0)
