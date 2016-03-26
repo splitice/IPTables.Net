@@ -89,8 +89,8 @@ namespace IPTables.Net.Tests
             var rules = ipUtils.GetAll();
 
             Assert.AreEqual(2, rules.Count);
-            Assert.AreEqual("from all lookup main", string.Join(" ",ipUtils.ExportObject(rules[0])));
-            Assert.AreEqual("from all lookup default", string.Join(" ",ipUtils.ExportObject(rules[1])));
+            Assert.AreEqual("pref 32766 from all lookup main", string.Join(" ", ipUtils.ExportObject(rules[0])));
+            Assert.AreEqual("pref 32767 from all lookup default", string.Join(" ", ipUtils.ExportObject(rules[1])));
         }
     }
 }

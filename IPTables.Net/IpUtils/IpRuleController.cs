@@ -9,13 +9,6 @@ namespace IPTables.Net.IpUtils
         {
         }
 
-        internal override string[] ExportObject(IpObject obj)
-        {
-            obj = obj.Clone();
-            obj.Pairs.Remove("id");
-            return base.ExportObject(obj);
-        }
-
         public List<IpObject> GetAll()
         {
             List<IpObject> r = new List<IpObject>();
@@ -24,7 +17,7 @@ namespace IPTables.Net.IpUtils
             foreach (var line in lines)
             {
                 var l = line.Trim();
-                var obj = ParseObject(l, "id", new []{':'});
+                var obj = ParseObject(l, "pref", new[] { ':' });
                 if (obj != null)
                 {
                     r.Add(obj);
