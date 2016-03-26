@@ -3,7 +3,7 @@ using System.Net;
 
 namespace IPTables.Net.Supporting
 {
-    internal static class IPAddressExtension
+    public static class IPAddressExtension
     {
         public static long ToInt(this IPAddress addr)
         {
