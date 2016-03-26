@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using SystemInteract;
 
 namespace IPTables.Net.TestFramework
@@ -39,7 +40,22 @@ namespace IPTables.Net.TestFramework
 
         public bool WaitForExit(int milliseconds)
         {
-            return true;
+            if (StandardOutput == null && StandardError == null)
+            {
+                return true;
+            }
+
+            DateTime tostop = DateTime.Now.AddMilliseconds(milliseconds);
+            do
+            {
+                if ((StandardOutput == null || StandardOutput.EndOfStream) && (StandardError == null || StandardError.EndOfStream))
+                {
+                    return true;
+                }
+                Thread.Sleep(100);
+            } while (tostop < DateTime.Now);
+
+            return false;
         }
 
         public void WaitForExit()
