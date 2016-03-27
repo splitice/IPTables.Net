@@ -41,22 +41,15 @@ namespace IPTables.Net.IpUtils.Utils
                 return null;
             }
             int i = 0;
-            if (firstKey != null && strs[0] != firstKey)
+            if (firstKey != null)
             {
-                if (i + 1 != strs.Length)
+                var v = strs[i];
+                if (firstTrimChars != null)
                 {
-                    var v = strs[i];
-                    if (firstTrimChars != null)
-                    {
-                        v = v.TrimEnd(firstTrimChars);
-                    }
-                    ret.Pairs.Add(firstKey, v);
-                    i++;
+                    v = v.TrimEnd(firstTrimChars);
                 }
-                else
-                {
-                    throw new IpTablesNetException("Insufficient values to parse");
-                }
+                ret.Pairs.Add(firstKey, v);
+                i++;
             }
             for (; i < strs.Length; i++)
             {
