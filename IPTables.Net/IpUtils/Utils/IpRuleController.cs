@@ -9,6 +9,12 @@ namespace IPTables.Net.IpUtils.Utils
         {
         }
 
+        protected override bool IsSingle(string key)
+        {
+            if (key == "not") return true;
+            return base.IsSingle(key);
+        }
+
         public List<IpObject> GetAll()
         {
             List<IpObject> r = new List<IpObject>();
