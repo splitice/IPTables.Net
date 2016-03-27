@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using IPTables.Net.IpUtils.Utils;
 
-namespace IPTables.Net.IpUtils.Comparison
+namespace IPTables.Net.IpUtils.Sync
 {
-    public class DefaultComparer
+    public class DefaultIpuSync
     {
         private IpController _controller;
         private Func<IEnumerable<IpObject>> _getter;
 
-        public DefaultComparer(IpController controller, Func<IEnumerable<IpObject>> getter)
+        public DefaultIpuSync(IpController controller, Func<IEnumerable<IpObject>> getter)
         {
             _controller = controller;
             _getter = getter;
