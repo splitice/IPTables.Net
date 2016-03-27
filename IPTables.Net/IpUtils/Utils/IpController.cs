@@ -6,8 +6,8 @@ namespace IPTables.Net.IpUtils.Utils
 {
     public abstract class IpController
     {
-        private ISystemFactory _system;
-        private String _module;
+        protected ISystemFactory _system;
+        protected String _module;
 
         public IpController(String module, ISystemFactory system)
         {
