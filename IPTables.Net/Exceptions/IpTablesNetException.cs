@@ -6,6 +6,7 @@ using System.Text;
 
 namespace IPTables.Net.Exceptions
 {
+    [Serializable]
     public class IpTablesNetException: Exception
     {
         public IpTablesNetException()
