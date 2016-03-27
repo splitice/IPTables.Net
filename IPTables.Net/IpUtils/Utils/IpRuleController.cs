@@ -3,7 +3,7 @@ using SystemInteract;
 
 namespace IPTables.Net.IpUtils.Utils
 {
-    class IpRuleController: IpController
+    public class IpRuleController : IpController
     {
         public IpRuleController(ISystemFactory system) : base("rule", system)
         {

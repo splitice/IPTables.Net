@@ -7,7 +7,7 @@ using IPTables.Net.IpUtils.Utils;
 
 namespace IPTables.Net.IpUtils.Comparison
 {
-    class DefaultComparer
+    public class DefaultComparer
     {
         private IpController _controller;
         private Func<IEnumerable<IpObject>> _getter;

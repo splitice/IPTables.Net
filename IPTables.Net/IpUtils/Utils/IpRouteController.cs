@@ -4,7 +4,7 @@ using SystemInteract;
 
 namespace IPTables.Net.IpUtils.Utils
 {
-    class IpRouteController : IpController
+    public class IpRouteController : IpController
     {
         public IpRouteController(ISystemFactory system) : base("rule", system)
         {
