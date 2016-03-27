@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using SystemInteract;
+using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.IpUtils.Utils
 {
@@ -42,7 +43,7 @@ namespace IPTables.Net.IpUtils.Utils
             int i = 0;
             if (firstKey != null && strs[0] != firstKey)
             {
-                if (i != strs.Length)
+                if (i + 1 != strs.Length)
                 {
                     var v = strs[i];
                     if (firstTrimChars != null)
@@ -54,7 +55,7 @@ namespace IPTables.Net.IpUtils.Utils
                 }
                 else
                 {
-                    throw new Exception("Insufficient values to parse");
+                    throw new IpTablesNetException("Insufficient values to parse");
                 }
             }
             for (; i < strs.Length; i++)
@@ -64,14 +65,14 @@ namespace IPTables.Net.IpUtils.Utils
                 {
                     ret.Singles.Add(k);
                 }
-                else if (i != strs.Length)
+                else if (i + 1 != strs.Length)
                 {
                     ret.Pairs.Add(k,strs[i+1]);
                     i++;
                 }
                 else
                 {
-                    throw new Exception("Insufficient values to parse");
+                    throw new IpTablesNetException(String.Format("Insufficient values to parse: {0}", k));
                 }
             }
             return ret;
