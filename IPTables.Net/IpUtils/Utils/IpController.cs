@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using SystemInteract;
 using IPTables.Net.Exceptions;
 
@@ -35,7 +36,7 @@ namespace IPTables.Net.IpUtils.Utils
         protected IpObject ParseObject(String str, String firstKey, char[] firstTrimChars = null)
         {
             IpObject ret = new IpObject();
-            String[] strs = str.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+            String[] strs = str.Split(new char[] {' ','\t'}, StringSplitOptions.RemoveEmptyEntries);
             if (strs.Length == 0)
             {
                 return null;
@@ -65,6 +66,7 @@ namespace IPTables.Net.IpUtils.Utils
                 }
                 else
                 {
+                    //Console.WriteLine("{0} {1}",ret.Singles.Count,string.Join(", ",ret.Pairs.Select((a)=>a.Key + ":" + a.Value)));
                     throw new IpTablesNetException(String.Format("Insufficient values to parse: {0}", k));
                 }
             }

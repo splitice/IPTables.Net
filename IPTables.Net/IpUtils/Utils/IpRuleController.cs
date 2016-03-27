@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SystemInteract;
 
 namespace IPTables.Net.IpUtils.Utils
@@ -23,6 +24,7 @@ namespace IPTables.Net.IpUtils.Utils
             foreach (var line in lines)
             {
                 var l = line.Trim();
+                //Console.WriteLine(l);
                 var obj = ParseObject(l, "pref", new[] { ':' });
                 if (obj != null)
                 {
