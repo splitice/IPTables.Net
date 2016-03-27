@@ -102,7 +102,7 @@ namespace IPTables.Net.Tests
         public void TestGetRules()
         {
             var systemFactory = new MockIptablesSystemFactory();
-            var output = "32766:  from all lookup main\n32767:  from all lookup default";
+            var output = "32766:   from all lookup main\n32767:  from all lookup default";
             systemFactory.MockOutputs.Add(new KeyValuePair<string, string>("ip","rule show"), new StreamReader[]{new StreamReader(new MemoryStream(Encoding.ASCII.GetBytes(output)))});
             var ipUtils = new IpRuleController(systemFactory);
             var rules = ipUtils.GetAll();
