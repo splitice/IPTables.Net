@@ -92,7 +92,7 @@ namespace IPTables.Net.Tests
 
             var expected = new List<KeyValuePair<String, String>>
             {
-                new KeyValuePair<string, string> ("ip","rule delete pref 100")
+                new KeyValuePair<string, string> ("ip","rule delete pref 100 from 1.1.1.1")
             };
 
             CollectionAssert.AreEqual(expected, systemFactory.ExecutionLog);
