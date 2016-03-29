@@ -42,6 +42,18 @@ namespace IPTables.Net.IpUtils.Utils
                 return null;
             }
             int i = 0;
+            for (; i < strs.Length; i++)
+            {
+                var k = strs[i];
+                if (IsSingle(k))
+                {
+                    ret.Singles.Add(k);
+                }
+                else
+                {
+                    break;
+                }
+            }
             if (firstKey != null)
             {
                 var v = strs[i];
