@@ -36,7 +36,7 @@ namespace IPTables.Net.IpUtils.Utils
                 }
                 if (obj != null)
                 {
-                    if (table != "default")
+                    if (table != "default" && table != "all")
                     {
                         obj.Pairs.Add("table", table);
                     }
