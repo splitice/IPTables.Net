@@ -6,7 +6,7 @@ namespace IPTables.Net.IpUtils.Utils
 {
     public class IpRouteController : IpController
     {
-        public IpRouteController(ISystemFactory system) : base("rule", system)
+        public IpRouteController(ISystemFactory system) : base("route", system)
         {
         }
 
