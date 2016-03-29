@@ -27,6 +27,10 @@ namespace IPTables.Net.IpUtils.Utils
                 var obj = ParseObject(l, "to");
                 if (obj != null)
                 {
+                    if (table != "default")
+                    {
+                        obj.Pairs.Add("table", table);
+                    }
                     r.Add(obj);
                 }
             }
