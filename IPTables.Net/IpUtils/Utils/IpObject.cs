@@ -23,7 +23,7 @@ namespace IPTables.Net.IpUtils.Utils
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Pairs.SequenceEqual(other.Pairs) && Singles.SetEquals(other.Singles);
+            return Pairs.OrderBy((a) => a.GetHashCode()).SequenceEqual(other.Pairs.OrderBy((a) => a.GetHashCode())) && Singles.SetEquals(other.Singles);
         }
 
         public override bool Equals(object obj)
@@ -38,7 +38,7 @@ namespace IPTables.Net.IpUtils.Utils
         {
             unchecked
             {
-                return Singles.OfType<object>().Union(Pairs.OfType<object>()).Aggregate(13, (current, m) => current*397 + m.GetHashCode());
+                return Singles.OfType<object>().Union(Pairs.OfType<object>()).OrderBy((a) => a.GetHashCode()).Aggregate(13, (current, m) => current * 397 + m.GetHashCode());
             }
         }
     }
