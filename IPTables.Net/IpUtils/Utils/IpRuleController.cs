@@ -41,5 +41,16 @@ namespace IPTables.Net.IpUtils.Utils
             }
             return r;
         }
+
+        internal override string[] ExportObject(IpObject obj)
+        {
+            var ret = new List<string>(base.ExportObject(obj));
+            if (!obj.Pairs.ContainsKey("from"))
+            {
+                ret.Add("from");
+                ret.Add("all");
+            }
+            return ret.ToArray();
+        }
     }
 }
