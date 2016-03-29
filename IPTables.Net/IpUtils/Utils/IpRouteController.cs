@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using SystemInteract;
+using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.IpUtils.Utils
 {
@@ -24,7 +25,15 @@ namespace IPTables.Net.IpUtils.Utils
             foreach (var line in lines)
             {
                 var l = line.Trim();
-                var obj = ParseObject(l, "to");
+                IpObject obj;
+                try
+                {
+                    obj = ParseObject(l, "to");
+                }
+                catch (Exception ex)
+                {
+                    throw new IpTablesNetException("An exception occured while parsing route: "+ line, ex);
+                }
                 if (obj != null)
                 {
                     if (table != "default")

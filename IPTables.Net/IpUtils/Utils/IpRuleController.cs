@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using SystemInteract;
+using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.IpUtils.Utils
 {
@@ -25,7 +26,14 @@ namespace IPTables.Net.IpUtils.Utils
             {
                 var l = line.Trim();
                 //Console.WriteLine(l);
-                var obj = ParseObject(l, "pref", new[] { ':' });
+                IpObject obj;
+                try { 
+                    obj = ParseObject(l, "pref", new[] { ':' });
+                }
+                catch (Exception ex)
+                {
+                    throw new IpTablesNetException("An exception occured while parsing rule: " + line, ex);
+                }
                 if (obj != null)
                 {
                     r.Add(obj);
