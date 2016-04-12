@@ -8,6 +8,11 @@ namespace IPTables.Net.Iptables.Modules.Connmark
 {
     public class ConnmarkTargetModule : ModuleBase, IIpTablesModule, IEquatable<ConnmarkTargetModule>
     {
+        private const String OptionRestoreMarkLong = "--restore-mark";
+        private const String OptionSaveMarkLong = "--save-mark";
+        private const String OptionNfMaskLong = "--nfmask";
+        private const String OptionCtMaskLong = "--ctmask";
+
         private const String OptionSetMarkLong = "--set-mark";
         private const String OptionSetXMarkLong = "--set-xmark";
 
@@ -16,11 +21,21 @@ namespace IPTables.Net.Iptables.Modules.Connmark
         private const String OptionSetOrMarkLong = "--or-mark";
         private const String OptionSetXorMarkLong = "--xor-mark";
 
+        private enum Mode
+        {
+            SetMark,
+            RestoreMark,
+            SaveMark
+        }
+
         private const int DefaultMask = unchecked((int)0xFFFFFFFF);
 
         private bool _markProvided = false;
         private int _value = 0;
         private int _mask = unchecked((int)0xFFFFFFFF);
+        private int _ctMask;
+        private int _nfMask;
+        private Mode _mode = Mode.SetMark;
 
         public ConnmarkTargetModule(int version) : base(version)
         {
@@ -59,7 +74,7 @@ namespace IPTables.Net.Iptables.Modules.Connmark
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return _markProvided.Equals(other._markProvided) && _value == other._value && _mask == other._mask;
+            return _markProvided.Equals(other._markProvided) && _value == other._value && _mask == other._mask && _nfMask == other._nfMask && _ctMask == other._ctMask && _mode == other._mode;
         }
 
         public bool NeedsLoading
@@ -73,30 +88,51 @@ namespace IPTables.Net.Iptables.Modules.Connmark
             switch (parser.GetCurrentArg())
             {
                 case OptionSetXorMarkLong:
+                    _mode = Mode.SetMark;
                     bits = FlexibleInt32.Parse(parser.GetNextArg());
                     SetXorMark(bits);
                     return 1;
 
                 case OptionSetAndMarkLong:
+                    _mode = Mode.SetMark;
                     bits = FlexibleInt32.Parse(parser.GetNextArg());
                     SetAndMark(bits);
                     return 1;
 
                 case OptionSetOrMarkLong:
+                    _mode = Mode.SetMark;
                     bits = FlexibleInt32.Parse(parser.GetNextArg());
                     SetOrMark(bits);
                     return 1;
 
                 case OptionSetMarkLong:
+                    _mode = Mode.SetMark;
                     var s1 = parser.GetNextArg().Split('/');
 
                     SetMark(FlexibleInt32.Parse(s1[0]), s1.Length == 1 ? DefaultMask : FlexibleInt32.Parse(s1[1]));
                     return 1;
 
                 case OptionSetXMarkLong:
+                    _mode = Mode.SetMark;
                     var s2 = parser.GetNextArg().Split('/');
 
                     SetXMark(FlexibleInt32.Parse(s2[0]), s2.Length == 1 ? DefaultMask : FlexibleInt32.Parse(s2[1]));
+                    return 1;
+
+                case OptionRestoreMarkLong:
+                    _mode = Mode.RestoreMark;
+                    return 0;
+
+                case OptionSaveMarkLong:
+                    _mode = Mode.SaveMark;
+                    return 0;
+
+                case OptionCtMaskLong:
+                    _ctMask = FlexibleInt32.Parse(parser.GetNextArg());
+                    return 1;
+
+                case OptionNfMaskLong:
+                    _nfMask = FlexibleInt32.Parse(parser.GetNextArg());
                     return 1;
             }
 
@@ -107,16 +143,32 @@ namespace IPTables.Net.Iptables.Modules.Connmark
         {
             var sb = new StringBuilder();
 
-            if (_markProvided)
+            if (_mode == Mode.SetMark)
             {
-                sb.Append(OptionSetXMarkLong + " ");
-                sb.Append("0x");
-                sb.Append(_value.ToString("X"));
-                if (_mask != unchecked((int)0xFFFFFFFF))
+                if (_markProvided)
                 {
-                    sb.Append("/0x");
-                    sb.Append(_mask.ToString("X"));
+                    sb.Append(OptionSetXMarkLong + " ");
+                    sb.Append("0x");
+                    sb.Append(_value.ToString("X"));
+                    if (_mask != unchecked((int) 0xFFFFFFFF))
+                    {
+                        sb.Append("/0x");
+                        sb.Append(_mask.ToString("X"));
+                    }
                 }
+            }
+            else
+            {
+                if (_mode == Mode.RestoreMark)
+                {
+                    sb.Append(OptionRestoreMarkLong + " ");
+                }
+                else
+                {
+                    sb.Append(OptionSaveMarkLong + " ");
+                }
+                sb.Append(OptionCtMaskLong + " 0x" + _ctMask.ToString("X") + " ");
+                sb.Append(OptionNfMaskLong + " 0x" + _nfMask.ToString("X"));
             }
 
             return sb.ToString();
@@ -130,7 +182,11 @@ namespace IPTables.Net.Iptables.Modules.Connmark
                 OptionSetXMarkLong,
                 OptionSetAndMarkLong,
                 OptionSetOrMarkLong,
-                OptionSetXorMarkLong
+                OptionSetXorMarkLong,
+                OptionRestoreMarkLong,
+                OptionSaveMarkLong,
+                OptionNfMaskLong,
+                OptionCtMaskLong
             };
             return options;
         }
@@ -155,6 +211,9 @@ namespace IPTables.Net.Iptables.Modules.Connmark
                 int hashCode = _markProvided.GetHashCode();
                 hashCode = (hashCode * 397) ^ _value;
                 hashCode = (hashCode * 397) ^ _mask;
+                hashCode = (hashCode * 397) ^ _ctMask;
+                hashCode = (hashCode * 397) ^ _nfMask;
+                hashCode = (hashCode * 397) ^ _mode.GetHashCode();
                 return hashCode;
             }
         }
