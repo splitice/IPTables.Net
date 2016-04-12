@@ -57,7 +57,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                     case "port":
                         if (i != 0)
                         {
-                            entry.Protocol = optionComponents[i];
+                            entry.Protocol = optionComponents[i].ToLowerInvariant();
                             i++;
                         }
                         entry.Port = ushort.Parse(optionComponents[i]);

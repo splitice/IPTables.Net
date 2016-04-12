@@ -124,7 +124,10 @@ namespace IPTables.Net.Iptables.IpSet
             if (transactional)
             {
                 //End Transaction: COMMIT
-                System.SetAdapter.EndTransactionCommit();
+                if (!System.SetAdapter.EndTransactionCommit())
+                {
+                    throw new IpTablesNetException("Failed to commit IPSets");
+                }
             }
         }
 
