@@ -9,5 +9,10 @@ namespace IPTables.Net.Exceptions
         {
             
         }
+
+        public IpTablesParserException()
+        {
+            
+        }
     }
 }

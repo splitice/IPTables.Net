@@ -14,6 +14,11 @@ namespace IPTables.Net.Exceptions
             _errno = errno;
         }
 
+        public IpTablesNetExceptionErrno()
+        {
+            
+        }
+
         public int Errno
         {
             get { return _errno; }
