@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace IPTables.Net.Exceptions
 {
@@ -13,6 +14,11 @@ namespace IPTables.Net.Exceptions
         public IpTablesParserException()
         {
             
+        }
+
+        protected IpTablesParserException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
         }
     }
 }

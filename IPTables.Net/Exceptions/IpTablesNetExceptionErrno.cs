@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace IPTables.Net.Exceptions
@@ -12,6 +13,11 @@ namespace IPTables.Net.Exceptions
         public IpTablesNetExceptionErrno(String message, int errno): base(message)
         {
             _errno = errno;
+        }
+
+        protected IpTablesNetExceptionErrno(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
         }
 
         public IpTablesNetExceptionErrno()
