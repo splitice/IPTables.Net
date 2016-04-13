@@ -31,25 +31,32 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
         }
         private bool ExecuteTransaction()
         {
-            //ipset save
+            String output, error;
+
             ISystemProcess process = _system.StartProcess(BinaryName, "restore");
 
             if (WriteStrings(_transactionCommands, process.StandardInput))
             {
                 process.StandardInput.Flush();
                 process.StandardInput.Close();
-                ProcessHelper.WaitForExit(process);
+                ProcessHelper.ReadToEnd(process, out output, out error);
 
                 //OK
                 if (process.ExitCode != 0)
                 {
                     return true;
                 }
+
+
             }
             else
             {
-                String output, error;
                 ProcessHelper.ReadToEnd(process, out output, out error);
+            }
+
+            error = error.Trim();
+            if (error.Length != 0)
+            {
                 throw new IpTablesNetException(String.Format("Failed to execute transaction: {0}", error));
             }
 
