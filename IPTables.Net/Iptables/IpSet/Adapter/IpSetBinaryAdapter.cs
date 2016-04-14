@@ -42,12 +42,10 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
                 ProcessHelper.ReadToEnd(process, out output, out error);
 
                 //OK
-                if (process.ExitCode != 0)
+                if (process.ExitCode == 0)
                 {
                     return true;
                 }
-
-
             }
             else
             {
