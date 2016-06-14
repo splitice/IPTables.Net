@@ -440,7 +440,7 @@ int dump_nf_cts(bool expectations, struct cr_img* out)
 		struct nlmsghdr nlh;
 		struct nfgenmsg g;
 	} req;
-	int sk, ret;
+	int sk = 0, ret;
 
 	pr_info("Dumping netns links\n");
 
@@ -466,10 +466,14 @@ int dump_nf_cts(bool expectations, struct cr_img* out)
 	req.g.nfgen_family = AF_UNSPEC;
 
 	ret = do_rtnl_req(sk, &req, sizeof(req), dump_one_nf, NULL, &img);
-	close(sk);
 	
 	*out = img;
 out:
+	if (sk != 0)
+	{
+		close(sk);
+	}
+	
 	return ret;
 
 }

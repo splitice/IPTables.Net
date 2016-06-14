@@ -345,23 +345,6 @@ int invert)
 static int fd;
 static fpos_t pos;
 
-void switchStdout(const char *newStream)
-{
-	fflush(stdout);
-	fgetpos(stdout, &pos);
-	fd = dup(fileno(stdout));
-	freopen(newStream, "w", stdout);
-}
-
-void revertStdout()
-{
-	fflush(stdout);
-	dup2(fd, fileno(stdout));
-	close(fd);
-	clearerr(stdout);
-	fsetpos(stdout, &pos);
-}
-
 static int print_match_save(const struct xt_entry_match *e,
 	const struct ipt_ip *ip)
 {
@@ -379,12 +362,7 @@ static int print_match_save(const struct xt_entry_match *e,
 		/* some matches don't provide a save function */
 		if (match->save){
 			memset(buf, 0, sizeof(buf));
-			switchStdout("/dev/null");
-			setvbuf(stdout, buf, _IOLBF, BUFSIZ);
 			match->save(ip, e);
-			fflush(stdout);
-			setbuf(stdout, NULL);
-			revertStdout();
 			ptr += sprintf(ptr, "%s", buf);
 		}
 	}
@@ -526,12 +504,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 			if (target){
 				if (target->save){
 					memset(cbuf, 0, sizeof(cbuf));
-					switchStdout("/dev/null");
-					setvbuf(stdout, cbuf, _IOLBF, BUFSIZ);
 					target->save(&e->ip, t);
-					fflush(stdout);
-					setbuf(stdout, NULL);
-					revertStdout();
 					ptr += sprintf(ptr, "%s", cbuf);
 				}
 				else {
