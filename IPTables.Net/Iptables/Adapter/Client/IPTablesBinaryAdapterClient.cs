@@ -105,10 +105,14 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override IpTablesChainSet ListRules(String table)
         {
-            ISystemProcess process = _system.System.StartProcess(_iptablesBinary + "-save", String.Format("-c -t {0}", table));
-            String output, error;
-            ProcessHelper.ReadToEnd(process, out output, out error);
-            return Helper.IPTablesSaveParser.GetRulesFromOutput(_system, output, table, _ipVersion);
+            using (
+                ISystemProcess process = _system.System.StartProcess(_iptablesBinary + "-save",
+                    String.Format("-c -t {0}", table)))
+            {
+                String output, error;
+                ProcessHelper.ReadToEnd(process, out output, out error);
+                return Helper.IPTablesSaveParser.GetRulesFromOutput(_system, output, table, _ipVersion);
+            }
         }
 
         public override void StartTransaction()

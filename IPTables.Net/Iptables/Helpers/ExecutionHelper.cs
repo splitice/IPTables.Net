@@ -19,27 +19,29 @@ namespace IPTables.Net.Iptables.Helpers
 
         public static void ExecuteIptables(NetfilterSystem system, String command, String iptablesBinary, out String output, out String error)
         {
-            ISystemProcess process = system.System.StartProcess(iptablesBinary, command);
-            ProcessHelper.ReadToEnd(process, out output, out error);
-
-            //OK
-            if (process.ExitCode == 0)
-                return;
-
-            //ERR: INVALID COMMAND LINE
-            if (process.ExitCode == 2)
+            using (ISystemProcess process = system.System.StartProcess(iptablesBinary, command))
             {
-                throw new IpTablesNetException("IPTables execution failed: Invalid Command Line - "+command);
-            }
+                ProcessHelper.ReadToEnd(process, out output, out error);
 
-            //ERR: GENERAL ERROR
-            if (process.ExitCode == 1)
-            {
-                throw new IpTablesNetException("IPTables execution failed: Error - " + command);
-            }
+                //OK
+                if (process.ExitCode == 0)
+                    return;
 
-            //ERR: UNKNOWN
-            throw new IpTablesNetException("IPTables execution failed: Unknown Error - " + command);
+                //ERR: INVALID COMMAND LINE
+                if (process.ExitCode == 2)
+                {
+                    throw new IpTablesNetException("IPTables execution failed: Invalid Command Line - " + command);
+                }
+
+                //ERR: GENERAL ERROR
+                if (process.ExitCode == 1)
+                {
+                    throw new IpTablesNetException("IPTables execution failed: Error - " + command);
+                }
+
+                //ERR: UNKNOWN
+                throw new IpTablesNetException("IPTables execution failed: Unknown Error - " + command);
+            }
         }
     }
 }

@@ -43,15 +43,17 @@ namespace IPTables.Net.Netfilter.Utils
                 cmd += " reset";
             }
 
-            var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name));
-
             String output, error;
-            ProcessHelper.ReadToEnd(process, out output, out error);
+            using (var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name)))
+            {
+                ProcessHelper.ReadToEnd(process, out output, out error);
+            }
 
             if (output.Trim().Length == 0)
             {
                 return null;
             }
+
             return FromXml(output, name);
         }
 
@@ -63,19 +65,21 @@ namespace IPTables.Net.Netfilter.Utils
         public void Add(String name)
         {
             String cmd = "add {0}";
-            var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name));
-
-            String output, error;
-            ProcessHelper.ReadToEnd(process, out output, out error);
+            using (var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name)))
+            {
+                String output, error;
+                ProcessHelper.ReadToEnd(process, out output, out error);
+            }
         }
 
         public void Delete(String name)
         {
             String cmd = "del {0}";
-            var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name));
-
-            String output, error;
-            ProcessHelper.ReadToEnd(process, out output, out error);
+            using (var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name)))
+            {
+                String output, error;
+                ProcessHelper.ReadToEnd(process, out output, out error);
+            }
         }
 
         public List<NfAcctUsage> List(bool reset = false)
@@ -85,10 +89,12 @@ namespace IPTables.Net.Netfilter.Utils
             {
                 cmd += " reset";
             }
-            var process = _system.StartProcess("/usr/sbin/nfacct", cmd);
 
             String output, error;
-            ProcessHelper.ReadToEnd(process, out output, out error);
+            using (var process = _system.StartProcess("/usr/sbin/nfacct", cmd))
+            {
+                ProcessHelper.ReadToEnd(process, out output, out error);
+            }
 
             //No XML returned for empty
             if (output.Trim().Length == 0)

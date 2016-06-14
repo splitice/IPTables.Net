@@ -36,12 +36,14 @@ namespace IPTables.Net.Iptables.Helpers
         /// <returns></returns>
         public static bool KernelSupported(ISystemFactory system)
         {
-            var process = system.StartProcess("uname", "-r");
             String output, error;
-            ProcessHelper.ReadToEnd(process, out output, out error);
-            if (process.ExitCode != 0)
+            using (var process = system.StartProcess("uname", "-r"))
             {
-                throw new IpTablesNetException("Unable to execute uname and retreive the kenel version");
+                ProcessHelper.ReadToEnd(process, out output, out error);
+                if (process.ExitCode != 0)
+                {
+                    throw new IpTablesNetException("Unable to execute uname and retreive the kenel version");
+                }
             }
             var regex = new Regex(@"([0-9]+)\.([0-9]+)\.([0-9]+)\-([0-9]+)");
             if (regex.IsMatch(output))
