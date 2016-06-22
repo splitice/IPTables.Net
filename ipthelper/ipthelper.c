@@ -54,6 +54,9 @@
 char* errbuffer = NULL;
 jmp_buf buf;
 
+int stdout_save;
+
+
 char **split_commandline(const char *cmdline, int *argc)
 {
 	int i;
@@ -194,7 +197,23 @@ char **split_commandline(const char *cmdline, int *argc)
 #define prog_vers iptables_globals.program_version
 
 char buffer[10240];
-char* ptr = NULL;
+char* ptr = buffer;
+
+
+void capture_stdout()
+{
+	fflush(stdout); //clean everything first
+	stdout_save = dup(STDOUT_FILENO); //save the stdout state
+	freopen("NUL", "a", stdout); //redirect stdout to null pointer
+	setvbuf(stdout, ptr, _IOFBF, 1); //set buffer to stdout
+}
+
+void restore_stdout()
+{
+	freopen("NUL", "a", stdout); //redirect stdout to null again
+	dup2(stdout_save, STDOUT_FILENO); //restore the previous state of stdout
+	setvbuf(stdout, NULL, _IOLBF, 1); //disable buffer to print to screen instantly
+}
 
 /* Primitive headers... */
 /* defined in netinet/in.h */
@@ -348,7 +367,6 @@ static fpos_t pos;
 static int print_match_save(const struct xt_entry_match *e,
 	const struct ipt_ip *ip)
 {
-	char buf[BUFSIZ];
 	const struct xtables_match *match =
 		xtables_find_match(e->u.user.name, XTF_TRY_LOAD, NULL);
 
@@ -361,9 +379,9 @@ static int print_match_save(const struct xt_entry_match *e,
 
 		/* some matches don't provide a save function */
 		if (match->save){
-			memset(buf, 0, sizeof(buf));
+			capture_stdout();
 			match->save(ip, e);
-			ptr += sprintf(ptr, "%s", buf);
+			restore_stdout();
 		}
 	}
 	else {
@@ -438,8 +456,6 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 	const char *target_name;
 	char cbuf[BUFSIZ];
 	
-	ptr = buffer;
-	
 	if ( ! setjmp(buf) ) {
 		/* print counters for iptables-save */
 		if (counters > 0)
@@ -505,9 +521,9 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 
 			if (target){
 				if (target->save){
-					memset(cbuf, 0, sizeof(cbuf));
+					capture_stdout();
 					target->save(&e->ip, t);
-					ptr += sprintf(ptr, "%s", cbuf);
+					restore_stdout();
 				}
 				else {
 					/* If the target size is greater than xt_entry_target
@@ -535,6 +551,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 	#endif
 
 		*ptr = '\0';
+		ptr = buffer;
 
 		return buffer;
 	}else{
