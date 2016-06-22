@@ -311,6 +311,10 @@ namespace IPTables.Net.Iptables.NativeLibrary
                 throw new IpTablesNetException("A table is already open, commit or discard first");
             }
             _handle = init_handle(table);
+            if (_handle == IntPtr.Zero)
+            {
+                throw new IpTablesNetException(String.Format("Failed to open table \"{0}\", error: {1}", table, LastError()));
+            }
         }
 
         public List<IntPtr> GetRules(String chain)

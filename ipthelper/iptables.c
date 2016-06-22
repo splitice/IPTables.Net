@@ -1008,8 +1008,21 @@ EXPORT void* init_handle(const char* table){
 	void* handle = iptc_init(table);
 
 	/* try to insmod the module if iptc_init failed */
-	if (!handle && xtables_load_ko(xtables_modprobe_program, false) != -1)
-		handle = iptc_init(table);
+	if (!handle)
+	{
+		if (xtables_load_ko(xtables_modprobe_program, false) != -1)
+		{
+			handle = iptc_init(table);
+			if (!handle)
+			{
+				xtables_error(OTHER_PROBLEM, "unable to init module %s after loading", xtables_modprobe_program);
+			}
+		}
+		else
+		{
+			xtables_error(OTHER_PROBLEM, "unable to load module %s", xtables_modprobe_program);
+		}
+	}
 
 	return handle;
 }
