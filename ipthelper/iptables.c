@@ -165,9 +165,11 @@ iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 	va_start(args, msg);
 	va_copy(args2, args);
 	buffer_length = vsprintf(NULL, msg, args);
+	va_end(args);
+
 	errbuffer = malloc(buffer_length + 100);
 	vsprintf(errbuffer, msg, args2);
-	va_end(args);
+	va_end(args2);
 
 	if (status == VERSION_PROBLEM){
 		memcpy(errbuffer + buffer_length, UPGRADE_MSG, sizeof(UPGRADE_MSG));
