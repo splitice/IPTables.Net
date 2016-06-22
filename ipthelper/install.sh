@@ -10,7 +10,7 @@ if [[ -z "$CXX" ]]; then
 fi
 
 make ADDITIONAL_CFLAGS=$(printenv ADDITIONAL_CFLAGS) CXX="$CXX" CONFIG="$CONFIG" 
-cp Release/libipthelper.so /usr/lib/
+cp $CONFIG/libipthelper.so /usr/lib/
 ldconfig -n /usr/lib
 
 echo "Installation Complete"
