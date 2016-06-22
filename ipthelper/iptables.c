@@ -1015,12 +1015,12 @@ EXPORT void* init_handle(const char* table){
 			handle = iptc_init(table);
 			if (!handle)
 			{
-				xtables_error(OTHER_PROBLEM, "unable to init module after loading");
+				iptables_exit_error(OTHER_PROBLEM, "unable to init module %s after loading", xtables_modprobe_program);
 			}
 		}
 		else
 		{
-			xtables_error(OTHER_PROBLEM, "unable to load module");
+			iptables_exit_error(OTHER_PROBLEM, "unable to load module %s", xtables_modprobe_program);
 		}
 	}
 
