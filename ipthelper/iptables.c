@@ -99,7 +99,7 @@ static const char optflags[]
 
 extern jmp_buf buf;
 extern char* errbuffer;
-#define VERSION_PROBLEM "Perhaps iptables or your kernel needs to be upgraded."
+#define UPGRADE_MSG "Perhaps iptables or your kernel needs to be upgraded."
 
 void iptables_exit_error(enum xtables_exittype status, const char *msg, ...) __attribute__((noreturn, format(printf, 2, 3)));
 
