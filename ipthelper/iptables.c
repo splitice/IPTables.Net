@@ -176,8 +176,6 @@ iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 	}
 	/* On error paths, make sure that we don't leak memory */
 	xtables_free_opts(1);
-
-	//longjmp(buf,1);
 }
 
 /* Primitive headers... */
@@ -1008,8 +1006,10 @@ static void command_match(struct iptables_command_state *cs)
 }
 
 EXPORT void* init_handle(const char* table){
+	const char* err;
 	void* handle = iptc_init(table);
-
+	err = iptc_strerror(errno);
+	
 	/* try to insmod the module if iptc_init failed */
 	if (!handle)
 	{
@@ -1018,12 +1018,12 @@ EXPORT void* init_handle(const char* table){
 			handle = iptc_init(table);
 			if (!handle)
 			{
-				xtables_error(OTHER_PROBLEM, "unable to init module %s after loading", xtables_modprobe_program);
+				xtables_error(OTHER_PROBLEM, "unable to init module %s after loading: %s", xtables_modprobe_program, err);
 			}
 		}
 		else
 		{
-			xtables_error(OTHER_PROBLEM, "unable to load module %s", xtables_modprobe_program);
+			xtables_error(OTHER_PROBLEM, "unable to load module %s. init error: %s", xtables_modprobe_program, err);
 		}
 	}
 
