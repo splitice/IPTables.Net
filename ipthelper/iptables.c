@@ -1013,7 +1013,11 @@ EXPORT void* init_handle(const char* table){
 	/* try to insmod the module if iptc_init failed */
 	if (!handle)
 	{
-		if (xtables_load_ko(xtables_modprobe_program, false) != -1)
+		if (xtables_modprobe_program == NULL)
+		{
+			xtables_error(OTHER_PROBLEM, "init error: %s", err);
+		}
+		else if (xtables_load_ko(xtables_modprobe_program, false) != -1)
 		{
 			handle = iptc_init(table);
 			if (!handle)
