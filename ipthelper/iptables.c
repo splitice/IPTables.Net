@@ -154,7 +154,7 @@ struct xtables_globals iptables_globals = {
 void
 iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 {
-	va_list args;
+	va_list args, args2;
 	int buffer_length;
 	
 	if(errbuffer != NULL){
@@ -163,9 +163,10 @@ iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 	}
 
 	va_start(args, msg);
+	G_VA_COPY(args2, args);
 	buffer_length = vsprintf(NULL, msg, args);
 	errbuffer = malloc(buffer_length + 100);
-	vsprintf(errbuffer, msg, args);
+	vsprintf(errbuffer, msg, args2);
 	va_end(args);
 
 	if (status == VERSION_PROBLEM){
@@ -1015,12 +1016,12 @@ EXPORT void* init_handle(const char* table){
 			handle = iptc_init(table);
 			if (!handle)
 			{
-				iptables_exit_error(OTHER_PROBLEM, "unable to init module %s after loading", xtables_modprobe_program);
+				xtables_error(OTHER_PROBLEM, "unable to init module %s after loading", xtables_modprobe_program);
 			}
 		}
 		else
 		{
-			iptables_exit_error(OTHER_PROBLEM, "unable to load module %s", xtables_modprobe_program);
+			xtables_error(OTHER_PROBLEM, "unable to load module %s", xtables_modprobe_program);
 		}
 	}
 
