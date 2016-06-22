@@ -177,7 +177,7 @@ iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 	/* On error paths, make sure that we don't leak memory */
 	xtables_free_opts(1);
 
-	longjmp(buf,1);
+	//longjmp(buf,1);
 }
 
 /* Primitive headers... */
