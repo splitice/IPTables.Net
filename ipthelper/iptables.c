@@ -163,7 +163,7 @@ iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 	}
 
 	va_start(args, msg);
-	G_VA_COPY(args2, args);
+	va_copy(args2, args);
 	buffer_length = vsprintf(NULL, msg, args);
 	errbuffer = malloc(buffer_length + 100);
 	vsprintf(errbuffer, msg, args2);
