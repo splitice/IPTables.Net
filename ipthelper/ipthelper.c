@@ -51,7 +51,7 @@
 #endif
 #include <setjmp.h>
 
-char errbuffer[BUFSIZ];
+char* errbuffer = NULL;
 jmp_buf buf;
 
 char **split_commandline(const char *cmdline, int *argc)

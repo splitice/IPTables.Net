@@ -98,7 +98,8 @@ static const char optflags[]
 #define OPT_FRAGMENT    0x00800U
 
 extern jmp_buf buf;
-extern char errbuffer[BUFSIZ];
+extern char* errbuffer;
+#define VERSION_PROBLEM "Perhaps iptables or your kernel needs to be upgraded."
 
 void iptables_exit_error(enum xtables_exittype status, const char *msg, ...) __attribute__((noreturn, format(printf, 2, 3)));
 
@@ -154,16 +155,21 @@ void
 iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 {
 	va_list args;
+	int buffer_length;
+	
+	if(errbuffer != NULL){
+		free(errbuffer);
+		errbuffer = NULL;
+	}
 
 	va_start(args, msg);
+	buffer_length = vsprintf(NULL, msg, args);
+	errbuffer = malloc(buffer_length + 100);
 	vsprintf(errbuffer, msg, args);
 	va_end(args);
 
 	if (status == VERSION_PROBLEM){
-		char* dup = strdup(errbuffer);
-		sprintf(errbuffer + strlen(errbuffer), "%s Note: %s", 
-		"Perhaps iptables or your kernel needs to be upgraded.");
-		free(dup);
+		memcpy(errbuffer + buffer_length, UPGRADE_MSG, sizeof(UPGRADE_MSG));
 	}
 	/* On error paths, make sure that we don't leak memory */
 	xtables_free_opts(1);
