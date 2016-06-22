@@ -194,7 +194,7 @@ char **split_commandline(const char *cmdline, int *argc)
 #define prog_vers iptables_globals.program_version
 
 char buffer[10240];
-char* ptr = buffer;
+char* ptr = NULL;
 
 /* Primitive headers... */
 /* defined in netinet/in.h */
@@ -438,6 +438,8 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 	const char *target_name;
 	char cbuf[BUFSIZ];
 	
+	ptr = buf;
+	
 	if ( ! setjmp(buf) ) {
 		/* print counters for iptables-save */
 		if (counters > 0)
@@ -533,7 +535,6 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 	#endif
 
 		*ptr = '\0';
-		ptr = buffer;
 
 		return buffer;
 	}else{
