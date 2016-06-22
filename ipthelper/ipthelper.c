@@ -438,7 +438,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 	const char *target_name;
 	char cbuf[BUFSIZ];
 	
-	ptr = buf;
+	ptr = buffer;
 	
 	if ( ! setjmp(buf) ) {
 		/* print counters for iptables-save */
