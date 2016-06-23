@@ -205,13 +205,12 @@ void capture_stdout()
 	memset(line_buffer, 0, sizeof(line_buffer));
 	fflush(stdout); //clean everything first
 	stdout_save = dup(STDOUT_FILENO); //save the stdout state
-	freopen("NUL", "a", stdout); //redirect stdout to null pointer
+	freopen("/dev/null", "a", stdout); //redirect stdout to null pointer
 	setvbuf(stdout, line_buffer, _IOFBF, 1024); //set buffer to stdout
 }
 
 void restore_stdout()
 {
-	fflush(stdout);
 	strcat(ptr, line_buffer);
 	ptr += strlen(line_buffer);
 	dup2(stdout_save, STDOUT_FILENO); //restore the previous state of stdout
