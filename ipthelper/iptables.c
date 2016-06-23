@@ -101,7 +101,7 @@ extern jmp_buf buf;
 extern char* errbuffer;
 #define UPGRADE_MSG "Perhaps iptables or your kernel needs to be upgraded."
 
-void iptables_exit_error(enum xtables_exittype status, const char *msg, ...) __attribute__((noreturn, format(printf, 2, 3)));
+void iptables_exit_error(enum xtables_exittype status, const char *msg, ...) __attribute__((format(printf, 2, 3)));
 
 static struct option original_opts[] = {
 	{ .name = "append", .has_arg = 1, .flag=0, .val = 'A' },

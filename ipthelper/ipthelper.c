@@ -214,8 +214,8 @@ void restore_stdout()
 	fflush(stdout);
 	strcat(ptr, line_buffer);
 	ptr += strlen(line_buffer);
-	freopen("NUL", "a", stdout); //redirect stdout to null again
 	dup2(stdout_save, STDOUT_FILENO); //restore the previous state of stdout
+	close(stdout_save);
 	setvbuf(stdout, NULL, _IOLBF, 1); //disable buffer to print to screen instantly
 }
 
