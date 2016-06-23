@@ -200,13 +200,34 @@ char **split_commandline(const char *cmdline, int *argc)
 
 char buffer[10240];
 char* ptr = buffer;
-int shm;
+int shm = -1;
+char shm_name[32];
+
+void capture_setup()
+{
+	if (shm != -1)
+	{
+		return;
+	}
+	sprintf(shm_name, "iph_%d", getppid());
+	shm = shm_open(shm_name, O_CREAT | O_RDWR | O_TRUNC, S_IRUSR | S_IWUSR);
+}
+
+void capture_cleanup()
+{
+	if (shm == -1)
+	{
+		return;
+	}
+	shm_unlink(shm_name);
+	shm = -1;
+}
 
 void capture_stdout()
 {
+	capture_setup();
 	fflush(stdout); //clean everything first
 	stdout_save = dup(STDOUT_FILENO); //save the stdout state
-	shm = shm_open("shm-name", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
 	dup2(shm, STDOUT_FILENO);
 }
 
@@ -223,6 +244,7 @@ bool restore_stdout()
 		ptr += len;
 	}
 	dup2(stdout_save, STDOUT_FILENO); //restore the previous state of stdout
+	ftruncate()
 	close(stdout_save);
 	return true;
 }
@@ -571,8 +593,12 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 		*ptr = '\0';
 		ptr = buffer;
 
+		capture_cleanup();
+		
 		return buffer;
 	}else{
+		capture_cleanup();
+		
 		return NULL;
 	}
 }
@@ -593,6 +619,7 @@ EXPORT int execute_command(const char* rule, void *h){
 	}
 	
 	free(newargv);
+	capture_cleanup();
 	return ret;
 }
 
