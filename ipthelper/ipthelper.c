@@ -210,16 +210,21 @@ void capture_stdout()
 	dup2(shm, STDOUT_FILENO);
 }
 
-void restore_stdout()
+bool restore_stdout()
 {
 	int len;
 	lseek(shm, 0, SEEK_SET);
 	while ((len = read(shm, ptr, 1024)) != 0)
 	{
+		if (len == -1)
+		{
+			return false;
+		}
 		ptr += len;
 	}
 	dup2(stdout_save, STDOUT_FILENO); //restore the previous state of stdout
 	close(stdout_save);
+	return true;
 }
 
 /* Primitive headers... */
@@ -388,7 +393,10 @@ static int print_match_save(const struct xt_entry_match *e,
 		if (match->save){
 			capture_stdout();
 			match->save(ip, e);
-			restore_stdout();
+			if (!restore_stdout())
+			{
+				xtables_error(OTHER_PROBLEM, "Unable to capture stdout, errno: %d", errno);
+			}
 		}
 	}
 	else {
@@ -530,7 +538,10 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 				if (target->save){
 					capture_stdout();
 					target->save(&e->ip, t);
-					restore_stdout();
+					if (!restore_stdout())
+					{
+						xtables_error(OTHER_PROBLEM, "Unable to capture stdout, errno: %d", errno);
+					}
 				}
 				else {
 					/* If the target size is greater than xt_entry_target
