@@ -219,6 +219,7 @@ void capture_cleanup()
 	{
 		return;
 	}
+	close(shm);
 	shm_unlink(shm_name);
 	shm = -1;
 }
@@ -234,6 +235,7 @@ void capture_stdout()
 bool restore_stdout()
 {
 	fflush(stdout);
+	
 	int len;
 	lseek(shm, 0, SEEK_SET);
 	while ((len = read(shm, ptr, 1024)) != 0)
@@ -245,9 +247,11 @@ bool restore_stdout()
 		ptr += len;
 	}
 	dup2(stdout_save, STDOUT_FILENO); //restore the previous state of stdout
-	ftruncate(shm, 0);
-	lseek(shm, 0, SEEK_SET);
 	close(stdout_save);
+	
+	lseek(shm, 0, SEEK_SET);
+	ftruncate(shm, 0);
+	
 	return true;
 }
 
