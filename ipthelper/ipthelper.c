@@ -244,7 +244,7 @@ bool restore_stdout()
 		ptr += len;
 	}
 	dup2(stdout_save, STDOUT_FILENO); //restore the previous state of stdout
-	ftruncate()
+	ftruncate(shm, 0);
 	close(stdout_save);
 	return true;
 }
