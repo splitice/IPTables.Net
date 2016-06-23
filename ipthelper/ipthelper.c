@@ -213,7 +213,7 @@ void capture_stdout()
 void restore_stdout()
 {
 	int len;
-	fsetpos(shm, 0);
+	lseek(shm, 0, SEEK_SET);
 	while ((len = read(shm, ptr, 1024)) != 0)
 	{
 		ptr += len;
