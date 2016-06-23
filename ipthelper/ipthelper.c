@@ -43,6 +43,8 @@
 #include <assert.h>
 #include "ipthelper.h"
 #include "iptables.h"
+#include <sys/mman.h>
+#include <sys/stat.h> /* For mode constants */
 
 #ifdef _WIN32
 #include <windows.h>
@@ -198,24 +200,26 @@ char **split_commandline(const char *cmdline, int *argc)
 
 char buffer[10240];
 char* ptr = buffer;
-char line_buffer[1024];
+int shm;
 
 void capture_stdout()
 {
-	memset(line_buffer, 0, sizeof(line_buffer));
 	fflush(stdout); //clean everything first
 	stdout_save = dup(STDOUT_FILENO); //save the stdout state
-	freopen("/dev/null", "a", stdout); //redirect stdout to null pointer
-	setvbuf(stdout, line_buffer, _IOFBF, 1024); //set buffer to stdout
+	shm = shm_open("shm-name", O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+	dup2(shm, STDOUT_FILENO);
 }
 
 void restore_stdout()
 {
-	strcat(ptr, line_buffer);
-	ptr += strlen(line_buffer);
+	int len;
+	fsetpos(shm, 0);
+	while ((len = read(shm, ptr, 1024)) != 0)
+	{
+		ptr += len;
+	}
 	dup2(stdout_save, STDOUT_FILENO); //restore the previous state of stdout
 	close(stdout_save);
-	setvbuf(stdout, NULL, _IOLBF, 1); //disable buffer to print to screen instantly
 }
 
 /* Primitive headers... */
