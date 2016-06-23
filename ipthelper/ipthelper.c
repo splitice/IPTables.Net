@@ -246,6 +246,7 @@ bool restore_stdout()
 	}
 	dup2(stdout_save, STDOUT_FILENO); //restore the previous state of stdout
 	ftruncate(shm, 0);
+	lseek(shm, 0, SEEK_SET);
 	close(stdout_save);
 	return true;
 }
