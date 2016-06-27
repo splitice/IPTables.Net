@@ -4,7 +4,8 @@ mono:
   - latest
 git:
   depth: 300
-sudo: true
+sudo: required
+dist: trusty
 addons:
   apt:
     sources:
@@ -20,6 +21,8 @@ addons:
     - libnetfilter-conntrack3
     - libnfnetlink-dev
     - libnfnetlink0
+	
+	
 install:
   - sudo modprobe ip_conntrack
 script:
@@ -31,7 +34,7 @@ script:
   - bash travis-ci/autoversion.sh IPTables.Net.Tests
   - bash travis-ci/autoversion.sh IPTables.Net.TestFramework
   - export EnableNuGetPackageRestore=false
-  - mozroots --import --sync
+  - cert-sync /etc/ssl/certs/ca-certificates.crt
   - travis_retry mono .nuget/NuGet.exe restore IPTables.Net.sln
   - xbuild /p:Configuration=Release IPTables.Net.sln
   - xbuild /p:Configuration=Debug IPTables.Net.sln
