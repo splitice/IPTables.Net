@@ -4,8 +4,10 @@ mono:
   - latest
 git:
   depth: 300
+
 sudo: required
 dist: trusty
+
 addons:
   apt:
     sources:
@@ -21,8 +23,7 @@ addons:
     - libnetfilter-conntrack3
     - libnfnetlink-dev
     - libnfnetlink0
-	
-	
+
 install:
   - sudo modprobe ip_conntrack
 script:
