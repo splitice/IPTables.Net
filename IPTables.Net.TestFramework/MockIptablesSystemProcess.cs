@@ -153,5 +153,9 @@ namespace IPTables.Net.TestFramework
         public event DataReceivedEventHandler OutputDataReceived;
         public event DataReceivedEventHandler ErrorDataReceived;
         public event EventHandler Exited;
+        public void Dispose()
+        {
+            
+        }
     }
 }
