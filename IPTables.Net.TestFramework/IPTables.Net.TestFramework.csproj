@@ -49,8 +49,8 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="SystemInteract, Version=1.0.0.10, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SystemInteract.1.0.0-cibuild0010\lib\SystemInteract.dll</HintPath>
+    <Reference Include="SystemInteract, Version=1.0.0.14, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SystemInteract.1.0.0-cibuild0014\lib\SystemInteract.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
