@@ -10,9 +10,6 @@ namespace IPTables.Net.Iptables.DataTypes
         public static TcpFlagMatch Syn = new TcpFlagMatch(
             new List<TcpFlag> {TcpFlag.SYN, TcpFlag.RST, TcpFlag.ACK, TcpFlag.FIN}, new List<TcpFlag> {TcpFlag.SYN});
 
-        public static TcpFlagMatch NotSyn = new TcpFlagMatch(
-            new List<TcpFlag> {TcpFlag.SYN}, new List<TcpFlag>());
-
         public HashSet<TcpFlag> Comparing = new HashSet<TcpFlag>();
         public HashSet<TcpFlag> MustHave = new HashSet<TcpFlag>();
 
@@ -20,11 +17,6 @@ namespace IPTables.Net.Iptables.DataTypes
         {
             Comparing.UnionWith(tcpComparing);
             MustHave.UnionWith(tcpMustHave);
-        }
-
-        public HashSet<TcpFlag> MustNotHave
-        {
-            get { throw new NotImplementedException(); }
         }
 
         public bool Equals(TcpFlagMatch other)

@@ -17,7 +17,7 @@ namespace IPTables.Net.Iptables.Modules.Tcp
 
         public ValueOrNot<PortOrRange> DestinationPort = new ValueOrNot<PortOrRange>();
         public ValueOrNot<PortOrRange> SourcePort = new ValueOrNot<PortOrRange>();
-        public TcpFlagMatch TcpFlags = null;
+        public ValueOrNot<TcpFlagMatch> TcpFlags = null;
         //--syn
         public ValueOrNot<int> TcpOption = new ValueOrNot<int>();
 
@@ -53,11 +53,11 @@ namespace IPTables.Net.Iptables.Modules.Tcp
                     return 1;
 
                 case OptionDestinationTcpFlags:
-                    TcpFlags = TcpFlagMatch.Parse(parser.GetNextArg(), parser.GetNextArg(2));
+                    TcpFlags = new ValueOrNot<TcpFlagMatch>(TcpFlagMatch.Parse(parser.GetNextArg(), parser.GetNextArg(2)), not);
                     return 2;
 
                 case OptionSyn:
-                    TcpFlags = not ? TcpFlagMatch.NotSyn : TcpFlagMatch.Syn;
+                    TcpFlags = new ValueOrNot<TcpFlagMatch>(TcpFlagMatch.Syn, not);
                     return 0;
 
                 case OptionTcpOption:
