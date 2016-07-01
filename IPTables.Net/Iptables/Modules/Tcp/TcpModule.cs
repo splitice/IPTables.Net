@@ -90,9 +90,7 @@ namespace IPTables.Net.Iptables.Modules.Tcp
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
-                sb.Append(OptionDestinationTcpFlags);
-                sb.Append(" ");
-                sb.Append(TcpFlags);
+                sb.Append(TcpFlags.ToOption(OptionDestinationTcpFlags, null, false));
             }
 
             if (!TcpOption.Null)

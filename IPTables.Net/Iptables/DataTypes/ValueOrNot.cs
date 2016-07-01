@@ -69,7 +69,7 @@ namespace IPTables.Net.Iptables.DataTypes
             }
         }
 
-        public String ToOption(String optionKey, String value = null)
+        public String ToOption(String optionKey, String value = null, bool escape = true)
         {
             String built = "";
             if (Null)
@@ -88,9 +88,14 @@ namespace IPTables.Net.Iptables.DataTypes
                 value = Value.ToString();
             }
 
+            if (escape)
+            {
+                value = ShellHelper.EscapeArguments(value);
+            }
+
             if (!String.IsNullOrEmpty(value))
             {
-                built += " " + ShellHelper.EscapeArguments(value);
+                built += " " + value;
             }
             return built;
         }
