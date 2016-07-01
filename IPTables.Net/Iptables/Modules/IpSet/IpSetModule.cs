@@ -148,8 +148,12 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.Append((MatchSet.Not ? "! ":"") + OptionMatchSet + " " + ShellHelper.EscapeArguments(MatchSet.Value));
-            sb.Append(" " + MatchSetFlags);
+            if (MatchSet != null)
+            {
+                sb.Append((MatchSet.Not ? "! " : "") + OptionMatchSet + " " +
+                          ShellHelper.EscapeArguments(MatchSet.Value));
+                sb.Append(" " + MatchSetFlags);
+            }
 
             if (ReturnNoMatch)
             {
