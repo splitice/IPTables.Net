@@ -62,7 +62,7 @@ namespace IPTables.Net.Tests
                 };
 
                 List<byte[]> list = new List<byte[]>();
-                cts.Dump(false, list.Add);
+                cts.Dump(false, list.Add, qf);
 
                 pinned.Free();
             }
