@@ -282,6 +282,8 @@ bool conditional_filter(struct nlmsghdr *nlh)
 	if (err < 0)
 		goto out;
 	
+	printf("root: %d\n", CTA_MAX + 1);
+	
 	tb_cur = tb;
 	for (int i = 0; i < filter_len; i++)
 	{
@@ -294,6 +296,8 @@ bool conditional_filter(struct nlmsghdr *nlh)
 		}
 		else if (f->max != 0)
 		{
+			printf("nested: %d, %d\n", f->key, f->max);
+			
 			err = nla_parse_nested((struct nlattr **)f->internal, f->max, tb_cur[f->key], NULL);
 			if (err < 0)
 			{
