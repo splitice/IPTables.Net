@@ -33,7 +33,7 @@ extern "C"
 	int restore_nf_cts(bool expectation, char* data, int data_len);
 	void cr_free(cr_img* img);
 	int cr_length(cr_node* node);
-	uint16_t cr_constant(const char* key);
+	int cr_constant(const char* key);
 	
 	void conditional_free();
 	void conditional_init(int address_family, cr_filter* filters, int filters_len);

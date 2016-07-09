@@ -19,8 +19,12 @@ namespace IPTables.Net.Conntrack
                 UInt16 value;
                 if (!_constants.TryGetValue(key, out value))
                 {
-                    value = ConntrackHelper.cr_constant(key);
-                    _constants.Add(key, value);
+                    int v = ConntrackHelper.cr_constant(key);
+                    if (v == -1)
+                    {
+                        throw new KeyNotFoundException(String.Format("Unable to lookup constant {0}", key));
+                    }
+                    _constants.Add(key, (UInt16)v);
                 }
                 return value;
             }

@@ -208,7 +208,7 @@ void restore_mark_free() {
 	restore_mark_init(0, 0);
 }
 
-uint16_t cr_constant(const char* key)
+int cr_constant(const char* key)
 {
 	auto it = constants.find(key);
 	if (it == constants.begin())
