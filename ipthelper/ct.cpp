@@ -256,6 +256,10 @@ void conditional_init(int address_family, cr_filter* filters, int filters_len)
 	filter_len = filters_len;
 	filter_af = address_family;
 }
+
+/*
+Filter by network address
+*/
 bool conditional_filter(struct nlmsghdr *nlh)
 {
 	struct nfgenmsg *msg;
@@ -283,20 +287,30 @@ bool conditional_filter(struct nlmsghdr *nlh)
 	{
 		cr_filter* f = &filter[i];
 		
-		if (f->max != 0)
+		if (f->key == CTA_UNSPEC)
+		{
+			// &&
+			tb_cur = tb;
+		}
+		else if (f->max != 0)
 		{
 			err = nla_parse_nested((struct nlattr **)f->internal, f->max, tb_cur[f->key], NULL);
 			if (err < 0)
-				goto out;
-		
+			{
+				return true;//error
+			}
+			
 			tb_cur = (nlattr **)f->internal;
 		}
 		else if (f->compare_len != 0)
 		{
 			data = (char *)nla_data(tb_cur[f->key]);
-			//printf("%s\n", inet_ntoa(*(in_addr*)data));
 			
 			ret = memcmp(data, f->compare, f->compare_len) == 0;
+			if (!ret)
+			{
+				return ret;
+			}
 		}
 	}
 	
