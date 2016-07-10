@@ -24,7 +24,8 @@ namespace IPTables.Net.Conntrack
                     {
                         throw new KeyNotFoundException(String.Format("Unable to lookup constant {0}", key));
                     }
-                    _constants.Add(key, (UInt16)v);
+                    value = (UInt16)v;
+                    _constants.Add(key, value);
                 }
                 return value;
             }
