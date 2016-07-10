@@ -248,7 +248,7 @@ void conditional_init(int address_family, cr_filter* filters, int filters_len)
 		{
 			if (filters[i].max != 0)
 			{
-				filters[i].internal = malloc(sizeof(nlattr *) * (filters[i].max + 1));
+				filters[i].internal = malloc(sizeof(nlattr) * (filters[i].max + 1));
 			}
 		}
 		
@@ -273,7 +273,6 @@ bool conditional_filter(struct nlmsghdr *nlh)
 		return true;
 	}
 	struct nlattr *tb[CTA_MAX + 1];
-	struct nlattr *tb2[CTA_MAX + 1];
 	struct nlattr ** tb_cur;
 	int err;
 	char* data;
@@ -299,13 +298,13 @@ bool conditional_filter(struct nlmsghdr *nlh)
 		{
 			printf("nested: %d, %d\n", f->key, f->max);
 			
-			err = nla_parse_nested(tb2, f->max, tb_cur[f->key], NULL);
+			err = nla_parse_nested((struct nlattr **)f->internal, f->max, tb_cur[f->key], NULL);
 			if (err < 0)
 			{
 				return true;//error
 			}
 			
-			tb_cur = tb2;
+			tb_cur = (nlattr **)f->internal;
 		}
 		else if (f->compare_len != 0)
 		{
