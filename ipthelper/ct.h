@@ -24,7 +24,7 @@ extern "C"
 			char* compare; /* Value to compare with */
 			void* internal;
 		};
-	}  __attribute__((aligned(8))) __attribute__((packed));
+	}  __attribute__((aligned(4))) __attribute__((packed));
 
 	void restore_mark_init(uint32_t mark, uint32_t mark_mask);
 	void restore_mark_free();
