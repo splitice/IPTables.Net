@@ -6,7 +6,7 @@ using System.Text;
 
 namespace IPTables.Net.Conntrack
 {
-    [StructLayout(LayoutKind.Sequential, Pack=4, Size=16)]
+    [StructLayout(LayoutKind.Sequential, Pack=4, Size=20)]
     public struct ConntrackQueryFilter
     {
         public Int32 Key;
