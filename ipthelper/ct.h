@@ -19,11 +19,7 @@ extern "C"
 		int key; /* e.g CTA_PROTOINFO */
 		int max; /* e.g CTA_PROTOINFO_MAX, or 0 if doing comparison */
 		int compare_len; /* comparison length, only used if max == 0 */
-		union
-		{
-			char* compare; /* Value to compare with */
-			void* internal;
-		};
+		char* compare; /* Value to compare with */
 	}  __attribute__((aligned(8))) __attribute__((packed));
 
 	void restore_mark_init(uint32_t mark, uint32_t mark_mask);

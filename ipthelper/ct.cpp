@@ -273,6 +273,7 @@ bool conditional_filter(struct nlmsghdr *nlh)
 		return true;
 	}
 	struct nlattr *tb[CTA_MAX + 1];
+	struct nlattr *tb2[CTA_MAX + 1];
 	struct nlattr ** tb_cur;
 	int err;
 	char* data;
@@ -298,13 +299,13 @@ bool conditional_filter(struct nlmsghdr *nlh)
 		{
 			printf("nested: %d, %d\n", f->key, f->max);
 			
-			err = nla_parse_nested((struct nlattr **)f->internal, f->max, tb_cur[f->key], NULL);
+			err = nla_parse_nested(tb2, f->max, tb_cur[f->key], NULL);
 			if (err < 0)
 			{
 				return true;//error
 			}
 			
-			tb_cur = (nlattr **)f->internal;
+			tb_cur = tb2;
 		}
 		else if (f->compare_len != 0)
 		{
