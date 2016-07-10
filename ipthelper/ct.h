@@ -16,8 +16,8 @@ extern "C"
 	
 	struct cr_filter
 	{
-		uint16_t key; /* e.g CTA_PROTOINFO */
-		uint16_t max; /* e.g CTA_PROTOINFO_MAX, or 0 if doing comparison */
+		int key; /* e.g CTA_PROTOINFO */
+		int max; /* e.g CTA_PROTOINFO_MAX, or 0 if doing comparison */
 		int compare_len; /* comparison length, only used if max == 0 */
 		union
 		{
