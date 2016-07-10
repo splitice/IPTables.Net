@@ -460,7 +460,7 @@ Dump connections
 */
 int dump_nf_cts(bool expectations, struct cr_img* out)
 {
-	struct cr_img img = {};
+	struct cr_img img = { 0 };
 	struct {
 		struct nlmsghdr nlh;
 		struct nfgenmsg g;
@@ -472,7 +472,7 @@ int dump_nf_cts(bool expectations, struct cr_img* out)
 	ret = sk = socket(AF_NETLINK, SOCK_RAW, NETLINK_NETFILTER);
 	if (sk < 0) {
 		pr_perror("Can't open rtnl sock for net dump");
-		*out = { };
+		*out = { 0 };
 		goto out;
 	}
 
