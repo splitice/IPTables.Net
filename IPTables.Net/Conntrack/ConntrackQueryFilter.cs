@@ -12,10 +12,10 @@ namespace IPTables.Net.Conntrack
         [FieldOffset(0)]
         public Int32 Key;
         [FieldOffset(4)]
-        public Int32 Max;
+        public UInt16 Max;
+        [FieldOffset(6)]
+        public UInt16 CompareLength;
         [FieldOffset(8)]
-        public Int32 CompareLength;
-        [FieldOffset(12)]
         public IntPtr Compare;
     }
 }

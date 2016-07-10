@@ -297,7 +297,6 @@ bool conditional_filter(struct nlmsghdr *nlh)
 		}
 		else if (f->max != 0)
 		{
-			assert(f->max > 0);
 			printf("nested: %d, %d\n", f->key, f->max);
 			
 			err = nla_parse_nested((struct nlattr **)f->internal, f->max, tb_cur[f->key], NULL);
@@ -310,7 +309,6 @@ bool conditional_filter(struct nlmsghdr *nlh)
 		}
 		else if (f->compare_len != 0)
 		{
-			assert(f->compare_len > 0);
 			printf("compare len: %d\n", f->compare_len);
 			data = (char *)nla_data(tb_cur[f->key]);
 			
