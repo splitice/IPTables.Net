@@ -229,6 +229,8 @@ void conditional_free()
 			free(filter[i].internal);
 		}
 	}
+	free(filter);
+	
 	filter = NULL;
 }
 void conditional_init(int address_family, cr_filter* filters, int filters_len)
@@ -243,12 +245,13 @@ void conditional_init(int address_family, cr_filter* filters, int filters_len)
 	}
 	else
 	{
-		filter = filters;
+		filter = (cr_filter*)malloc(sizeof(cr_filter) * filters_len);
+		memcpy(filter, filters, sizeof(cr_filter) * filters_len);
 		for (int i = 0; i < filters_len; i++)
 		{
-			if (filters[i].max != 0)
+			if (filter[i].max != 0)
 			{
-				filters[i].internal = malloc(sizeof(nlattr) * (filters[i].max + 1));
+				filter[i].internal = malloc(sizeof(nlattr) * (filter[i].max + 1));
 			}
 		}
 		
