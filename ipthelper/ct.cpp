@@ -247,7 +247,9 @@ void conditional_init(int address_family, cr_filter* filters, int filters_len)
 	{
 		filter = (cr_filter*)malloc(sizeof(cr_filter) * filters_len);
 		memcpy(filter, filters, sizeof(cr_filter) * filters_len);
-		for (int i = 0; i < filters_len; i++)
+		filter_len = filters_len;
+		
+		for (int i = 0; i < filter_len; i++)
 		{
 			if (filter[i].max != 0)
 			{
@@ -256,7 +258,6 @@ void conditional_init(int address_family, cr_filter* filters, int filters_len)
 		}
 		
 	}
-	filter_len = filters_len;
 	filter_af = address_family;
 }
 
