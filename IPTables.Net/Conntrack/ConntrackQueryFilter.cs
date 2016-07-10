@@ -6,12 +6,16 @@ using System.Text;
 
 namespace IPTables.Net.Conntrack
 {
-    [StructLayout(LayoutKind.Sequential, Pack=4, Size=20)]
+    [StructLayout(LayoutKind.Explicit)]
     public struct ConntrackQueryFilter
     {
+        [FieldOffset(0)]
         public Int32 Key;
+        [FieldOffset(4)]
         public Int32 Max;
+        [FieldOffset(8)]
         public Int32 CompareLength;
+        [FieldOffset(12)]
         public IntPtr Compare;
     }
 }
