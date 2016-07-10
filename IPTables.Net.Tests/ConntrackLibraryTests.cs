@@ -53,6 +53,9 @@ namespace IPTables.Net.Tests
                 {
                     addr32 = (UInt32)addr.ToInt();
                 }
+
+
+
                 var pinned = GCHandle.Alloc(addr32, GCHandleType.Pinned);
                 ConntrackQueryFilter[] qf = new ConntrackQueryFilter[]
                 {
@@ -60,6 +63,8 @@ namespace IPTables.Net.Tests
 		            new ConntrackQueryFilter{Key = cts.GetConstant("CTA_TUPLE_IP"), Max = cts.GetConstant("CTA_IP_MAX"), CompareLength = 0},
 		            new ConntrackQueryFilter{Key = cts.GetConstant("CTA_IP_V4_DST"), Max = 0, CompareLength = 4, Compare = pinned.AddrOfPinnedObject()},
                 };
+
+                Console.WriteLine(qf[0].ToString());
 
                 List<byte[]> list = new List<byte[]>();
                 cts.Dump(false, list.Add, qf);

@@ -17,5 +17,10 @@ namespace IPTables.Net.Conntrack
         public UInt16 CompareLength;
         [FieldOffset(8)]
         public IntPtr Compare;
+
+        public override string ToString()
+        {
+            return string.Format("Key: {0}, Max: {1}, CompareLength: {2}, Compare: {3}", Key, Max, CompareLength, Compare);
+        }
     }
 }
