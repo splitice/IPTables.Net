@@ -295,6 +295,7 @@ bool conditional_filter(struct nlmsghdr *nlh)
 		
 		if (f->key == CTA_UNSPEC)
 		{
+			assert(i != 0);
 			printf("&&\n");
 			// &&
 			tb_cur = tb;
