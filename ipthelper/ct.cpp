@@ -286,7 +286,7 @@ bool conditional_filter(struct nlmsghdr *nlh)
 	if (err < 0)
 		goto out;
 	
-	printf("root: %d\n", CTA_MAX + 1);
+	//printf("root: %d\n", CTA_MAX + 1);
 	
 	tb_cur = tb;
 	for (int i = 0; i < filter_len; i++)
@@ -296,13 +296,13 @@ bool conditional_filter(struct nlmsghdr *nlh)
 		if (f->key == CTA_UNSPEC)
 		{
 			assert(i != 0);
-			printf("&&\n");
+			//printf("&&\n");
 			// &&
 			tb_cur = tb;
 		}
 		else if (f->max != 0)
 		{
-			printf("nested: %d, %d\n", f->key, f->max);
+			//printf("nested: %d, %d\n", f->key, f->max);
 			
 			err = nla_parse_nested((struct nlattr **)f->internal, f->max, tb_cur[f->key], NULL);
 			if (err < 0)
@@ -314,7 +314,7 @@ bool conditional_filter(struct nlmsghdr *nlh)
 		}
 		else if (f->compare_len != 0)
 		{
-			printf("compare len: %d\n", f->compare_len);
+			//printf("compare len: %d\n", f->compare_len);
 			data = (char *)nla_data(tb_cur[f->key]);
 			
 			ret = memcmp(data, f->compare, f->compare_len) == 0;
