@@ -27,7 +27,7 @@ namespace IPTables.Net.Tests
         [Test]
         public void TestStructureSize()
         {
-            Assert.AreEqual(20, Marshal.SizeOf(typeof(ConntrackQueryFilter)));
+            Assert.AreEqual(12 + IntPtr.Size, Marshal.SizeOf(typeof(ConntrackQueryFilter)));
         }
 
         [Test]
