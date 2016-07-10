@@ -211,7 +211,7 @@ void restore_mark_free() {
 int cr_constant(const char* key)
 {
 	auto it = constants.find(key);
-	if (it == constants.begin())
+	if (it != constants.begin())
 	{
 		return it->second;
 	}
