@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -24,6 +25,7 @@ namespace IPTables.Net.Conntrack
                     {
                         throw new KeyNotFoundException(String.Format("Unable to lookup constant {0}", key));
                     }
+                    Debug.Assert(v <= UInt16.MaxValue);
                     value = (UInt16)v;
                     _constants.Add(key, value);
                 }
