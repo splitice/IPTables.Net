@@ -77,7 +77,10 @@ namespace IPTables.Net.Conntrack
                     }
                     finally
                     {
-                        ConntrackHelper.cr_free(img);
+                        if (img.CrNode != IntPtr.Zero)
+                        {
+                            ConntrackHelper.cr_free(img);
+                        }
                     }
                 }
                 finally
