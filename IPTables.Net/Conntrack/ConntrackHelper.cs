@@ -40,6 +40,6 @@ namespace IPTables.Net.Conntrack
         public static extern int conditional_free();
 
         [DllImport(Helper)]
-        public static extern int conditional_init(Int32 address_family, ConntrackQueryFilter[] qf, int qfLength);
+        public static extern int conditional_init(Int32 address_family, [In] [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 2)] ConntrackQueryFilter[] qf, int qfLength);
     }
 }
