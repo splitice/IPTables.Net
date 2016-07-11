@@ -256,7 +256,7 @@ void conditional_init(int address_family, cr_filter* filters, int filters_len)
 		{
 			if (filter[i].max != 0)
 			{
-				filter[i].internal = malloc(sizeof(nlattr) * (filter[i].max + 1));
+				filter[i].internal = malloc(sizeof(nlattr*) * (filter[i].max + 1));
 			}
 		}
 		

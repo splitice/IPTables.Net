@@ -57,6 +57,7 @@ namespace IPTables.Net.Conntrack
                 {
                     byte[] buffer = new byte[1];
                     ConntrackHelper.CrImg img = new ConntrackHelper.CrImg();
+                    Debug.Assert(img.CrNode == IntPtr.Zero);
                     ConntrackHelper.dump_nf_cts(expectationTable, ref img);
                     try
                     {
