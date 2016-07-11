@@ -2,8 +2,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
 extern "C"
 {
+#endif
 	struct cr_node
 	{
 		struct cr_node* next;
@@ -31,11 +33,14 @@ extern "C"
 	
 	int dump_nf_cts(bool expectations, struct cr_img* out);
 	int restore_nf_cts(bool expectation, char* data, int data_len);
-	void cr_free(cr_img* img);
-	int cr_length(cr_node* node);
+	void cr_free(struct cr_img* img);
+	int cr_length(struct cr_node* node);
 	int cr_constant(const char* key);
 	
 	void conditional_free();
-	void conditional_init(int address_family, cr_filter* filters, int filters_len);
+	void conditional_init(int address_family, struct cr_filter* filters, int filters_len);
 	bool conditional_filter(struct nlmsghdr *nlh);
+	
+#ifdef __cplusplus
 }
+#endif

@@ -211,15 +211,18 @@ void restore_mark_free() {
 int cr_constant(const char* key)
 {
 	auto it = constants.find(key);
-	if (it != constants.begin())
+	if (it == constants.begin())
 	{
-		return it->second;
+		return -1;
 	}
-	return -1;
+	return it->second;
 }
 
 void conditional_free()
 {
+	filter_af = 0;
+	
+	//nothing to with the filter
 	if (filter == NULL) return;
 	
 	for (int i = 0; i < filter_len; i++)
@@ -276,7 +279,11 @@ bool conditional_filter(struct nlmsghdr *nlh)
 	{
 		return true;
 	}
+	
+	//Root data storage
 	struct nlattr *tb[CTA_MAX + 1];
+	
+	//Pointer to the current tb being queried
 	struct nlattr ** tb_cur;
 	int err;
 	char* data;

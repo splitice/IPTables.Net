@@ -57,10 +57,10 @@
     <ClCompile Include="xshared.c">
       <Filter>Source files</Filter>
     </ClCompile>
-    <ClCompile Include="ct.cpp">
+    <ClCompile Include="libnetlink.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
-    <ClCompile Include="libnetlink.cpp">
+    <ClCompile Include="ct.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
   </ItemGroup>
