@@ -33,6 +33,11 @@ namespace IPTables.Net.IpUtils.Utils
             return ret.ToArray();
         }
 
+        internal IpObject ParseObjectInternal(String str, String firstKey, char[] firstTrimChars = null)
+        {
+            return ParseObject(str, firstKey, firstTrimChars);
+        }
+
         protected IpObject ParseObject(String str, String firstKey, char[] firstTrimChars = null)
         {
             IpObject ret = new IpObject();

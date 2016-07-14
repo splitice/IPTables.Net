@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -16,6 +17,18 @@ namespace IPTables.Net.Tests
     [TestFixture]
     class IpUtilsRuleTests
     {
+        [Test]
+        public void TestParseRule()
+        {
+            var systemFactory = new MockIptablesSystemFactory();
+            var ipUtils = new IpRuleController(systemFactory);
+            var one = ipUtils.ParseObjectInternal("default via 10.17.199.1 dev s4  table 200", "to");
+            var two = ipUtils.ParseObjectInternal("default via 10.17.199.1 dev s4 table 200", "to");
+
+            CollectionAssert.AreEqual(one.Pairs, two.Pairs);
+            Assert.AreEqual("default", one.Pairs["to"]);
+            Assert.AreEqual("200",one.Pairs["table"]);
+        }
         [Test]
         public void TestAddRule()
         {
