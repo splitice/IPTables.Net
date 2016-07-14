@@ -106,6 +106,7 @@
     <Compile Include="Iptables\U32\U32TestStatement.cs" />
     <Compile Include="IpUtils\Sync\DefaultIpuSync.cs" />
     <Compile Include="IpUtils\Utils\IpController.cs" />
+    <Compile Include="IpUtils\Utils\IpControllerException.cs" />
     <Compile Include="IpUtils\Utils\IpObject.cs" />
     <Compile Include="IpUtils\Utils\IpRouteController.cs" />
     <Compile Include="IpUtils\Utils\IpRuleController.cs" />
