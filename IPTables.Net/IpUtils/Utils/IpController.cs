@@ -101,11 +101,11 @@ namespace IPTables.Net.IpUtils.Utils
             var ret = Command("add", args);
             if (ret[0].Length != 0)
             {
-                throw new Exception(String.Format("Unable to add {0}: {1}",_module,ret[0]));
+                throw new IpControllerException(String.Format("Unable to add {0} \"{1}\" occured while processing: {2}",_module,ret[0],string.Join(" ", args)));
             }
             if (ret[1].Length != 0)
             {
-                throw new Exception(String.Format("Unable to add {0}: {1}", _module, ret[1]));
+                throw new IpControllerException(String.Format("Unable to add {0} error \"{1}\" occured while processing: {2}", _module, ret[0], string.Join(" ", args)));
             }
         }
 
@@ -119,11 +119,11 @@ namespace IPTables.Net.IpUtils.Utils
             var ret = Command("delete", args);
             if (ret[0].Length != 0)
             {
-                throw new Exception(String.Format("Unable to delete {0}: {1}", _module, ret[0]));
+                throw new IpControllerException(String.Format("Unable to delete {0} \"{1}\" occured while processing: {2}", _module, ret[0], string.Join(" ", args)));
             }
             if (ret[1].Length != 0)
             {
-                throw new Exception(String.Format("Unable to delete {0}: {1}", _module, ret[1]));
+                throw new IpControllerException(String.Format("Unable to delete {0} error \"{1}\" occured while processing: {2}", _module, ret[0], string.Join(" ", args)));
             }
         }
 
