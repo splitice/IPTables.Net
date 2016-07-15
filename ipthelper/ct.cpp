@@ -416,6 +416,8 @@ int restore_nf_cts(bool expectation, char* data, int data_len)
 	struct nlmsghdr *nlh = NULL;
 	int exit_code = -1, sk;
 	int i = 0;
+	int counter = 0;
+	int res;
 
 	sk = socket(AF_NETLINK, SOCK_RAW, NETLINK_NETFILTER);
 	if (sk < 0) {
@@ -425,8 +427,6 @@ int restore_nf_cts(bool expectation, char* data, int data_len)
 	}
 
 	while (i < data_len) {
-		int res;
-		
 		if (i + sizeof(struct nlmsghdr) > data_len)
 		{
 			break;
@@ -443,7 +443,7 @@ int restore_nf_cts(bool expectation, char* data, int data_len)
 		if (!expectation)
 			if (ct_restore_callback(nlh))
 			{
-				pr_info("Unable to adjust CT for restore");
+				pr_info("Unable to adjust CT for restore\n");
 				exit_code = -EINVAL;
 				goto out;
 			}
@@ -456,6 +456,7 @@ int restore_nf_cts(bool expectation, char* data, int data_len)
 			goto out;
 		}
 		
+		counter++;
 		assert(i <= data_len);
 	}
 	
@@ -464,9 +465,10 @@ int restore_nf_cts(bool expectation, char* data, int data_len)
 	}
 	else {
 		exit_code = data_len - i;
-		pr_info("%d data is remaining", exit_code);
+		pr_info("%d data is remaining\n", exit_code);
 	}
 	
+	pr_info("%d successfully restored\n", counter);
 out:
 	close(sk);
 out_img:
