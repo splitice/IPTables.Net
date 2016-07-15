@@ -485,7 +485,7 @@ int dump_nf_cts(bool expectations, struct cr_img* out)
 
 	memset(&req, 0, sizeof(req));
 	req.nlh.nlmsg_len = sizeof(req);
-	req.nlh.nlmsg_type = (NFNL_SUBSYS_CTNETLINK << 8);
+	req.nlh.nlmsg_type = ((expectations ? NFNL_SUBSYS_CTNETLINK_EXP : NFNL_SUBSYS_CTNETLINK) << 8);
 
 	if (!expectations)
 		req.nlh.nlmsg_type |= IPCTNL_MSG_CT_GET;
