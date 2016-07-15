@@ -34,7 +34,15 @@ namespace IPTables.Net.Conntrack
             }
         }
 
-        public void Restore(bool expectationsTable, byte[] data, UInt32 restoreMark = 0, UInt32 restoreMarkMask = 0)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="expectationsTable"></param>
+        /// <param name="data"></param>
+        /// <param name="restoreMark"></param>
+        /// <param name="restoreMarkMask"></param>
+        /// <returns>remaining unprocessed data</returns>
+        public int Restore(bool expectationsTable, byte[] data, UInt32 restoreMark = 0, UInt32 restoreMarkMask = 0)
         {
             bool useRestoreMark = restoreMark != 0 || restoreMarkMask != 0;
             if (useRestoreMark)
@@ -42,14 +50,16 @@ namespace IPTables.Net.Conntrack
                 ConntrackHelper.restore_mark_init(restoreMark,restoreMarkMask);
             }
             int errorCode = ConntrackHelper.restore_nf_cts(expectationsTable, data, data.Length);
-            if (errorCode != 0)
+            if (errorCode < 0)
             {
-                throw new IpTablesNetException(String.Format("An error occured while loading NFCTs with the code: {0}", errorCode));
+                throw new IpTablesNetException(String.Format("An error occured while loading NFCTs with the errno: {0}", -errorCode));
             }
             if (useRestoreMark)
             {
                 ConntrackHelper.restore_mark_free();
             }
+
+            return errorCode;
         }
 
         public void Dump(bool expectationTable, Action<byte[]> cb, ConntrackQueryFilter[] qf = null, AddressFamily addressFamily = AddressFamily.Unspecified)

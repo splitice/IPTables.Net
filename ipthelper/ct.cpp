@@ -425,7 +425,12 @@ int restore_nf_cts(bool expectation, char* data, int data_len)
 	}
 
 	while (i < data_len) {
-		int ret;
+		int res;
+		
+		if (i + sizeof(struct nlmsghdr) > data_len)
+		{
+			break;
+		}
 
 		nlh = (struct nlmsghdr *)&data[i];
 		
@@ -437,12 +442,17 @@ int restore_nf_cts(bool expectation, char* data, int data_len)
 		
 		if (!expectation)
 			if (ct_restore_callback(nlh))
+			{
+				pr_info("Unable to adjust CT for restore");
+				exit_code = -EINVAL;
 				goto out;
+			}
 
 		nlh->nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK | NLM_F_CREATE;
-		ret = do_rtnl_req(sk, nlh, nlh->nlmsg_len, NULL, NULL, NULL);
-		if (ret) {
-			exit_code = ret;
+		res = do_rtnl_req(sk, nlh, nlh->nlmsg_len, NULL, NULL, NULL);
+		if (res) {
+			pr_perror("Unable to insert CT");
+			exit_code = res;
 			goto out;
 		}
 		
@@ -454,6 +464,7 @@ int restore_nf_cts(bool expectation, char* data, int data_len)
 	}
 	else {
 		exit_code = data_len - i;
+		pr_info("%d data is remaining", exit_code);
 	}
 	
 out:
