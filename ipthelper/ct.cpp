@@ -474,7 +474,7 @@ int dump_nf_cts(bool expectations, struct cr_img* out)
 	} req;
 	int sk = 0, ret;
 
-	pr_info("Dumping netns links\n");
+	pr_info("Dumping netns links (table: %s)\n", expectations ? "expect" : "default");
 
 	ret = sk = socket(AF_NETLINK, SOCK_RAW, NETLINK_NETFILTER);
 	if (sk < 0) {
