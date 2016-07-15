@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.Conntrack
 {
@@ -40,7 +41,11 @@ namespace IPTables.Net.Conntrack
             {
                 ConntrackHelper.restore_mark_init(restoreMark,restoreMarkMask);
             }
-            ConntrackHelper.restore_nf_cts(expectationsTable, data, data.Length);
+            int errorCode = ConntrackHelper.restore_nf_cts(expectationsTable, data, data.Length);
+            if (errorCode != 0)
+            {
+                throw new IpTablesNetException(String.Format("An error occured while loading NFCTs with the code: {0}", errorCode));
+            }
             if (useRestoreMark)
             {
                 ConntrackHelper.restore_mark_free();
