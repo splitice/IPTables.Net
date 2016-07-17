@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
 
@@ -8,8 +9,10 @@ namespace IPTables.Net.Iptables.Modules.Ct
     public class CtTargetModule : ModuleBase, IIpTablesModule, IEquatable<CtTargetModule>
     {
         private const String OptionHelperLong = "--helper";
+        private const String OptionCtEventsLong = "--ctevents";
 
         private String Helper;
+        private List<String> CtEvents = new List<string>(); 
 
         public CtTargetModule(int version) : base(version)
         {
@@ -19,7 +22,7 @@ namespace IPTables.Net.Iptables.Modules.Ct
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Helper.Equals(other.Helper);
+            return Helper.Equals(other.Helper) && CtEvents.OrderBy((a)=>a).SequenceEqual(other.CtEvents.OrderBy((a)=>a));
         }
 
         public bool NeedsLoading
@@ -29,11 +32,13 @@ namespace IPTables.Net.Iptables.Modules.Ct
 
         public int Feed(RuleParser parser, bool not)
         {
-            int bits;
             switch (parser.GetCurrentArg())
             {
                 case OptionHelperLong:
                     Helper = parser.GetNextArg();
+                    return 1;
+                case OptionCtEventsLong:
+                    CtEvents = parser.GetNextArg().Split(new char[]{','}).Select((a)=>a.Trim()).ToList();
                     return 1;
             }
 
@@ -50,6 +55,12 @@ namespace IPTables.Net.Iptables.Modules.Ct
                 sb.Append(Helper);
             }
 
+            if (CtEvents.Any())
+            {
+                sb.Append(OptionCtEventsLong + " ");
+                sb.Append(string.Join(",",CtEvents));
+            }
+
             return sb.ToString();
         }
 
@@ -57,7 +68,8 @@ namespace IPTables.Net.Iptables.Modules.Ct
         {
             var options = new HashSet<string>
             {
-                OptionHelperLong
+                OptionHelperLong,
+                OptionCtEventsLong
             };
             return options;
         }
