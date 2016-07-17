@@ -42,6 +42,9 @@ namespace IPTables.Net.Iptables.Modules.Ct
                 case OptionCtEventsLong:
                     CtEvents = parser.GetNextArg().Split(new char[]{','}).Select((a)=>a.Trim()).ToList();
                     return 1;
+                case OptionExpEventsLong:
+                    ExpEvents = parser.GetNextArg().Split(new char[] { ',' }).Select((a) => a.Trim()).ToList();
+                    return 1;
             }
 
             return 0;
