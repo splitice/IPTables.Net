@@ -24,7 +24,7 @@ namespace IPTables.Net.Iptables.Modules.Ct
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Helper.Equals(other.Helper) && CtEvents.OrderBy((a) => a).SequenceEqual(other.CtEvents.OrderBy((a) => a)) && ExpEvents.OrderBy((a) => a).SequenceEqual(other.ExpEvents.OrderBy((a) => a));
+            return Helper == other.Helper && CtEvents.OrderBy((a) => a).SequenceEqual(other.CtEvents.OrderBy((a) => a)) && ExpEvents.OrderBy((a) => a).SequenceEqual(other.ExpEvents.OrderBy((a) => a));
         }
 
         public bool NeedsLoading
@@ -103,7 +103,7 @@ namespace IPTables.Net.Iptables.Modules.Ct
         {
             unchecked
             {
-                return Helper.GetHashCode();
+                return Helper == null ? 0 : Helper.GetHashCode();
             }
         }
     }

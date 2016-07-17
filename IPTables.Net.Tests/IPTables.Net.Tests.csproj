@@ -74,6 +74,7 @@
     <Compile Include="RuleBuilderNestedTests.cs" />
     <Compile Include="RuleBuilderMultiportTests.cs" />
     <Compile Include="RuleBuilderSplitterTests.cs" />
+    <Compile Include="SingleConntrackRuleParseTests.cs" />
     <Compile Include="SingleDnatParseTests.cs" />
     <Compile Include="SingleConnlimitRuleParseTests.cs" />
     <Compile Include="SingleCommentRuleParseTests.cs" />
