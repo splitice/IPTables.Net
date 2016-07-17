@@ -10,9 +10,11 @@ namespace IPTables.Net.Iptables.Modules.Ct
     {
         private const String OptionHelperLong = "--helper";
         private const String OptionCtEventsLong = "--ctevents";
+        private const String OptionExpEventsLong = "--expevents";
 
         private String Helper;
-        private List<String> CtEvents = new List<string>(); 
+        private List<String> CtEvents = new List<string>();
+        private List<String> ExpEvents = new List<string>(); 
 
         public CtTargetModule(int version) : base(version)
         {
@@ -22,7 +24,7 @@ namespace IPTables.Net.Iptables.Modules.Ct
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Helper.Equals(other.Helper) && CtEvents.OrderBy((a)=>a).SequenceEqual(other.CtEvents.OrderBy((a)=>a));
+            return Helper.Equals(other.Helper) && CtEvents.OrderBy((a) => a).SequenceEqual(other.CtEvents.OrderBy((a) => a)) && ExpEvents.OrderBy((a) => a).SequenceEqual(other.ExpEvents.OrderBy((a) => a));
         }
 
         public bool NeedsLoading
@@ -61,6 +63,12 @@ namespace IPTables.Net.Iptables.Modules.Ct
                 sb.Append(string.Join(",",CtEvents));
             }
 
+            if (ExpEvents.Any())
+            {
+                sb.Append(OptionExpEventsLong + " ");
+                sb.Append(string.Join(",", ExpEvents));
+            }
+
             return sb.ToString();
         }
 
@@ -69,7 +77,8 @@ namespace IPTables.Net.Iptables.Modules.Ct
             var options = new HashSet<string>
             {
                 OptionHelperLong,
-                OptionCtEventsLong
+                OptionCtEventsLong,
+                OptionExpEventsLong
             };
             return options;
         }
