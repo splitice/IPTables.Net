@@ -23,7 +23,7 @@ extern "C" {
 	extern EXPORT int execute_command(const char* rule, void *h);
 	extern EXPORT int init_helper(void);
 	extern EXPORT void* init_handle(const char* table);
-	extern EXPORT char* ipth_bpf_compile(const char* dlt, int length);
+	extern EXPORT char* ipth_bpf_compile(const char* dltname, const char* program, int length);
 #ifdef __cplusplus
 }
 #endif
