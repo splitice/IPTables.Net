@@ -644,7 +644,7 @@ EXPORT char* last_error(void){
 	return errbuffer;
 }
 
-EXPORT char* ipth_bpf_compile(const char* dltname, const char* program, int length)
+EXPORT char* ipth_bpf_compile(const char* dltname, const char* code, int length)
 {
 	struct bpf_program program;
 	struct bpf_insn *ins;
@@ -656,7 +656,7 @@ EXPORT char* ipth_bpf_compile(const char* dltname, const char* program, int leng
 		return NULL;
 	}
 
-	if (pcap_compile_nopcap(65535, dlt, &program, program, 1,
+	if (pcap_compile_nopcap(65535, dlt, &program, code, 1,
 							PCAP_NETMASK_UNKNOWN)) {
 		fprintf(stderr, "Compilation error\n");
 		return 1;
