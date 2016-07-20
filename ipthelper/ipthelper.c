@@ -45,6 +45,7 @@
 #include "iptables.h"
 #include <sys/mman.h>
 #include <sys/stat.h> /* For mode constants */
+#include <pcap.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -641,4 +642,45 @@ EXPORT int init_helper(void){
 
 EXPORT char* last_error(void){
 	return errbuffer;
+}
+
+EXPORT char* ipth_bpf_compile(const char* dlt, int length)
+{
+	struct bpf_program program;
+	struct bpf_insn *ins;
+	int i, dlt;
+	char* buffer = (char*)malloc(length + 1);
+
+	dlt = pcap_datalink_name_to_val(dlt);
+	if (dlt == -1) {
+		return NULL;
+	}
+
+	if (pcap_compile_nopcap(65535, dlt, &program, argv[argc - 1], 1,
+							PCAP_NETMASK_UNKNOWN)) {
+		fprintf(stderr, "Compilation error\n");
+		return 1;
+	}
+
+	length -= snprintf(buffer,length,"%d,", program.bf_len);
+	ins = program.bf_insns;
+	for (i = 0; i < program.bf_len-1; ++ins, ++i){
+		if(length == 0){
+			goto error;
+		}
+		length -= snprintf(buffer,length,"%u %u %u %u,", ins->code, ins->jt, ins->jf, ins->k);
+	}
+
+	length -= snprintf(buffer,length,"%u %u %u %u\n", ins->code, ins->jt, ins->jf, ins->k);
+	if(length == 0){
+		goto error;
+	}
+
+	goto ok;
+error:
+	free(buffer);
+	buffer = NULL;
+ok:
+	pcap_freecode(&program);
+	return buffer;
 }
