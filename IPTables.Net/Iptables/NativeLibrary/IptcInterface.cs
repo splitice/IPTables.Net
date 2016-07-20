@@ -222,6 +222,19 @@ namespace IPTables.Net.Iptables.NativeLibrary
         [DllImport(Helper)]
         static extern IntPtr last_error();
 
+        [DllImport(Helper)]
+        static extern IntPtr ipth_bpf_compile([MarshalAs(UnmanagedType.LPStr)]String dltname, [MarshalAs(UnmanagedType.LPStr)]String code, int length);
+        [DllImport(Helper)]
+        static extern void ipth_free(IntPtr ptr);
+
+        public static String BpfCompile(String dltName, String code, int programBufLen)
+        {
+            IntPtr ptr = ipth_bpf_compile(dltName, code, programBufLen);
+            String str = Marshal.PtrToStringAnsi(ptr);
+            ipth_free(ptr);
+            return str;
+        }
+
         public String LastError()
         {
             return Marshal.PtrToStringAnsi(last_error());

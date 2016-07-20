@@ -644,6 +644,11 @@ EXPORT char* last_error(void){
 	return errbuffer;
 }
 
+EXPORT void ipth_free(void* ptr)
+{
+	free(ptr);
+}
+
 EXPORT char* ipth_bpf_compile(const char* dltname, const char* code, int length)
 {
 	struct bpf_program program;
