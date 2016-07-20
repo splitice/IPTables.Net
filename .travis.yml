@@ -23,6 +23,8 @@ addons:
     - libnetfilter-conntrack3
     - libnfnetlink-dev
     - libnfnetlink0
+    - libpcap0.8
+    - libpcap0.8-dev
 
 install:
   - sudo modprobe ip_conntrack
