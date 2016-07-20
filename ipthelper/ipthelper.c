@@ -644,14 +644,14 @@ EXPORT char* last_error(void){
 	return errbuffer;
 }
 
-EXPORT char* ipth_bpf_compile(const char* dlt, int length)
+EXPORT char* ipth_bpf_compile(const char* dltname, int length)
 {
 	struct bpf_program program;
 	struct bpf_insn *ins;
 	int i, dlt;
 	char* buffer = (char*)malloc(length + 1);
 
-	dlt = pcap_datalink_name_to_val(dlt);
+	dlt = pcap_datalink_name_to_val(dltname);
 	if (dlt == -1) {
 		return NULL;
 	}
