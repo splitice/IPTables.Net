@@ -81,6 +81,7 @@
     <Compile Include="Iptables\IpSet\IpSetTypeHelper.cs" />
     <Compile Include="Iptables\IpTablesRuleDefinition.cs" />
     <Compile Include="Iptables\IPTablesTables.cs" />
+    <Compile Include="Iptables\Modules\BpfL4\BpfModule.cs" />
     <Compile Include="Iptables\Modules\U32\U32Module.cs" />
     <Compile Include="Iptables\NativeLibrary\IptcInterface.cs" />
     <Compile Include="Iptables\Modules\Bpf\BpfModule.cs" />

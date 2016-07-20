@@ -230,6 +230,10 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public static String BpfCompile(String dltName, String code, int programBufLen)
         {
             IntPtr ptr = ipth_bpf_compile(dltName, code, programBufLen);
+            if (ptr == IntPtr.Zero)
+            {
+                return null;
+            }
             String str = Marshal.PtrToStringAnsi(ptr);
             ipth_free(ptr);
             return str;

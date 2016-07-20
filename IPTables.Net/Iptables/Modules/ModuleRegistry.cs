@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Modules.Bpf;
+using IPTables.Net.Iptables.Modules.BpfL4;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.Modules.Connlimit;
 using IPTables.Net.Iptables.Modules.Connmark;
@@ -66,6 +67,7 @@ namespace IPTables.Net.Iptables.Modules
             SynProxyModule.GetModuleEntry,
             IpSetModule.GetModuleEntry,
             BpfModule.GetModuleEntry,
+            BpfL4Module.GetModuleEntry,
             U32Module.GetModuleEntry
         };
 
