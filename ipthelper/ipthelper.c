@@ -668,21 +668,21 @@ EXPORT char* ipth_bpf_compile(const char* dltname, const char* code, int length)
 		return 1;
 	}
 
-	n = snprintf(buffer, length, "%d,", program.bf_len);
-	buffer += n;
+	n = snprintf(bufferptr, length, "%d,", program.bf_len);
+	bufferptr += n;
 	length -= n;
 	ins = program.bf_insns;
 	for (i = 0; i < program.bf_len-1; ++ins, ++i){
 		if(length == 0){
 			goto error;
 		}
-		n = snprintf(buffer, length, "%u %u %u %u,", ins->code, ins->jt, ins->jf, ins->k);
-		buffer += n;
+		n = snprintf(bufferptr, length, "%u %u %u %u,", ins->code, ins->jt, ins->jf, ins->k);
+		bufferptr += n;
 		length -= n;
 	}
 
-	n = snprintf(buffer, length, "%u %u %u %u\n", ins->code, ins->jt, ins->jf, ins->k);
-	buffer += n;
+	n = snprintf(bufferptr, length, "%u %u %u %u\n", ins->code, ins->jt, ins->jf, ins->k);
+	bufferptr += n;
 	length -= n;
 	if(length == 0){
 		goto error;
