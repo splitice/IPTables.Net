@@ -681,7 +681,7 @@ EXPORT char* ipth_bpf_compile(const char* dltname, const char* code, int length)
 		length -= n;
 	}
 
-	n = snprintf(bufferptr, length, "%u %u %u %u\n", ins->code, ins->jt, ins->jf, ins->k);
+	n = snprintf(bufferptr, length, "%u %u %u %u", ins->code, ins->jt, ins->jf, ins->k);
 	bufferptr += n;
 	length -= n;
 	if(length == 0){
