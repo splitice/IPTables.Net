@@ -653,8 +653,9 @@ EXPORT char* ipth_bpf_compile(const char* dltname, const char* code, int length)
 {
 	struct bpf_program program;
 	struct bpf_insn *ins;
-	int i, dlt;
+	int i, dlt, n;
 	char* buffer = (char*)malloc(length + 1);
+	char* bufferptr = buffer;
 
 	dlt = pcap_datalink_name_to_val(dltname);
 	if (dlt == -1) {
@@ -667,16 +668,22 @@ EXPORT char* ipth_bpf_compile(const char* dltname, const char* code, int length)
 		return 1;
 	}
 
-	length -= snprintf(buffer,length,"%d,", program.bf_len);
+	n = snprintf(buffer, length, "%d,", program.bf_len);
+	buffer += n;
+	length -= n;
 	ins = program.bf_insns;
 	for (i = 0; i < program.bf_len-1; ++ins, ++i){
 		if(length == 0){
 			goto error;
 		}
-		length -= snprintf(buffer,length,"%u %u %u %u,", ins->code, ins->jt, ins->jf, ins->k);
+		n = snprintf(buffer, length, "%u %u %u %u,", ins->code, ins->jt, ins->jf, ins->k);
+		buffer += n;
+		length -= n;
 	}
 
-	length -= snprintf(buffer,length,"%u %u %u %u\n", ins->code, ins->jt, ins->jf, ins->k);
+	n = snprintf(buffer, length, "%u %u %u %u\n", ins->code, ins->jt, ins->jf, ins->k);
+	buffer += n;
+	length -= n;
 	if(length == 0){
 		goto error;
 	}
