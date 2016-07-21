@@ -665,7 +665,7 @@ EXPORT char* ipth_bpf_compile(const char* dltname, const char* code, int length)
 	if (pcap_compile_nopcap(65535, dlt, &program, code, 1,
 							PCAP_NETMASK_UNKNOWN)) {
 		fprintf(stderr, "Compilation error\n");
-		return 1;
+		return NULL;
 	}
 
 	n = snprintf(bufferptr, length, "%d,", program.bf_len);
