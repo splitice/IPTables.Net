@@ -67,6 +67,7 @@
     <Compile Include="Iptables\DataTypes\FlexibleUInt32.cs" />
     <Compile Include="Iptables\DataTypes\HashLimitMode.cs" />
     <Compile Include="Iptables\Helpers\PortRangeHelpers.cs" />
+    <Compile Include="Iptables\Helpers\PosixFamilyHelpers.cs" />
     <Compile Include="Iptables\Helpers\RulePortHelper.cs" />
     <Compile Include="Iptables\Helpers\ShortHash.cs" />
     <Compile Include="Iptables\Helpers\SynProxyHelper.cs" />
