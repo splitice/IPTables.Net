@@ -18,6 +18,7 @@ namespace IPTables.Net.Iptables.IpSet
         private String _name;
         private IpSetType _type;
         private int _timeout;
+        private string _family;
         private int _hashSize = 1024;
         private int _maxElem = 65536;
         private List<IpSetEntry> _entries = new List<IpSetEntry>();
@@ -67,15 +68,22 @@ namespace IPTables.Net.Iptables.IpSet
             set { _syncMode = value; }
         }
 
+        public string Family
+        {
+            get { return _family; }
+            set { _family = value; }
+        }
+
         #endregion
 
         #region Constructor
 
-        public IpSetSet(IpSetType type, string name, int timeout, IpTablesSystem system, IpSetSyncMode syncMode)
+        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode)
         {
             _type = type;
             _name = name;
             _timeout = timeout;
+            _family = family;
             _system = system;
             _syncMode = syncMode;
         }
@@ -96,7 +104,7 @@ namespace IPTables.Net.Iptables.IpSet
 
             if (_type == IpSetType.HashIp || _type == IpSetType.HashIpPort || _type == IpSetType.HashNet || _type == IpSetType.HashNetPort)
             {
-                command += " family inet";
+                command += " family "+_family;
             }
             else if (_type == IpSetType.BitmapPort)
             {

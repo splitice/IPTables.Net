@@ -60,7 +60,7 @@ namespace IPTables.Net.Iptables.IpSet
                 {
                     //Add
                     System.SetAdapter.CreateSet(set);
-                    systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, System, set.SyncMode);
+                    systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, "inet", System, set.SyncMode);
                 }
                 else
                 {
@@ -69,7 +69,7 @@ namespace IPTables.Net.Iptables.IpSet
                     {
                         System.SetAdapter.DestroySet(set.Name);
                         System.SetAdapter.CreateSet(set);
-                        systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, System, set.SyncMode);
+                        systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, "inet", System, set.SyncMode);
                     }
                 }
 
