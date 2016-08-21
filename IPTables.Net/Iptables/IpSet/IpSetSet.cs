@@ -18,7 +18,7 @@ namespace IPTables.Net.Iptables.IpSet
         private String _name;
         private IpSetType _type;
         private int _timeout;
-        private string _family;
+        private string _family = "inet";
         private int _hashSize = 1024;
         private int _maxElem = 65536;
         private List<IpSetEntry> _entries = new List<IpSetEntry>();

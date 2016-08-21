@@ -49,6 +49,9 @@ namespace IPTables.Net.Iptables.IpSet.Parser
             {
                 switch (option)
                 {
+                    case "family":
+                        _set.Family = GetNextArg();
+                        break;
                     case "hashsize":
                         _set.HashSize = int.Parse(GetNextArg());
                         break;
