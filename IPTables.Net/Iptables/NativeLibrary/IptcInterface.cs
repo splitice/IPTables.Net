@@ -30,7 +30,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         /* Cleanup after iptc_init(). */
         [DllImport(LibraryV4, SetLastError = true)]
-        public static extern void v4_iptc_free(IntPtr h);
+        public static extern void iptc_free(IntPtr h);
 
         /* Iterator functions to run through the chains.  Returns NULL at end. */
         [DllImport(LibraryV4, SetLastError = true)]
@@ -501,7 +501,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         private void Free()
         {
             RequireHandle();
-            v4_iptc_free(_handle);
+            iptc_free(_handle);
             _handle = IntPtr.Zero;
         }
 
