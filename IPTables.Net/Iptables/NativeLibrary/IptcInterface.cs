@@ -383,7 +383,10 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public static extern int init_helper6();
 
         [DllImport(Helper, SetLastError = true)]
-        static extern IntPtr init_handle(String table);
+        static extern IntPtr init_handle4(String table);
+
+        [DllImport(Helper, SetLastError = true)]
+        static extern IntPtr init_handle6(String table);
 
         [DllImport(Helper)]
         static extern IntPtr last_error();
@@ -508,7 +511,14 @@ namespace IPTables.Net.Iptables.NativeLibrary
             {
                 throw new IpTablesNetException("A table is already open, commit or discard first");
             }
-            _handle = init_handle(table);
+            if (_ipVersion == 4)
+            {
+                _handle = init_handle4(table);
+            }
+            else
+            {
+                _handle = init_handle6(table);
+            }
             if (_handle == IntPtr.Zero)
             {
                 throw new IpTablesNetException(String.Format("Failed to open table \"{0}\", error: {1}", table, LastError()));
