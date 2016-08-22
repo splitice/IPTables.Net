@@ -51,7 +51,7 @@ namespace IPTables.Net.Iptables.DataTypes
 
             if (p.Length == 1)
             {
-                return new IpCidr(ip, 32);
+                return new IpCidr(ip);
             }
 
             if (Equals(ip, IPAddress.Any))
@@ -96,7 +96,7 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public override string ToString()
         {
-            if (Cidr == 32)
+            if ((Cidr == 32 && Address.AddressFamily == AddressFamily.InterNetwork) || Cidr == 128)
             {
                 return Address.ToString();
             }
