@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ct.cpp" />
+    <ClCompile Include="ip6tables.c" />
     <ClCompile Include="iptables.c" />
     <ClCompile Include="ipthelper.c" />
     <ClCompile Include="libnetlink.cpp" />

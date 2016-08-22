@@ -1,5 +1,6 @@
 #pragma once
 #include <libiptc/libiptc.h>
+#include <libiptc/libip6tc.h>
 
 #if defined(_MSC_VER)
 //  Microsoft 
@@ -23,8 +24,10 @@ extern "C" {
 	extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, const char *chain, int counters);
 	extern EXPORT int execute_command6(const char* rule, void *h);
 	extern EXPORT int execute_command4(const char* rule, void *h);
-	extern EXPORT int init_helper(void);
-	extern EXPORT void* init_handle(const char* table);
+	extern EXPORT int init_helper4(void);
+	extern EXPORT int init_helper6(void);
+	extern EXPORT void* init_handle4(const char* table);
+	extern EXPORT void* init_handle6(const char* table);
 	extern EXPORT char* ipth_bpf_compile(const char* dltname, const char* program, int length);
 	extern EXPORT void ipth_free(void* ptr);
 #ifdef __cplusplus

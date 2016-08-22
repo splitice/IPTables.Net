@@ -377,7 +377,10 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public static extern int execute_command4(String command, IntPtr h);
 
         [DllImport(Helper, SetLastError = true)]
-        public static extern int init_helper();
+        public static extern int init_helper4();
+
+        [DllImport(Helper, SetLastError = true)]
+        public static extern int init_helper6();
 
         [DllImport(Helper, SetLastError = true)]
         static extern IntPtr init_handle(String table);
@@ -436,7 +439,16 @@ namespace IPTables.Net.Iptables.NativeLibrary
             logger = log;
             if (!_helperInit)
             {
-                if (init_helper() < 0)
+                int res;
+                if (ipVersion == 4)
+                {
+                    res = init_helper4();
+                }
+                else
+                {
+                    res = init_helper6();
+                }
+                if (res < 0)
                 {
                     throw new Exception("Failed to initialize the helper / xtables");
                 }

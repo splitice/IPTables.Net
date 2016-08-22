@@ -63,5 +63,8 @@
     <ClCompile Include="ct.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="ip6tables.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

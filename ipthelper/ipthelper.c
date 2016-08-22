@@ -37,7 +37,6 @@
 #include <stdarg.h>
 #include <limits.h>
 #include <unistd.h>
-#include <iptables.h>
 #include <xtables.h>
 #include <fcntl.h>
 #include <assert.h>
@@ -672,27 +671,27 @@ extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, cons
 		ptr += sprintf(ptr,"-A %s", chain);
 
 		/* Print IP part. */
-		print_ip6("-s", e->ip.src.s_addr, e->ip.smsk.s_addr,
-			e->ip.invflags & IPT_INV_SRCIP);
+		print_ip6("-s", &e->ipv6.src, &e->ipv6.smsk,
+			e->ipv6.invflags & IPT_INV_SRCIP);
 
-		print_ip6("-d", e->ip.dst.s_addr, e->ip.dmsk.s_addr,
-			e->ip.invflags & IPT_INV_DSTIP);
+		print_ip6("-d", &e->ipv6.dst, &e->ipv6.dmsk,
+			e->ipv6.invflags & IPT_INV_DSTIP);
 
-		print_iface('i', e->ip.iniface, e->ip.iniface_mask,
-			e->ip.invflags & IPT_INV_VIA_IN);
+		print_iface('i', e->ipv6.iniface, e->ipv6.iniface_mask,
+			e->ipv6.invflags & IPT_INV_VIA_IN);
 
-		print_iface('o', e->ip.outiface, e->ip.outiface_mask,
-			e->ip.invflags & IPT_INV_VIA_OUT);
+		print_iface('o', e->ipv6.outiface, e->ipv6.outiface_mask,
+			e->ipv6.invflags & IPT_INV_VIA_OUT);
 
-		print_proto(e->ip.proto, e->ip.invflags & XT_INV_PROTO);
+		print_proto(e->ipv6.proto, e->ipv6.invflags & XT_INV_PROTO);
 
-		if (e->ip.flags & IPT_F_FRAG)
+		if (e->ipv6.flags & IPT_F_FRAG)
 			ptr += sprintf(ptr,"%s -f",
-			e->ip.invflags & IPT_INV_FRAG ? " !" : "");
+			e->ipv6.invflags & IPT_INV_FRAG ? " !" : "");
 
 		/* Print matchinfo part */
 		if (e->target_offset) {
-			IPT_MATCH_ITERATE(e, print_match_save6, &e->ip);
+			IPT_MATCH_ITERATE(e, print_match_save6, &e->ipv6);
 		}
 
 		/* print counters for iptables -R */
@@ -704,7 +703,7 @@ extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, cons
 	#ifdef OLD_IPTABLES
 		if (target_name && (*target_name != '\0'))
 	#ifdef IPT_F_GOTO
-			ptr += sprintf(ptr," -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
+			ptr += sprintf(ptr," -%c %s", e->ipv6.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
 	#else
 			ptr += sprintf(ptr," -j %s", target_name);
 	#endif
@@ -729,7 +728,7 @@ extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, cons
 			if (target){
 				if (target->save){
 					capture_stdout();
-					target->save(&e->ip, t);
+					target->save(&e->ipv6, t);
 					if (!restore_stdout())
 					{
 						xtables_error(OTHER_PROBLEM, "Unable to capture stdout, errno: %d", errno);
@@ -753,7 +752,7 @@ extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, cons
 	#ifndef OLD_IPTABLES
 		else if (target_name && (*target_name != '\0')){
 	#ifdef IPT_F_GOTO
-			ptr += sprintf(ptr, " -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
+			ptr += sprintf(ptr, " -%c %s", e->ipv6.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
 	#else
 			ptr += sprintf(ptr, " -j %s", target_name);
 	#endif
