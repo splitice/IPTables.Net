@@ -53,10 +53,12 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
-                IptcInterface iptc = new IptcInterface("filter", 6);
-                var rules = iptc.GetRules("test");
-                Assert.AreEqual(1,rules.Count);
-                Assert.AreEqual("-A test -j ACCEPT", iptc.GetRuleString("test",rules[0]));
+                using (IptcInterface iptc = new IptcInterface("filter", 6))
+                {
+                    var rules = iptc.GetRules("test");
+                    Assert.AreEqual(1, rules.Count);
+                    Assert.AreEqual("-A test -j ACCEPT", iptc.GetRuleString("test", rules[0]));
+                }
             }   
         }
 
@@ -65,10 +67,12 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
-                IptcInterface iptc = new IptcInterface("filter", 6);
-                var rules = iptc.GetRules("test3");
-                Assert.AreEqual(1, rules.Count);
-                Assert.AreEqual("-A test3 -p tcp -m tcp --dport 80 -j ACCEPT", iptc.GetRuleString("test3", rules[0]));
+                using (IptcInterface iptc = new IptcInterface("filter", 6))
+                {
+                    var rules = iptc.GetRules("test3");
+                    Assert.AreEqual(1, rules.Count);
+                    Assert.AreEqual("-A test3 -p tcp -m tcp --dport 80 -j ACCEPT", iptc.GetRuleString("test3", rules[0]));
+                }
             }
         }
 
@@ -77,14 +81,17 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
-                IptcInterface iptc = new IptcInterface("filter", 6);
+                using (IptcInterface iptc = new IptcInterface("filter", 6))
+                {
 
-                var status = iptc.ExecuteCommand("ip6tables -A test2 -d 1.1.1.1 -p tcp -m tcp --dport 80 -j ACCEPT");
-                Assert.AreEqual(1, status, "Expected OK return value");
+                    var status = iptc.ExecuteCommand("ip6tables -A test2 -d 1.1.1.1 -p tcp -m tcp --dport 80 -j ACCEPT");
+                    Assert.AreEqual(1, status, "Expected OK return value");
 
-                var rules = iptc.GetRules("test2");
-                Assert.AreEqual(1, rules.Count);
-                Assert.AreEqual("-A test2 -d 1.1.1.1/32 -p tcp -m tcp --dport 80 -j ACCEPT", iptc.GetRuleString("test2", rules[0]));
+                    var rules = iptc.GetRules("test2");
+                    Assert.AreEqual(1, rules.Count);
+                    Assert.AreEqual("-A test2 -d 1.1.1.1/32 -p tcp -m tcp --dport 80 -j ACCEPT",
+                        iptc.GetRuleString("test2", rules[0]));
+                }
             }
         }
 
@@ -93,10 +100,12 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
-                IptcInterface iptc = new IptcInterface("filter", 6);
+                using (IptcInterface iptc = new IptcInterface("filter", 6))
+                {
 
-                var chains = iptc.GetChains();
-                Assert.AreNotEqual(0, chains.Count, "Expected atleast one chain");
+                    var chains = iptc.GetChains();
+                    Assert.AreNotEqual(0, chains.Count, "Expected atleast one chain");
+                }
             }
         }
 
@@ -105,16 +114,25 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
-                IptcInterface iptc = new IptcInterface("mangle", 6);
+                using (IptcInterface iptc = new IptcInterface("mangle", 6))
+                {
 
-                var chains = iptc.GetChains();
-                Assert.AreNotEqual(0, chains.Count, "Expected atleast one chain");
+                    var chains = iptc.GetChains();
+                    Assert.AreNotEqual(0, chains.Count, "Expected atleast one chain");
 
-                List<String> expectedChains = new List<string>{"PREROUTING", "INPUT", "FORWARD", "OUTPUT", "POSTROUTING"};
-                CollectionAssert.AreEqual(expectedChains, iptc.GetChains(), "first table chain test");
+                    List<String> expectedChains = new List<string>
+                    {
+                        "PREROUTING",
+                        "INPUT",
+                        "FORWARD",
+                        "OUTPUT",
+                        "POSTROUTING"
+                    };
+                    CollectionAssert.AreEqual(expectedChains, iptc.GetChains(), "first table chain test");
 
-                //Test repeatable
-                CollectionAssert.AreEqual(expectedChains, iptc.GetChains(), "second table chain test");
+                    //Test repeatable
+                    CollectionAssert.AreEqual(expectedChains, iptc.GetChains(), "second table chain test");
+                }
             }
         }
     }
