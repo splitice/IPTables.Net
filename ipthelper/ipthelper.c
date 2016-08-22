@@ -764,7 +764,7 @@ extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, cons
 	#ifndef OLD_IPTABLES
 		else if (target_name && (*target_name != '\0')){
 	#ifdef IPT_F_GOTO
-			ptr += sprintf(ptr, " -%c %s", e->ipv6.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
+			ptr += sprintf(ptr, " -%c %s", e->ipv6.flags & IP6T_F_GOTO ? 'g' : 'j', target_name);
 	#else
 			ptr += sprintf(ptr, " -j %s", target_name);
 	#endif
