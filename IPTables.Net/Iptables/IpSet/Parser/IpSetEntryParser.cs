@@ -62,7 +62,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                         }
                         else
                         {
-                            entry.Protocol = s[1].ToLowerInvariant();
+                            entry.Protocol = s[0].ToLowerInvariant();
                             entry.Port = ushort.Parse(s[1]);
                         }
                         break;
