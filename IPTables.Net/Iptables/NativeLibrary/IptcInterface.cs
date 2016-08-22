@@ -499,6 +499,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
                 {
                     _helperInit = 0;
                 }
+                Debug.Assert(_helperInit >= 0);
                 Free(); 
             }
         }
