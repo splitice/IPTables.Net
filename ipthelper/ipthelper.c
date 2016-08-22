@@ -622,15 +622,19 @@ static void print_ip6(const char *prefix, const struct in6_addr *ip,
 	if (l == 0 && !invert)
 		return;
 
-	printf("%s %s %s",
+	inet_ntop(AF_INET6, ip, buf, sizeof buf);
+	ptr += sprintf(ptr, "%s %s %s",
 		invert ? " !" : "",
 		prefix,
-		inet_ntop(AF_INET6, ip, buf, sizeof buf));
+		buf);
 
 	if (l == -1)
-		printf("/%s", inet_ntop(AF_INET6, mask, buf, sizeof buf));
+	{
+		inet_ntop(AF_INET6, mask, buf, sizeof buf);
+		ptr += sprintf(ptr, "/%s", buf);
+	}
 	else
-		printf("/%d", l);
+		ptr += sprintf(ptr, "/%d", l);
 }
 
 static int print_match_save6(const struct xt_entry_match *e,
