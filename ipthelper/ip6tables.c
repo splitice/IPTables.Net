@@ -1379,7 +1379,25 @@ static void command_jump(struct iptables_command_state *cs)
 
 	cs->target->t = xtables_calloc(1, size);
 	cs->target->t->u.target_size = size;
+	
+#ifdef OLD_IPTABLES
 	strcpy(cs->target->t->u.user.name, cs->jumpto);
+#else
+	if (cs->target->real_name == NULL) {
+		strcpy(cs->target->t->u.user.name, cs->jumpto);
+	}
+	else {
+		/* Alias support for userspace side */
+		strcpy(cs->target->t->u.user.name, cs->target->real_name);
+		if (!(cs->target->ext_flags & XTABLES_EXT_ALIAS))
+			fprintf(stderr,
+				"Notice: The %s target is converted into %s target "
+			"in rule listing and saving.\n",
+				cs->jumpto,
+				cs->target->real_name);
+	}
+#endif
+	
 	cs->target->t->u.user.revision = cs->target->revision;
 	xs_init_target(cs->target);
 	if (cs->target->x6_options != NULL)
@@ -1409,7 +1427,24 @@ static void command_match(struct iptables_command_state *cs)
 	size = XT_ALIGN(sizeof(struct xt_entry_match)) + m->size;
 	m->m = xtables_calloc(1, size);
 	m->m->u.match_size = size;
+	
+#ifdef OLD_IPTABLES
 	strcpy(m->m->u.user.name, m->name);
+#else
+	if (m->real_name == NULL) {
+		strcpy(m->m->u.user.name, m->name);
+	}
+	else {
+		strcpy(m->m->u.user.name, m->real_name);
+		if (!(m->ext_flags & XTABLES_EXT_ALIAS))
+			fprintf(stderr,
+				"Notice: the %s match is converted into %s match "
+			"in rule listing and saving.\n",
+				m->name,
+				m->real_name);
+	}
+#endif
+	
 	m->m->u.user.revision = m->revision;
 	xs_init_match(m);
 	if (m == m->next)
@@ -1886,11 +1921,11 @@ int do_command6(int argc, char *argv[], char **table, void **handle)
 
 	/* only allocate handle if we weren't called with a handle */
 	if (!*handle)
-		*handle = ip6tc_init(*table);
+		*handle = init_handle6(*table);
 
 	/* try to insmod the module if iptc_init failed */
 	if (!*handle && xtables_load_ko(xtables_modprobe_program, false) != -1)
-		*handle = ip6tc_init(*table);
+		*handle = init_handle6(*table);
 
 	if (!*handle)
 		xtables_error(VERSION_PROBLEM,

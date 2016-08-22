@@ -640,7 +640,11 @@ static int print_match_save6(const struct xt_entry_match *e,
 		xtables_find_match(e->u.user.name, XTF_TRY_LOAD, NULL);
 
 	if (match) {
-		printf(" -m %s", e->u.user.name);
+#ifdef OLD_IPTABLES
+		ptr += sprintf(ptr, " -m %s", e->u.user.name);
+#else
+		ptr += sprintf(ptr, " -m %s", match->alias ? match->alias(e) : e->u.user.name);
+#endif
 
 		/* some matches don't provide a save function */
 		if (match->save)
@@ -691,7 +695,7 @@ extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, cons
 
 		/* Print matchinfo part */
 		if (e->target_offset) {
-			IPT_MATCH_ITERATE(e, print_match_save6, &e->ipv6);
+			IP6T_MATCH_ITERATE(e, print_match_save6, &e->ipv6);
 		}
 
 		/* print counters for iptables -R */
@@ -699,7 +703,7 @@ extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, cons
 			ptr += sprintf(ptr," -c %llu %llu", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
 
 		/* Print target name */
-		target_name = iptc_get_target(e, h);
+		target_name = ip6tc_get_target(e, h);
 	#ifdef OLD_IPTABLES
 		if (target_name && (*target_name != '\0'))
 	#ifdef IPT_F_GOTO
@@ -710,7 +714,7 @@ extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, cons
 	#endif
 
 		/* Print targinfo part */
-		t = ipt_get_target((struct ipt_entry *)e);
+		t = ip6t_get_target((struct ipt_entry *)e);
 		if (t->u.user.name[0]) {
 			const struct xtables_target *target =
 				xtables_find_target(t->u.user.name, XTF_TRY_LOAD);
