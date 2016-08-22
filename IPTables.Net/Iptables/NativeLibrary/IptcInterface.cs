@@ -482,12 +482,12 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public void Dispose()
         {
-            if (--_helperInitCount == 0)
-            {
-                _helperInit = 0;
-            }
             if (_handle != IntPtr.Zero)
             {
+                if (--_helperInitCount == 0)
+                {
+                    _helperInit = 0;
+                }
                 Free(); 
             }
         }
