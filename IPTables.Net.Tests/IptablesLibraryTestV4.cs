@@ -53,12 +53,14 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
+                Assert.AreEqual(0, IptcInterface.RefCount);
                 using (IptcInterface iptc = new IptcInterface("filter", 4))
                 {
                     var rules = iptc.GetRules("test");
                     Assert.AreEqual(1, rules.Count);
                     Assert.AreEqual("-A test -j ACCEPT", iptc.GetRuleString("test", rules[0]));
                 }
+                Assert.AreEqual(0, IptcInterface.RefCount);
             }   
         }
 
@@ -67,12 +69,14 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
+                Assert.AreEqual(0, IptcInterface.RefCount);
                 using (IptcInterface iptc = new IptcInterface("filter", 4))
                 {
                     var rules = iptc.GetRules("test3");
                     Assert.AreEqual(1, rules.Count);
                     Assert.AreEqual("-A test3 -p tcp -m tcp --dport 80 -j ACCEPT", iptc.GetRuleString("test3", rules[0]));
                 }
+                Assert.AreEqual(0, IptcInterface.RefCount);
             }
         }
 
@@ -81,6 +85,7 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
+                Assert.AreEqual(0, IptcInterface.RefCount);
                 using (IptcInterface iptc = new IptcInterface("filter", 4))
                 {
 
@@ -92,6 +97,7 @@ namespace IPTables.Net.Tests
                     Assert.AreEqual("-A test2 -d 1.1.1.1/32 -p tcp -m tcp --dport 80 -j ACCEPT",
                         iptc.GetRuleString("test2", rules[0]));
                 }
+                Assert.AreEqual(0, IptcInterface.RefCount);
             }
         }
 
@@ -100,12 +106,14 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
+                Assert.AreEqual(0, IptcInterface.RefCount);
                 using (IptcInterface iptc = new IptcInterface("filter", 4))
                 {
 
                     var chains = iptc.GetChains();
                     Assert.AreNotEqual(0, chains.Count, "Expected atleast one chain");
                 }
+                Assert.AreEqual(0, IptcInterface.RefCount);
             }
         }
 
@@ -114,6 +122,7 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
+                Assert.AreEqual(0, IptcInterface.RefCount);
                 using (IptcInterface iptc = new IptcInterface("mangle", 4))
                 {
 
@@ -133,6 +142,7 @@ namespace IPTables.Net.Tests
                     //Test repeatable
                     CollectionAssert.AreEqual(expectedChains, iptc.GetChains(), "second table chain test");
                 }
+                Assert.AreEqual(0, IptcInterface.RefCount);
             }
         }
     }

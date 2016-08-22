@@ -1,6 +1,7 @@
 ﻿//#define DEBUG_NATIVE_IPTCP
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Common.Logging;
 using IPTables.Net.Exceptions;
@@ -421,6 +422,15 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         private static int _helperInit = 0;
         private static int _helperInitCount = 0;
+
+        internal static int RefCount
+        {
+            get
+            {
+                Debug.Assert(_helperInitCount != 0 || _helperInit == 0);
+                return _helperInitCount;
+            }
+        } 
 
         public static bool DllExists(out String msg)
         {
