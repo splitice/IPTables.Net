@@ -410,7 +410,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
             return Marshal.PtrToStringAnsi(last_error());
         }
 
-        private static bool _helperInit = false;
+        private static int _helperInit = 0;
 
         public static bool DllExists(out String msg)
         {
@@ -437,8 +437,12 @@ namespace IPTables.Net.Iptables.NativeLibrary
         {
             _ipVersion = ipVersion;
             logger = log;
-            if (!_helperInit)
+            if (_helperInit != 0)
             {
+                throw new IpTablesNetException("Can't initialize another IptcInterface before disposing of the last");
+            }
+            else
+                {
                 int res;
                 if (ipVersion == 4)
                 {
@@ -450,9 +454,9 @@ namespace IPTables.Net.Iptables.NativeLibrary
                 }
                 if (res < 0)
                 {
-                    throw new Exception("Failed to initialize the helper / xtables");
+                    throw new IpTablesNetException("Failed to initialize the helper / xtables");
                 }
-                _helperInit = true;
+                _helperInit = ipVersion;
             }
             OpenTable(table);
         }
@@ -464,10 +468,10 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public void Dispose()
         {
-
+            _helperInit = 0;
             if (_handle != IntPtr.Zero)
             {
-                Free();
+                Free(); 
             }
         }
 
