@@ -481,6 +481,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
                     throw new IpTablesNetException("Failed to initialize the helper / xtables");
                 }
                 _helperInit = ipVersion;
+                _helperInitCount++;
             }
             OpenTable(table);
         }
