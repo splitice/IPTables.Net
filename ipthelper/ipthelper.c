@@ -502,50 +502,59 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 	const char *target_name;
 	char cbuf[BUFSIZ];
 	
-	if ( ! setjmp(buf) ) {
+	if (!setjmp(buf)) {
 		/* print counters for iptables-save */
 		if (counters > 0)
-			ptr += sprintf(ptr,"[%llu:%llu] ", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
+			ptr += sprintf(ptr, "[%llu:%llu] ", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
 
 		/* print chain name */
-		ptr += sprintf(ptr,"-A %s", chain);
+		ptr += sprintf(ptr, "-A %s", chain);
 
 		/* Print IP part. */
-		print_ip("-s", e->ip.src.s_addr, e->ip.smsk.s_addr,
+		print_ip("-s",
+			e->ip.src.s_addr,
+			e->ip.smsk.s_addr,
 			e->ip.invflags & IPT_INV_SRCIP);
 
-		print_ip("-d", e->ip.dst.s_addr, e->ip.dmsk.s_addr,
+		print_ip("-d",
+			e->ip.dst.s_addr,
+			e->ip.dmsk.s_addr,
 			e->ip.invflags & IPT_INV_DSTIP);
 
-		print_iface('i', e->ip.iniface, e->ip.iniface_mask,
+		print_iface('i',
+			e->ip.iniface,
+			e->ip.iniface_mask,
 			e->ip.invflags & IPT_INV_VIA_IN);
 
-		print_iface('o', e->ip.outiface, e->ip.outiface_mask,
+		print_iface('o',
+			e->ip.outiface,
+			e->ip.outiface_mask,
 			e->ip.invflags & IPT_INV_VIA_OUT);
 
 		print_proto(e->ip.proto, e->ip.invflags & XT_INV_PROTO);
 
 		if (e->ip.flags & IPT_F_FRAG)
-			ptr += sprintf(ptr,"%s -f",
-			e->ip.invflags & IPT_INV_FRAG ? " !" : "");
+			ptr += sprintf(ptr,
+				"%s -f",
+				e->ip.invflags & IPT_INV_FRAG ? " !" : "");
 
-		/* Print matchinfo part */
+						/* Print matchinfo part */
 		if (e->target_offset) {
 			IPT_MATCH_ITERATE(e, print_match_save, &e->ip);
 		}
 
 		/* print counters for iptables -R */
 		if (counters < 0)
-			ptr += sprintf(ptr," -c %llu %llu", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
+			ptr += sprintf(ptr, " -c %llu %llu", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
 
 		/* Print target name */
 		target_name = iptc_get_target(e, h);
 	#ifdef OLD_IPTABLES
 		if (target_name && (*target_name != '\0'))
 	#ifdef IPT_F_GOTO
-			ptr += sprintf(ptr," -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
+			ptr += sprintf(ptr, " -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
 	#else
-			ptr += sprintf(ptr," -j %s", target_name);
+		ptr += sprintf(ptr, " -j %s", target_name);
 	#endif
 	#endif
 
@@ -556,7 +565,8 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 				xtables_find_target(t->u.user.name, XTF_TRY_LOAD);
 
 			if (!target) {
-				xtables_error(PARAMETER_PROBLEM, "Can't find library for target `%s'\n",
+				xtables_error(PARAMETER_PROBLEM,
+					"Can't find library for target `%s'\n",
 					t->u.user.name);
 				return NULL;
 			}
@@ -565,8 +575,8 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 			ptr += sprintf(ptr, " -j %s", target->alias ? target->alias(t) : target_name);
 	#endif
 
-			if (target){
-				if (target->save){
+			if (target) {
+				if (target->save) {
 					capture_stdout();
 					target->save(&e->ip, t);
 					if (!restore_stdout())
@@ -580,7 +590,8 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 					* how to print it */
 					if (t->u.target_size !=
 						sizeof(struct xt_entry_target)) {
-						xtables_error(PARAMETER_PROBLEM, "Target `%s' is missing "
+						xtables_error(PARAMETER_PROBLEM,
+							"Target `%s' is missing "
 							"save function\n",
 							t->u.user.name);
 						return NULL;
@@ -590,7 +601,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 		}
 
 	#ifndef OLD_IPTABLES
-		else if (target_name && (*target_name != '\0')){
+		else if (target_name && (*target_name != '\0')) {
 	#ifdef IPT_F_GOTO
 			ptr += sprintf(ptr, " -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
 	#else
@@ -601,15 +612,12 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 
 		*ptr = '\0';
 		ptr = buffer;
-
-		capture_cleanup();
-		
-		return buffer;
-	}else{
-		capture_cleanup();
-		
-		return NULL;
+	}else {
+		ptr = NULL;
 	}
+	memset(&buf, 0, sizeof(buf));
+
+	capture_cleanup();
 }
 
 /* print a given ip including mask if neccessary */
@@ -773,15 +781,14 @@ extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, cons
 
 		*ptr = '\0';
 		ptr = buffer;
-
-		capture_cleanup();
-		
-		return buffer;
 	}else{
-		capture_cleanup();
-		
-		return NULL;
+		ptr = NULL;
 	}
+	memset(&buf, 0, sizeof(buf));
+
+	capture_cleanup();
+		
+	return ptr;
 }
 
 EXPORT int execute_command4(const char* rule, void *h){
@@ -798,6 +805,7 @@ EXPORT int execute_command4(const char* rule, void *h){
 	}else{
 		ret = 0;
 	}
+	memset(&buf, 0, sizeof(buf));
 	
 	free(newargv);
 	capture_cleanup();
