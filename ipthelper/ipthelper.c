@@ -688,22 +688,18 @@ extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, cons
 
 		/* Print IP part. */
 		print_ip6("-s", &e->ipv6.src, &e->ipv6.smsk,
-			e->ipv6.invflags & IPT_INV_SRCIP);
+			e->ipv6.invflags & IP6T_INV_SRCIP);
 
 		print_ip6("-d", &e->ipv6.dst, &e->ipv6.dmsk,
-			e->ipv6.invflags & IPT_INV_DSTIP);
+			e->ipv6.invflags & IP6T_INV_DSTIP);
 
 		print_iface('i', e->ipv6.iniface, e->ipv6.iniface_mask,
-			e->ipv6.invflags & IPT_INV_VIA_IN);
+			e->ipv6.invflags & IP6T_INV_VIA_IN);
 
 		print_iface('o', e->ipv6.outiface, e->ipv6.outiface_mask,
-			e->ipv6.invflags & IPT_INV_VIA_OUT);
+			e->ipv6.invflags & IP6T_INV_VIA_OUT);
 
 		print_proto(e->ipv6.proto, e->ipv6.invflags & XT_INV_PROTO);
-
-		if (e->ipv6.flags & IPT_F_FRAG)
-			ptr += sprintf(ptr,"%s -f",
-			e->ipv6.invflags & IPT_INV_FRAG ? " !" : "");
 
 		/* Print matchinfo part */
 		if (e->target_offset) {
