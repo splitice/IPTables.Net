@@ -10,7 +10,8 @@ namespace IPTables.Net.Iptables.NativeLibrary
     public class IptcInterface : IDisposable
     {
         private IntPtr _handle;
-        public const String Library = "libip4tc.so";
+        public const String LibraryV4 = "libip4tc.so";
+        public const String LibraryV6 = "libip6tc.so";
         public const String Helper = "libipthelper.so";
         public const int StringLabelLength = 32;
 
@@ -20,45 +21,45 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public const String IPTC_LABEL_RETURN = "RETURN";
 
         /* Does this chain exist? */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_is_chain(String chain, IntPtr handle);
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_is_chain(String chain, IntPtr handle);
 
         /* Take a snapshot of the rules.  Returns NULL on error. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern IntPtr iptc_init(String tablename);
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern IntPtr v4_iptc_init(String tablename);
 
         /* Cleanup after iptc_init(). */
-        [DllImport(Library, SetLastError = true)]
-        public static extern void iptc_free(IntPtr h);
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern void v4_iptc_free(IntPtr h);
 
         /* Iterator functions to run through the chains.  Returns NULL at end. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern IntPtr iptc_first_chain(IntPtr handle);
-        [DllImport(Library, SetLastError = true)]
-        public static extern IntPtr iptc_next_chain(IntPtr handle);
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern IntPtr v4_iptc_first_chain(IntPtr handle);
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern IntPtr v4_iptc_next_chain(IntPtr handle);
 
         /* Get first rule in the given chain: NULL for empty chain. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern IntPtr iptc_first_rule(String chain,
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern IntPtr v4_iptc_first_rule(String chain,
                             IntPtr handle);
 
         /* Returns NULL when rules run out. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern IntPtr iptc_next_rule(IntPtr prev,
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern IntPtr v4_iptc_next_rule(IntPtr prev,
                                IntPtr handle);
 
         /* Returns a pointer to the target name of this entry. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern String iptc_get_target(IntPtr e,
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern String v4_iptc_get_target(IntPtr e,
                         IntPtr handle);
 
         /* Is this a built-in chain? */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_builtin(String chain, IntPtr handle);
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_builtin(String chain, IntPtr handle);
 
         /* Get the policy of a given built-in chain */
-        [DllImport(Library, SetLastError = true)]
-        public static extern String iptc_get_policy(String chain,
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern String v4_iptc_get_policy(String chain,
                         IntPtr counter,
                         IntPtr handle);
 
@@ -67,16 +68,16 @@ namespace IPTables.Net.Iptables.NativeLibrary
         /* Rule numbers start at 1 for the first rule. */
 
         /* Insert the entry `e' in chain `chain' into position `rulenum'. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_insert_entry(
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_insert_entry(
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)] String chain,
                       IntPtr e,
                       uint rulenum,
                       IntPtr handle);
 
         /* Atomically replace rule `rulenum' in `chain' with `e'. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_replace_entry([MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_replace_entry([MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
                        IntPtr e,
                        uint rulenum,
@@ -84,8 +85,8 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         /* Append entry `e' to chain `chain'.  Equivalent to insert with
            rulenum = length of chain. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_append_entry(
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_append_entry(
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
                       IntPtr e,
@@ -93,8 +94,8 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         /* Delete the first rule in `chain' which matches `e', subject to
            matchmask (array of length == origfw) */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_delete_entry(
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_delete_entry(
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
                       IntPtr origfw,
@@ -102,60 +103,51 @@ namespace IPTables.Net.Iptables.NativeLibrary
                       IntPtr handle);
 
         /* Delete the rule in position `rulenum' in `chain'. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_delete_num_entry(
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_delete_num_entry(
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
                       uint rulenum,
                       IntPtr handle);
 
-        /* Check the packet `e' on chain `chain'.  Returns the verdict, or
-           NULL and sets errno. */
-        /*[DllImport(Library, SetLastError = true)]
-        public static extern String iptc_check_packet(
-            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
-                String chain,
-                          IntPtr entry,
-                          IntPtr handle);*/
-
         /* Flushes the entries in the given chain (ie. empties chain). */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_flush_entries(
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_flush_entries(
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
                        IntPtr handle);
 
         /* Zeroes the counters in a chain. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_zero_entries(
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_zero_entries(
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
                       IntPtr handle);
 
         /* Creates a new chain. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_create_chain(
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_create_chain(
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
                       IntPtr handle);
 
         /* Deletes a chain. */
-        [DllImport(Library, SetLastError = true)]
-        static extern int iptc_delete_chain(
+        [DllImport(LibraryV4, SetLastError = true)]
+        static extern int v4_iptc_delete_chain(
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
                       IntPtr handle);
 
         /* Renames a chain. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_rename_chain(
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_rename_chain(
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
                       IntPtr handle);
 
         /* Sets the policy on a built-in chain. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_set_policy(
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_set_policy(
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
@@ -164,31 +156,31 @@ namespace IPTables.Net.Iptables.NativeLibrary
                     IntPtr handle);
 
         /* Get the number of references to this chain */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_get_references(IntPtr references,
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_get_references(IntPtr references,
                 [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
                     IntPtr handle);
 
         /* read packet and byte counters for a specific rule */
-        [DllImport(Library, SetLastError = true)]
-        public static extern IntPtr iptc_read_counter(
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern IntPtr v4_iptc_read_counter(
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
                                uint rulenum,
                                IntPtr handle);
 
         /* zero packet and byte counters for a specific rule */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_zero_counter(
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_zero_counter(
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
                       uint rulenum,
                       IntPtr handle);
 
         /* set packet and byte counters for a specific rule */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_set_counter(
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_set_counter(
             [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
                 String chain,
                      uint rulenum,
@@ -196,22 +188,193 @@ namespace IPTables.Net.Iptables.NativeLibrary
                      IntPtr handle);
 
         /* Makes the actual changes. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern int iptc_commit(IntPtr handle);
-
-        /* Get raw socket. */
-        /*[DllImport(Library, SetLastError = true)]
-        public static extern int iptc_get_raw_socket();*/
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern int v4_iptc_commit(IntPtr handle);
 
         /* Translates errno numbers into more human-readable form than strerror. */
-        [DllImport(Library, SetLastError = true)]
-        public static extern IntPtr iptc_strerror(int err);
+        [DllImport(LibraryV4, SetLastError = true)]
+        public static extern IntPtr v4_iptc_strerror(int err);
+
+        /* Does this chain exist? */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_is_chain(String chain, IntPtr handle);
+
+        /* Take a snapshot of the rules.  Returns NULL on error. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern IntPtr v6_iptc_init(String tablename);
+
+        /* Cleanup after iptc_init(). */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern void v6_iptc_free(IntPtr h);
+
+        /* Iterator functions to run through the chains.  Returns NULL at end. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern IntPtr v6_iptc_first_chain(IntPtr handle);
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern IntPtr v6_iptc_next_chain(IntPtr handle);
+
+        /* Get first rule in the given chain: NULL for empty chain. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern IntPtr v6_iptc_first_rule(String chain,
+                            IntPtr handle);
+
+        /* Returns NULL when rules run out. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern IntPtr v6_iptc_next_rule(IntPtr prev,
+                               IntPtr handle);
+
+        /* Returns a pointer to the target name of this entry. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern String v6_iptc_get_target(IntPtr e,
+                        IntPtr handle);
+
+        /* Is this a built-in chain? */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_builtin(String chain, IntPtr handle);
+
+        /* Get the policy of a given built-in chain */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern String v6_iptc_get_policy(String chain,
+                        IntPtr counter,
+                        IntPtr handle);
+
+        /* These functions return TRUE for OK or 0 and set errno.  If errno ==
+           0, it means there was a version error (ie. upgrade libiptc). */
+        /* Rule numbers start at 1 for the first rule. */
+
+        /* Insert the entry `e' in chain `chain' into position `rulenum'. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_insert_entry(
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)] String chain,
+                      IntPtr e,
+                      uint rulenum,
+                      IntPtr handle);
+
+        /* Atomically replace rule `rulenum' in `chain' with `e'. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_replace_entry([MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+                       IntPtr e,
+                       uint rulenum,
+                       IntPtr handle);
+
+        /* Append entry `e' to chain `chain'.  Equivalent to insert with
+           rulenum = length of chain. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_append_entry(
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+                      IntPtr e,
+                      IntPtr handle);
+
+        /* Delete the first rule in `chain' which matches `e', subject to
+           matchmask (array of length == origfw) */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_delete_entry(
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+                      IntPtr origfw,
+                      String matchmask,
+                      IntPtr handle);
+
+        /* Delete the rule in position `rulenum' in `chain'. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_delete_num_entry(
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+                      uint rulenum,
+                      IntPtr handle);
+
+        /* Flushes the entries in the given chain (ie. empties chain). */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_flush_entries(
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+                       IntPtr handle);
+
+        /* Zeroes the counters in a chain. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_zero_entries(
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+                      IntPtr handle);
+
+        /* Creates a new chain. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_create_chain(
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+                      IntPtr handle);
+
+        /* Deletes a chain. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        static extern int v6_iptc_delete_chain(
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+                      IntPtr handle);
+
+        /* Renames a chain. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_rename_chain(
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+                      IntPtr handle);
+
+        /* Sets the policy on a built-in chain. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_set_policy(
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chainPolicy,
+                    IntPtr counters,
+                    IntPtr handle);
+
+        /* Get the number of references to this chain */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_get_references(IntPtr references,
+                [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+                    IntPtr handle);
+
+        /* read packet and byte counters for a specific rule */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern IntPtr v6_iptc_read_counter(
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+                               uint rulenum,
+                               IntPtr handle);
+
+        /* zero packet and byte counters for a specific rule */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_zero_counter(
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+                      uint rulenum,
+                      IntPtr handle);
+
+        /* set packet and byte counters for a specific rule */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_set_counter(
+            [MarshalAs(UnmanagedType.LPStr, SizeConst = StringLabelLength)]
+                String chain,
+                     uint rulenum,
+                     IntPtr counters,
+                     IntPtr handle);
+
+        /* Makes the actual changes. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern int v6_iptc_commit(IntPtr handle);
+
+        /* Translates errno numbers into more human-readable form than strerror. */
+        [DllImport(LibraryV6, SetLastError = true)]
+        public static extern IntPtr v6_iptc_strerror(int err);
 
         [DllImport(Helper, SetLastError = true)]
         public static extern IntPtr output_rule4(IntPtr e, IntPtr h, String chain, int counters);
 
         [DllImport(Helper, SetLastError = true)]
-        public static extern int execute_command(String command, IntPtr h);
+        public static extern int execute_command4(String command, IntPtr h);
 
         [DllImport(Helper, SetLastError = true)]
         public static extern int init_helper();
@@ -267,8 +430,9 @@ namespace IPTables.Net.Iptables.NativeLibrary
             return DllExists(out msg);
         }
 
-        public IptcInterface(String table, ILog log = null)
+        public IptcInterface(String table, int ipVersion, ILog log = null)
         {
+            _ipVersion = ipVersion;
             logger = log;
             if (!_helperInit)
             {
@@ -297,6 +461,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         private List<String> _debugEntries = new List<string>();
         private ILog logger;
+        private int _ipVersion;
 
         private void DebugEntry(string message)
         {
@@ -317,7 +482,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         private void Free()
         {
             RequireHandle();
-            iptc_free(_handle);
+            v4_iptc_free(_handle);
             _handle = IntPtr.Zero;
         }
 
@@ -338,11 +503,26 @@ namespace IPTables.Net.Iptables.NativeLibrary
         {
             RequireHandle();
             List<IntPtr> ret = new List<IntPtr>();
-            var rule = iptc_first_rule(chain, _handle);
+            IntPtr rule;
+            if (_ipVersion == 4)
+            {
+                rule = v4_iptc_first_rule(chain, _handle);
+            }
+            else
+            {
+                rule = v6_iptc_first_rule(chain, _handle);
+            }
             while (rule != IntPtr.Zero)
             {
                 ret.Add(rule);
-                rule = iptc_next_rule(rule, _handle);
+                if (_ipVersion == 4)
+                {
+                    rule = v4_iptc_next_rule(rule, _handle);
+                }
+                else
+                {
+                    rule = v6_iptc_next_rule(rule, _handle);
+                }
             }
             return ret;
         }
@@ -352,11 +532,26 @@ namespace IPTables.Net.Iptables.NativeLibrary
         {
             RequireHandle();
             List<string> ret = new List<string>();
-            var chain = iptc_first_chain(_handle);
+            IntPtr chain;
+            if (_ipVersion == 4)
+            {
+                chain = v4_iptc_first_chain(_handle);
+            }
+            else
+            {
+                chain = v6_iptc_first_chain(_handle);
+            }
             while (chain != IntPtr.Zero)
             {
                 ret.Add(Marshal.PtrToStringAnsi(chain));
-                chain = iptc_next_chain(_handle);
+                if (_ipVersion == 4)
+                {
+                    chain = v4_iptc_next_chain(_handle);
+                }
+                else
+                {
+                    chain = v6_iptc_next_chain(_handle);
+                }
             }
             return ret;
         }
@@ -369,7 +564,15 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public String GetErrorString()
         {
             int lastError = GetLastError();
-            var error = iptc_strerror(lastError);
+            IntPtr error;
+            if (_ipVersion == 4)
+            {
+                error = v4_iptc_strerror(lastError);
+            }
+            else
+            {
+                error = v6_iptc_strerror(lastError);
+            }
             return String.Format("({0}) {1}",lastError,Marshal.PtrToStringAnsi(error));
         }
 
@@ -395,7 +598,11 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public bool Insert(String chain, IntPtr entry, uint at)
         {
             RequireHandle();
-            return iptc_insert_entry(chain, entry, at, _handle) == 1;
+            if (_ipVersion == 4)
+            {
+                return v4_iptc_insert_entry(chain, entry, at, _handle) == 1;
+            }
+            return v6_iptc_insert_entry(chain, entry, at, _handle) == 1;
         }
 
         /// <summary>
@@ -407,7 +614,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         {
             DebugEntry(command);
             RequireHandle();
-            var ptr = execute_command(command, _handle);
+            var ptr = execute_command4(command, _handle);
 
             if (ptr == 0)
             {
@@ -434,7 +641,16 @@ namespace IPTables.Net.Iptables.NativeLibrary
                 _debugEntries.Clear();
             }
 
-            bool status =  iptc_commit(_handle) == 1;
+            bool status;
+
+            if (_ipVersion == 4)
+            {
+                status = v4_iptc_commit(_handle) == 1;
+            }
+            else
+            {
+                status = v6_iptc_commit(_handle) == 1;
+            }
             if (!status)
             {
                 Free();
@@ -455,7 +671,12 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public bool HasChain(string chainName)
         {
             RequireHandle();
-            return iptc_is_chain(chainName, _handle) == 1;
+            if (_ipVersion == 4)
+            {
+                return v4_iptc_is_chain(chainName, _handle) == 1;
+            }
+
+            return v6_iptc_is_chain(chainName, _handle) == 1;
         }
 
         /// <summary>
@@ -466,7 +687,11 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public bool AddChain(string chainName)
         {
             RequireHandle();
-            return iptc_create_chain(chainName, _handle) == 1;
+            if (_ipVersion == 4)
+            {
+                return v4_iptc_create_chain(chainName, _handle) == 1;
+            }
+            return v6_iptc_create_chain(chainName, _handle) == 1;
         }
 
         /// <summary>
@@ -477,7 +702,11 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public bool DeleteChain(string chainName)
         {
             RequireHandle();
-            return iptc_delete_chain(chainName, _handle) == 1;
+            if (_ipVersion == 4)
+            {
+                return v4_iptc_delete_chain(chainName, _handle) == 1;
+            }
+            return v6_iptc_delete_chain(chainName, _handle) == 1;
         }
     }
 }

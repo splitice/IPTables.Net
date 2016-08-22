@@ -12,5 +12,7 @@ extern struct xtables_globals iptables_globals;
 /* Your shared library should call one of these. */
 int do_command4(int argc, char *argv[], char **table,
 	void **handle);
+int do_command6(int argc, char *argv[], char **table,
+	void **handle);
 
 #endif /*_IPTABLES_USER_H*/

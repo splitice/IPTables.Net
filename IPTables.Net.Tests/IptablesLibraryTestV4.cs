@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace IPTables.Net.Tests
 {
     [TestFixture]
-    class IptablesLibraryTest
+    class IptablesLibraryTestV4
     {
         public static bool IsLinux
         {
@@ -53,7 +53,7 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
-                IptcInterface iptc = new IptcInterface("filter");
+                IptcInterface iptc = new IptcInterface("filter", 4);
                 var rules = iptc.GetRules("test");
                 Assert.AreEqual(1,rules.Count);
                 Assert.AreEqual("-A test -j ACCEPT", iptc.GetRuleString("test",rules[0]));
@@ -65,7 +65,7 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
-                IptcInterface iptc = new IptcInterface("filter");
+                IptcInterface iptc = new IptcInterface("filter", 4);
                 var rules = iptc.GetRules("test3");
                 Assert.AreEqual(1, rules.Count);
                 Assert.AreEqual("-A test3 -p tcp -m tcp --dport 80 -j ACCEPT", iptc.GetRuleString("test3", rules[0]));
@@ -77,7 +77,7 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
-                IptcInterface iptc = new IptcInterface("filter");
+                IptcInterface iptc = new IptcInterface("filter", 4);
 
                 var status = iptc.ExecuteCommand("iptables -A test2 -d 1.1.1.1 -p tcp -m tcp --dport 80 -j ACCEPT");
                 Assert.AreEqual(1, status, "Expected OK return value");
@@ -93,7 +93,7 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
-                IptcInterface iptc = new IptcInterface("filter");
+                IptcInterface iptc = new IptcInterface("filter", 4);
 
                 var chains = iptc.GetChains();
                 Assert.AreNotEqual(0, chains.Count, "Expected atleast one chain");
@@ -105,7 +105,7 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
-                IptcInterface iptc = new IptcInterface("mangle");
+                IptcInterface iptc = new IptcInterface("mangle", 4);
 
                 var chains = iptc.GetChains();
                 Assert.AreNotEqual(0, chains.Count, "Expected atleast one chain");

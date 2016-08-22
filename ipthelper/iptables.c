@@ -37,6 +37,7 @@
 #include <limits.h>
 #include <unistd.h>
 #include <iptables.h>
+#include <ip6tables.h>
 #include <xtables.h>
 #include <fcntl.h>
 #include <assert.h>
@@ -1601,6 +1602,644 @@ int do_command4(int argc, char *argv[], char **table, void **handle)
 
 	if (verbose > 1)
 		dump_entries(*handle);
+
+	clear_rule_matches(&cs.matches);
+
+	if (e != NULL) {
+		free(e);
+		e = NULL;
+	}
+
+	free(saddrs);
+	free(smasks);
+	free(daddrs);
+	free(dmasks);
+	xtables_free_opts(1);
+
+	return ret;
+}
+
+
+
+int do_command6(int argc, char *argv[], char **table, struct xtc_handle **handle)
+{
+	struct iptables_command_state cs;
+	struct ip6t_entry *e = NULL;
+	unsigned int nsaddrs = 0, ndaddrs = 0;
+	struct in6_addr *saddrs = NULL, *daddrs = NULL;
+	struct in6_addr *smasks = NULL, *dmasks = NULL;
+
+	int verbose = 0;
+	const char *chain = NULL;
+	const char *shostnetworkmask = NULL, *dhostnetworkmask = NULL;
+	const char *policy = NULL, *newname = NULL;
+	unsigned int rulenum = 0, command = 0;
+	const char *pcnt = NULL, *bcnt = NULL;
+	int ret = 1;
+	struct xtables_match *m;
+	struct xtables_rule_match *matchp;
+	struct xtables_target *t;
+	unsigned long long cnt;
+
+	memset(&cs, 0, sizeof(cs));
+	cs.jumpto = "";
+	cs.argv = argv;
+
+	/* re-set optind to 0 in case do_command6 gets called
+	 * a second time */
+	optind = 0;
+
+	/* clear mflags in case do_command6 gets called a second time
+	 * (we clear the global list of all matches for security)*/
+	for (m = xtables_matches; m; m = m->next)
+		m->mflags = 0;
+
+	for (t = xtables_targets; t; t = t->next) {
+		t->tflags = 0;
+		t->used = 0;
+	}
+
+	/* Suppress error messages: we may add new options if we
+           demand-load a protocol. */
+	opterr = 0;
+
+	opts = xt_params->orig_opts;
+	while ((cs.c = getopt_long(argc, argv,
+	   "-:A:C:D:R:I:L::S::M:F::Z::N:X::E:P:Vh::o:p:s:d:j:i:bvnt:m:xc:g:46",
+					   opts, NULL)) != -1) {
+		switch (cs.c) {
+			/*
+			 * Command selection
+			 */
+		case 'A':
+			add_command(&command, CMD_APPEND, CMD_NONE,
+				    cs.invert);
+			chain = optarg;
+			break;
+
+		case 'C':
+			add_command(&command, CMD_CHECK, CMD_NONE,
+			            cs.invert);
+			chain = optarg;
+			break;
+
+		case 'D':
+			add_command(&command, CMD_DELETE, CMD_NONE,
+				    cs.invert);
+			chain = optarg;
+			if (optind < argc && argv[optind][0] != '-'
+			    && argv[optind][0] != '!') {
+				rulenum = parse_rulenumber(argv[optind++]);
+				command = CMD_DELETE_NUM;
+			}
+			break;
+
+		case 'R':
+			add_command(&command, CMD_REPLACE, CMD_NONE,
+				    cs.invert);
+			chain = optarg;
+			if (optind < argc && argv[optind][0] != '-'
+			    && argv[optind][0] != '!')
+				rulenum = parse_rulenumber(argv[optind++]);
+			else
+				xtables_error(PARAMETER_PROBLEM,
+					   "-%c requires a rule number",
+					   cmd2char(CMD_REPLACE));
+			break;
+
+		case 'I':
+			add_command(&command, CMD_INSERT, CMD_NONE,
+				    cs.invert);
+			chain = optarg;
+			if (optind < argc && argv[optind][0] != '-'
+			    && argv[optind][0] != '!')
+				rulenum = parse_rulenumber(argv[optind++]);
+			else rulenum = 1;
+			break;
+
+		case 'L':
+			add_command(&command, CMD_LIST,
+				    CMD_ZERO | CMD_ZERO_NUM, cs.invert);
+			if (optarg) chain = optarg;
+			else if (optind < argc && argv[optind][0] != '-'
+				 && argv[optind][0] != '!')
+				chain = argv[optind++];
+			if (optind < argc && argv[optind][0] != '-'
+			    && argv[optind][0] != '!')
+				rulenum = parse_rulenumber(argv[optind++]);
+			break;
+
+		case 'S':
+			add_command(&command, CMD_LIST_RULES,
+				    CMD_ZERO | CMD_ZERO_NUM, cs.invert);
+			if (optarg) chain = optarg;
+			else if (optind < argc && argv[optind][0] != '-'
+				 && argv[optind][0] != '!')
+				chain = argv[optind++];
+			if (optind < argc && argv[optind][0] != '-'
+			    && argv[optind][0] != '!')
+				rulenum = parse_rulenumber(argv[optind++]);
+			break;
+
+		case 'F':
+			add_command(&command, CMD_FLUSH, CMD_NONE,
+				    cs.invert);
+			if (optarg) chain = optarg;
+			else if (optind < argc && argv[optind][0] != '-'
+				 && argv[optind][0] != '!')
+				chain = argv[optind++];
+			break;
+
+		case 'Z':
+			add_command(&command, CMD_ZERO, CMD_LIST|CMD_LIST_RULES,
+				    cs.invert);
+			if (optarg) chain = optarg;
+			else if (optind < argc && argv[optind][0] != '-'
+				&& argv[optind][0] != '!')
+				chain = argv[optind++];
+			if (optind < argc && argv[optind][0] != '-'
+				&& argv[optind][0] != '!') {
+				rulenum = parse_rulenumber(argv[optind++]);
+				command = CMD_ZERO_NUM;
+			}
+			break;
+
+		case 'N':
+			if (optarg && (*optarg == '-' || *optarg == '!'))
+				xtables_error(PARAMETER_PROBLEM,
+					   "chain name not allowed to start "
+					   "with `%c'\n", *optarg);
+			if (xtables_find_target(optarg, XTF_TRY_LOAD))
+				xtables_error(PARAMETER_PROBLEM,
+					   "chain name may not clash "
+					   "with target name\n");
+			add_command(&command, CMD_NEW_CHAIN, CMD_NONE,
+				    cs.invert);
+			chain = optarg;
+			break;
+
+		case 'X':
+			add_command(&command, CMD_DELETE_CHAIN, CMD_NONE,
+				    cs.invert);
+			if (optarg) chain = optarg;
+			else if (optind < argc && argv[optind][0] != '-'
+				 && argv[optind][0] != '!')
+				chain = argv[optind++];
+			break;
+
+		case 'E':
+			add_command(&command, CMD_RENAME_CHAIN, CMD_NONE,
+				    cs.invert);
+			chain = optarg;
+			if (optind < argc && argv[optind][0] != '-'
+			    && argv[optind][0] != '!')
+				newname = argv[optind++];
+			else
+				xtables_error(PARAMETER_PROBLEM,
+					   "-%c requires old-chain-name and "
+					   "new-chain-name",
+					    cmd2char(CMD_RENAME_CHAIN));
+			break;
+
+		case 'P':
+			add_command(&command, CMD_SET_POLICY, CMD_NONE,
+				    cs.invert);
+			chain = optarg;
+			if (optind < argc && argv[optind][0] != '-'
+			    && argv[optind][0] != '!')
+				policy = argv[optind++];
+			else
+				xtables_error(PARAMETER_PROBLEM,
+					   "-%c requires a chain and a policy",
+					   cmd2char(CMD_SET_POLICY));
+			break;
+
+		case 'h':
+			if (!optarg)
+				optarg = argv[optind];
+
+			/* ip6tables -p icmp -h */
+			if (!cs.matches && cs.protocol)
+				xtables_find_match(cs.protocol, XTF_TRY_LOAD,
+					&cs.matches);
+
+			exit_printhelp(cs.matches);
+
+			/*
+			 * Option selection
+			 */
+		case 'p':
+			set_option(&cs.options, OPT_PROTOCOL, &cs.fw6.ipv6.invflags,
+				   cs.invert);
+
+			/* Canonicalize into lower case */
+			for (cs.protocol = optarg; *cs.protocol; cs.protocol++)
+				*cs.protocol = tolower(*cs.protocol);
+
+			cs.protocol = optarg;
+			cs.fw6.ipv6.proto = xtables_parse_protocol(cs.protocol);
+			cs.fw6.ipv6.flags |= IP6T_F_PROTO;
+
+			if (cs.fw6.ipv6.proto == 0
+			    && (cs.fw6.ipv6.invflags & XT_INV_PROTO))
+				xtables_error(PARAMETER_PROBLEM,
+					   "rule would never match protocol");
+
+			if (is_exthdr(cs.fw6.ipv6.proto)
+			    && (cs.fw6.ipv6.invflags & XT_INV_PROTO) == 0)
+				fprintf(stderr,
+					"Warning: never matched protocol: %s. "
+					"use extension match instead.\n",
+					cs.protocol);
+			break;
+
+		case 's':
+			set_option(&cs.options, OPT_SOURCE, &cs.fw6.ipv6.invflags,
+				   cs.invert);
+			shostnetworkmask = optarg;
+			break;
+
+		case 'd':
+			set_option(&cs.options, OPT_DESTINATION, &cs.fw6.ipv6.invflags,
+				   cs.invert);
+			dhostnetworkmask = optarg;
+			break;
+
+#ifdef IP6T_F_GOTO
+		case 'g':
+			set_option(&cs.options, OPT_JUMP, &cs.fw6.ipv6.invflags,
+					cs.invert);
+			cs.fw6.ipv6.flags |= IP6T_F_GOTO;
+			cs.jumpto = parse_target(optarg);
+			break;
+#endif
+
+		case 'j':
+			command_jump(&cs);
+			break;
+
+
+		case 'i':
+			if (*optarg == '\0')
+				xtables_error(PARAMETER_PROBLEM,
+					"Empty interface is likely to be "
+					"undesired");
+			set_option(&cs.options, OPT_VIANAMEIN, &cs.fw6.ipv6.invflags,
+				   cs.invert);
+			xtables_parse_interface(optarg,
+					cs.fw6.ipv6.iniface,
+					cs.fw6.ipv6.iniface_mask);
+			break;
+
+		case 'o':
+			if (*optarg == '\0')
+				xtables_error(PARAMETER_PROBLEM,
+					"Empty interface is likely to be "
+					"undesired");
+			set_option(&cs.options, OPT_VIANAMEOUT, &cs.fw6.ipv6.invflags,
+				   cs.invert);
+			xtables_parse_interface(optarg,
+					cs.fw6.ipv6.outiface,
+					cs.fw6.ipv6.outiface_mask);
+			break;
+
+		case 'v':
+			if (!verbose)
+				set_option(&cs.options, OPT_VERBOSE,
+					   &cs.fw6.ipv6.invflags, cs.invert);
+			verbose++;
+			break;
+
+		case 'm':
+			command_match(&cs);
+			break;
+
+		case 'n':
+			set_option(&cs.options, OPT_NUMERIC, &cs.fw6.ipv6.invflags,
+				   cs.invert);
+			break;
+
+		case 't':
+			if (cs.invert)
+				xtables_error(PARAMETER_PROBLEM,
+					   "unexpected ! flag before --table");
+			*table = optarg;
+			break;
+
+		case 'x':
+			set_option(&cs.options, OPT_EXPANDED, &cs.fw6.ipv6.invflags,
+				   cs.invert);
+			break;
+
+		case 'V':
+			if (cs.invert)
+				printf("Not %s ;-)\n", prog_vers);
+			else
+				printf("%s v%s\n",
+				       prog_name, prog_vers);
+			exit(0);
+
+		case '0':
+			set_option(&cs.options, OPT_LINENUMBERS, &cs.fw6.ipv6.invflags,
+				   cs.invert);
+			break;
+
+		case 'M':
+			xtables_modprobe_program = optarg;
+			break;
+
+		case 'c':
+
+			set_option(&cs.options, OPT_COUNTERS, &cs.fw6.ipv6.invflags,
+				   cs.invert);
+			pcnt = optarg;
+			bcnt = strchr(pcnt + 1, ',');
+			if (bcnt)
+			    bcnt++;
+			if (!bcnt && optind < argc && argv[optind][0] != '-'
+			    && argv[optind][0] != '!')
+				bcnt = argv[optind++];
+			if (!bcnt)
+				xtables_error(PARAMETER_PROBLEM,
+					"-%c requires packet and byte counter",
+					opt2char(OPT_COUNTERS));
+
+			if (sscanf(pcnt, "%llu", &cnt) != 1)
+				xtables_error(PARAMETER_PROBLEM,
+					"-%c packet counter not numeric",
+					opt2char(OPT_COUNTERS));
+			cs.fw6.counters.pcnt = cnt;
+
+			if (sscanf(bcnt, "%llu", &cnt) != 1)
+				xtables_error(PARAMETER_PROBLEM,
+					"-%c byte counter not numeric",
+					opt2char(OPT_COUNTERS));
+			cs.fw6.counters.bcnt = cnt;
+			break;
+
+		case '4':
+			/* This is not the IPv4 iptables */
+			if (line != -1)
+				return 1; /* success: line ignored */
+			fprintf(stderr, "This is the IPv6 version of ip6tables.\n");
+			exit_tryhelp(2);
+
+		case '6':
+			/* This is indeed the IPv6 ip6tables */
+			break;
+
+		case 1: /* non option */
+			if (optarg[0] == '!' && optarg[1] == '\0') {
+				if (cs.invert)
+					xtables_error(PARAMETER_PROBLEM,
+						   "multiple consecutive ! not"
+						   " allowed");
+				cs.invert = TRUE;
+				optarg[0] = '\0';
+				continue;
+			}
+			fprintf(stderr, "Bad argument `%s'\n", optarg);
+			exit_tryhelp(2);
+
+		default:
+			if (command_default(&cs, &ip6tables_globals) == 1)
+				/*
+				 * If new options were loaded, we must retry
+				 * getopt immediately and not allow
+				 * cs.invert=FALSE to be executed.
+				 */
+				continue;
+			break;
+		}
+		cs.invert = FALSE;
+	}
+
+	for (matchp = cs.matches; matchp; matchp = matchp->next)
+		xtables_option_mfcall(matchp->match);
+	if (cs.target != NULL)
+		xtables_option_tfcall(cs.target);
+
+	/* Fix me: must put inverse options checking here --MN */
+
+	if (optind < argc)
+		xtables_error(PARAMETER_PROBLEM,
+			   "unknown arguments found on commandline");
+	if (!command)
+		xtables_error(PARAMETER_PROBLEM, "no command specified");
+	if (cs.invert)
+		xtables_error(PARAMETER_PROBLEM,
+			   "nothing appropriate following !");
+
+	if (command & (CMD_REPLACE | CMD_INSERT | CMD_DELETE | CMD_APPEND | CMD_CHECK)) {
+		if (!(cs.options & OPT_DESTINATION))
+			dhostnetworkmask = "::0/0";
+		if (!(cs.options & OPT_SOURCE))
+			shostnetworkmask = "::0/0";
+	}
+
+	if (shostnetworkmask)
+		xtables_ip6parse_multiple(shostnetworkmask, &saddrs,
+					  &smasks, &nsaddrs);
+
+	if (dhostnetworkmask)
+		xtables_ip6parse_multiple(dhostnetworkmask, &daddrs,
+					  &dmasks, &ndaddrs);
+
+	if ((nsaddrs > 1 || ndaddrs > 1) &&
+	    (cs.fw6.ipv6.invflags & (IP6T_INV_SRCIP | IP6T_INV_DSTIP)))
+		xtables_error(PARAMETER_PROBLEM, "! not allowed with multiple"
+			   " source or destination IP addresses");
+
+	if (command == CMD_REPLACE && (nsaddrs != 1 || ndaddrs != 1))
+		xtables_error(PARAMETER_PROBLEM, "Replacement rule does not "
+			   "specify a unique address");
+
+	generic_opt_check(command, cs.options);
+
+	if (chain != NULL && strlen(chain) >= XT_EXTENSION_MAXNAMELEN)
+		xtables_error(PARAMETER_PROBLEM,
+			   "chain name `%s' too long (must be under %u chars)",
+			   chain, XT_EXTENSION_MAXNAMELEN);
+
+	/* only allocate handle if we weren't called with a handle */
+	if (!*handle)
+		*handle = ip6tc_init(*table);
+
+	/* try to insmod the module if iptc_init failed */
+	if (!*handle && xtables_load_ko(xtables_modprobe_program, false) != -1)
+		*handle = ip6tc_init(*table);
+
+	if (!*handle)
+		xtables_error(VERSION_PROBLEM,
+			"can't initialize ip6tables table `%s': %s",
+			*table, ip6tc_strerror(errno));
+
+	if (command == CMD_APPEND
+	    || command == CMD_DELETE
+	    || command == CMD_CHECK
+	    || command == CMD_INSERT
+	    || command == CMD_REPLACE) {
+		if (strcmp(chain, "PREROUTING") == 0
+		    || strcmp(chain, "INPUT") == 0) {
+			/* -o not valid with incoming packets. */
+			if (cs.options & OPT_VIANAMEOUT)
+				xtables_error(PARAMETER_PROBLEM,
+					   "Can't use -%c with %s\n",
+					   opt2char(OPT_VIANAMEOUT),
+					   chain);
+		}
+
+		if (strcmp(chain, "POSTROUTING") == 0
+		    || strcmp(chain, "OUTPUT") == 0) {
+			/* -i not valid with outgoing packets */
+			if (cs.options & OPT_VIANAMEIN)
+				xtables_error(PARAMETER_PROBLEM,
+					   "Can't use -%c with %s\n",
+					   opt2char(OPT_VIANAMEIN),
+					   chain);
+		}
+
+		if (cs.target && ip6tc_is_chain(cs.jumpto, *handle)) {
+			fprintf(stderr,
+				"Warning: using chain %s, not extension\n",
+				cs.jumpto);
+
+			if (cs.target->t)
+				free(cs.target->t);
+
+			cs.target = NULL;
+		}
+
+		/* If they didn't specify a target, or it's a chain
+		   name, use standard. */
+		if (!cs.target
+		    && (strlen(cs.jumpto) == 0
+			|| ip6tc_is_chain(cs.jumpto, *handle))) {
+			size_t size;
+
+			cs.target = xtables_find_target(XT_STANDARD_TARGET,
+					XTF_LOAD_MUST_SUCCEED);
+
+			size = sizeof(struct xt_entry_target)
+				+ cs.target->size;
+			cs.target->t = xtables_calloc(1, size);
+			cs.target->t->u.target_size = size;
+			strcpy(cs.target->t->u.user.name, cs.jumpto);
+			xs_init_target(cs.target);
+		}
+
+		if (!cs.target) {
+			/* it is no chain, and we can't load a plugin.
+			 * We cannot know if the plugin is corrupt, non
+			 * existant OR if the user just misspelled a
+			 * chain. */
+#ifdef IP6T_F_GOTO
+			if (cs.fw6.ipv6.flags & IP6T_F_GOTO)
+				xtables_error(PARAMETER_PROBLEM,
+						"goto '%s' is not a chain\n",
+						cs.jumpto);
+#endif
+			xtables_find_target(cs.jumpto, XTF_LOAD_MUST_SUCCEED);
+		} else {
+			e = generate_entry(&cs.fw6, cs.matches, cs.target->t);
+			free(cs.target->t);
+		}
+	}
+
+	switch (command) {
+	case CMD_APPEND:
+		ret = append_entry(chain, e,
+				   nsaddrs, saddrs, smasks,
+				   ndaddrs, daddrs, dmasks,
+				   cs.options&OPT_VERBOSE,
+				   *handle);
+		break;
+	case CMD_DELETE:
+		ret = delete_entry(chain, e,
+				   nsaddrs, saddrs, smasks,
+				   ndaddrs, daddrs, dmasks,
+				   cs.options&OPT_VERBOSE,
+				   *handle, cs.matches, cs.target);
+		break;
+	case CMD_DELETE_NUM:
+		ret = ip6tc_delete_num_entry(chain, rulenum - 1, *handle);
+		break;
+	case CMD_CHECK:
+		ret = check_entry(chain, e,
+				   nsaddrs, saddrs, smasks,
+				   ndaddrs, daddrs, dmasks,
+				   cs.options&OPT_VERBOSE,
+				   *handle, cs.matches, cs.target);
+		break;
+	case CMD_REPLACE:
+		ret = replace_entry(chain, e, rulenum - 1,
+				    saddrs, smasks, daddrs, dmasks,
+				    cs.options&OPT_VERBOSE, *handle);
+		break;
+	case CMD_INSERT:
+		ret = insert_entry(chain, e, rulenum - 1,
+				   nsaddrs, saddrs, smasks,
+				   ndaddrs, daddrs, dmasks,
+				   cs.options&OPT_VERBOSE,
+				   *handle);
+		break;
+	case CMD_FLUSH:
+		ret = flush_entries6(chain, cs.options&OPT_VERBOSE, *handle);
+		break;
+	case CMD_ZERO:
+		ret = zero_entries(chain, cs.options&OPT_VERBOSE, *handle);
+		break;
+	case CMD_ZERO_NUM:
+		ret = ip6tc_zero_counter(chain, rulenum, *handle);
+		break;
+	case CMD_LIST:
+	case CMD_LIST|CMD_ZERO:
+	case CMD_LIST|CMD_ZERO_NUM:
+		ret = list_entries(chain,
+				   rulenum,
+				   cs.options&OPT_VERBOSE,
+				   cs.options&OPT_NUMERIC,
+				   cs.options&OPT_EXPANDED,
+				   cs.options&OPT_LINENUMBERS,
+				   *handle);
+		if (ret && (command & CMD_ZERO))
+			ret = zero_entries(chain,
+					   cs.options&OPT_VERBOSE, *handle);
+		if (ret && (command & CMD_ZERO_NUM))
+			ret = ip6tc_zero_counter(chain, rulenum, *handle);
+		break;
+	case CMD_LIST_RULES:
+	case CMD_LIST_RULES|CMD_ZERO:
+	case CMD_LIST_RULES|CMD_ZERO_NUM:
+		ret = list_rules(chain,
+				   rulenum,
+				   cs.options&OPT_VERBOSE,
+				   *handle);
+		if (ret && (command & CMD_ZERO))
+			ret = zero_entries(chain,
+					   cs.options&OPT_VERBOSE, *handle);
+		if (ret && (command & CMD_ZERO_NUM))
+			ret = ip6tc_zero_counter(chain, rulenum, *handle);
+		break;
+	case CMD_NEW_CHAIN:
+		ret = ip6tc_create_chain(chain, *handle);
+		break;
+	case CMD_DELETE_CHAIN:
+		ret = delete_chain6(chain, cs.options&OPT_VERBOSE, *handle);
+		break;
+	case CMD_RENAME_CHAIN:
+		ret = ip6tc_rename_chain(chain, newname,	*handle);
+		break;
+	case CMD_SET_POLICY:
+		ret = ip6tc_set_policy(chain, policy, cs.options&OPT_COUNTERS ? &cs.fw6.counters : NULL, *handle);
+		break;
+	default:
+		/* We should never reach this... */
+		exit_tryhelp(2);
+	}
+
+	if (verbose > 1)
+		dump_entries6(*handle);
 
 	clear_rule_matches(&cs.matches);
 
