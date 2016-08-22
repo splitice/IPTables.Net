@@ -374,7 +374,13 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public static extern IntPtr output_rule4(IntPtr e, IntPtr h, String chain, int counters);
 
         [DllImport(Helper, SetLastError = true)]
+        public static extern IntPtr output_rule6(IntPtr e, IntPtr h, String chain, int counters);
+
+        [DllImport(Helper, SetLastError = true)]
         public static extern int execute_command4(String command, IntPtr h);
+
+        [DllImport(Helper, SetLastError = true)]
+        public static extern int execute_command6(String command, IntPtr h);
 
         [DllImport(Helper, SetLastError = true)]
         public static extern int init_helper4();
@@ -613,7 +619,16 @@ namespace IPTables.Net.Iptables.NativeLibrary
         public String GetRuleString(String chain, IntPtr rule, bool counters = false)
         {
             RequireHandle();
-            var ptr = output_rule4(rule, _handle, chain, counters ? 1 : 0);
+
+            IntPtr ptr;
+            if (_ipVersion == 4)
+            {
+                ptr = output_rule4(rule, _handle, chain, counters ? 1 : 0);
+            }
+            else
+            {
+                ptr = output_rule6(rule, _handle, chain, counters ? 1 : 0);
+            }
             if (ptr == IntPtr.Zero)
             {
                 throw new IpTablesNetException("IPTCH Error: " + LastError().Trim());
@@ -647,7 +662,15 @@ namespace IPTables.Net.Iptables.NativeLibrary
         {
             DebugEntry(command);
             RequireHandle();
-            var ptr = execute_command4(command, _handle);
+            int ptr;
+            if (_ipVersion == 4)
+            {
+                ptr = execute_command4(command, _handle);
+            }
+            else
+            {
+                ptr = execute_command6(command, _handle);
+            }
 
             if (ptr == 0)
             {
