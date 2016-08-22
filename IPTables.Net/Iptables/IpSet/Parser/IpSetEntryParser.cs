@@ -43,7 +43,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
         {
             var type = entry.Set.Type;
             var typeComponents = IpSetTypeHelper.TypeComponents(IpSetTypeHelper.TypeToString(type)).ToArray();
-            var optionComponents = value.Split(new char[] { ',', ':' });
+            var optionComponents = value.Split(new char[] { ',' });
 
 
             for (int i = 0; i < optionComponents.Length; i++)
@@ -55,12 +55,16 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                         entry.Cidr = IpCidr.Parse(optionComponents[i]);
                         break;
                     case "port":
-                        if (i != 0)
+                        var s = optionComponents[i].Split(':');
+                        if (s.Length == 1)
                         {
-                            entry.Protocol = optionComponents[i].ToLowerInvariant();
-                            i++;
+                            entry.Port = ushort.Parse(s[0]);
                         }
-                        entry.Port = ushort.Parse(optionComponents[i]);
+                        else
+                        {
+                            entry.Protocol = s[1].ToLowerInvariant();
+                            entry.Port = ushort.Parse(s[1]);
+                        }
                         break;
                     case "mac":
                         entry.Mac = optionComponents[i];

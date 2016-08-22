@@ -74,7 +74,7 @@ namespace IPTables.Net.Iptables.IpSet
         /// <returns></returns>
         public static IEnumerable<string> TypeComponents(String str)
         {
-            var parts = str.Split(new char[] { ':', ',' });
+            var parts = str.Split(new char[] { ',', ':' });
             return parts.Skip(1);
         }
     }
