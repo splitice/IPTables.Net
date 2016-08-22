@@ -652,13 +652,21 @@ static int print_match_save6(const struct xt_entry_match *e,
 
 		/* some matches don't provide a save function */
 		if (match->save)
+		{
+			capture_stdout();
 			match->save(ip, e);
-	} else {
-		if (e->u.match_size) {
-			fprintf(stderr,
-				"Can't find library for match `%s'\n",
-				e->u.user.name);
-			exit(1);
+			if (!restore_stdout())
+			{
+				xtables_error(OTHER_PROBLEM, "Unable to capture stdout, errno: %d", errno);
+			}
+		}
+		else {
+			if (e->u.match_size) {
+				fprintf(stderr,
+					"Can't find library for match `%s'\n",
+					e->u.user.name);
+				exit(1);
+			}
 		}
 	}
 	return 0;
