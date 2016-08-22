@@ -618,6 +618,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 	memset(&buf, 0, sizeof(buf));
 
 	capture_cleanup();
+	return ptr;
 }
 
 /* print a given ip including mask if neccessary */
