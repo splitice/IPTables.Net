@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.NativeLibrary;
 using NUnit.Framework;
 
@@ -83,8 +84,7 @@ namespace IPTables.Net.Tests
             {
                 using (IptcInterface iptc = new IptcInterface("filter", 6))
                 {
-                    var status = iptc.ExecuteCommand("ip6tables -A test2 -d 1.1.1.1 -p tcp -m tcp --dport 80 -j ACCEPT");
-                    Assert.AreNotEqual(1, status, "Expected OK return value");
+                    Assert.Throws<IpTablesNetException>((() => iptc.ExecuteCommand("ip6tables -A test2 -d 1.1.1.1 -p tcp -m tcp --dport 80 -j ACCEPT")));
                 }
             }
         }
