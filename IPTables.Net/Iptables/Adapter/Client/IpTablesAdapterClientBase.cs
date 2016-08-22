@@ -75,5 +75,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             return ListRules(table).Chains.Select((a)=>a.Name).ToList();
         }
+
+        public abstract void Dispose();
     }
 }

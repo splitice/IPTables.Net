@@ -26,11 +26,23 @@ namespace IPTables.Net
             return base.GetChains(table, ipVersion).Cast<IpTablesChain>();
         }
 
+        public new IEnumerable<IpTablesChain> GetChains(INetfilterAdapterClient client, String table, int ipVersion)
+        {
+            return base.GetChains(client, table, ipVersion).Cast<IpTablesChain>();
+        }
+
+        public List<String> GetChainNames(INetfilterAdapterClient client, String table, int ipVersion)
+        {
+            var adapter = client as IIPTablesAdapterClient;
+            return adapter.GetChains(table);
+        }
+
         public List<String> GetChainNames(String table, int ipVersion)
         {
-            var tableAdapter = GetTableAdapter(ipVersion);
-            var adapter = tableAdapter as IIPTablesAdapterClient;
-            return adapter.GetChains(table);
-        } 
+            using (var client = GetTableAdapter(ipVersion))
+            {
+                return GetChainNames(client, table, ipVersion);
+            }
+        }
     }
 }

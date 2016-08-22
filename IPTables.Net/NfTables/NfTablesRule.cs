@@ -10,6 +10,7 @@ namespace IPTables.Net.NfTables
     {
         private NfTablesChain _chain;
         private PacketCounters _packet;
+        private int _ipVersion;
 
         public void DeleteRule(bool usingPosition = true)
         {
@@ -19,6 +20,26 @@ namespace IPTables.Net.NfTables
         public void AddRule()
         {
             throw new NotImplementedException();
+        }
+
+        public void DeleteRule(INetfilterAdapterClient client, bool usingPosition = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddRule(INetfilterAdapterClient client)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ReplaceRule(INetfilterAdapterClient client, INetfilterRule with)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int IpVersion
+        {
+            get { return _ipVersion; }
         }
 
         public void ReplaceRule(INetfilterRule with)

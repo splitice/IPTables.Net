@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using SystemInteract;
 using IPTables.Net.Iptables;
+using IPTables.Net.Netfilter;
 using IPTables.Net.Netfilter.TableSync;
 using NUnit.Framework;
 
@@ -38,21 +39,21 @@ namespace IPTables.Net.TestFramework
             throw new NotImplementedException();
         }
 
-        public void TestSync(IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, Func<IpTablesRule, IpTablesRule, bool> commentComparer = null)
+        public void TestSync(INetfilterAdapterClient client, IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, Func<IpTablesRule, IpTablesRule, bool> commentComparer = null)
         {
             IpTablesChain chain = rulesOriginal.Chains.First();
 
             DefaultNetfilterSync<IpTablesRule> sync = new DefaultNetfilterSync<IpTablesRule>(commentComparer,null);
 
             if (commentComparer == null)
-                chain.Sync(rulesNew.Chains.First().Rules, sync);
+                chain.Sync(client, rulesNew.Chains.First().Rules, sync);
             else
-                chain.Sync(rulesNew.Chains.First().Rules, sync);
+                chain.Sync(client, rulesNew.Chains.First().Rules, sync);
         }
 
-        public void TestSync(IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, List<string> expectedCommands, Func<IpTablesRule, IpTablesRule, bool> commentComparer = null)
+        public void TestSync(INetfilterAdapterClient client, IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, List<string> expectedCommands, Func<IpTablesRule, IpTablesRule, bool> commentComparer = null)
         {
-            TestSync(rulesOriginal, rulesNew, commentComparer);
+            TestSync(client, rulesOriginal, rulesNew, commentComparer);
 
             CollectionAssert.AreEqual(expectedCommands, ExecutionLog.Select(a => a.Value).ToList());
         }

@@ -294,7 +294,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             }
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             
         }

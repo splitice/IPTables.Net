@@ -51,6 +51,10 @@ namespace IPTables.Net.NfTables.Adapter.Client
             throw new NotImplementedException();
         }
 
+        public override void Dispose()
+        {
+        }
+
         public override void DeleteRule(NfTablesRule rule)
         {
             throw new NotImplementedException();

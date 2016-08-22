@@ -77,15 +77,19 @@ namespace IPTables.Net.Iptables
             get { return _system; }
         }
 
-        public void Sync(IEnumerable<IpTablesRule> with,
+        public void Sync(INetfilterAdapterClient client, IEnumerable<IpTablesRule> with,
             INetfilterSync<IpTablesRule> sync)
         {
-            var tableAdapter = _system.GetTableAdapter(_ipVersion);
-            tableAdapter.StartTransaction();
+            client.StartTransaction();
 
-            SyncInternal(with, sync);
+            SyncInternal(client, with, sync);
 
-            tableAdapter.EndTransactionCommit();
+            client.EndTransactionCommit();
+        }
+
+        public void Delete(INetfilterAdapterClient client, bool flush = false)
+        {
+            _system.DeleteChain(client, _name, _table, _ipVersion, flush);
         }
 
         public void Delete(bool flush = false)
@@ -102,10 +106,9 @@ namespace IPTables.Net.Iptables
             return true;
         }
 
-        internal void SyncInternal(IEnumerable<IpTablesRule> with,
-            INetfilterSync<IpTablesRule> sync)
+        internal void SyncInternal(INetfilterAdapterClient client, IEnumerable<IpTablesRule> with, INetfilterSync<IpTablesRule> sync)
         {
-            sync.SyncChainRules(with, Rules);
+            sync.SyncChainRules(client, with, Rules);
         }
 
         public int GetRulePosition(IpTablesRule rule)

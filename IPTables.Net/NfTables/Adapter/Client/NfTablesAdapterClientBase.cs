@@ -67,5 +67,7 @@ namespace IPTables.Net.NfTables.Adapter.Client
         {
             return ListRules(table);
         }
+
+        public abstract void Dispose();
     }
 }

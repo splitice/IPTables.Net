@@ -219,26 +219,47 @@ namespace IPTables.Net.Iptables
             return command;
         }
 
-        public void AddRule()
+        public void AddRule(INetfilterAdapterClient client)
         {
             if (Chain == null)
             {
                 throw new IpTablesNetException("Unknown Chain");
             }
-            _system.GetTableAdapter(Chain.IpVersion).AddRule(this);
+            client.AddRule(this);
         }
 
-        public void ReplaceRule(INetfilterRule with)
+        public void AddRule()
+        {
+            using (var client = _system.GetTableAdapter(Chain.IpVersion))
+            {
+                AddRule(client);
+            }
+        }
+
+        public void ReplaceRule(INetfilterAdapterClient client, INetfilterRule with)
         {
             var withCast = with as IpTablesRule;
             if (withCast == null)
             {
                 throw new IpTablesNetException("Comparing different Netfilter rule types, unsupported");
             }
-            ReplaceRule(withCast);
+            ReplaceRule(client, withCast);
         }
 
-        public void DeleteRule(bool usingPosition = true)
+        public int IpVersion
+        {
+            get { return _chain.IpVersion; }
+        }
+
+        public void ReplaceRule(INetfilterRule with)
+        {
+            using (var client = _system.GetTableAdapter(with.IpVersion))
+            {
+                ReplaceRule(client, with);
+            }
+        }
+
+        public void DeleteRule(INetfilterAdapterClient client, bool usingPosition = true)
         {
 
             if (Chain == null)
@@ -248,13 +269,22 @@ namespace IPTables.Net.Iptables
             if (usingPosition)
             {
                 var position = Chain.GetRulePosition(this);
-                _system.GetTableAdapter(Chain.IpVersion).DeleteRule(Chain.Table, Chain.Name, position);
+                client.DeleteRule(Chain.Table, Chain.Name, position);
             }
             else
             {
-                _system.GetTableAdapter(Chain.IpVersion).DeleteRule(this);
+                client.DeleteRule(this);
             }
             Chain.Rules.Remove(this);
+        }
+
+
+        public void DeleteRule(bool usingPosition = true)
+        {
+            using (var client = _system.GetTableAdapter(Chain.IpVersion))
+            {
+                DeleteRule(client, usingPosition);
+            }
         }
 
         internal IIpTablesModule GetModuleForParseInternal(string name, Type moduleType, int version)
@@ -403,15 +433,24 @@ namespace IPTables.Net.Iptables
             return GetModuleForParseInternal(moduleName, typeof(T), Chain.IpVersion) as T;
         }
 
-        public void ReplaceRule(IpTablesRule withRule)
+        public void ReplaceRule(INetfilterAdapterClient client, IpTablesRule withRule)
         {
             if (Chain == null)
             {
                 throw new IpTablesNetException("Unknown Chain");
             }
             int idx = Chain.Rules.IndexOf(this);
-            _system.GetTableAdapter(Chain.IpVersion).ReplaceRule(withRule);
+            client.ReplaceRule(withRule);
             Chain.Rules[idx] = withRule;
+        }
+
+
+        public void ReplaceRule(IpTablesRule withRule)
+        {
+            using (var client = _system.GetTableAdapter(Chain.IpVersion))
+            {
+                ReplaceRule(client, withRule);
+            }
         }
 
         #endregion

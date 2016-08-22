@@ -48,7 +48,7 @@ namespace IPTables.Net.Netfilter.TableSync
             RuleComparerForUpdate = ruleComparerForUpdate;
         } 
 
-        public void SyncChainRules(IEnumerable<T> with, IEnumerable<T> currentRules)
+        public void SyncChainRules(INetfilterAdapterClient client, IEnumerable<T> with, IEnumerable<T> currentRules)
         {
             //Copy the rules
             currentRules = new List<T>(currentRules.ToArray());
@@ -80,14 +80,14 @@ namespace IPTables.Net.Netfilter.TableSync
                     if (_ruleComparerForUpdate(cR, withRule))
                     {
                         //Replace this rule
-                        cR.ReplaceRule(withRule);
+                        cR.ReplaceRule(client, withRule);
                         i++;
                     }
                     else
                     {
                         if (_shouldDelete(cR))
                         {
-                            cR.DeleteRule();
+                            cR.DeleteRule(client);
                         }
                     }
                 }
@@ -96,7 +96,7 @@ namespace IPTables.Net.Netfilter.TableSync
             //Get rules to be added
             foreach (T rR in with.Skip(i))
             {
-                rR.AddRule();
+                rR.AddRule(client);
             }
         }
 
@@ -105,12 +105,12 @@ namespace IPTables.Net.Netfilter.TableSync
             
         }
 
-        public void SyncChainRules(IEnumerable<INetfilterRule> with, IEnumerable<INetfilterRule> currentRules)
+        public void SyncChainRules(INetfilterAdapterClient client, IEnumerable<INetfilterRule> with, IEnumerable<INetfilterRule> currentRules)
         {
             var withCast = with.Cast<T>();
             var currentRulesCast = currentRules.Cast<T>();
 
-            SyncChainRules(withCast, currentRulesCast);
+            SyncChainRules(client, withCast, currentRulesCast);
         }
     }
 }

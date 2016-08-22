@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IPTables.Net.Netfilter
 {
-    public interface INetfilterAdapterClient
+    public interface INetfilterAdapterClient: IDisposable
     {
         //Transaction
         void StartTransaction();

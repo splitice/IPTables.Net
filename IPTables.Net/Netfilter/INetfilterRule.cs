@@ -11,6 +11,13 @@ namespace IPTables.Net.Netfilter
         void AddRule();
         void ReplaceRule(INetfilterRule with);
 
+
+        void DeleteRule(INetfilterAdapterClient client, bool usingPosition = true);
+        void AddRule(INetfilterAdapterClient client);
+        void ReplaceRule(INetfilterAdapterClient client, INetfilterRule with);
+
+        int IpVersion { get; }
+
         PacketCounters Counters { get; }
 
         INetfilterChain Chain { get; }

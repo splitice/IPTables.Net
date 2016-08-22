@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using SystemInteract;
+using IPTables.Net.Conntrack;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
@@ -12,15 +13,13 @@ namespace IPTables.Net.Netfilter
     public class NetfilterSystem
     {
         private readonly ISystemFactory _system;
-        private readonly INetfilterAdapterClient _tableAdapter4;
-        private readonly INetfilterAdapterClient _tableAdapter6;
         private readonly IpSetBinaryAdapter _setAdapter;
+        private INetfilterAdapter _tableAdapter;
 
         public NetfilterSystem(ISystemFactory system, INetfilterAdapter tableAdapter, IpSetBinaryAdapter setAdapter = null)
         {
             _system = system;
-            _tableAdapter4 = tableAdapter == null ? null : tableAdapter.GetClient(this,4);
-            _tableAdapter6 = tableAdapter == null ? null : tableAdapter.GetClient(this,6);
+            _tableAdapter = tableAdapter;
             if (setAdapter == null)
             {
                 setAdapter = new IpSetBinaryAdapter(system);
@@ -35,7 +34,7 @@ namespace IPTables.Net.Netfilter
 
         public INetfilterAdapterClient GetTableAdapter(int version)
         {
-            return version == 4 ? _tableAdapter4 : _tableAdapter6;
+            return _tableAdapter.GetClient(this, 4);
         }
 
         public IpSetBinaryAdapter SetAdapter
@@ -43,25 +42,58 @@ namespace IPTables.Net.Netfilter
             get { return _setAdapter; }
         }
 
+        public INetfilterChainSet GetRules(INetfilterAdapterClient client, string table, int ipVersion)
+        {
+            return client.ListRules(table);
+        }
+
+        public IEnumerable<INetfilterRule> GetRules(INetfilterAdapterClient client, string table, string chain, int ipVersion)
+        {
+            return GetChain(client, table, chain, ipVersion).Rules;
+        }
+
+        public IEnumerable<INetfilterChain> GetChains(INetfilterAdapterClient client, string table, int ipVersion)
+        {
+            return GetRules(client, table, ipVersion).Chains;
+        }
+
+
         public INetfilterChainSet GetRules(string table, int ipVersion)
         {
-            return GetTableAdapter(ipVersion).ListRules(table);
+            using (var client = GetTableAdapter(ipVersion))
+            {
+                return GetRules(client, table, ipVersion);
+            }
         }
 
         public IEnumerable<INetfilterRule> GetRules(string table, string chain, int ipVersion)
         {
-            return GetChain(table, chain, ipVersion).Rules;
+            using (var client = GetTableAdapter(ipVersion))
+            {
+                return GetRules(client, table, chain, ipVersion);
+            }
         }
 
         public IEnumerable<INetfilterChain> GetChains(string table, int ipVersion)
         {
-            return GetRules(table, ipVersion).Chains;
+            using (var client = GetTableAdapter(ipVersion))
+            {
+                return GetChains(client, table, ipVersion);
+            }
         }
 
 
         public INetfilterChain GetChain(string table, string chain, int ipVersion)
         {
-            INetfilterChainSet tableRules = GetRules(table, ipVersion);
+            using (var client = GetTableAdapter(ipVersion))
+            {
+                return GetChain(client, table, chain, ipVersion);
+            }
+        }
+
+        public INetfilterChain GetChain(INetfilterAdapterClient client, string table, string chain, int ipVersion)
+        {
+            INetfilterChainSet tableRules = GetRules(client, table, ipVersion);
             if (tableRules == null)
             {
                 throw new IpTablesNetException("Unable to get a chainset for table: "+table);
@@ -70,21 +102,21 @@ namespace IPTables.Net.Netfilter
         }
 
 
-        public void DeleteChain(string name, string table = "filter", int ipVersion = 4, bool flush = false)
+        public void DeleteChain(INetfilterAdapterClient client, string name, string table = "filter", int ipVersion = 4, bool flush = false)
         {
-            GetTableAdapter(ipVersion).DeleteChain(table, name, flush);
+            client.DeleteChain(table, name, flush);
         }
 
-        public IpTablesChain AddChain(String name, String table = "filter", int ipVersion = 4)
+        public IpTablesChain AddChain(INetfilterAdapterClient client, String name, String table = "filter", int ipVersion = 4)
         {
-            GetTableAdapter(ipVersion).AddChain(table, name);
+            client.AddChain(table, name);
 
             return new IpTablesChain(table, name, ipVersion, this, new List<IpTablesRule>());
         }
 
-        public IpTablesChain AddChain(IpTablesChain chain, bool addRules = false)
+        public IpTablesChain AddChain(INetfilterAdapterClient client, IpTablesChain chain, bool addRules = false)
         {
-            GetTableAdapter(chain.IpVersion).AddChain(chain.Table, chain.Name);
+            client.AddChain(chain.Table, chain.Name);
 
             if (addRules)
             {
@@ -99,6 +131,28 @@ namespace IPTables.Net.Netfilter
             }
 
             return chain;
+        }
+
+        
+        public void DeleteChain(string name, string table = "filter", int ipVersion = 4, bool flush = false)
+        {
+            using (var client = GetTableAdapter(ipVersion))
+            {
+                DeleteChain(client, name, table, ipVersion, flush);
+            }
+        }
+
+        public IpTablesChain AddChain(String name, String table = "filter", int ipVersion = 4)
+        {
+            using (var client = GetTableAdapter(ipVersion))
+            {
+                return AddChain(client, name, table, ipVersion);
+            }
+        }
+
+        public IpTablesChain AddChain(IpTablesChain chain, bool addRules = false)
+        {
+            return AddChain(chain.Name, chain.Table, chain.IpVersion);
         }
     }
 }
