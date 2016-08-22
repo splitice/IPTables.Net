@@ -61,7 +61,7 @@ namespace IPTables.Net.Netfilter.TableSync
                 {
                     if (_shouldDelete(cR))
                     {
-                        cR.DeleteRule();
+                        cR.DeleteRule(client);
                     }
                     continue;
                 }
