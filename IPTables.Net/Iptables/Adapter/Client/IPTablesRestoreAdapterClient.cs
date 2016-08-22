@@ -293,5 +293,10 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 throw new IpTablesNetException("Transaction active, must be commited or rolled back.");
             }
         }
+
+        public void Dispose()
+        {
+            
+        }
     }
 }

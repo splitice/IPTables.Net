@@ -4,7 +4,7 @@ using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Adapter.Client
 {
-    public interface IIPTablesAdapterClient : INetfilterAdapterClient
+    public interface IIPTablesAdapterClient : INetfilterAdapterClient, IDisposable
     {
         new IpTablesChainSet ListRules(String table);
         void DeleteRule(IpTablesRule rule);

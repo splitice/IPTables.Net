@@ -420,6 +420,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         }
 
         private static int _helperInit = 0;
+        private static int _helperInitCount = 0;
 
         public static bool DllExists(out String msg)
         {
@@ -446,7 +447,11 @@ namespace IPTables.Net.Iptables.NativeLibrary
         {
             _ipVersion = ipVersion;
             logger = log;
-            if (_helperInit != 0)
+            if (_helperInit == ipVersion)
+            {
+                _helperInitCount++;
+            }
+            else if (_helperInit != 0)
             {
                 throw new IpTablesNetException("Can't initialize another IptcInterface before disposing of the last");
             }
@@ -477,7 +482,10 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public void Dispose()
         {
-            _helperInit = 0;
+            if (--_helperInitCount == 0)
+            {
+                _helperInit = 0;
+            }
             if (_handle != IntPtr.Zero)
             {
                 Free(); 

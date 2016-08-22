@@ -129,5 +129,9 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             //No transaction support
         }
+
+        public void Dispose()
+        {
+        }
     }
 }

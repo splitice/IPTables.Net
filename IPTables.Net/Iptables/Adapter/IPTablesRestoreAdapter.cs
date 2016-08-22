@@ -28,8 +28,10 @@ namespace IPTables.Net.Iptables.Adapter
 
         public void CheckBinary(IpTablesSystem system)
         {
-            var client = GetClient(system);
-            (client as Client.IPTablesRestoreAdapterClient).CheckBinary();
+            using (var client = GetClient(system))
+            {
+                (client as Client.IPTablesRestoreAdapterClient).CheckBinary();
+            }
         }
     }
 }
