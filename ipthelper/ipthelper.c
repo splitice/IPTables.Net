@@ -812,11 +812,22 @@ EXPORT int execute_command6(const char* rule, void *h){
 	return ret;
 }
 
-EXPORT int init_helper(void){
+EXPORT int init_helper4(void){
 	int c;
 	if ( ! setjmp(buf) ) {
 		c = xtables_init_all(&iptables_globals, NFPROTO_IPV4);
 	}else{
+		c = 0;
+	}
+	return c;
+}
+
+EXPORT int init_helper6(void) {
+	int c;
+	if (!setjmp(buf)) {
+		c = xtables_init_all(&iptables_globals, NFPROTO_IPV6);
+	}
+	else {
 		c = 0;
 	}
 	return c;
