@@ -490,10 +490,7 @@ static void print_proto(uint16_t proto, int invert)
 		ptr += sprintf(ptr,"%s -p %u", invertstr, proto);
 	}
 }
-const char* output_rule(int version, const struct ipt_entry *e, void *h, const char *chain, int counters)
-{
-	
-}
+
 /* We want this to be readable, so only print out neccessary fields.
 * Because that's the kind of world I want to live in.  */
 extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const char *chain, int counters)

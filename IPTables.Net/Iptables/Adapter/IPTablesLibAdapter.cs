@@ -11,10 +11,6 @@ namespace IPTables.Net.Iptables.Adapter
     {
         public override IIPTablesAdapterClient GetClient(IpTablesSystem system, int ipVersion = 4)
         {
-            if (ipVersion == 6)
-            {
-                return new IPTablesBinaryAdapterClient(ipVersion, system, "ip6tables");
-            }
             return new Client.IPTablesLibAdapterClient(ipVersion, system, ipVersion == 4 ? "iptables" : "ip6tables");
         }
     }
