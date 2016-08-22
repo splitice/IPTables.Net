@@ -202,7 +202,7 @@ namespace IPTables.Net.Iptables
                 if (position == -1)
                 {
                     throw new IpTablesNetException(
-                        "This rule does not have a specific position and hence can not be located for replace");
+                        "This rule does not have a specific position and hence can not be located for replace. Rule: " + GetCommand(true));
                 }
                 command += position + " ";
             }
