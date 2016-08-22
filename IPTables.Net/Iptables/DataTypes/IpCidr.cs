@@ -14,10 +14,16 @@ namespace IPTables.Net.Iptables.DataTypes
         public IPAddress Address;
         public uint Cidr;
 
-        public IpCidr(IPAddress address, uint cidr = 32)
+        public IpCidr(IPAddress address, uint cidr)
         {
             Address = address;
             Cidr = cidr;
+        }
+
+        public IpCidr(IPAddress address)
+        {
+            Address = address;
+            Cidr = (address.AddressFamily == AddressFamily.InterNetworkV6) ? (uint)128 : 32;
         }
 
         public IPNetwork GetIPNetwork()
