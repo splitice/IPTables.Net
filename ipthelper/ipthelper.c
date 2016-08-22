@@ -54,7 +54,7 @@
 #include <setjmp.h>
 
 char* errbuffer = NULL;
-jmp_buf buf;
+jmp_buf buf = { };
 
 int stdout_save;
 
@@ -810,6 +810,7 @@ EXPORT int execute_command6(const char* rule, void *h){
 	}else{
 		ret = 0;
 	}
+	memset(&buf, 0, sizeof(buf));
 	
 	free(newargv);
 	capture_cleanup();
@@ -823,6 +824,7 @@ EXPORT int init_helper4(void){
 	}else{
 		c = 0;
 	}
+	memset(&buf, 0, sizeof(buf));
 	return c;
 }
 

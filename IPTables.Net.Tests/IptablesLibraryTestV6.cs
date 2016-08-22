@@ -77,19 +77,30 @@ namespace IPTables.Net.Tests
         }
 
         [Test]
+        public void TestRuleInputInvalid()
+        {
+            if (IsLinux)
+            {
+                using (IptcInterface iptc = new IptcInterface("filter", 6))
+                {
+                    var status = iptc.ExecuteCommand("ip6tables -A test2 -d 1.1.1.1 -p tcp -m tcp --dport 80 -j ACCEPT");
+                    Assert.AreNotEqual(1, status, "Expected OK return value");
+                }
+            }
+        }
+
+        [Test]
         public void TestRuleInput()
         {
             if (IsLinux)
             {
                 using (IptcInterface iptc = new IptcInterface("filter", 6))
                 {
-
-                    var status = iptc.ExecuteCommand("ip6tables -A test2 -d 1.1.1.1 -p tcp -m tcp --dport 80 -j ACCEPT");
+                    var status = iptc.ExecuteCommand("ip6tables -A test2 -d ::1 -p tcp -m tcp --dport 80 -j ACCEPT");
                     Assert.AreEqual(1, status, "Expected OK return value");
-
                     var rules = iptc.GetRules("test2");
                     Assert.AreEqual(1, rules.Count);
-                    Assert.AreEqual("-A test2 -d 1.1.1.1/32 -p tcp -m tcp --dport 80 -j ACCEPT",
+                    Assert.AreEqual("-A test2 -d ::1/128 -p tcp -m tcp --dport 80 -j ACCEPT",
                         iptc.GetRuleString("test2", rules[0]));
                 }
             }

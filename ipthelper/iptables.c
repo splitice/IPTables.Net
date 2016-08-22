@@ -151,11 +151,14 @@ struct xtables_globals iptables_globals = {
 	.exit_err = iptables_exit_error
 };
 
+extern jmp_buf buf;
+
 void
 iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 {
 	va_list args, args2;
 	int buffer_length;
+	jmp_buf buf_zero = { 0 };
 	
 	if(errbuffer != NULL){
 		free(errbuffer);
@@ -176,6 +179,11 @@ iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 	}
 	/* On error paths, make sure that we don't leak memory */
 	xtables_free_opts(1);
+	
+	if (memcmp(&buf,&buf_zero, sizeof(buf_zero)) != 0) 
+	{
+		longjmp(buf, 1);
+	}
 }
 
 /* Primitive headers... */
