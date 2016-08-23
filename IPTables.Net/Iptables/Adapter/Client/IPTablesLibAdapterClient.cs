@@ -27,6 +27,15 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _ipVersion = ipVersion;
         }
 
+        private String GetBinary()
+        {
+            if (_ipVersion == 4)
+            {
+                return "iptables";
+            }
+            return "ip6tables";
+        }
+
         private IptcInterface GetInterface(String table)
         {
             if (_interfaces.ContainsKey(table))
@@ -52,7 +61,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
             String command = "-D " + chainName + " " + position;
 
-            if (GetInterface(table).ExecuteCommand("iptables " + command) != 1)
+            if (GetInterface(table).ExecuteCommand(GetBinary() + " " + command) != 1)
             {
                 throw new IpTablesNetException(String.Format("Failed to delete rule \"{0}\" due to error: \"{1}\"", command, GetInterface(table).GetErrorString()));
             }
@@ -74,7 +83,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             }
 
             String command = rule.GetActionCommand("-D");
-            if (GetInterface(rule.Chain.Table).ExecuteCommand("iptables " + command) != 1)
+            if (GetInterface(rule.Chain.Table).ExecuteCommand(GetBinary() + " " + command) != 1)
             {
                 throw new IpTablesNetException(String.Format("Failed to delete rule \"{0}\" due to error: \"{1}\"", command, GetInterface(rule.Chain.Table).GetErrorString()));
             }
@@ -91,7 +100,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             }
 
             String command = rule.GetActionCommand("-I");
-            if (GetInterface(rule.Chain.Table).ExecuteCommand("iptables " + command) != 1)
+            if (GetInterface(rule.Chain.Table).ExecuteCommand(GetBinary() + " " + command) != 1)
             {
                 throw new IpTablesNetException(String.Format("Failed to insert rule \"{0}\" due to error: \"{1}\"", command, GetInterface(rule.Chain.Table).GetErrorString()));
             }
@@ -108,7 +117,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             }
 
             String command = rule.GetActionCommand("-R");
-            if (GetInterface(rule.Chain.Table).ExecuteCommand("iptables " + command) != 1)
+            if (GetInterface(rule.Chain.Table).ExecuteCommand(GetBinary() + " " + command) != 1)
             {
                 throw new IpTablesNetException(String.Format("Failed to replace rule \"{0}\" due to error: \"{1}\"", command, GetInterface(rule.Chain.Table).GetErrorString()));
             }
@@ -125,7 +134,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             }
 
             String command = rule.GetActionCommand("-A");
-            if (GetInterface(rule.Chain.Table).ExecuteCommand("iptables " + command) != 1)
+            if (GetInterface(rule.Chain.Table).ExecuteCommand(GetBinary() + " " + command) != 1)
             {
                 throw new IpTablesNetException(String.Format("Failed to add rule \"{0}\" due to error: \"{1}\"", command, GetInterface(rule.Chain.Table).GetErrorString()));
             }
