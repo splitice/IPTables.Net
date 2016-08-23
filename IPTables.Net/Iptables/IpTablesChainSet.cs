@@ -41,14 +41,16 @@ namespace IPTables.Net.Iptables
             return new IpTablesChain(tableName, chainName, _ipVersion, system);
         }
 
-        public void AddChain(String name, String table, NetfilterSystem system)
+        public IpTablesChain AddChain(String name, String table, NetfilterSystem system)
         {
             if (HasChain(name, table))
             {
                 throw new IpTablesNetException("A chain with that name already exists");
             }
 
-            AddChain(new IpTablesChain(table, name, _ipVersion, system));
+            var newChain = new IpTablesChain(table, name, _ipVersion, system);
+            AddChain(newChain);
+            return newChain;
         }
 
         public void RemoveChain(IpTablesChain chain)

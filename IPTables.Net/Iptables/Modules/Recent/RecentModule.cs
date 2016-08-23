@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Recent
 {
     public class RecentModule : ModuleBase, IIpTablesModule, IEquatable<RecentModule>
     {
+        private static IPAddress IPv6Max = IPAddress.Parse("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff");
+
         private const String OptionNameLong = "--name";
         private const String OptionSetLong = "--set";
         private const String OptionRsourceLong = "--rsource";
@@ -31,6 +34,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
         public bool Rttl;
         public int? Seconds = null;
         public IPAddress Mask = IPAddress.Broadcast;
+        private int _version;
 
         public bool Rdest
         {
@@ -40,9 +44,10 @@ namespace IPTables.Net.Iptables.Modules.Recent
 
         public RecentModule(int version) : base(version)
         {
+            _version = version;
             if (version == 6)
             {
-                Mask = IPAddress.IPv6None;
+                Mask = IPv6Max;
             }
         }
 
@@ -50,6 +55,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
+            
             return Mode.Equals(other.Mode) && string.Equals(Name, other.Name) && Rsource.Equals(other.Rsource) &&
                    Seconds == other.Seconds && Reap.Equals(other.Reap) && HitCount == other.HitCount &&
                    Rttl.Equals(other.Rttl) && Mask.Equals(other.Mask);
@@ -98,7 +104,12 @@ namespace IPTables.Net.Iptables.Modules.Recent
                     Rttl = true;
                     return 0;
                 case OptionMaskLong:
+                    var oldAf = Mask.AddressFamily;
                     Mask = IPAddress.Parse(parser.GetNextArg());
+                    if (Mask.AddressFamily != oldAf)
+                    {
+                        throw new IpTablesNetException("Invalid address family for mask "+parser.GetNextArg()+" should be "+oldAf);
+                    }
                     return 1;
             }
 
@@ -140,7 +151,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
                 sb.Append(Name);
             }
 
-            if (!(Equals(Mask, IPAddress.Broadcast)))
+            if (!(Equals(Mask, _version == 4 ? IPAddress.Broadcast : IPv6Max)))
             {
                 if (sb.Length != 0)
                     sb.Append(" ");

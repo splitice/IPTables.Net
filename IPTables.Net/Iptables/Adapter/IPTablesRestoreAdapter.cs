@@ -26,9 +26,9 @@ namespace IPTables.Net.Iptables.Adapter
             return new Client.IPTablesRestoreAdapterClient(ipVersion, system, ipVersion == 4 ? _iptablesRestoreBinary4 : _iptablesRestoreBinary6, ipVersion == 4 ? _iptablesSaveBinary4 : _iptablesSaveBinary6, ipVersion == 4 ? "iptables" : "ip6tables");
         }
 
-        public void CheckBinary(IpTablesSystem system)
+        public void CheckBinary(IpTablesSystem system, int ipVersion)
         {
-            using (var client = GetClient(system))
+            using (var client = GetClient(system, ipVersion))
             {
                 (client as Client.IPTablesRestoreAdapterClient).CheckBinary();
             }

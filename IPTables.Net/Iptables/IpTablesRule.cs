@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Modules;
@@ -363,6 +364,7 @@ namespace IPTables.Net.Iptables
         public static IpTablesRule Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
             int version = 4, String defaultTable = "filter", ChainCreateMode createChain = ChainCreateMode.CreateNewChainIfNeeded)
         {
+            Debug.Assert(chains.IpVersion == version);
             string[] arguments = ArgumentHelper.SplitArguments(rule);
             int count = arguments.Length;
             var ipRule = new IpTablesRule(system, new IpTablesChain(null, defaultTable, version, system));
@@ -400,6 +402,7 @@ namespace IPTables.Net.Iptables
                         chain = parser.CreateChain(system, chains == null ? 4 : chains.IpVersion);
                     }
                 }
+                Debug.Assert(chain.IpVersion == version);
                 ipRule.Chain = chain;
             }
             catch (Exception ex)

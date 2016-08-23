@@ -422,6 +422,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         private static int _helperInit = 0;
         private static int _helperInitCount = 0;
+        public bool Disposed = false;
 
         internal static int RefCount
         {
@@ -457,13 +458,14 @@ namespace IPTables.Net.Iptables.NativeLibrary
         {
             _ipVersion = ipVersion;
             logger = log;
+            //Console.WriteLine("!" + new System.Diagnostics.StackTrace());
             if (_helperInit == ipVersion)
             {
                 _helperInitCount++;
             }
             else if (_helperInit != 0)
             {
-                throw new IpTablesNetException("Can't initialize another IptcInterface before disposing of the last");
+                throw new IpTablesNetException("Can't initialize another Iptc of a different version before disposing of the last, current="+_helperInit+" trying="+ipVersion);
             }
             else
                 {
@@ -495,12 +497,16 @@ namespace IPTables.Net.Iptables.NativeLibrary
         {
             if (_handle != IntPtr.Zero)
             {
+                Debug.Assert(_helperInit >= 0);
+                Free();
+            }
+            if (!Disposed)
+            {
                 if (--_helperInitCount == 0)
                 {
                     _helperInit = 0;
                 }
-                Debug.Assert(_helperInit >= 0);
-                Free(); 
+                Disposed = true;
             }
         }
 
@@ -518,6 +524,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         private void RequireHandle()
         {
+            Debug.Assert(!Disposed);
             if (_handle == IntPtr.Zero)
             {
                 throw new IpTablesNetException("No IP Table currently open");

@@ -14,6 +14,7 @@ namespace IPTables.Net.NfTables
         private NfNetfilterHook _hook = null;
         private List<NfTablesDataStructure> _dataStructures = new List<NfTablesDataStructure>();
         private List<NfTablesRule> _rules = new List<NfTablesRule>();
+        private int _ipVersion;
 
         public NfTablesChain(string tableName, string chainName, NetfilterSystem netfilterSystem)
         {
@@ -28,6 +29,11 @@ namespace IPTables.Net.NfTables
         public string Table
         {
             get { return _table.Name; }
+        }
+
+        public int IpVersion
+        {
+            get { return _ipVersion; }
         }
 
         public IEnumerable<INetfilterRule> Rules

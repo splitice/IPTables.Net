@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using IPTables.Net.Iptables;
 using NUnit.Framework;
@@ -10,6 +11,13 @@ namespace IPTables.Net.Tests
     [TestFixture]
     class IpTablesComparisonTests
     {
+        [Test]
+        public void TestIpCompare()
+        {
+            Assert.AreEqual(IPAddress.IPv6Loopback, IPAddress.Parse("::1"));
+            Assert.AreEqual(IPAddress.Parse("::0.0.0.1"), IPAddress.Parse("::1"));
+        }
+
         [Test]
         public void TestComparisonMultiport()
         {

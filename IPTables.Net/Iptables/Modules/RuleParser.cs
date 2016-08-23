@@ -85,7 +85,7 @@ namespace IPTables.Net.Iptables.Modules
 
             if (option == "-m")
             {
-                LoadParserModule(GetNextArg());
+                LoadParserModule(GetNextArg(), version);
                 return 1;
             }
             if (option == "-A")
@@ -100,7 +100,7 @@ namespace IPTables.Net.Iptables.Modules
             }
             if (option == "-j")
             {
-                LoadParserModule(GetNextArg(), true);
+                LoadParserModule(GetNextArg(), version, true);
             }
             foreach (ModuleEntry m in _parsers)
             {
@@ -120,7 +120,7 @@ namespace IPTables.Net.Iptables.Modules
             throw new IpTablesNetException("Unknown option: \"" + option + "\"");
         }
 
-        private void LoadParserModule(string name, bool isTarget = false)
+        private void LoadParserModule(string name, int version, bool isTarget = false)
         {
             ModuleEntry entry;
             if (isTarget)
@@ -135,7 +135,7 @@ namespace IPTables.Net.Iptables.Modules
             }
             else
             {
-                entry = _moduleRegistry.GetModule(name, _ipRule.Chain.IpVersion);
+                entry = _moduleRegistry.GetModule(name, version);
                 if (entry.Polyfill)
                 {
                     _polyfill = entry;

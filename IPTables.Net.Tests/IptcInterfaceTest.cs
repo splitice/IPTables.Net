@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
-using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.NativeLibrary;
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    class IptablesLibraryTestV6
+    [TestFixture(4)]
+    [TestFixture(6)]
+    class IptcInterfaceTest
     {
+        private int _ipVersion;
+
         public static bool IsLinux
         {
             get
@@ -21,17 +24,33 @@ namespace IPTables.Net.Tests
             }
         }
 
+        public IptcInterfaceTest(int ipVersion)
+        {
+            _ipVersion = ipVersion;
+        }
+
+        private String GetBinary()
+        {
+            if (_ipVersion == 4)
+            {
+                return "iptables";
+            }
+            return "ip6tables";
+        }
+
         [TestFixtureSetUp]
         public void TestStartup()
         {
             if (IsLinux)
             {
-                Process.Start("/sbin/ip6tables", "-N test2").WaitForExit();
-                Process.Start("/sbin/ip6tables", "-N test").WaitForExit();
-                Process.Start("/sbin/ip6tables", "-A test -j ACCEPT").WaitForExit();
+                Process.Start("/sbin/" + GetBinary(), "-F test").WaitForExit();
 
-                Process.Start("/sbin/ip6tables", "-N test3").WaitForExit();
-                Process.Start("/sbin/ip6tables", "-A test3 -p tcp -m tcp --dport 80 -j ACCEPT").WaitForExit();
+                Process.Start("/sbin/" + GetBinary(), "-N test2").WaitForExit();
+                Process.Start("/sbin/" + GetBinary(), "-N test").WaitForExit();
+                Process.Start("/sbin/" + GetBinary(), "-A test -j ACCEPT").WaitForExit();
+
+                Process.Start("/sbin/" + GetBinary(), "-N test3").WaitForExit();
+                Process.Start("/sbin/" + GetBinary(), "-A test3 -p tcp -m tcp --dport 80 -j ACCEPT").WaitForExit();
             }
         }
 
@@ -40,12 +59,13 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
-                Process.Start("/sbin/iptables", "-D test -j ACCEPT").WaitForExit();
-                Process.Start("/sbin/iptables", "-X test").WaitForExit();
-                Process.Start("/sbin/iptables", "-F test2").WaitForExit();
-                Process.Start("/sbin/iptables", "-X test2").WaitForExit();
-                Process.Start("/sbin/iptables", "-F test3").WaitForExit();
-                Process.Start("/sbin/iptables", "-X test3").WaitForExit();
+                Process.Start("/sbin/" + GetBinary(), "-D test -j ACCEPT").WaitForExit();
+                Process.Start("/sbin/" + GetBinary(), "-F test").WaitForExit();
+                Process.Start("/sbin/"+GetBinary(), "-X test").WaitForExit();
+                Process.Start("/sbin/"+GetBinary(), "-F test2").WaitForExit();
+                Process.Start("/sbin/"+GetBinary(), "-X test2").WaitForExit();
+                Process.Start("/sbin/"+GetBinary(), "-F test3").WaitForExit();
+                Process.Start("/sbin/"+GetBinary(), "-X test3").WaitForExit();
             }
         }
 
@@ -55,7 +75,7 @@ namespace IPTables.Net.Tests
             if (IsLinux)
             {
                 Assert.AreEqual(0, IptcInterface.RefCount);
-                using (IptcInterface iptc = new IptcInterface("filter", 6))
+                using (IptcInterface iptc = new IptcInterface("filter", _ipVersion))
                 {
                     var rules = iptc.GetRules("test");
                     Assert.AreEqual(1, rules.Count);
@@ -71,7 +91,7 @@ namespace IPTables.Net.Tests
             if (IsLinux)
             {
                 Assert.AreEqual(0, IptcInterface.RefCount);
-                using (IptcInterface iptc = new IptcInterface("filter", 6))
+                using (IptcInterface iptc = new IptcInterface("filter", _ipVersion))
                 {
                     var rules = iptc.GetRules("test3");
                     Assert.AreEqual(1, rules.Count);
@@ -81,19 +101,7 @@ namespace IPTables.Net.Tests
             }
         }
 
-        [Test]
-        public void TestRuleInputInvalid()
-        {
-            if (IsLinux)
-            {
-                Assert.AreEqual(0, IptcInterface.RefCount);
-                using (IptcInterface iptc = new IptcInterface("filter", 6))
-                {
-                    Assert.Throws<IpTablesNetException>((() => iptc.ExecuteCommand("ip6tables -A test2 -d 1.1.1.1 -p tcp -m tcp --dport 80 -j ACCEPT")));
-                }
-                Assert.AreEqual(0, IptcInterface.RefCount);
-            }
-        }
+
 
         [Test]
         public void TestRuleInput()
@@ -101,14 +109,48 @@ namespace IPTables.Net.Tests
             if (IsLinux)
             {
                 Assert.AreEqual(0, IptcInterface.RefCount);
-                using (IptcInterface iptc = new IptcInterface("filter", 6))
+                using (IptcInterface iptc = new IptcInterface("filter", _ipVersion))
                 {
-                    var status = iptc.ExecuteCommand("ip6tables -A test2 -d ::1 -p tcp -m tcp --dport 80 -j ACCEPT");
+
+                    var status = iptc.ExecuteCommand(_ipVersion == 4 ? "iptables -A test2 -d 1.1.1.1 -p tcp -m tcp --dport 80 -j ACCEPT" : "iptables -A test2 -d ::1 -p tcp -m tcp --dport 80 -j ACCEPT");
                     Assert.AreEqual(1, status, "Expected OK return value");
+
                     var rules = iptc.GetRules("test2");
                     Assert.AreEqual(1, rules.Count);
-                    Assert.AreEqual("-A test2 -d ::1/128 -p tcp -m tcp --dport 80 -j ACCEPT",
+                    Assert.AreEqual(_ipVersion == 4 ? "-A test2 -d 1.1.1.1/32 -p tcp -m tcp --dport 80 -j ACCEPT" : "-A test2 -d ::1/128 -p tcp -m tcp --dport 80 -j ACCEPT",
                         iptc.GetRuleString("test2", rules[0]));
+                }
+                Assert.AreEqual(0, IptcInterface.RefCount);
+            }
+        }
+
+        [Test]
+        public void TestRuleIp()
+        {
+            if (IsLinux)
+            {
+                Assert.AreEqual(0, IptcInterface.RefCount);
+
+                String ip;
+                int cidr;
+                if (_ipVersion == 4)
+                {
+                    ip = IPAddress.Loopback.ToString();
+                    cidr = 32;
+                }
+                else
+                {
+                    ip = "::1";
+                    cidr = 128;
+                }
+                var rule = "-A test3 -s " + ip + "/" + cidr + " -p tcp -m tcp --dport 80 -j ACCEPT";
+
+                using (IptcInterface iptc = new IptcInterface("filter", _ipVersion))
+                {
+                    iptc.ExecuteCommand("ip6tables " + rule);
+                    var rules = iptc.GetRules("test3");
+                    Assert.AreEqual(2, rules.Count);
+                    Assert.AreEqual(rule, iptc.GetRuleString("test3", rules[1]));
                 }
                 Assert.AreEqual(0, IptcInterface.RefCount);
             }
@@ -120,7 +162,7 @@ namespace IPTables.Net.Tests
             if (IsLinux)
             {
                 Assert.AreEqual(0, IptcInterface.RefCount);
-                using (IptcInterface iptc = new IptcInterface("filter", 6))
+                using (IptcInterface iptc = new IptcInterface("filter", _ipVersion))
                 {
 
                     var chains = iptc.GetChains();
@@ -136,7 +178,7 @@ namespace IPTables.Net.Tests
             if (IsLinux)
             {
                 Assert.AreEqual(0, IptcInterface.RefCount);
-                using (IptcInterface iptc = new IptcInterface("mangle", 6))
+                using (IptcInterface iptc = new IptcInterface("mangle", _ipVersion))
                 {
 
                     var chains = iptc.GetChains();

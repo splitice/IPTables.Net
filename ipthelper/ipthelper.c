@@ -728,7 +728,7 @@ extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, cons
 	#endif
 
 		/* Print targinfo part */
-		t = ip6t_get_target((struct ipt_entry *)e);
+		t = ip6t_get_target((struct ip6t_entry *)e);
 		if (t->u.user.name[0]) {
 			const struct xtables_target *target =
 				xtables_find_target(t->u.user.name, XTF_TRY_LOAD);

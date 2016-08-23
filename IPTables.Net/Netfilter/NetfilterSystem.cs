@@ -34,7 +34,7 @@ namespace IPTables.Net.Netfilter
 
         public INetfilterAdapterClient GetTableAdapter(int version)
         {
-            return _tableAdapter.GetClient(this, 4);
+            return _tableAdapter.GetClient(this, version);
         }
 
         public IpSetBinaryAdapter SetAdapter
@@ -42,19 +42,19 @@ namespace IPTables.Net.Netfilter
             get { return _setAdapter; }
         }
 
-        public INetfilterChainSet GetRules(INetfilterAdapterClient client, string table, int ipVersion)
+        public INetfilterChainSet GetRules(INetfilterAdapterClient client, string table)
         {
             return client.ListRules(table);
         }
 
-        public IEnumerable<INetfilterRule> GetRules(INetfilterAdapterClient client, string table, string chain, int ipVersion)
+        public IEnumerable<INetfilterRule> GetRules(INetfilterAdapterClient client, string table, string chain)
         {
-            return GetChain(client, table, chain, ipVersion).Rules;
+            return GetChain(client, table, chain).Rules;
         }
 
-        public IEnumerable<INetfilterChain> GetChains(INetfilterAdapterClient client, string table, int ipVersion)
+        public IEnumerable<INetfilterChain> GetChains(INetfilterAdapterClient client, string table)
         {
-            return GetRules(client, table, ipVersion).Chains;
+            return GetRules(client, table).Chains;
         }
 
 
@@ -62,7 +62,7 @@ namespace IPTables.Net.Netfilter
         {
             using (var client = GetTableAdapter(ipVersion))
             {
-                return GetRules(client, table, ipVersion);
+                return GetRules(client, table);
             }
         }
 
@@ -70,7 +70,7 @@ namespace IPTables.Net.Netfilter
         {
             using (var client = GetTableAdapter(ipVersion))
             {
-                return GetRules(client, table, chain, ipVersion);
+                return GetRules(client, table, chain);
             }
         }
 
@@ -78,7 +78,7 @@ namespace IPTables.Net.Netfilter
         {
             using (var client = GetTableAdapter(ipVersion))
             {
-                return GetChains(client, table, ipVersion);
+                return GetChains(client, table);
             }
         }
 
@@ -87,13 +87,13 @@ namespace IPTables.Net.Netfilter
         {
             using (var client = GetTableAdapter(ipVersion))
             {
-                return GetChain(client, table, chain, ipVersion);
+                return GetChain(client, table, chain);
             }
         }
 
-        public INetfilterChain GetChain(INetfilterAdapterClient client, string table, string chain, int ipVersion)
+        public INetfilterChain GetChain(INetfilterAdapterClient client, string table, string chain)
         {
-            INetfilterChainSet tableRules = GetRules(client, table, ipVersion);
+            INetfilterChainSet tableRules = GetRules(client, table);
             if (tableRules == null)
             {
                 throw new IpTablesNetException("Unable to get a chainset for table: "+table);

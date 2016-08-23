@@ -193,9 +193,11 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
             foreach (String chain in ipc.GetChains())
             {
-                chains.AddChain(chain, table, _system);
+                var newChain = chains.AddChain(chain, table, _system);
+                Debug.Assert(newChain.IpVersion == _ipVersion);
             }
 
+            Debug.Assert(_ipVersion == chains.IpVersion);
             foreach (var chain in chains)
             {
                 foreach (var ipc_rule in ipc.GetRules(chain.Name))
@@ -205,7 +207,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                     {
                         throw new IpTablesNetException("Unable to get string version of rule");
                     }
-                    chains.AddRule(IpTablesRule.Parse(rule, _system, chains, 4, table));
+                    chains.AddRule(IpTablesRule.Parse(rule, _system, chains, _ipVersion, table));
                 }
             }   
 

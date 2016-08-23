@@ -58,13 +58,13 @@
     <Compile Include="CheckVersion.cs" />
     <Compile Include="CheckInternalTables.cs" />
     <Compile Include="EscapeHelperTests.cs" />
-    <Compile Include="IptablesLibraryTestV6.cs" />
+    <Compile Include="IptablesLibraryTest.cs" />
     <Compile Include="IpUtilsRuleTests.cs" />
     <Compile Include="IpSetSyncTests.cs" />
     <Compile Include="IpSetParseTest.cs" />
     <Compile Include="IpTablesComparisonTests.cs" />
     <Compile Include="ConntrackLibraryTests.cs" />
-    <Compile Include="IptablesLibraryTestV4.cs" />
+    <Compile Include="IptcInterfaceTest.cs" />
     <Compile Include="IpTablesRestoreSyncTests.cs" />
     <Compile Include="IpTablesRuleSetTests.cs" />
     <Compile Include="IpTablesSaveReadingTests.cs" />

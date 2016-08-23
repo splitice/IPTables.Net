@@ -11,6 +11,7 @@ namespace IPTables.Net.Netfilter
 
         String Table { get; }
 
+        int IpVersion { get; }
         IEnumerable<INetfilterRule> Rules { get; }
 
         void AddRule(INetfilterRule rule);
