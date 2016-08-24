@@ -1,0 +1,9 @@
+dpkg-source --commit
+then modify
+
+or 
+
+add patch in debian/patches and add to series
+
+to build:
+dpkg-buildpackage -b -uc

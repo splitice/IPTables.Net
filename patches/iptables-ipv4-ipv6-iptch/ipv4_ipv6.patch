@@ -1,0 +1,85 @@
+Description: IPv6 & IPv6 registration support
+ .
+ iptables (1.6.0-3) unstable; urgency=medium
+ .
+   * several changes in this release. To put it short: split packages into
+     libiptc, libip4tc, lipip6tc and libxtables-dev, so we no longer require
+     the old iptables-dev binary package.
+     .
+     Also, give to all binary packages Multi-Arch support.
+     .
+     Another important thing: move libs from /lib to /usr/lib
+     .
+     Now follows almost all the commits:
+     .
+   [ Arturo Borrero Gonzalez ]
+   * [2a142cc] libxtables11: Section is libs instead of net (Closes:
+     #812973)
+   * [637406a] iptables: make it Multi-Arch: foreign (Closes: #776041)
+   * [4486e87] iptables,iptables-nftables-compat: Suggests kmod (Closes:
+     #623865)
+   * [e687ad9] manpages: fix typo in manpages (ip6tables-resotre) (Closes:
+     #793299)
+   * [4b6ae2e] manpages: add xtables-compat.8
+   * [1777193] d/control: bump standars to 3.9.7
+   * [bf21537] d/rules: disable libipq
+   * [9658f74] debian/: finish Multi-Arch support and migrate from /lib to
+     /usr/lib
+   * [1187751] d/rules: drop override_dh_shlibdeps
+   * [246d62f] d/: package split: libiptc and libiptc-dev
+   * [56803ca] d/iptables-dev.install: don't ship ip_qeue include
+   * [a837415] d/: create libxtables-dev binary package (replacing
+     iptables-dev)
+   * [ceda689] d/control: bump replaces, breaks and conflicts
+   * [2436692] d/control: create iptables-dev as a transitional dummy package
+   * [df1759c] d/control: relax Replaces & Breaks from lib packages to iptables
+   * [35d0fa9] d/control: libxtables11 is also of Multi-Arch: same
+   * [d17226d] d/control: library binary packages are of priority optional
+   * [80ee5d2] d/control: iptables-dev doesn't require to Depends on lib packages
+   * [2200348] d/: wrap-and-sort
+ .
+   [ Michael Biebl ]
+   * [47e0872] d/: complete libiptc packages split
+Author: Arturo Borrero Gonzalez <arturo.borrero.glez@gmail.com>
+Bug-Debian: https://bugs.debian.org/623865
+Bug-Debian: https://bugs.debian.org/776041
+Bug-Debian: https://bugs.debian.org/793299
+Bug-Debian: https://bugs.debian.org/812973
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: https://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- iptables-1.6.0.orig/libxtables/xtables.c
++++ iptables-1.6.0/libxtables/xtables.c
+@@ -878,8 +878,8 @@ void xtables_register_match(struct xtabl
+ 		xtables_check_options(me->name, me->extra_opts);
+ 
+ 	/* ignore not interested match */
+-	if (me->family != afinfo->family && me->family != AF_UNSPEC)
+-		return;
++	//if (me->family != afinfo->family && me->family != AF_UNSPEC)
++	//	return;
+ 
+ 	/* place on linked list of matches pending full registration */
+ 	me->next = xtables_pending_matches;
+@@ -1036,8 +1036,8 @@ void xtables_register_target(struct xtab
+ 		xtables_check_options(me->name, me->extra_opts);
+ 
+ 	/* ignore not interested target */
+-	if (me->family != afinfo->family && me->family != AF_UNSPEC)
+-		return;
++	//if (me->family != afinfo->family && me->family != AF_UNSPEC)
++	//	return;
+ 
+ 	/* place on linked list of targets pending full registration */
+ 	me->next = xtables_pending_targets;
