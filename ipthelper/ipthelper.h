@@ -30,6 +30,7 @@ extern "C" {
 	extern EXPORT void* init_handle6(const char* table);
 	extern EXPORT char* ipth_bpf_compile(const char* dltname, const char* program, int length);
 	extern EXPORT void ipth_free(void* ptr);
+	extern EXPORT void* set_modprobe(const char* program);
 #ifdef __cplusplus
 }
 #endif

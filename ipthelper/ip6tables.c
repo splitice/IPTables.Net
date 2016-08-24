@@ -1424,6 +1424,12 @@ static void command_match(struct iptables_command_state *cs)
 			"unexpected ! flag before --match");
 
 	m = xtables_find_match(optarg, XTF_LOAD_MUST_SUCCEED, &cs->matches);
+	if (m == NULL) {
+		xtables_error(PARAMETER_PROBLEM,
+			"unable to load match module %s",
+			optarg);
+		return;
+	}
 	size = XT_ALIGN(sizeof(struct xt_entry_match)) + m->size;
 	m->m = xtables_calloc(1, size);
 	m->m->u.match_size = size;
@@ -1462,6 +1468,10 @@ static void command_match(struct iptables_command_state *cs)
 			&m->option_offset);
 }
 
+
+EXPORT void* set_modprobe(const char* program) {
+	xtables_modprobe_program = program;
+}
 
 EXPORT void* init_handle6(const char* table){
 	const char* err;
