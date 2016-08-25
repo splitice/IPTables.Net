@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Net;
+using System.Net.Sockets;
+using System.Text.RegularExpressions;
 using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
     public struct IPPortOrRange
     {
+        private static Regex ParsePattern = new Regex(@"(?:(?:\[(?<ip1_1>[0-9a-fA-f\:]+)\]-)?\[(?<ip2_1>[0-9a-fA-f\:]+)\](?::(?<port_1>[0-9\-]+))?)|(?:(?:(?<ip1_2>[0-9\.]+)-)?(?<ip2_2>[0-9\.]+)(?::(?<port_2>[0-9\-]+))?)|(?:(?:(?<ip1_3>[0-9a-fA-f\:]+)-)?(?<ip2_3>[0-9a-fA-f\:]+))");
         private readonly IPAddress _lowerAddress;
         private readonly IPAddress _upperAddress;
         private PortOrRange _port;
@@ -75,37 +78,55 @@ namespace IPTables.Net.Iptables.DataTypes
 
             if (strPort.Length == 0)
             {
-                return String.Format("{0}-{1}", LowerAddress, UpperAddress);
+                return String.Format("{0}-{1}", FormatIp(LowerAddress), FormatIp(UpperAddress));
             }
-            return String.Format("{0}-{1}:{2}", LowerAddress, UpperAddress, strPort);
+            return String.Format("{0}-{1}:{2}", FormatIp(LowerAddress), FormatIp(UpperAddress), strPort);
         }
 
-        public static IPPortOrRange Parse(string getNextArg, char splitChar = ':')
+        private string FormatIp(IPAddress ip)
         {
-            string[] split = getNextArg.Split(new[] {splitChar});
-            if (split.Length == 0)
+            if (ip.AddressFamily == AddressFamily.InterNetworkV6)
             {
-                throw new IpTablesNetException("Error");
+                return "["+ip+"]";
+            }
+            return ip.ToString();
+        }
+
+        public static IPPortOrRange Parse(string getNextArg)
+        {
+            var match = ParsePattern.Match(getNextArg);
+
+            if (!match.Success)
+            {
+                throw new ArgumentException("Invalid IP port or range format");
             }
 
-            string[] splitIp = split[0].Split(new[] {'-'});
+            IPAddress lowerIp = null;
+            IPAddress upperIp = null;
+            String port = null;
 
-            IPAddress lowerIp = IPAddress.Parse(splitIp[0]);
-            IPAddress upperIp;
-            if (splitIp.Length == 1)
+            foreach (Group g in match.Groups)
             {
-                upperIp = lowerIp;
-            }
-            else
-            {
-                upperIp = IPAddress.Parse(splitIp[1]);
+                var name = ParsePattern.GroupNameFromNumber(g.Index);
+                if (name == "ip1_1" || name == "ip1_2" || name == "ip1_3")
+                {
+                    lowerIp = IPAddress.Parse(g.Value);
+                }
+                if (name == "ip2_1" || name == "ip2_2" || name == "ip2_3")
+                {
+                    upperIp = IPAddress.Parse(g.Value);
+                }
+                if (name == "port_1" || name == "port_2" || name == "port_3")
+                {
+                    port = g.Value;
+                }
             }
 
-            if (split.Length == 1)
+            if (port == null)
             {
                 return new IPPortOrRange(lowerIp, upperIp);
             }
-            return new IPPortOrRange(lowerIp, upperIp, PortOrRange.Parse(split[1], '-'));
+            return new IPPortOrRange(lowerIp, upperIp, PortOrRange.Parse(port, '-'));
         }
     }
 }
