@@ -105,21 +105,29 @@ namespace IPTables.Net.Iptables.DataTypes
             IPAddress upperIp = null;
             String port = null;
 
-            foreach (Group g in match.Groups)
+            for (int i = 0; i<match.Groups.Count; i++)
             {
-                var name = ParsePattern.GroupNameFromNumber(g.Index);
+                var g = match.Groups[i];
+                if (g.Value == "") continue;
+
+                var name = ParsePattern.GroupNameFromNumber(i);
                 if (name == "ip1_1" || name == "ip1_2" || name == "ip1_3")
                 {
                     lowerIp = IPAddress.Parse(g.Value);
                 }
-                if (name == "ip2_1" || name == "ip2_2" || name == "ip2_3")
+                else if (name == "ip2_1" || name == "ip2_2" || name == "ip2_3")
                 {
                     upperIp = IPAddress.Parse(g.Value);
                 }
-                if (name == "port_1" || name == "port_2" || name == "port_3")
+                else if (name == "port_1" || name == "port_2" || name == "port_3")
                 {
                     port = g.Value;
                 }
+            }
+
+            if (lowerIp == null)
+            {
+                lowerIp = upperIp;
             }
 
             if (port == null)
