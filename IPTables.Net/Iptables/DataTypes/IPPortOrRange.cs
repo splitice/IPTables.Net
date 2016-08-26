@@ -8,7 +8,7 @@ namespace IPTables.Net.Iptables.DataTypes
 {
     public struct IPPortOrRange
     {
-        private static Regex ParsePattern = new Regex(@"(?:(?:\[(?<ip1_1>[0-9a-fA-f\:]+)\]-)?\[(?<ip2_1>[0-9a-fA-f\:]+)\](?::(?<port_1>[0-9\-]+))?)|(?:(?:(?<ip1_2>[0-9\.]+)-)?(?<ip2_2>[0-9\.]+)(?::(?<port_2>[0-9\-]+))?)|(?:(?:(?<ip1_3>[0-9a-fA-f\:]+)-)?(?<ip2_3>[0-9a-fA-f\:]+))");
+        private static Regex ParsePattern = new Regex(@"^(?:(?:(?:\[(?<ip1_1>[0-9a-fA-f\:]+)\]-)?\[(?<ip2_1>[0-9a-fA-f\:]+)\](?::(?<port_1>[0-9\-]+))?)|(?:(?:(?<ip1_2>[0-9\.]+)-)?(?<ip2_2>[0-9\.]+)(?::(?<port_2>[0-9\-]+))?)|(?:(?:(?<ip1_3>[0-9a-fA-f\:]+)-)?(?<ip2_3>[0-9a-fA-f\:]+)))$");
         private readonly IPAddress _lowerAddress;
         private readonly IPAddress _upperAddress;
         private PortOrRange _port;
@@ -73,7 +73,7 @@ namespace IPTables.Net.Iptables.DataTypes
                 {
                     return LowerAddress.ToString();
                 }
-                return LowerAddress + ":" + PortStringRepresentation();
+                return FormatIp(LowerAddress) + ":" + PortStringRepresentation();
             }
 
             if (strPort.Length == 0)
