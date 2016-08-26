@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Sockets;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Supporting;
-using LukeSkywalker.IPNetwork;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
@@ -28,7 +27,7 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public IPNetwork GetIPNetwork()
         {
-            return IPNetwork.Parse(Address, IPNetwork.ToNetmask((byte)Cidr));
+            return IPNetwork.Parse(Address, IPNetwork.ToNetmask((byte)Cidr, Address.AddressFamily));
         }
 
         public bool Equals(IpCidr other)
