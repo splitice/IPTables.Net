@@ -53,6 +53,11 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                     case "ip":
                     case "net":
                         entry.Cidr = IpCidr.Parse(optionComponents[i]);
+                        var network = entry.Cidr.GetIPNetwork();
+                        if (!Equals(network.Network, entry.Cidr.Address))
+                        {
+                            entry.Cidr = new IpCidr(network.Network, entry.Cidr.Cidr);
+                        }
                         break;
                     case "port":
                         var s = optionComponents[i].Split(':');
