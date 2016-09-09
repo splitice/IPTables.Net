@@ -73,7 +73,7 @@ namespace IPTables.Net.Iptables.IpSet
         public String GetKeyCommand()
         {
             List<String> parts = new List<string>();
-            if (_cidr.Cidr != 0)
+            if (_cidr.Prefix != 0)
             {
                 parts.Add(_cidr.ToString());
             }

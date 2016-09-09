@@ -56,7 +56,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                         var network = entry.Cidr.GetIPNetwork();
                         if (!Equals(network.Network, entry.Cidr.Address))
                         {
-                            entry.Cidr = new IpCidr(network.Network, entry.Cidr.Cidr);
+                            entry.Cidr = new IpCidr(network.Network, entry.Cidr.Prefix);
                         }
                         break;
                     case "port":

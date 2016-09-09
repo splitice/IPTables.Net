@@ -11,28 +11,28 @@ namespace IPTables.Net.Iptables.DataTypes
         public static IpCidr Any = new IpCidr(IPAddress.Any, 0);
 
         public IPAddress Address;
-        public uint Cidr;
+        public uint Prefix;
 
-        public IpCidr(IPAddress address, uint cidr)
+        public IpCidr(IPAddress address, uint prefix)
         {
             Address = address;
-            Cidr = cidr;
+            Prefix = prefix;
         }
 
         public IpCidr(IPAddress address)
         {
             Address = address;
-            Cidr = (address.AddressFamily == AddressFamily.InterNetworkV6) ? (uint)128 : 32;
+            Prefix = (address.AddressFamily == AddressFamily.InterNetworkV6) ? (uint)128 : 32;
         }
 
         public IPNetwork GetIPNetwork()
         {
-            return IPNetwork.Parse(Address, IPNetwork.ToNetmask((byte)Cidr, Address.AddressFamily));
+            return IPNetwork.Parse(Address, IPNetwork.ToNetmask((byte)Prefix, Address.AddressFamily));
         }
 
         public bool Equals(IpCidr other)
         {
-            return other.Address.Equals(Address) && other.Cidr == Cidr;
+            return other.Address.Equals(Address) && other.Prefix == Prefix;
         }
 
         public static IpCidr Parse(String cidr)
@@ -95,11 +95,11 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public override string ToString()
         {
-            if ((Cidr == 32 && Address.AddressFamily == AddressFamily.InterNetwork) || Cidr == 128)
+            if ((Prefix == 32 && Address.AddressFamily == AddressFamily.InterNetwork) || Prefix == 128)
             {
                 return Address.ToString();
             }
-            return Address + "/" + Cidr;
+            return Address + "/" + Prefix;
         }
 
         public bool Contains(IpCidr cidr)
