@@ -20,7 +20,10 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         private const String OptionHashLimitHtableSize = "--hashlimit-htable-size";
         private const String OptionHashLimitHtableMax = "--hashlimit-htable-max";
         private const String OptionHashLimitHtableExpire = "--hashlimit-htable-expire";
-        private const String OptionHashLimitHtableGcInterval = "--hashlimit-htable-gcinterval"; 
+        private const String OptionHashLimitHtableGcInterval = "--hashlimit-htable-gcinterval";
+
+        private const int DefaultMaskIpv4 = 32;
+        private const int DefaultMaskIpv6 = 128;
 
         public int Burst = 5;
 
@@ -29,8 +32,8 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         public LimitUnit Unit = LimitUnit.Hour;
         public HashLimitMode LimitMode = HashLimitMode.Upto;
         public String Mode = "";
-        public int SrcMask = 32;
-        public int DstMask = 32;
+        public int SrcMask;
+        public int DstMask;
         public int HtableSize = 65000;
         public int HtableMax = 30000;
         public int HtableExpire = 10000;
@@ -38,6 +41,16 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
 
         public HashLimitModule(int version) : base(version)
         {
+            if (version == 4)
+            {
+                SrcMask = DefaultMaskIpv4;
+                DstMask = DefaultMaskIpv4;
+            }
+            else if (version == 6)
+            {
+                SrcMask = DefaultMaskIpv6;
+                DstMask = DefaultMaskIpv6;
+            }
         }
 
         public bool Equals(HashLimitModule other)
