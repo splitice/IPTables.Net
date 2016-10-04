@@ -34,15 +34,17 @@ namespace IPTables.Net.Conntrack
             }
         }
 
-        public bool ExtractField<T>(ConntrackQueryFilter[] qf, byte[] conn, out T ret) where T:struct
+        public bool ExtractField<T>(ConntrackQueryFilter[] qf, byte[] conn, out T output) where T:struct
         {
-            ret = new T();
+            var r = new T();
             var size = Marshal.SizeOf(typeof(T));
-            GCHandle handle = GCHandle.Alloc(ret, GCHandleType.Pinned);
+            GCHandle handle = GCHandle.Alloc(r, GCHandleType.Pinned);
 
             try
             {
-                return ConntrackHelper.cr_extract_field(qf, qf.Length, conn, handle.AddrOfPinnedObject(), size);
+                var ret = ConntrackHelper.cr_extract_field(qf, qf.Length, conn, handle.AddrOfPinnedObject(), size);
+                output = r;
+                return ret;
             }
             finally
             {
