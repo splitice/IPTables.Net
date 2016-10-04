@@ -370,11 +370,14 @@ bool cr_extract_field(cr_filter* filter,
 		
 		if (f->max != 0)
 		{
-			tb_buf = malloc(sizeof(struct nlattr *) * (f->max + 1));
+			if (tb_cur[f->key] == NULL){
+				return false;
+			}
+			tb_buf = (struct nlattr **)malloc(sizeof(struct nlattr *) * (f->max + 1));
 			err = nla_parse_nested(tb_buf, f->max, tb_cur[f->key], NULL);
 			if (err < 0)
 			{
-				return true;//error
+				return false;//error
 			}
 			
 			if (tb_cur != tb){
