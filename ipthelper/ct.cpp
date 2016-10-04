@@ -284,7 +284,7 @@ bool conditional_filter(struct nlmsghdr *nlh)
 	struct nlattr *tb[CTA_MAX + 1];
 	
 	//Pointer to the current tb being queried
-	struct nlattr ** tb_cur;
+	struct nlattr ** tb_cur = tb;
 	int err;
 	char* data;
 	bool ret = true;
@@ -294,8 +294,8 @@ bool conditional_filter(struct nlmsghdr *nlh)
 		goto out;
 	
 	//printf("root: %d\n", CTA_MAX + 1);
+
 	
-	tb_cur = tb;
 	for (int i = 0; i < filter_len; i++)
 	{
 		cr_filter* f = &filter[i];
@@ -346,8 +346,11 @@ bool cr_extract_field(cr_filter* filter,
 	struct nfgenmsg *msg;
 	msg = (nfgenmsg *)NLMSG_DATA(nlh);
 	
+
 	//Root data storage
 	struct nlattr *tb[CTA_MAX + 1];
+	struct nlattr ** tb_buf;			
+		
 	
 	//Pointer to the current tb being queried
 	struct nlattr ** tb_cur;
@@ -365,22 +368,19 @@ bool cr_extract_field(cr_filter* filter,
 	{
 		cr_filter* f = &filter[i];
 		
-		if (f->key == CTA_UNSPEC)
+		if (f->max != 0)
 		{
-			assert(i != 0);
-			//printf("&&\n");
-			// &&
-			tb_cur = tb;
-		}
-		else if (f->max != 0)
-		{
-			err = nla_parse_nested((struct nlattr **)f->internal, f->max, tb_cur[f->key], NULL);
+			tb_buf = malloc(sizeof(struct nlattr *) * (f->max + 1));
+			err = nla_parse_nested(tb_buf, f->max, tb_cur[f->key], NULL);
 			if (err < 0)
 			{
 				return true;//error
 			}
 			
-			tb_cur = (nlattr **)f->internal;
+			if (tb_cur != tb){
+				free(tb_cur);
+			}
+			tb_cur = (nlattr **)tb_cur;
 		}
 		else
 		{
