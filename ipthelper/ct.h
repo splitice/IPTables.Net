@@ -35,6 +35,7 @@ extern "C"
 	int restore_nf_cts(bool expectation, char* data, int data_len);
 	void cr_free(struct cr_img* img);
 	int cr_length(struct cr_node* node);
+	void cr_output(struct cr_node* node);
 	int cr_constant(const char* key);
 	bool cr_extract_field(struct cr_filter* filter,
 		int filter_len,

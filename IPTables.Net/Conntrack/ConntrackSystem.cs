@@ -36,19 +36,18 @@ namespace IPTables.Net.Conntrack
 
         public bool ExtractField<T>(ConntrackQueryFilter[] qf, byte[] conn, out T output) where T:struct
         {
-            var r = new T();
             var size = Marshal.SizeOf(typeof(T));
-            GCHandle handle = GCHandle.Alloc(r, GCHandleType.Pinned);
+            var handle = Marshal.AllocHGlobal(size);
 
             try
             {
-                var ret = ConntrackHelper.cr_extract_field(qf, qf.Length, conn, handle.AddrOfPinnedObject(), size);
-                output = r;
+                var ret = ConntrackHelper.cr_extract_field(qf, qf.Length, conn, handle, size);
+                output = (T)Marshal.PtrToStructure(handle, typeof(T));
                 return ret;
             }
             finally
             {
-                handle.Free();
+                Marshal.FreeHGlobal(handle);
             }
         }
 
@@ -91,7 +90,9 @@ namespace IPTables.Net.Conntrack
                     byte[] buffer = new byte[1];
                     ConntrackHelper.CrImg img = new ConntrackHelper.CrImg();
                     Debug.Assert(img.CrNode == IntPtr.Zero);
+
                     ConntrackHelper.dump_nf_cts(expectationTable, ref img);
+
                     try
                     {
                         IntPtr ptr = img.CrNode;
@@ -99,13 +100,17 @@ namespace IPTables.Net.Conntrack
                         {
                             int crsize = ConntrackHelper.cr_length(ptr);
                             IntPtr newPtr = Marshal.ReadIntPtr(ptr);
+                            
                             crsize -= IntPtr.Size;
+                            Debug.Assert(crsize > 0);
                             if (buffer.Length != crsize)
                             {
                                 buffer = new byte[crsize];
                             }
+                            
                             Marshal.Copy(new IntPtr((long) ptr + IntPtr.Size), buffer, 0, crsize);
                             cb(buffer);
+                            
                             ptr = newPtr;
                         }
                     }

@@ -611,3 +611,14 @@ int cr_length(cr_node* node)
 	struct nlmsghdr *hdr = (struct nlmsghdr *)node->data;	
 	return hdr->nlmsg_len + sizeof(cr_node*);
 }
+
+void cr_output(struct cr_node* node)
+{
+	struct nlmsghdr *hdr = (struct nlmsghdr *)node->data;	
+	unsigned char* msg = (unsigned char*)hdr;
+	
+	for (int i = 0; i < hdr->nlmsg_len; i++) {
+		printf("%02x", hdr[i]);
+	}
+	puts("");
+}
