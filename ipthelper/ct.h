@@ -36,6 +36,11 @@ extern "C"
 	void cr_free(struct cr_img* img);
 	int cr_length(struct cr_node* node);
 	int cr_constant(const char* key);
+	bool cr_extract_field(cr_filter* filter,
+		int filter_len,
+		struct nlmsghdr *nlh,
+		void* output,
+		int output_len);
 	
 	void conditional_free();
 	void conditional_init(int address_family, struct cr_filter* filters, int filters_len);
