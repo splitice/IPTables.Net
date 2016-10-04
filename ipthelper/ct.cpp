@@ -367,32 +367,40 @@ bool cr_extract_field(cr_filter* filter,
 		if (f->max != 0)
 		{
 			if (tb_cur[f->key] == NULL){
-				return false;
+				goto free_err;
 			}
 			tb_buf = (struct nlattr **)malloc(sizeof(struct nlattr *) * (f->max + 1));
 			err = nla_parse_nested(tb_buf, f->max, tb_cur[f->key], NULL);
 			if (err < 0)
 			{
-				return false;//error
+				goto free_err;
 			}
 			
 			if (tb_cur != tb){
 				free(tb_cur);
 			}
-			tb_cur = (nlattr **)tb_buf;
+			tb_cur = tb_buf;
 		}
 		else
 		{
 			//printf("compare len: %d\n", f->compare_len);
 			data = (char *)nla_data(tb_cur[f->key]);
 			if (data == NULL){
-				return false;
+				goto free_err;
 			}
 			memcpy(output, data, output_len);
+			if (tb_cur != tb){
+				free(tb_cur);
+			}
 			return true;
 		}
 	}
-	
+free_err:
+
+	if (tb_cur != tb){
+		free(tb_cur);
+	}
+
 	return false;
 }
 
