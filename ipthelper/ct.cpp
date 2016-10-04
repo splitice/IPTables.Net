@@ -351,9 +351,8 @@ bool cr_extract_field(cr_filter* filter,
 	struct nlattr *tb[CTA_MAX + 1];
 	struct nlattr ** tb_buf;			
 		
-	
 	//Pointer to the current tb being queried
-	struct nlattr ** tb_cur;
+	struct nlattr ** tb_cur = tb;
 	int err;
 	char* data;
 	
@@ -361,9 +360,6 @@ bool cr_extract_field(cr_filter* filter,
 	if (err < 0)
 		return false;
 	
-	//printf("root: %d\n", CTA_MAX + 1);
-	
-	tb_cur = tb;
 	for (int i = 0; i < filter_len; i++)
 	{
 		cr_filter* f = &filter[i];
