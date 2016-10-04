@@ -34,20 +34,22 @@ namespace IPTables.Net.Conntrack
             }
         }
 
-        public T ExtractField<T>(ConntrackQueryFilter[] qf, byte[] conn)
+        public T ExtractField<T>(ConntrackQueryFilter[] qf, byte[] conn) where T:struct
         {
+            var ret = new T();
             var size = Marshal.SizeOf(typeof(T));
-            var buffer = new byte[size];
-            ConntrackHelper.cr_extract_field(qf, qf.Length, conn, buffer, size);
+            GCHandle handle = GCHandle.Alloc(ret, GCHandleType.Pinned);
 
-            if (typeof (T) == typeof (char))
+            try
             {
-                return (T)(object)BitConverter.ToChar(buffer, 0);
+                ConntrackHelper.cr_extract_field(qf, qf.Length, conn, handle.AddrOfPinnedObject(), size);
             }
-            else
+            finally
             {
-                throw new InvalidCastException("Unable to cast");
+                handle.Free();
             }
+
+            return ret;
         }
 
         /// <summary>
