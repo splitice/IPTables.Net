@@ -43,6 +43,6 @@ namespace IPTables.Net.Conntrack
         public static extern int conditional_init(Int32 address_family, [In] ConntrackQueryFilter[] qf, int qfLength);
 
         [DllImport(Helper)]
-        public static extern int cr_extract_field([In] ConntrackQueryFilter[] qf, int qfLength, byte[] data, IntPtr output, int outputLen);
+        public static extern bool cr_extract_field([In] ConntrackQueryFilter[] qf, int qfLength, byte[] data, IntPtr output, int outputLen);
     }
 }
