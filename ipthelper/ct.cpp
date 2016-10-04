@@ -389,7 +389,9 @@ bool cr_extract_field(cr_filter* filter,
 		{
 			//printf("compare len: %d\n", f->compare_len);
 			data = (char *)nla_data(tb_cur[f->key]);
-			
+			if (data == NULL){
+				return false;
+			}
 			memcpy(output, data, output_len);
 			return true;
 		}
