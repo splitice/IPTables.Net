@@ -383,7 +383,7 @@ bool cr_extract_field(cr_filter* filter,
 			if (tb_cur != tb){
 				free(tb_cur);
 			}
-			tb_cur = (nlattr **)tb_cur;
+			tb_cur = (nlattr **)tb_buf;
 		}
 		else
 		{
