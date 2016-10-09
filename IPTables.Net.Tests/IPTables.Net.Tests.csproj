@@ -86,6 +86,7 @@
     <Compile Include="SingleLengthRuleParseTests.cs" />
     <Compile Include="SingleHashlimitRuleParseTests.cs" />
     <Compile Include="IPTablesRuleTests.cs" />
+    <Compile Include="SingleNfacctRuleParseTests.cs" />
     <Compile Include="SingleSynProxyRuleParseTests.cs" />
     <Compile Include="SingleNqueueRuleParseTests.cs" />
     <Compile Include="SingleNflogRuleParseTests.cs" />
