@@ -21,5 +21,7 @@ namespace IPTables.Net.Netfilter
         PacketCounters Counters { get; }
 
         INetfilterChain Chain { get; }
+
+        bool DebugEquals(INetfilterRule rule, bool debug);
     }
 }

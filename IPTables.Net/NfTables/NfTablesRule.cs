@@ -63,6 +63,11 @@ namespace IPTables.Net.NfTables
             get { return _chain; }
         }
 
+        public bool DebugEquals(INetfilterRule rule, bool debug)
+        {
+            throw new NotImplementedException();
+        }
+
         public String Table
         {
             get { return _chain.Table; }

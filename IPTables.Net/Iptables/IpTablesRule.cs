@@ -131,15 +131,34 @@ namespace IPTables.Net.Iptables
         /// </summary>
         /// <param name="rule"></param>
         /// <returns></returns>
-        public bool Equals(IpTablesRule rule)
+        public bool DebugEquals(IpTablesRule rule, bool debug)
         {
             if (!Chain.Equals(rule.Chain))
             {
                 return false;
             }
-            return _moduleData.DictionaryEqual(rule.ModuleDataInternal);
+            var diff = _moduleData.DictionaryDiffering(rule.ModuleDataInternal);
+            if (debug)
+            {
+                Console.WriteLine("1: {0}\r\n2: {1}\r\nDifference: {2}", GetActionCommand(), rule.GetActionCommand(), diff);
+            }
+            return diff == default(string);
         }
 
+        public bool DebugEquals(INetfilterRule obj, bool debug)
+        {
+            if (obj is IpTablesRule)
+            {
+                return DebugEquals(obj as IpTablesRule, debug);
+            }
+            return Equals(obj);
+        }
+
+
+        public bool Equals(IpTablesRule other)
+        {
+            return DebugEquals(other, false);
+        }
 
         public override bool Equals(object obj)
         {

@@ -25,6 +25,7 @@ namespace IPTables.Net.Netfilter.TableSync
         }
 
         private Func<T, T, bool> _ruleComparerForUpdate;
+        private bool _debug;
 
         public Func<T, T, bool> RuleComparerForUpdate
         {
@@ -42,10 +43,11 @@ namespace IPTables.Net.Netfilter.TableSync
             }
         }
 
-        public DefaultNetfilterSync(Func<T, T, bool> ruleComparerForUpdate, Func<T, bool> shouldDelete = null)
+        public DefaultNetfilterSync(Func<T, T, bool> ruleComparerForUpdate, Func<T, bool> shouldDelete = null, bool debug = true)
         {
             ShouldDelete = shouldDelete;
             RuleComparerForUpdate = ruleComparerForUpdate;
+            _debug = debug;
         } 
 
         public void SyncChainRules(INetfilterAdapterClient client, IEnumerable<T> with, IEnumerable<T> currentRules)
@@ -69,7 +71,17 @@ namespace IPTables.Net.Netfilter.TableSync
                 //Get the rule for comparison
                 T withRule = with.ElementAt(i);
 
-                if (cR.Equals(withRule))
+                bool eq;
+                if (_debug)
+                {
+                    eq = cR.DebugEquals(withRule, true);
+                }
+                else
+                {
+                    eq = cR.Equals(withRule);
+                }
+
+                if (eq)
                 {
                     //No need to make any changes
                     i++;
