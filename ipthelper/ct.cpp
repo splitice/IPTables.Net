@@ -618,7 +618,7 @@ void cr_output(struct cr_node* node)
 	unsigned char* msg = (unsigned char*)hdr;
 	
 	for (int i = 0; i < hdr->nlmsg_len; i++) {
-		printf("%02x", hdr[i]);
+		printf("%02x", msg[i]);
 	}
 	puts("");
 }
