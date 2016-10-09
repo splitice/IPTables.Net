@@ -8,6 +8,33 @@ namespace IPTables.Net.Tests
     internal class SingleMarkRuleParseTests
     {
         [Test]
+        public void MatchMarkDec()
+        {
+            String rule = "-A INPUT -p tcp -j ACCEPT -m mark --mark 13041408/0xFFFF00";
+            String ruleExpect = "-A INPUT -p tcp -j ACCEPT -m mark --mark 13041408/0xFFFF00";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
+
+            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+            Assert.AreEqual(IpTablesRule.Parse(ruleExpect, null, chains, 4), irule);
+        }
+
+        [Test]
+        public void MatchMarkHex()
+        {
+            String rule = "-A INPUT -p tcp -j ACCEPT -m mark --mark 0xc6ff00/0xFFFF00";
+            String ruleExpect = "-A INPUT -p tcp -j ACCEPT -m mark --mark 13041408/0xFFFF00";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
+
+            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+            Assert.AreEqual(IpTablesRule.Parse(ruleExpect, null, chains, 4), irule);
+        }
+
+
+        [Test]
         public void TestXmark()
         {
             String rule = "-A INPUT -p tcp -j MARK --set-xmark 0xFF";
