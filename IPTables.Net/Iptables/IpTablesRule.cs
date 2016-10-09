@@ -138,11 +138,12 @@ namespace IPTables.Net.Iptables
                 return false;
             }
             var diff = _moduleData.DictionaryDiffering(rule.ModuleDataInternal);
-            if (debug)
+            var ret = diff == default(string);
+            if (debug && !ret)
             {
                 Console.WriteLine("1: {0}\r\n2: {1}\r\nDifference: {2}", GetActionCommand(), rule.GetActionCommand(), diff);
             }
-            return diff == default(string);
+            return ret;
         }
 
         public bool DebugEquals(INetfilterRule obj, bool debug)
