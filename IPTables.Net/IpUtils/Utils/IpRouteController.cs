@@ -13,7 +13,7 @@ namespace IPTables.Net.IpUtils.Utils
 
         protected override bool IsSingle(string key)
         {
-            if (key == "onlink" || key == "pervasive" || key == "broadcast" || key == "local" || key == "unreachable") return true;
+            if (key == "onlink" || key == "pervasive" || key == "broadcast" || key == "unreachable") return true;
             return base.IsSingle(key);
         }
 

@@ -59,6 +59,7 @@
     <Compile Include="CheckInternalTables.cs" />
     <Compile Include="EscapeHelperTests.cs" />
     <Compile Include="IptablesLibraryTest.cs" />
+    <Compile Include="IpUtilsRouteTests.cs" />
     <Compile Include="IpUtilsRuleTests.cs" />
     <Compile Include="IpSetSyncTests.cs" />
     <Compile Include="IpSetParseTest.cs" />
