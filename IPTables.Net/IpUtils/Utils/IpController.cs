@@ -38,7 +38,7 @@ namespace IPTables.Net.IpUtils.Utils
             return ParseObject(str, firstKey, firstTrimChars);
         }
 
-        protected IpObject ParseObject(String str, String firstKey, char[] firstTrimChars = null)
+        protected virtual IpObject ParseObject(String str, String firstKey, char[] firstTrimChars = null)
         {
             IpObject ret = new IpObject();
             String[] strs = str.Split(new char[] {' ','\t'}, StringSplitOptions.RemoveEmptyEntries);

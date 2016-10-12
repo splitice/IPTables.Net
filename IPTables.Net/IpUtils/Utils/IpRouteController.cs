@@ -46,6 +46,16 @@ namespace IPTables.Net.IpUtils.Utils
             return r;
         }
 
+        protected override IpObject ParseObject(string str, string firstKey, char[] firstTrimChars = null)
+        {
+            String[] strs = str.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            if (strs.Length != 0 && strs[0] == "local")
+            {
+                return base.ParseObject(str, null);
+            }
+            return base.ParseObject(str, firstKey, firstTrimChars);
+        }
+
         internal override String[] ExportObject(IpObject obj)
         {
             List<String> ret = new List<string>();
