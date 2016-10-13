@@ -59,7 +59,10 @@ namespace IPTables.Net.IpUtils.Utils
         internal override String[] ExportObject(IpObject obj)
         {
             List<String> ret = new List<string>();
-            ret.Add(obj.Pairs["to"]);
+            if (obj.Pairs.ContainsKey("to"))
+            {
+                ret.Add(obj.Pairs["to"]);
+            }
             foreach (var kv in obj.Pairs)
             {
                 if(kv.Key == "to") continue;

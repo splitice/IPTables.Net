@@ -32,7 +32,7 @@ namespace IPTables.Net.Tests
             var systemFactory = new MockIptablesSystemFactory();
             var ipUtils = new IpRouteController(systemFactory);
             var one = ipUtils.ParseObjectInternal("local default dev lo  table 100  scope host", "to");
-
+            ipUtils.ExportObject(one);
         }
     }
 }
