@@ -11,10 +11,12 @@ namespace IPTables.Net.Iptables.Modules.Ct
         private const String OptionHelperLong = "--helper";
         private const String OptionCtEventsLong = "--ctevents";
         private const String OptionExpEventsLong = "--expevents";
+        private const String OptionNotrack = "--notrack";
 
-        private String Helper;
-        private List<String> CtEvents = new List<string>();
-        private List<String> ExpEvents = new List<string>(); 
+        public String Helper;
+        public List<String> CtEvents = new List<string>();
+        public List<String> ExpEvents = new List<string>(); 
+        public bool NoTrack;
 
         public CtTargetModule(int version) : base(version)
         {
@@ -24,7 +26,7 @@ namespace IPTables.Net.Iptables.Modules.Ct
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Helper == other.Helper && CtEvents.OrderBy((a) => a).SequenceEqual(other.CtEvents.OrderBy((a) => a)) && ExpEvents.OrderBy((a) => a).SequenceEqual(other.ExpEvents.OrderBy((a) => a));
+            return Helper == other.Helper && NoTrack == other.NoTrack && CtEvents.OrderBy((a) => a).SequenceEqual(other.CtEvents.OrderBy((a) => a)) && ExpEvents.OrderBy((a) => a).SequenceEqual(other.ExpEvents.OrderBy((a) => a));
         }
 
         public bool NeedsLoading
@@ -36,6 +38,9 @@ namespace IPTables.Net.Iptables.Modules.Ct
         {
             switch (parser.GetCurrentArg())
             {
+                case OptionNotrack:
+                    NoTrack = true;
+                    return 0;
                 case OptionHelperLong:
                     Helper = parser.GetNextArg();
                     return 1;
@@ -53,6 +58,11 @@ namespace IPTables.Net.Iptables.Modules.Ct
         public String GetRuleString()
         {
             var sb = new StringBuilder();
+
+            if (NoTrack)
+            {
+                sb.Append(OptionNotrack);
+            }
 
             if (Helper != null)
             {
@@ -79,6 +89,7 @@ namespace IPTables.Net.Iptables.Modules.Ct
         {
             var options = new HashSet<string>
             {
+                OptionNotrack,
                 OptionHelperLong,
                 OptionCtEventsLong,
                 OptionExpEventsLong
