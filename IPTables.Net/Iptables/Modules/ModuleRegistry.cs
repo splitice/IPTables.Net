@@ -11,6 +11,7 @@ using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Ct;
 using IPTables.Net.Iptables.Modules.Dnat;
 using IPTables.Net.Iptables.Modules.HashLimit;
+using IPTables.Net.Iptables.Modules.HashRoute;
 using IPTables.Net.Iptables.Modules.Helper;
 using IPTables.Net.Iptables.Modules.IpSet;
 using IPTables.Net.Iptables.Modules.Length;
@@ -68,6 +69,8 @@ namespace IPTables.Net.Iptables.Modules
             IpSetModule.GetModuleEntry,
             BpfModule.GetModuleEntry,
             BpfL4Module.GetModuleEntry,
+            HashRouteMatchModule.GetModuleEntry,
+            HashRouteTargetModule.GetModuleEntry,
             U32Module.GetModuleEntry
         };
 
