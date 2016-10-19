@@ -160,7 +160,7 @@ namespace IPTables.Net.Iptables.Modules.HashRoute
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("HASHROUTE", typeof (HashRouteTargetModule), GetOptions);
+            return GetTargetModuleEntryInternal("HASHROUTE", typeof(HashRouteTargetModule), GetOptions);
         }
 
         public override bool Equals(object obj)
