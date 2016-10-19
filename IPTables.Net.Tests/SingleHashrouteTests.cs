@@ -32,7 +32,7 @@ namespace IPTables.Net.Tests
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
             Assert.AreEqual(IpTablesRule.Parse(rule, null, chains, 4), IpTablesRule.Parse(rule, null, chains, 4));
-            Assert.IsFalse(IpTablesRule.Parse(rule, null, chains, 4).ToString().Contains("-m HASHROUTE"));
+            Assert.IsFalse(IpTablesRule.Parse(rule, null, chains, 4).GetCommand().Contains("-m HASHROUTE"));
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace IPTables.Net.Tests
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
             Assert.AreEqual(IpTablesRule.Parse(rule, null, chains, 4), IpTablesRule.Parse(rule2, null, chains));
-            Assert.IsFalse(IpTablesRule.Parse(rule, null, chains, 4).ToString().Contains("-m HASHROUTE"));
+            Assert.IsFalse(IpTablesRule.Parse(rule, null, chains, 4).GetCommand().Contains("-m HASHROUTE"));
         }
     }
 }

@@ -53,7 +53,7 @@ namespace IPTables.Net.Iptables.Modules.HashRoute
 
         public bool NeedsLoading
         {
-            get { return true; }
+            get { return false; }
         }
 
         public int Feed(RuleParser parser, bool not)
