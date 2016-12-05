@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Modules.Bpf;
@@ -74,6 +75,41 @@ namespace IPTables.Net.Iptables.Modules
             U32Module.GetModuleEntry
         };
 
+        public static List<ModuleEntry> PreloadDuplicateModules; 
+        public static Dictionary<String, ModuleEntry> PreloadOptions = BuildPreloadOptions();
+
+        private static Dictionary<string, ModuleEntry> BuildPreloadOptions()
+        {
+            var ret = new Dictionary<String, ModuleEntry>();
+            HashSet<String> duplicates = new HashSet<string>();
+            foreach (var moduleEntry in IncludedModules)
+            {
+                var m = moduleEntry();
+                if(!m.Preloaded) continue;
+
+                foreach (var option in m.Options)
+                {
+                    if (ret.ContainsKey(option))
+                    {
+                        m.Duplicated = true;
+                        if (!PreloadDuplicateModules.Contains(m))
+                        {
+                            PreloadDuplicateModules.Add(m);
+                        }
+                        duplicates.Add(option);
+                    }
+                    else ret.Add(option, m);
+                }
+            }
+
+            foreach (var opt in duplicates)
+            {
+                ret.Remove(opt);
+            }
+
+            return ret;
+        }
+
         private readonly Dictionary<String, ModuleEntry> _modules = new Dictionary<string, ModuleEntry>();
         private static ModuleRegistry _instance = new ModuleRegistry();
 
@@ -97,26 +133,22 @@ namespace IPTables.Net.Iptables.Modules
 
         public ModuleEntry GetModule(String module, int version, bool target = false, bool polyfill = true)
         {
-            if (!_modules.ContainsKey(module))
+            ModuleEntry m;
+            if (!_modules.TryGetValue(module, out m))
             {
                 if (polyfill)
                 {
-                    ModuleEntry moduleEntry = PolyfillModule.GetModuleEntry();
-                    moduleEntry.Name = module;
-                    return moduleEntry;
+                    m = PolyfillModule.GetModuleEntry();
+                    m.Name = module;
+                    Debug.Assert(target == false);
+                    return m;
                 }
                 throw new IpTablesNetException(String.Format("The factory could not find module: {0}", module));
             }
-            ModuleEntry m = _modules[module];
             if (m.IsTarget == target)
                 return m;
 
             throw new IpTablesNetException(String.Format("The factory could not find a module of the correct type: {0}", module));
-        }
-
-        public IEnumerable<ModuleEntry> GetPreloadModules()
-        {
-            return _modules.Where(a => a.Value.Preloaded).Select(a => a.Value);
         }
 
         public ModuleEntry? GetModuleOrDefault(String module, bool target = false)

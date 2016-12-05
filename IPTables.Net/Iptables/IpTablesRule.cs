@@ -282,7 +282,6 @@ namespace IPTables.Net.Iptables
 
         public void DeleteRule(INetfilterAdapterClient client, bool usingPosition = true)
         {
-
             if (Chain == null)
             {
                 throw new IpTablesNetException("Unknown Chain");
@@ -308,15 +307,15 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        internal IIpTablesModule GetModuleForParseInternal(string name, Type moduleType, int version)
+        internal IIpTablesModule GetModuleForParseInternal(string name, ModuleEntry.ObjectActivator moduleType, int version)
         {
-            if (_moduleData.ContainsKey(name))
+            IIpTablesModule module;
+            if (!_moduleData.TryGetValue(name, out module))
             {
-                return _moduleData[name];
+                module = moduleType(version);
+                _moduleData.Add(name, module);
             }
 
-            var module = (IIpTablesModule)Activator.CreateInstance(moduleType, version);
-            _moduleData.Add(name, module);
             return module;
         }
 
@@ -413,13 +412,14 @@ namespace IPTables.Net.Iptables
                         throw new IpTablesNetException(String.Format("Unable to find chain: {0}", parser.ChainName));
                     }
 
+                    var ipVersion = chains == null ? 4 : chains.IpVersion;
                     if (createChain == ChainCreateMode.ReturnNewChain)
                     {
-                        chain = parser.GetNewChain(system, chains == null ? 4 : chains.IpVersion);
+                        chain = parser.GetNewChain(system, ipVersion);
                     }
                     else
                     {
-                        chain = parser.CreateChain(system, chains == null ? 4 : chains.IpVersion);
+                        chain = parser.CreateChain(system, ipVersion);
                     }
                 }
                 Debug.Assert(chain.IpVersion == version);
@@ -453,7 +453,13 @@ namespace IPTables.Net.Iptables
         /// <returns></returns>
         public T GetModuleOrLoad<T>(string moduleName) where T : class, IIpTablesModule
         {
-            return GetModuleForParseInternal(moduleName, typeof(T), Chain.IpVersion) as T;
+            IIpTablesModule module;
+            if (!_moduleData.TryGetValue(moduleName, out module))
+            {
+                var moduleEntry = ModuleRegistry.Instance.GetModule(moduleName, IpVersion);
+                module = GetModuleForParseInternal(moduleName, moduleEntry.Activator, Chain.IpVersion);
+            }
+            return module as T;
         }
 
         public void ReplaceRule(INetfilterAdapterClient client, IpTablesRule withRule)
@@ -480,7 +486,7 @@ namespace IPTables.Net.Iptables
 
         internal void LoadModule(ModuleEntry entry)
         {
-            GetModuleForParseInternal(entry.Name, entry.Module, Chain.IpVersion);
+            GetModuleForParseInternal(entry.Name, entry.Activator, Chain.IpVersion);
         }
     }
 }

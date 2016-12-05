@@ -13,7 +13,8 @@ namespace IPTables.Net.Iptables.Modules
         private readonly IpTablesChainSet _chains;
         private readonly IpTablesRule _ipRule;
         private readonly ModuleRegistry _moduleRegistry = ModuleRegistry.Instance;
-        private readonly List<ModuleEntry> _parsers = new List<ModuleEntry>();
+        private readonly List<ModuleEntry> _parsers;
+        private readonly Dictionary<String, ModuleEntry> _moduleOptions; 
         public int Position = 0;
 
         private String _chainName;
@@ -24,7 +25,8 @@ namespace IPTables.Net.Iptables.Modules
         {
             _arguments = arguments;
             _ipRule = ipRule;
-            _parsers.AddRange(_moduleRegistry.GetPreloadModules());
+            _parsers = ModuleRegistry.PreloadDuplicateModules.ToList();
+            _moduleOptions = ModuleRegistry.PreloadOptions;
             _chains = chains;
             _tableName = defaultTable;
         }
@@ -102,18 +104,29 @@ namespace IPTables.Net.Iptables.Modules
             {
                 LoadParserModule(GetNextArg(), version, true);
             }
-            foreach (ModuleEntry m in _parsers)
+
+            //All the preloaded modules are indexed here
+            ModuleEntry mQuick;
+            if (_moduleOptions.TryGetValue(option, out mQuick))
             {
+                IIpTablesModule module = _ipRule.GetModuleForParseInternal(mQuick.Name, mQuick.Activator, version);
+                return module.Feed(this, not);
+            }
+
+            //Search each module, do it verbosely from the most recently added
+            for (int index = _parsers.Count - 1; index >= 0; index--)
+            {
+                ModuleEntry m = _parsers[index];
                 if (m.Options.Contains(option))
                 {
-                    IIpTablesModule module = _ipRule.GetModuleForParseInternal(m.Name, m.Module, version);
+                    IIpTablesModule module = _ipRule.GetModuleForParseInternal(m.Name, m.Activator, version);
                     return module.Feed(this, not);
                 }
             }
 
             if (_polyfill != null)
             {
-                IIpTablesModule module = _ipRule.GetModuleForParseInternal(_polyfill.Value.Name, _polyfill.Value.Module, version);
+                IIpTablesModule module = _ipRule.GetModuleForParseInternal(_polyfill.Value.Name, _polyfill.Value.Activator, version);
                 return module.Feed(this, not);
             }
 
