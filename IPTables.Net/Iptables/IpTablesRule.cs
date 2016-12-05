@@ -22,10 +22,13 @@ namespace IPTables.Net.Iptables
         }
 
         #region Fields
+
+        private bool _cow;
+
         /// <summary>
         /// Data stored for each IPTables module / extension (including "core")
         /// </summary>
-        private readonly OrderedDictionary<String, IIpTablesModule> _moduleData = new OrderedDictionary<String, IIpTablesModule>();
+        private OrderedDictionary<String, IIpTablesModule> _moduleData = new OrderedDictionary<String, IIpTablesModule>();
 
         /// <summary>
         /// The System hosting this IPTables rule
@@ -63,12 +66,22 @@ namespace IPTables.Net.Iptables
         public IpTablesRule(IpTablesRule rule)
         {
             Chain = rule.Chain;
-            foreach (var module in rule.ModuleDataInternal)
-            {
-                _moduleData.Add(module.Key,module.Value.Clone() as IIpTablesModule);
-            }
+            _moduleData = rule.ModuleDataInternal;
+            _cow = true;
         }
         #endregion
+
+        private void Cow()
+        {
+            var moduleData = _moduleData;
+            _moduleData = new OrderedDictionary<string, IIpTablesModule>(moduleData.Count);
+
+            foreach (var module in moduleData)
+            {
+                _moduleData.Add(module.Key, module.Value);
+            }
+            _cow = false;
+        }
 
         #region Properties
 
@@ -328,6 +341,7 @@ namespace IPTables.Net.Iptables
         /// <param name="createChain"></param>
         public void AppendToRule(String rule, int version, IpTablesChainSet chains = null, bool createChain = false)
         {
+            Cow();
             string[] arguments = ArgumentHelper.SplitArguments(rule);
             int count = arguments.Length;
 
@@ -441,6 +455,7 @@ namespace IPTables.Net.Iptables
         /// <returns></returns>
         public T GetModule<T>(string moduleName) where T : class, IIpTablesModule
         {
+            Cow();
             if (!_moduleData.ContainsKey(moduleName)) return null;
             return _moduleData[moduleName] as T;
         }
@@ -453,6 +468,7 @@ namespace IPTables.Net.Iptables
         /// <returns></returns>
         public T GetModuleOrLoad<T>(string moduleName) where T : class, IIpTablesModule
         {
+            Cow();
             IIpTablesModule module;
             if (!_moduleData.TryGetValue(moduleName, out module))
             {
