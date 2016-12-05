@@ -14,7 +14,6 @@ namespace IPTables.Net.Iptables.Modules
         private readonly IpTablesRule _ipRule;
         private readonly ModuleRegistry _moduleRegistry = ModuleRegistry.Instance;
         private readonly List<ModuleEntry> _parsers;
-        private readonly Dictionary<String, ModuleEntry> _moduleOptions; 
         public int Position = 0;
 
         private String _chainName;
@@ -26,7 +25,6 @@ namespace IPTables.Net.Iptables.Modules
             _arguments = arguments;
             _ipRule = ipRule;
             _parsers = ModuleRegistry.PreloadDuplicateModules.ToList();
-            _moduleOptions = ModuleRegistry.PreloadOptions;
             _chains = chains;
             _tableName = defaultTable;
         }
@@ -107,7 +105,7 @@ namespace IPTables.Net.Iptables.Modules
 
             //All the preloaded modules are indexed here
             ModuleEntry mQuick;
-            if (_moduleOptions.TryGetValue(option, out mQuick))
+            if (ModuleRegistry.PreloadOptions.TryGetValue(option, out mQuick))
             {
                 IIpTablesModule module = _ipRule.GetModuleForParseInternal(mQuick.Name, mQuick.Activator, version);
                 return module.Feed(this, not);
