@@ -75,7 +75,7 @@ namespace IPTables.Net.Iptables.Modules
             U32Module.GetModuleEntry
         };
 
-        public static List<ModuleEntry> PreloadDuplicateModules; 
+        public static List<ModuleEntry> PreloadDuplicateModules = new List<ModuleEntry>(); 
         public static Dictionary<String, ModuleEntry> PreloadOptions = BuildPreloadOptions();
 
         private static Dictionary<string, ModuleEntry> BuildPreloadOptions()
