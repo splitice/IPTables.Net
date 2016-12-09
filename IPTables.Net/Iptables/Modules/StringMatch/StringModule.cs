@@ -171,7 +171,7 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
                 hashCode = (hashCode*397) ^ From;
                 hashCode = (hashCode*397) ^ To;
                 hashCode = (hashCode*397) ^ (int) Notation;
-                hashCode = (hashCode*397) ^ (Pattern != null ? Pattern.GetHashCode() : 0);
+                hashCode = (hashCode*397) ^ (Pattern.GetHashCode());
                 return hashCode;
             }
         }

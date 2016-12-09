@@ -172,9 +172,9 @@ namespace IPTables.Net.Iptables.Modules.Multiport
         {
             unchecked
             {
-                int hashCode = (Ports != null ? Ports.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (DestinationPorts != null ? DestinationPorts.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (SourcePorts != null ? SourcePorts.GetHashCode() : 0);
+                int hashCode = (Ports.GetHashCode());
+                hashCode = (hashCode*397) ^ (DestinationPorts.GetHashCode());
+                hashCode = (hashCode*397) ^ (SourcePorts.GetHashCode());
                 return hashCode;
             }
         }

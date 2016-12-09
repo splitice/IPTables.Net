@@ -17,7 +17,7 @@ namespace IPTables.Net.Iptables.Modules.Tcp
 
         public ValueOrNot<PortOrRange> DestinationPort = new ValueOrNot<PortOrRange>();
         public ValueOrNot<PortOrRange> SourcePort = new ValueOrNot<PortOrRange>();
-        public ValueOrNot<TcpFlagMatch> TcpFlags = null;
+        public ValueOrNot<TcpFlagMatch> TcpFlags = new ValueOrNot<TcpFlagMatch>();
         //--syn
         public ValueOrNot<int> TcpOption = new ValueOrNot<int>();
 
@@ -86,7 +86,7 @@ namespace IPTables.Net.Iptables.Modules.Tcp
                 sb.Append(DestinationPort.ToOption(OptionDestinationPortShort));
             }
 
-            if (TcpFlags != null)
+            if (!TcpFlags.Null)
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
@@ -135,10 +135,10 @@ namespace IPTables.Net.Iptables.Modules.Tcp
         {
             unchecked
             {
-                int hashCode = (DestinationPort != null ? DestinationPort.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (SourcePort != null ? SourcePort.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (TcpFlags != null ? TcpFlags.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (TcpOption != null ? TcpOption.GetHashCode() : 0);
+                int hashCode = (DestinationPort.GetHashCode());
+                hashCode = (hashCode*397) ^ (SourcePort.GetHashCode());
+                hashCode = (hashCode*397) ^ (TcpFlags.GetHashCode());
+                hashCode = (hashCode*397) ^ (TcpOption.GetHashCode());
                 return hashCode;
             }
         }

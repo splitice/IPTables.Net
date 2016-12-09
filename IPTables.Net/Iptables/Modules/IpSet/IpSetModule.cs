@@ -148,7 +148,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         {
             StringBuilder sb = new StringBuilder();
 
-            if (MatchSet != null)
+            if (!MatchSet.Null)
             {
                 sb.Append((MatchSet.Not ? "! " : "") + OptionMatchSet + " " +
                           ShellHelper.EscapeArguments(MatchSet.Value));
@@ -218,7 +218,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         {
             unchecked
             {
-                int hashCode = (MatchSet != null ? MatchSet.GetHashCode() : 0);
+                int hashCode = (MatchSet.GetHashCode());
                 hashCode = (hashCode*397) ^ (MatchSetFlags != null ? MatchSetFlags.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ ReturnNoMatch.GetHashCode();
                 hashCode = (hashCode*397) ^ UpdateCounters.GetHashCode();

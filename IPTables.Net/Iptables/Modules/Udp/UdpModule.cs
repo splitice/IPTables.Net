@@ -99,8 +99,8 @@ namespace IPTables.Net.Iptables.Modules.Udp
         {
             unchecked
             {
-                int hashCode = (DestinationPort != null ? DestinationPort.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (SourcePort != null ? SourcePort.GetHashCode() : 0);
+                int hashCode = (DestinationPort.GetHashCode());
+                hashCode = (hashCode*397) ^ (SourcePort.GetHashCode());
                 return hashCode;
             }
         }

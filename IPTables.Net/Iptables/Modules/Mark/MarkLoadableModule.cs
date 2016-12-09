@@ -90,7 +90,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
         {
             unchecked
             {
-                return ((Mark != null ? Mark.GetHashCode() : 0)*397) ^ Mask;
+                return (Mark.GetHashCode()*397) ^ Mask;
             }
         }
     }

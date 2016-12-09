@@ -65,6 +65,7 @@ namespace IPTables.Net.Iptables
         /// <param name="rule"></param>
         public IpTablesRule(IpTablesRule rule)
         {
+            _system = rule.System;
             Chain = rule.Chain;
             _moduleData = rule.ModuleDataInternal;
             _cow = true;
@@ -78,7 +79,7 @@ namespace IPTables.Net.Iptables
 
             foreach (var module in moduleData)
             {
-                _moduleData.Add(module.Key, module.Value);
+                _moduleData.Add(module.Key, module.Value.Clone() as IIpTablesModule);
             }
             _cow = false;
         }

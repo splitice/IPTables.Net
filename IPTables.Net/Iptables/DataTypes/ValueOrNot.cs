@@ -4,10 +4,10 @@ using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
-    public class ValueOrNot<T> : IEquatable<ValueOrNot<T>>
+    public struct ValueOrNot<T> : IEquatable<ValueOrNot<T>>
     {
         private bool _not;
-        private bool _null = true;
+        private bool _hasValue;
         private T _value;
 
         public ValueOrNot(T value, bool not = false)
@@ -15,19 +15,14 @@ namespace IPTables.Net.Iptables.DataTypes
             _value = value;
             _not = not;
 // ReSharper disable once CompareNonConstrainedGenericWithNull
-            _null = value == null;
-        }
-
-        public ValueOrNot()
-        {
-            _null = true;
+            _hasValue = value != null;
         }
 
         public ValueOrNot(T value, T nullValue, bool not = false)
         {
             _value = value;
             _not = not;
-            _null = EqualityComparer<T>.Default.Equals(value, nullValue);
+            _hasValue = !EqualityComparer<T>.Default.Equals(value, nullValue);
         }
 
         public T Value
@@ -43,15 +38,15 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public bool Null
         {
-            get { return _null; }
+            get { return !_hasValue; }
         }
 
         public bool Equals(ValueOrNot<T> other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return _not.Equals(other._not) && _null.Equals(other._null) &&
-                   (_null || EqualityComparer<T>.Default.Equals(_value, other._value));
+            return _not.Equals(other._not) && _hasValue.Equals(other._hasValue) &&
+                   (!_hasValue || EqualityComparer<T>.Default.Equals(_value, other._value));
         }
 
         public void Set(bool not, T value)
@@ -60,12 +55,12 @@ namespace IPTables.Net.Iptables.DataTypes
 
             if (value == null)
             {
-                _null = true;
+                _hasValue = false;
             }
             else
             {
                 _value = value;
-                _null = false;
+                _hasValue = true;
             }
         }
 
@@ -114,7 +109,7 @@ namespace IPTables.Net.Iptables.DataTypes
             {
                 int hashCode = _not.GetHashCode();
                 hashCode = (hashCode*397) ^ EqualityComparer<T>.Default.GetHashCode(_value);
-                hashCode = (hashCode*397) ^ _null.GetHashCode();
+                hashCode = (hashCode*397) ^ _hasValue.GetHashCode();
                 return hashCode;
             }
         }
