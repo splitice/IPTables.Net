@@ -55,10 +55,25 @@ namespace IPTables.Net.Iptables.Modules.Recent
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            
+
+            if (!Mask.Equals(other.Mask))
+            {
+                if (other.Mask == null || Mask == null) return false;
+
+                if (!(Equals(other.Mask, IPAddress.Parse("255.255.255.255")) ||
+                    Equals(other.Mask, IPAddress.Parse("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"))
+                    ) && !(Equals(Mask, IPAddress.Parse("255.255.255.255")) ||
+                    Equals(Mask, IPAddress.Parse("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"))
+                    )
+                    )
+                {
+                    return false;
+                }
+            }
+
             return Mode.Equals(other.Mode) && string.Equals(Name, other.Name) && Rsource.Equals(other.Rsource) &&
                    Seconds == other.Seconds && Reap.Equals(other.Reap) && HitCount == other.HitCount &&
-                   Rttl.Equals(other.Rttl) && Mask.Equals(other.Mask);
+                   Rttl.Equals(other.Rttl);
         }
 
         public bool NeedsLoading
@@ -239,7 +254,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
         {
             unchecked
             {
-                int hashCode = (Mode != null ? Mode.GetHashCode() : 0);
+                int hashCode = (Mode.GetHashCode());
                 hashCode = (hashCode*397) ^ (Name != null ? Name.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ Rsource.GetHashCode();
                 hashCode = (hashCode*397) ^ Seconds.GetHashCode();
