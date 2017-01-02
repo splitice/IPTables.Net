@@ -46,7 +46,7 @@ namespace IPTables.Net.IpUtils.Utils
             return r;
         }
 
-        protected override IpObject ParseObject(string str, string firstKey, char[] firstTrimChars = null)
+        public override IpObject ParseObject(string str, string firstKey, char[] firstTrimChars = null)
         {
             String[] strs = str.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
             if (strs.Length != 0 && strs[0] == "local")
