@@ -28,7 +28,7 @@ namespace IPTables.Net.IpUtils.Utils
                 //Console.WriteLine(l);
                 IpObject obj;
                 try { 
-                    obj = ParseObject(l, "pref", new[] { ':' });
+                    obj = ParseObject(l);
                 }
                 catch (Exception ex)
                 {
@@ -40,6 +40,11 @@ namespace IPTables.Net.IpUtils.Utils
                 }
             }
             return r;
+        }
+
+        public IpObject ParseObject(string str)
+        {
+            return ParseObject(str, "pref", new[] {':'});
         }
 
         internal override string[] ExportObject(IpObject obj)

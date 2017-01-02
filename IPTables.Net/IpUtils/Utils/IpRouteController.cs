@@ -28,7 +28,7 @@ namespace IPTables.Net.IpUtils.Utils
                 IpObject obj;
                 try
                 {
-                    obj = ParseObject(l, "to");
+                    obj = ParseObject(l);
                 }
                 catch (Exception ex)
                 {
@@ -46,7 +46,12 @@ namespace IPTables.Net.IpUtils.Utils
             return r;
         }
 
-        public override IpObject ParseObject(string str, string firstKey, char[] firstTrimChars = null)
+        public IpObject ParseObject(string str)
+        {
+            return ParseObject(str, "to");
+        }
+
+        protected override IpObject ParseObject(string str, string firstKey, char[] firstTrimChars = null)
         {
             String[] strs = str.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
             if (strs.Length != 0 && strs[0] == "local")
