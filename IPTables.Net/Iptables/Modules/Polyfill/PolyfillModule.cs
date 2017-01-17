@@ -31,6 +31,10 @@ namespace IPTables.Net.Iptables.Modules.Polyfill
         {
             String current = parser.GetCurrentArg();
             _data.Add(current, new List<string>());
+            if (not)
+            {
+                _data[current].Add("!");
+            }
             for (int i = 1; i < parser.GetRemainingArgs(); i++)
             {
                 string arg = parser.GetNextArg(i);
