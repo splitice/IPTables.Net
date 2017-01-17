@@ -32,7 +32,7 @@ namespace IPTables.Net.Iptables.Modules.Polyfill
         public int Feed(RuleParser parser, bool not)
         {
             String current = parser.GetCurrentArg();
-            _data.Add(current, new List<string> { current });
+            _data.Add(current, new List<string> ());
             _not[current] = not;
             for (int i = 1; i < parser.GetRemainingArgs(); i++)
             {
