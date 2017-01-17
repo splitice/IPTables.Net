@@ -21,7 +21,7 @@ namespace IPTables.Net.Iptables.Modules.Polyfill
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             if (_data.Count != other._data.Count || _data.Keys.Except(other._data.Keys).Any()) return false;
-            return _not.All(thisPair => other._not[thisPair.Key]) && _data.All(thisPair => thisPair.Value.SequenceEqual(other._data[thisPair.Key]));
+            return _not.All(thisPair => other._not[thisPair.Key] == thisPair.Value) && _data.All(thisPair => thisPair.Value.SequenceEqual(other._data[thisPair.Key]));
         }
 
         public bool NeedsLoading
