@@ -45,7 +45,17 @@ namespace IPTables.Net.Iptables.Modules.Devgroup
 
         public String GetRuleString()
         {
-            return SrcGroup.ToOption(OptionSrcGroup);
+            String ret = "";
+            if (!SrcGroup.Null)
+            {
+                ret = SrcGroup.ToOption(OptionSrcGroup);
+            }
+            if (!DstGroup.Null)
+            {
+                if (ret != "") ret += " ";
+                ret += DstGroup.ToOption(OptionDstGroup);
+            }
+            return ret;
         }
 
         public static HashSet<String> GetOptions()
