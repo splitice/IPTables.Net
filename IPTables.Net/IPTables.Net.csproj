@@ -87,6 +87,7 @@
     <Compile Include="Iptables\Modules\BpfL4\BpfModule.cs" />
     <Compile Include="Iptables\Modules\HashRoute\HashRouteTargetModule.cs" />
     <Compile Include="Iptables\Modules\HashRoute\HashRouteMatchModule.cs" />
+    <Compile Include="Iptables\Modules\Devgroup\DevgroupModule.cs" />
     <Compile Include="Iptables\Modules\U32\U32Module.cs" />
     <Compile Include="Iptables\NativeLibrary\IptcInterface.cs" />
     <Compile Include="Iptables\Modules\Bpf\BpfModule.cs" />

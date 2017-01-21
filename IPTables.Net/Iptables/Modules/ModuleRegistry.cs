@@ -10,6 +10,7 @@ using IPTables.Net.Iptables.Modules.Connlimit;
 using IPTables.Net.Iptables.Modules.Connmark;
 using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Ct;
+using IPTables.Net.Iptables.Modules.Devgroup;
 using IPTables.Net.Iptables.Modules.Dnat;
 using IPTables.Net.Iptables.Modules.HashLimit;
 using IPTables.Net.Iptables.Modules.HashRoute;
@@ -72,6 +73,7 @@ namespace IPTables.Net.Iptables.Modules
             BpfL4Module.GetModuleEntry,
             HashRouteMatchModule.GetModuleEntry,
             HashRouteTargetModule.GetModuleEntry,
+            DevgroupModule.GetModuleEntry,
             U32Module.GetModuleEntry
         };
 
