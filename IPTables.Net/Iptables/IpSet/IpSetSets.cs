@@ -75,9 +75,10 @@ namespace IPTables.Net.Iptables.IpSet
 
                 if (set.SyncMode == IpSetSyncMode.SetAndEntries)
                 {
+                    var distinctEntries = set.Entries.Distinct().ToList();
                     try
                     {
-                        foreach (var entry in set.Entries)
+                        foreach (var entry in distinctEntries)
                         {
                             try
                             {
@@ -96,7 +97,7 @@ namespace IPTables.Net.Iptables.IpSet
                         foreach (var entry in systemSet.Entries)
                         {
                             IpSetEntry entry1 = entry;
-                            var memEntry = set.Entries.FirstOrDefault(((a) => a.KeyEquals(entry1)));
+                            var memEntry = distinctEntries.FirstOrDefault(((a) => a.KeyEquals(entry1)));
                             if (memEntry == null)
                             {
                                 System.SetAdapter.DeleteEntry(entry);
