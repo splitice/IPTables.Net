@@ -28,6 +28,7 @@ using IPTables.Net.Iptables.Modules.Polyfill;
 using IPTables.Net.Iptables.Modules.Recent;
 using IPTables.Net.Iptables.Modules.Snat;
 using IPTables.Net.Iptables.Modules.State;
+using IPTables.Net.Iptables.Modules.Statistic;
 using IPTables.Net.Iptables.Modules.StringMatch;
 using IPTables.Net.Iptables.Modules.SynProxy;
 using IPTables.Net.Iptables.Modules.Tcp;
@@ -74,6 +75,7 @@ namespace IPTables.Net.Iptables.Modules
             HashRouteMatchModule.GetModuleEntry,
             HashRouteTargetModule.GetModuleEntry,
             DevgroupModule.GetModuleEntry,
+            StatisticModule.GetModuleEntry,
             U32Module.GetModuleEntry
         };
 
