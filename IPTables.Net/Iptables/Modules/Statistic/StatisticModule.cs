@@ -82,7 +82,7 @@ namespace IPTables.Net.Iptables.Modules.Statistic
 
         public bool NeedsLoading
         {
-            get { return false; }
+            get { return true; }
         }
 
         public String GetRuleString()
