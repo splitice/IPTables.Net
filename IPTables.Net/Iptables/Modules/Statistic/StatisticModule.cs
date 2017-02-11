@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Helpers;
 using IPTables.Net.Iptables.Modules.Log;
 
@@ -19,13 +20,13 @@ namespace IPTables.Net.Iptables.Modules.Statistic
         }
 
         public Modes Mode;
-        public uint Every;
+        public ValueOrNot<uint> Every;
         public uint Packet;
 
         public double Probability
         {
-            get { return Every/2147483648.0; }
-            set { Every = (uint)(value*2147483648); }
+            get { return Every.Value/2147483648.0; }
+            set { Every = new ValueOrNot<uint>((uint)(value * 2147483648), Every.Not); }
         }
 
         public StatisticModule(int version)
@@ -41,13 +42,14 @@ namespace IPTables.Net.Iptables.Modules.Statistic
                     Mode = ParseMode(parser.GetNextArg());
                     return 1;
                 case OptionProbabilityLong:
+                    Every = new ValueOrNot<uint>(0, not);
                     Probability = double.Parse(parser.GetNextArg());
                     return 1;
                 case OptionPacketLong:
                     Packet = uint.Parse(parser.GetNextArg());
                     return 1;
                 case OptionEveryLong:
-                    Every = uint.Parse(parser.GetNextArg());
+                    Every = new ValueOrNot<uint>(uint.Parse(parser.GetNextArg()), not);
                     return 1;
             }
 
@@ -131,7 +133,7 @@ namespace IPTables.Net.Iptables.Modules.Statistic
 
         public bool Equals(StatisticModule other)
         {
-            return Mode == other.Mode && Every == other.Every && Packet == other.Packet;
+            return Mode == other.Mode && Every.Equals(other.Every) && Packet == other.Packet;
         }
 
         public override int GetHashCode()
@@ -139,7 +141,7 @@ namespace IPTables.Net.Iptables.Modules.Statistic
             unchecked
             {
                 var hashCode = (int) Mode;
-                hashCode = (hashCode*397) ^ (int) Every;
+                hashCode = (hashCode*397) ^ Every.GetHashCode();
                 hashCode = (hashCode*397) ^ (int) Packet;
                 return hashCode;
             }
