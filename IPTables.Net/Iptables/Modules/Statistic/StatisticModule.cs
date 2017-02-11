@@ -96,9 +96,13 @@ namespace IPTables.Net.Iptables.Modules.Statistic
             switch (Mode)
             {
                 case Modes.Nth:
-                    sb.Append(OptionEveryLong + " " + Every + " " + OptionPacketLong + " " + Packet);
+                    sb.Append(Every.ToOption(OptionEveryLong) + " " + OptionPacketLong + " " + Packet);
                     break;
                 case Modes.Random:
+                    if (Every.Not)
+                    {
+                        sb.Append("! ");
+                    }
                     sb.Append(OptionProbabilityLong + " " + Probability);
                     break;
             }
