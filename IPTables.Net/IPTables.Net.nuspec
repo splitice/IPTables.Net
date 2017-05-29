@@ -13,7 +13,7 @@
 		<copyright>Copyright Never</copyright>
 		<language>en-US</language>
 		<dependencies> 
-			<dependency id="Common.Logging" />
+			<dependency id="Common.Logging" version="1.0" />
 		</dependencies>
 	</metadata>
 	<files>
