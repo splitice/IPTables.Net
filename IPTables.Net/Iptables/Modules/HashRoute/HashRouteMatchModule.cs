@@ -11,6 +11,7 @@ namespace IPTables.Net.Iptables.Modules.HashRoute
     {
         private const String OptionHashRouteName = "--hashroute-name";
         private const String OptionHashRouteMode = "--hashroute-mode";
+        private const String OptionHashRouteMatchOnly = "--hashroute-match-only";
         private const String OptionHashRouteSrcMask = "--hashroute-srcmask";
         private const String OptionHashRouteDstMask = "--hashroute-dstmask";
         private const String OptionHashRouteHtableSize = "--hashroute-htable-size";
@@ -29,6 +30,7 @@ namespace IPTables.Net.Iptables.Modules.HashRoute
         public int HtableMax = 30000;
         public int HtableExpire = 10000;
         public int HtableGcInterval = 1000;
+        public bool MatchOnly;
 
         public HashRouteMatchModule(int version) : base(version)
         {
@@ -48,7 +50,7 @@ namespace IPTables.Net.Iptables.Modules.HashRoute
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(Name, other.Name) && string.Equals(Mode, other.Mode) && SrcMask == other.SrcMask && DstMask == other.DstMask && HtableSize == other.HtableSize && HtableMax == other.HtableMax && HtableExpire == other.HtableExpire && HtableGcInterval == other.HtableGcInterval;
+            return string.Equals(Name, other.Name) && string.Equals(Mode, other.Mode) && SrcMask == other.SrcMask && DstMask == other.DstMask && HtableSize == other.HtableSize && HtableMax == other.HtableMax && HtableExpire == other.HtableExpire && HtableGcInterval == other.HtableGcInterval && MatchOnly == other.MatchOnly;
         }
 
         public bool NeedsLoading
@@ -82,6 +84,9 @@ namespace IPTables.Net.Iptables.Modules.HashRoute
                 case OptionHashRouteHtableGcInterval:
                     HtableGcInterval = int.Parse(parser.GetNextArg());
                     return 1;
+                case OptionHashRouteMatchOnly:
+                    MatchOnly = true;
+                    return 0;
 
                 case OptionHashRouteName:
                     Name = parser.GetNextArg();
@@ -103,6 +108,11 @@ namespace IPTables.Net.Iptables.Modules.HashRoute
             sb.Append(OptionHashRouteName);
             sb.Append(" ");
             sb.Append(ShellHelper.EscapeArguments(Name));
+
+            if (MatchOnly)
+            {
+                sb.Append(" "+ OptionHashRouteMatchOnly);
+            }
 
             sb.Append(" ");
             sb.Append(OptionHashRouteMode);
@@ -146,6 +156,7 @@ namespace IPTables.Net.Iptables.Modules.HashRoute
         {
             var options = new HashSet<string>
             {
+                OptionHashRouteMatchOnly,
                 OptionHashRouteDstMask,
                 OptionHashRouteHtableExpire,
                 OptionHashRouteHtableGcInterval,
