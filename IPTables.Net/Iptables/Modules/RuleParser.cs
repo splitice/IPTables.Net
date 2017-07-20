@@ -102,6 +102,10 @@ namespace IPTables.Net.Iptables.Modules
             {
                 LoadParserModule(GetNextArg(), version, true);
             }
+            if (option == "-p")
+            {
+                LoadParserModule(GetNextArg(), version);
+            }
 
             //All the preloaded modules are indexed here
             ModuleEntry mQuick;
