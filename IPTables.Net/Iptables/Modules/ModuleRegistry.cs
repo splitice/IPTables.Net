@@ -76,7 +76,8 @@ namespace IPTables.Net.Iptables.Modules
             HashRouteTargetModule.GetModuleEntry,
             DevgroupModule.GetModuleEntry,
             StatisticModule.GetModuleEntry,
-            U32Module.GetModuleEntry
+            U32Module.GetModuleEntry,
+            TProxyModule.GetModuleEntry
         };
 
         public static List<ModuleEntry> PreloadDuplicateModules = new List<ModuleEntry>(); 
