@@ -63,7 +63,7 @@ namespace IPTables.Net.Iptables.Modules.SynProxy
 
                     SetMark(FlexibleInt32.Parse(s1[0]), s1.Length == 1 ? DefaultMask : FlexibleInt32.Parse(s1[1]));
 
-                    return 0;
+                    return 1;
             }
 
             return 0;
