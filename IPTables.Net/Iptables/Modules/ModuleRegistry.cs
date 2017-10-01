@@ -27,6 +27,7 @@ using IPTables.Net.Iptables.Modules.Nfqueue;
 using IPTables.Net.Iptables.Modules.Polyfill;
 using IPTables.Net.Iptables.Modules.Recent;
 using IPTables.Net.Iptables.Modules.Snat;
+using IPTables.Net.Iptables.Modules.Socket;
 using IPTables.Net.Iptables.Modules.State;
 using IPTables.Net.Iptables.Modules.Statistic;
 using IPTables.Net.Iptables.Modules.StringMatch;
@@ -77,6 +78,7 @@ namespace IPTables.Net.Iptables.Modules
             DevgroupModule.GetModuleEntry,
             StatisticModule.GetModuleEntry,
             U32Module.GetModuleEntry,
+            SocketModule.GetModuleEntry,
             TProxyModule.GetModuleEntry
         };
 
