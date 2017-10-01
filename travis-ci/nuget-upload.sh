@@ -7,6 +7,8 @@ P=$DIR/../$1
 
 cd $P
 
+sudo nuget update -self
+
 if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
 	nuget pack *.nuspec -Prop Configuration=Release -BasePath $P
 
