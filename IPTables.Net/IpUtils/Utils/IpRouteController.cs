@@ -17,10 +17,11 @@ namespace IPTables.Net.IpUtils.Utils
             return base.IsSingle(key);
         }
 
-        public List<IpObject> GetAll(String table = "default")
+        public List<IpObject> GetAll(String table = null)
         {
             List<IpObject> r = new List<IpObject>();
-            var ret = Command("show", "table", table);
+            String[] args = table == null ? new string[0] : { "table", table };
+            var ret = Command("show", args);
             var lines = ret[0].Trim().Split('\n');
             foreach (var line in lines)
             {
