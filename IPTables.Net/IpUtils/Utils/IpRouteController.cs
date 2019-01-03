@@ -20,7 +20,7 @@ namespace IPTables.Net.IpUtils.Utils
         public List<IpObject> GetAll(String table = null)
         {
             List<IpObject> r = new List<IpObject>();
-            String[] args = table == null ? new string[0] : { "table", table };
+            var args = table == null ? new string[0] : new string[] { "table", table };
             var ret = Command("show", args);
             var lines = ret[0].Trim().Split('\n');
             foreach (var line in lines)
