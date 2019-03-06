@@ -132,27 +132,23 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
         public virtual IpSetSets SaveSets(IpTablesSystem iptables)
         {
             IpSetSets sets = new IpSetSets(iptables);
-            String output, error;
 
             using (ISystemProcess process = _system.StartProcess(BinaryName, "save"))
             {
-                ProcessHelper.ReadToEnd(process, out output, out error);
-            }
-
-            String[] all = output.Split(new string[]{"\r\n","\n"}, StringSplitOptions.RemoveEmptyEntries);
-            foreach(String line in all){
-                
-                if (String.IsNullOrEmpty(line))
+                ProcessHelper.ReadToEnd(process, line =>
                 {
-                    break;
-                }
-                var trimmed = line.Trim();
-                if (trimmed.Length != 0)
-                {
-                    sets.Accept(trimmed, iptables);
-                }
+                    if (String.IsNullOrWhiteSpace(line))
+                    {
+                        return;
+                    }
+                    var trimmed = line.Trim();
+                    if (trimmed.Length != 0)
+                    {
+                        sets.Accept(trimmed, iptables);
+                    }
+                }, err=>{ });
             }
-
+            
             return sets;
         }
 
