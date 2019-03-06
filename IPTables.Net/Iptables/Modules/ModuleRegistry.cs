@@ -79,7 +79,8 @@ namespace IPTables.Net.Iptables.Modules
             StatisticModule.GetModuleEntry,
             U32Module.GetModuleEntry,
             SocketModule.GetModuleEntry,
-            TProxyModule.GetModuleEntry
+            TProxyModule.GetModuleEntry,
+            NetflowModule.GetModuleEntry
         };
 
         public static List<ModuleEntry> PreloadDuplicateModules = new List<ModuleEntry>(); 
