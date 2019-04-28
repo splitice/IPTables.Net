@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.IpSet.Adapter;
+using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables.IpSet
 {
@@ -144,24 +145,19 @@ namespace IPTables.Net.Iptables.IpSet
 
         public void Accept(String line, IpTablesSystem iptables)
         {
-            String[] split = line.Split(new char[] { ' ' });
+            String[] split = ArgumentHelper.SplitArguments(line);
 
-            if (split.Length == 0)
-            {
-                return;
-            }
+            if (split.Length == 0) return;
 
             var command = split[0];
-            var options = String.Join(" ", split.Skip(1).ToArray());
-
             switch (command)
             {
                 case "create":
-                    var set = IpSetSet.Parse(options, iptables);
+                    var set = IpSetSet.Parse(split, iptables, 1);
                     AddSet(set);
                     break;
                 case "add":
-                    IpSetEntry.Parse(options, this);
+                    IpSetEntry.Parse(split, this, 1);
                     break;
             }
         }

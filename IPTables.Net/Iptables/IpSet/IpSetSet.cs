@@ -134,18 +134,23 @@ namespace IPTables.Net.Iptables.IpSet
 
         #endregion
 
-        public static IpSetSet Parse(String rule, IpTablesSystem system)
+        public static IpSetSet Parse(String[] arguments, IpTablesSystem system, int startOffset = 0)
         {
             IpSetSet set = new IpSetSet(system);
-            string[] arguments = ArgumentHelper.SplitArguments(rule);
             var parser = new IpSetSetParser(arguments, set);
 
-            for (int i = 0; i < arguments.Length; i++)
+            for (int i = startOffset; i < arguments.Length; i++)
             {
                 i += parser.FeedToSkip(i);
             }
 
             return set;
+        }
+
+        public static IpSetSet Parse(String rule, IpTablesSystem system, int startOffset = 0)
+        {
+            string[] arguments = ArgumentHelper.SplitArguments(rule);
+            return Parse(arguments, system, startOffset);
         }
 
         public bool SetEquals(IpSetSet set, bool size = false)

@@ -130,20 +130,20 @@ namespace IPTables.Net.Iptables.IpSet
             return entry;
         }
 
-        public static IpSetEntry Parse(String command, IpSetSets sets)
+        public static IpSetEntry Parse(String command, IpSetSets sets, int startOffset = 0)
         {
-            var parts = command.Split(new char[] {' '});
+            var parts = ArgumentHelper.SplitArguments(command);
+            return Parse(parts, sets, startOffset);
+        }
 
-            if (parts.Length < 2)
-            {
-                return null;
-            }
+        public static IpSetEntry Parse(String[] arguments, IpSetSets sets, int startOffset = 0)
+        {
+            if (arguments.Length < 2) return null;
 
             IpSetEntry entry = new IpSetEntry(null);
-            string[] arguments = ArgumentHelper.SplitArguments(command);
             var parser = new IpSetEntryParser(arguments, entry, sets);
 
-            for (int i = 0; i < arguments.Length; i++)
+            for (int i = startOffset; i < arguments.Length; i++)
             {
                 i += parser.FeedToSkip(i);
             }

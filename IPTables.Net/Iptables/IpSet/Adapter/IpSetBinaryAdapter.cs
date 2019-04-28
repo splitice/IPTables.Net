@@ -137,10 +137,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             {
                 ProcessHelper.ReadToEnd(process, line =>
                 {
-                    if (String.IsNullOrWhiteSpace(line))
-                    {
-                        return;
-                    }
+                    if (line == null) return;
                     var trimmed = line.Trim();
                     if (trimmed.Length != 0)
                     {
