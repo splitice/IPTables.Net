@@ -28,7 +28,7 @@ namespace IPTables.Net.Iptables.IpSet
 
         internal string InternalName
         {
-            set { _name = Name; }
+            set { _name = value; }
         }
 
         #endregion
