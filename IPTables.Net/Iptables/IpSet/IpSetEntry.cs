@@ -83,12 +83,15 @@ namespace IPTables.Net.Iptables.IpSet
             }
             if (_port != -1)
             {
-                String prefix = "";
                 if (_protocol != null)
                 {
-                    prefix = _protocol + ":";
+                    parts.Add(_protocol + ":" + _port);
                 }
-                parts.Add(prefix + _port);
+                else
+                {
+                    parts.Add(_port.ToString());
+                }
+                
             }
             if (parts.Count == 0)
             {

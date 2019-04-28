@@ -41,8 +41,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
         /// <param name="value"></param>
         public static void ParseEntry(IpSetEntry entry, String value)
         {
-            var type = entry.Set.Type;
-            var typeComponents = IpSetTypeHelper.TypeComponents(IpSetTypeHelper.TypeToString(type)).ToArray();
+            var typeComponents = entry.Set.TypeComponents;
             var optionComponents = value.Split(new char[] { ',' });
 
 

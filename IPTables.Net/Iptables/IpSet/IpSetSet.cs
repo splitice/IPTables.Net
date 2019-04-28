@@ -24,6 +24,7 @@ namespace IPTables.Net.Iptables.IpSet
         private List<IpSetEntry> _entries = new List<IpSetEntry>();
         private IpTablesSystem _system;
         private IpSetSyncMode _syncMode = IpSetSyncMode.SetAndEntries;
+        private string[] _typeComponents;
         #endregion
 
         #region Properties
@@ -36,7 +37,11 @@ namespace IPTables.Net.Iptables.IpSet
         public IpSetType Type
         {
             get { return _type; }
-            set { _type = value; }
+            set
+            {
+                _type = value;
+                _typeComponents = null;
+            }
         }
 
         public int Timeout
@@ -72,6 +77,16 @@ namespace IPTables.Net.Iptables.IpSet
         {
             get { return _family; }
             set { _family = value; }
+        }
+
+        public string[] TypeComponents
+        {
+            get
+            {
+                if (_typeComponents != null) return _typeComponents;
+                _typeComponents = IpSetTypeHelper.TypeComponents(IpSetTypeHelper.TypeToString(Type)).ToArray();
+                return _typeComponents;
+            }
         }
 
         #endregion
