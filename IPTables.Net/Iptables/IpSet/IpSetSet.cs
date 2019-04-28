@@ -31,7 +31,6 @@ namespace IPTables.Net.Iptables.IpSet
         public string Name
         {
             get { return _name; }
-            set { _name = value; }
         }
 
         public IpSetType Type
@@ -87,6 +86,11 @@ namespace IPTables.Net.Iptables.IpSet
                 _typeComponents = IpSetTypeHelper.TypeComponents(IpSetTypeHelper.TypeToString(Type)).ToArray();
                 return _typeComponents;
             }
+        }
+
+        public IpTablesSystem System
+        {
+            get { return _system; }
         }
 
         #endregion
