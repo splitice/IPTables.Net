@@ -156,11 +156,8 @@ namespace IPTables.Net.Iptables.IpSet
 
         public bool KeyEquals(IpSetEntry other)
         {
-            bool r = _cidr.Equals(other._cidr) && _port == other._port && string.Equals(_mac, other._mac);
-            if (!r)
-            {
-                return false;
-            }
+            bool r = _port == other._port && _cidr.Equals(other._cidr) && string.Equals(_mac, other._mac);
+            if (!r) return false;
 
             return string.Equals(_protocol, other._protocol) ||
                    (String.IsNullOrEmpty(_protocol) && String.IsNullOrEmpty(other._protocol));

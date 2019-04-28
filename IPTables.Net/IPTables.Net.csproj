@@ -74,6 +74,7 @@
     <Compile Include="Iptables\Helpers\SynProxyHelper.cs" />
     <Compile Include="Iptables\IpSet\Adapter\IpSetBinaryAdapter.cs" />
     <Compile Include="Iptables\IpSet\IpSetEntry.cs" />
+    <Compile Include="Iptables\IpSet\IpSetEntryKeyComparer.cs" />
     <Compile Include="Iptables\IpSet\Parser\IpSetEntryParser.cs" />
     <Compile Include="Iptables\IpSet\Parser\IpSetSetParser.cs" />
     <Compile Include="Iptables\IpSet\IpSetSet.cs" />

@@ -21,7 +21,7 @@ namespace IPTables.Net.Iptables.IpSet
         private string _family = "inet";
         private int _hashSize = 1024;
         private int _maxElem = 65536;
-        private List<IpSetEntry> _entries = new List<IpSetEntry>();
+        private List<IpSetEntry> _entries;
         private IpTablesSystem _system;
         private IpSetSyncMode _syncMode = IpSetSyncMode.SetAndEntries;
         private string[] _typeComponents;
@@ -93,7 +93,7 @@ namespace IPTables.Net.Iptables.IpSet
 
         #region Constructor
 
-        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode)
+        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, List<IpSetEntry> entries = null)
         {
             _type = type;
             _name = name;
@@ -101,6 +101,7 @@ namespace IPTables.Net.Iptables.IpSet
             _family = family;
             _system = system;
             _syncMode = syncMode;
+            _entries = entries == null ? new List<IpSetEntry>() : entries.ToList();
         }
 
         internal IpSetSet(IpTablesSystem system)

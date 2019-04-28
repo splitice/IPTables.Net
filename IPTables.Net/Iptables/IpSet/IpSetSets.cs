@@ -11,7 +11,7 @@ namespace IPTables.Net.Iptables.IpSet
 {
     public class IpSetSets
     {
-        private List<IpSetSet> _sets = new List<IpSetSet>();
+        private Dictionary<String, IpSetSet> _sets = new Dictionary<String, IpSetSet>();
         private IpTablesSystem _system;
 
         public IpSetSets(IEnumerable<String> commands, IpTablesSystem system)
@@ -30,7 +30,7 @@ namespace IPTables.Net.Iptables.IpSet
 
         public IEnumerable<IpSetSet> Sets
         {
-            get { return _sets; }
+            get { return _sets.Values; }
         }
 
         public IpTablesSystem System
@@ -54,7 +54,7 @@ namespace IPTables.Net.Iptables.IpSet
 
             var systemSets = System.SetAdapter.SaveSets(System);
 
-            foreach (var set in _sets)
+            foreach (var set in _sets.Values)
             {
                 var systemSet = systemSets.GetSetByName(set.Name);
                 if (systemSet == null)
@@ -70,39 +70,27 @@ namespace IPTables.Net.Iptables.IpSet
                     {
                         System.SetAdapter.DestroySet(set.Name);
                         System.SetAdapter.CreateSet(set);
-                        systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, "inet", System, set.SyncMode);
+                        systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, "inet", System, set.SyncMode, set.Entries);
                     }
                 }
 
                 if (set.SyncMode == IpSetSyncMode.SetAndEntries)
                 {
-                    var distinctEntries = set.Entries.Distinct().ToList();
+                    HashSet<IpSetEntry> indexedEntries = new HashSet<IpSetEntry>(set.Entries, new IpSetEntryKeyComparer());
+                    HashSet<IpSetEntry> systemEntries = new HashSet<IpSetEntry>(systemSet.Entries, new IpSetEntryKeyComparer());
                     try
                     {
-                        foreach (var entry in distinctEntries)
+                        foreach (var entry in indexedEntries)
                         {
-                            try
+                            if (!systemSet.Entries.Remove(entry))
                             {
-                                var systemEntry = systemSet.Entries.FirstOrDefault((a) => a.KeyEquals(entry));
-                                if (systemEntry == null)
-                                {
-                                    System.SetAdapter.AddEntry(entry);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                throw;
+                                System.SetAdapter.AddEntry(entry);
                             }
                         }
 
-                        foreach (var entry in systemSet.Entries)
+                        foreach (var entry in systemEntries)
                         {
-                            IpSetEntry entry1 = entry;
-                            var memEntry = distinctEntries.FirstOrDefault(((a) => a.KeyEquals(entry1)));
-                            if (memEntry == null)
-                            {
-                                System.SetAdapter.DeleteEntry(entry);
-                            }
+                            System.SetAdapter.DeleteEntry(entry);
                         }
                     }
                     catch (Exception ex)
@@ -116,7 +104,7 @@ namespace IPTables.Net.Iptables.IpSet
             {
                 foreach (var set in systemSets.Sets)
                 {
-                    if (_sets.FirstOrDefault((a) => a.Name == set.Name) == null && canDeleteSet(set))
+                    if (!_sets.ContainsKey(set.Name) && canDeleteSet(set))
                     {
                         System.SetAdapter.DestroySet(set.Name);
                     }
@@ -140,7 +128,7 @@ namespace IPTables.Net.Iptables.IpSet
 
         public void AddSet(IpSetSet set)
         {
-            _sets.Add(set);
+            _sets.Add(set.Name, set);
         }
 
         public void Accept(String line, IpTablesSystem iptables)
