@@ -82,7 +82,7 @@ namespace IPTables.Net.Iptables.IpSet
                     {
                         foreach (var entry in indexedEntries)
                         {
-                            if (!systemSet.Entries.Remove(entry))
+                            if (!systemEntries.Remove(entry))
                             {
                                 System.SetAdapter.AddEntry(entry);
                             }
