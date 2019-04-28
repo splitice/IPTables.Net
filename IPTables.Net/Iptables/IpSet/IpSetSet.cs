@@ -25,6 +25,12 @@ namespace IPTables.Net.Iptables.IpSet
         private IpTablesSystem _system;
         private IpSetSyncMode _syncMode = IpSetSyncMode.SetAndEntries;
         private string[] _typeComponents;
+
+        internal string InternalName
+        {
+            set { _name = Name; }
+        }
+
         #endregion
 
         #region Properties

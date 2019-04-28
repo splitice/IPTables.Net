@@ -41,8 +41,8 @@ namespace IPTables.Net.Iptables.IpSet.Parser
 
             if (first)
             {
-                _set = new IpSetSet(IpSetTypeHelper.StringToType(GetNextArg()), option, _set.Timeout, _set.Family,
-                    _set.System, _set.SyncMode);
+                _set.InternalName = option;
+                _set.Type = IpSetTypeHelper.StringToType(GetNextArg());
                 return 1;
             }
             else
