@@ -123,7 +123,9 @@ namespace IPTables.Net.Iptables.IpSet
 
         public IpSetSet GetSetByName(string name)
         {
-            return Sets.FirstOrDefault((a) => a.Name == name);
+            IpSetSet ret = null;
+            _sets.TryGetValue(name, out ret);
+            return ret;
         }
 
         public void AddSet(IpSetSet set)

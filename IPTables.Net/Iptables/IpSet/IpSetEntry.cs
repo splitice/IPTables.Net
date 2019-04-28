@@ -141,14 +141,14 @@ namespace IPTables.Net.Iptables.IpSet
 
         public static IpSetEntry Parse(String[] arguments, IpSetSets sets, int startOffset = 0)
         {
-            if (arguments.Length < 2) return null;
+            if (arguments.Length < 2+startOffset) return null;
 
             IpSetEntry entry = new IpSetEntry(null);
             var parser = new IpSetEntryParser(arguments, entry, sets);
 
             for (int i = startOffset; i < arguments.Length; i++)
             {
-                i += parser.FeedToSkip(i);
+                i += parser.FeedToSkip(i, i == startOffset);
             }
 
             return entry;

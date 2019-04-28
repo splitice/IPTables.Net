@@ -80,14 +80,14 @@ namespace IPTables.Net.Iptables.IpSet.Parser
         /// <summary>
         /// Consume arguments
         /// </summary>
-        /// <param name="position">Rhe position to parse</param>
+        /// <param name="position">The position to parse</param>
         /// <returns>number of arguments consumed</returns>
-        public int FeedToSkip(int position)
+        public int FeedToSkip(int position, bool first)
         {
             Position = position;
             String option = GetCurrentArg();
 
-            if (position == 0)
+            if (first)
             {
                 var set = _sets.GetSetByName(option);
                 if (set == null)
@@ -99,7 +99,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
             }
             else
             {
-                ParseEntry(_entry,option);
+                ParseEntry(_entry, option);
             }
             return 0;
         }
