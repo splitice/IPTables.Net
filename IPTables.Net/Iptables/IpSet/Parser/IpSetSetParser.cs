@@ -34,12 +34,12 @@ namespace IPTables.Net.Iptables.IpSet.Parser
         /// </summary>
         /// <param name="position">Rhe position to parse</param>
         /// <returns>number of arguments consumed</returns>
-        public int FeedToSkip(int position)
+        public int FeedToSkip(int position, bool first)
         {
             Position = position;
             String option = GetCurrentArg();
 
-            if (position == 0)
+            if (first)
             {
                 _set.Name = option;
                 _set.Type = IpSetTypeHelper.StringToType(GetNextArg());

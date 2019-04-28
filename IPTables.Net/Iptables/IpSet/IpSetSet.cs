@@ -107,6 +107,7 @@ namespace IPTables.Net.Iptables.IpSet
         internal IpSetSet(IpTablesSystem system)
         {
             _system = system;
+            _entries = new List<IpSetEntry>();
         }
 
         #endregion
@@ -157,7 +158,7 @@ namespace IPTables.Net.Iptables.IpSet
 
             for (int i = startOffset; i < arguments.Length; i++)
             {
-                i += parser.FeedToSkip(i);
+                i += parser.FeedToSkip(i, startOffset == i);
             }
 
             return set;
