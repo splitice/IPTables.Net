@@ -88,6 +88,7 @@
     <Compile Include="Iptables\Modules\HashRoute\HashRouteTargetModule.cs" />
     <Compile Include="Iptables\Modules\HashRoute\HashRouteMatchModule.cs" />
     <Compile Include="Iptables\Modules\Devgroup\DevgroupModule.cs" />
+    <Compile Include="Iptables\Modules\Netflow\NetflowMatchModule.cs" />
     <Compile Include="Iptables\Modules\Socket\SocketModule.cs" />
     <Compile Include="Iptables\Modules\Statistic\StatisticModule.cs" />
     <Compile Include="Iptables\Modules\Netflow\NetflowModule.cs" />
