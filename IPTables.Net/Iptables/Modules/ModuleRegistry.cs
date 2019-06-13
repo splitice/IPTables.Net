@@ -21,6 +21,7 @@ using IPTables.Net.Iptables.Modules.Limit;
 using IPTables.Net.Iptables.Modules.Log;
 using IPTables.Net.Iptables.Modules.Mark;
 using IPTables.Net.Iptables.Modules.Multiport;
+using IPTables.Net.Iptables.Modules.Netflow;
 using IPTables.Net.Iptables.Modules.Nfacct;
 using IPTables.Net.Iptables.Modules.Nflog;
 using IPTables.Net.Iptables.Modules.Nfqueue;
@@ -80,7 +81,8 @@ namespace IPTables.Net.Iptables.Modules
             U32Module.GetModuleEntry,
             SocketModule.GetModuleEntry,
             TProxyModule.GetModuleEntry,
-            NetflowModule.GetModuleEntry
+            NetflowModule.GetModuleEntry,
+            NetflowMatchModule.GetModuleEntry
         };
 
         public static List<ModuleEntry> PreloadDuplicateModules = new List<ModuleEntry>(); 
