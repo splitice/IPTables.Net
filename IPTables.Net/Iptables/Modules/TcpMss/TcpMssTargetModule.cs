@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IPTables.Net.Iptables.Modules.TcpMss
 {
-    public class TcpMssModule : ModuleBase, IIpTablesModule, IEquatable<TcpMssModule>
+    public class TcpMssTargetModule : ModuleBase, IIpTablesModule, IEquatable<TcpMssTargetModule>
     {
         private const String OptionSetMss= "--set-mss";
         private const String OptionClampMssToPmtuLong = "--clamp-mss-to-pmtu";
@@ -12,11 +12,11 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
         public int SetMss = 0;
         public bool ClampMssToPmtu = false;
 
-        public TcpMssModule(int version) : base(version)
+        public TcpMssTargetModule(int version) : base(version)
         {
         }
 
-        public bool Equals(TcpMssModule other)
+        public bool Equals(TcpMssTargetModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -78,7 +78,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("TCPMSS", typeof (TcpMssModule), GetOptions);
+            return GetTargetModuleEntryInternal("TCPMSS", typeof (TcpMssTargetModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -86,7 +86,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((TcpMssModule) obj);
+            return Equals((TcpMssTargetModule) obj);
         }
 
         public override int GetHashCode()

@@ -92,6 +92,7 @@
     <Compile Include="Iptables\Modules\Socket\SocketModule.cs" />
     <Compile Include="Iptables\Modules\Statistic\StatisticModule.cs" />
     <Compile Include="Iptables\Modules\Netflow\NetflowModule.cs" />
+    <Compile Include="Iptables\Modules\TcpMss\TcpMssMatchModule.cs" />
     <Compile Include="Iptables\Modules\TProxy\TProxyModule.cs" />
     <Compile Include="Iptables\Modules\U32\U32Module.cs" />
     <Compile Include="Iptables\NativeLibrary\IptcInterface.cs" />
@@ -195,7 +196,7 @@
     <Compile Include="Iptables\Modules\Polyfill\PolyfillModule.cs" />
     <Compile Include="Iptables\Modules\Recent\RecentMode.cs" />
     <Compile Include="Iptables\Modules\Recent\RecentModule.cs" />
-    <Compile Include="Iptables\Modules\TcpMss\TcpMssModule.cs" />
+    <Compile Include="Iptables\Modules\TcpMss\TcpMssTargetModule.cs" />
     <Compile Include="Iptables\Modules\Multiport\MultiportModule.cs" />
     <Compile Include="Iptables\Modules\Udp\UdpModule.cs" />
     <Compile Include="Iptables\Modules\ModuleEntry.cs" />
