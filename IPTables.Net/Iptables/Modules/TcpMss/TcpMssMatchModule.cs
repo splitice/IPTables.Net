@@ -24,7 +24,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
 
         public bool NeedsLoading
         {
-            get { return false; }
+            get { return true; }
         }
 
         public int Feed(RuleParser parser, bool not)
@@ -42,16 +42,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
 
         public String GetRuleString()
         {
-            var sb = new StringBuilder();
-
-            if (!MssRange.Null)
-            {
-                sb.Append(OptionMss);
-                sb.Append(" ");
-                sb.Append(MssRange);
-            }
-
-            return sb.ToString();
+            return MssRange.ToOption(OptionMss);
         }
 
         public static HashSet<String> GetOptions()

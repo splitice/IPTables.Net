@@ -101,7 +101,7 @@ namespace IPTables.Net.Iptables.Modules.SynProxy
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("SYNPROXY", typeof (SynProxyModule), GetOptions, true);
+            return GetTargetModuleEntryInternal("SYNPROXY", typeof (SynProxyModule), GetOptions, false);
         }
 
         public override bool Equals(object obj)
