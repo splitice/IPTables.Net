@@ -84,6 +84,7 @@
     <Compile Include="SingleConnmarkRuleParseTests.cs" />
     <Compile Include="SingleHashrouteTests.cs" />
     <Compile Include="SingleMssRuleParseTests.cs" />
+    <Compile Include="SingleSdnatRuleParseTests.cs" />
     <Compile Include="SingleStatisticParseTests.cs" />
     <Compile Include="SingleIpSetRuleParseTests.cs" />
     <Compile Include="SingleHelperRuleParseTests.cs" />

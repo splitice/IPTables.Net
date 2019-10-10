@@ -47,7 +47,7 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
                     return 1;
 
                 case OptionToDestination:
-                    ToSource = IPPortOrRange.Parse(parser.GetNextArg());
+                    ToDestination = IPPortOrRange.Parse(parser.GetNextArg());
                     return 1;
                     
                 case OptionRandom:
@@ -103,19 +103,19 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
                     sb.Append(" ");
                 sb.Append(OptionPersisent);
             }
-
+            
+            if (CtMark != 0)
+            {
+                if (sb.Length != 0)
+                    sb.Append(" ");
+                sb.Append(OptionCtMark + " " + CtMark);
+            }
 
             if (CtMask != 0)
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
                 sb.Append(OptionCtMask + " " + CtMask);
-            }
-            if (CtMark != 0)
-            {
-                if (sb.Length != 0)
-                    sb.Append(" ");
-                sb.Append(OptionCtMark + " " + CtMark);
             }
 
             return sb.ToString();
