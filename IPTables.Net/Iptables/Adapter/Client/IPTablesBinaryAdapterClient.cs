@@ -94,12 +94,10 @@ namespace IPTables.Net.Iptables.Adapter.Client
             String arguments;
             if (flush)
             {
-                arguments = String.Format("-t {0} -F {1} -X {1}", table, chainName);
+                arguments = String.Format("-t {0} -F {1}", table, chainName);
+                ExecutionHelper.ExecuteIptables(_system, arguments, _iptablesBinary);
             }
-            else
-            {
-                arguments = String.Format("-t {0} -X {1}", table, chainName);
-            }
+            arguments = String.Format("-t {0} -X {1}", table, chainName);
             ExecutionHelper.ExecuteIptables(_system, arguments, _iptablesBinary);
         }
 

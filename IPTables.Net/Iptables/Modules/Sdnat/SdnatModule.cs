@@ -30,7 +30,7 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) && ToSource.Equals(other.ToSource) && ToSource.Equals(other.ToDestination) && CtMark == other.CtMark && CtMask == other.CtMask;
+            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) && ToSource.Equals(other.ToSource) && ToDestination.Equals(other.ToDestination) && CtMark == other.CtMark && CtMask == other.CtMask;
         }
 
         public bool NeedsLoading
