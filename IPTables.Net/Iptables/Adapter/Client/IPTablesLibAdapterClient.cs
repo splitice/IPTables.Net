@@ -177,12 +177,16 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             if (_inTransaction)
             {
+                if (flush)
+                {
+                    GetInterface(table).FlushChain(chainName);
+                }
                 GetInterface(table).DeleteChain(chainName);
                 return;
             }
 
             IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
-            binaryClient.DeleteChain(table, chainName);
+            binaryClient.DeleteChain(table, chainName, flush);
         }
 
         public override IpTablesChainSet ListRules(String table)

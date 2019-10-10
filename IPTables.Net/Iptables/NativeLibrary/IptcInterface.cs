@@ -791,5 +791,21 @@ namespace IPTables.Net.Iptables.NativeLibrary
             }
             return ip6tc_delete_chain(chainName, _handle) == 1;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="chainName"></param>
+        /// <returns>if sucessful</returns>
+        public bool FlushChain(string chainName)
+        {
+            RequireHandle();
+            if (_ipVersion == 4)
+            {
+                return iptc_flush_entries(chainName, _handle) == 1;
+            }
+            return ip6tc_flush_entries(chainName, _handle) == 1;
+        }
+
     }
 }
