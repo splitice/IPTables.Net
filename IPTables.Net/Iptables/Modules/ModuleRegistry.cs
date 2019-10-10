@@ -27,6 +27,7 @@ using IPTables.Net.Iptables.Modules.Nflog;
 using IPTables.Net.Iptables.Modules.Nfqueue;
 using IPTables.Net.Iptables.Modules.Polyfill;
 using IPTables.Net.Iptables.Modules.Recent;
+using IPTables.Net.Iptables.Modules.Sdnat;
 using IPTables.Net.Iptables.Modules.Snat;
 using IPTables.Net.Iptables.Modules.Socket;
 using IPTables.Net.Iptables.Modules.State;
@@ -51,6 +52,7 @@ namespace IPTables.Net.Iptables.Modules
             HelperModule.GetModuleEntry,
             DnatModule.GetModuleEntry,
             SnatModule.GetModuleEntry,
+            SdnatModule.GetModuleEntry,
             CtTargetModule.GetModuleEntry,
             ConnlimitModule.GetModuleEntry,
             LimitModule.GetModuleEntry,
