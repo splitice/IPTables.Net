@@ -53,8 +53,8 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="SystemInteract, Version=1.0.1.9, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SystemInteract.1.0.1-cibuild0009\lib\SystemInteract.dll</HintPath>
+    <Reference Include="SystemInteract, Version=1.0.1.11, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SystemInteract.1.0.1-cibuild0011\lib\SystemInteract.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
