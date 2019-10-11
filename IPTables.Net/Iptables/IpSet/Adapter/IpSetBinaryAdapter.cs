@@ -5,16 +5,16 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using SystemInteract;
-using Common.Logging;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
+using log4net;
 
 namespace IPTables.Net.Iptables.IpSet.Adapter
 {
     public class IpSetBinaryAdapter
     {
         private const String BinaryName = "ipset";
-        private ILog _log = LogManager.GetLogger<IpSetBinaryAdapter>();
+        protected static readonly ILog _log = LogManager.GetLogger(typeof(IpSetBinaryAdapter));
 
         private readonly ISystemFactory _system;
 

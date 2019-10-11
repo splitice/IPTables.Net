@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Common.Logging;
 using IPTables.Net.Exceptions;
+using log4net;
 
 namespace IPTables.Net.Iptables.Adapter.Client.Helper
 {
     class IPTablesRestoreTableBuilder
     {
-        protected static readonly ILog Log = LogManager.GetLogger<IPTablesRestoreTableBuilder>();
+        protected static readonly ILog Log = LogManager.GetLogger(typeof(IPTablesRestoreTableBuilder));
 
         private class Table
         {

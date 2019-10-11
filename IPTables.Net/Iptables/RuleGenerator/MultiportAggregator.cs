@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Common.Logging;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Helpers;
@@ -11,6 +10,7 @@ using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Multiport;
 using IPTables.Net.Iptables.Modules.Tcp;
 using IPTables.Net.Iptables.Modules.Udp;
+using log4net;
 
 namespace IPTables.Net.Iptables.RuleGenerator
 {
@@ -32,7 +32,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
     /// <typeparam name="TKey"></typeparam>
     public class MultiportAggregator<TKey> : IRuleGenerator
     {
-        protected static readonly ILog Log = LogManager.GetLogger<MultiportAggregator<TKey>>();
+        protected static readonly ILog Log = LogManager.GetLogger(typeof(MultiportAggregator<TKey>));
         private String _chain;
         private String _table;
         private Dictionary<TKey, List<IpTablesRule>> _rules = new Dictionary<TKey, List<IpTablesRule>>();
@@ -209,7 +209,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
 
                 //Nested output
                 var singleRule = OutputRulesForGroup(ruleSet, system, p.Value, chainName, p.Key);
-                Log.Debug((a)=>a("Is Single Rule: {0}", singleRule == null ? "NO" : "YES"));
+                Log.Debug($"Is Single Rule: {singleRule == null}");
                 if (singleRule == null)
                 {
                     if (chain.Rules.Count != 0)
@@ -224,7 +224,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                     }
                     else
                     {
-                        Log.Debug((a)=>a("No rules in the chain \"{0}\", skipping jump from {1}.", chainName, _chain));
+                        Log.Debug(String.Format("No rules in the chain \"{0}\", skipping jump from {1}.", chainName, _chain));
                     }
                 }
                 else

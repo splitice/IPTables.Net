@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Common.Logging;
 using IPTables.Net.Exceptions;
+using log4net;
 
 namespace IPTables.Net.Iptables.NativeLibrary
 {
