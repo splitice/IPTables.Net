@@ -65,7 +65,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
 
         public bool RestoreSets(IEnumerable<IpSetSet> sets)
         {
-            //ipset save
+            //ipset restore
             using (ISystemProcess process = _system.StartProcess(BinaryName, "restore"))
             {
                 if (WriteSets(sets, process.StandardInput))
@@ -133,6 +133,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
         {
             IpSetSets sets = new IpSetSets(iptables);
 
+            //ipset save
             using (ISystemProcess process = _system.StartProcess(BinaryName, "save"))
             {
                 ProcessHelper.ReadToEnd(process, line =>
