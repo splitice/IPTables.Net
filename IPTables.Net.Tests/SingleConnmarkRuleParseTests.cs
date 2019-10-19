@@ -68,6 +68,18 @@ namespace IPTables.Net.Tests
 
             Assert.AreEqual(rule, irule.GetActionCommand());
         }
-        
+
+
+        [Test]
+        public void TestRestoreMark()
+        {
+            String rule = "-A PREROUTING -j CONNMARK --restore-mark --ctmask 0x11 --nfmask 0x3FFFF00";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
+
+            Assert.AreEqual(rule, irule.GetActionCommand());
+        }
+
     }
 }
