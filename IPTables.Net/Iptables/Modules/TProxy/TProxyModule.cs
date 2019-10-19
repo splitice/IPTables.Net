@@ -110,7 +110,7 @@ namespace IPTables.Net.Iptables.Modules.SynProxy
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("TPROXY", typeof (TProxyModule), GetOptions, true);
+            return GetTargetModuleEntryInternal("TPROXY", typeof (TProxyModule), GetOptions, false);
         }
 
         protected bool Equals(TProxyModule other)

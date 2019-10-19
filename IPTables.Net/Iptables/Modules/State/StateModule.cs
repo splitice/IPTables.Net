@@ -63,7 +63,7 @@ namespace IPTables.Net.Iptables.Modules.State
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("state", typeof (StateModule), GetOptions, true);
+            return GetModuleEntryInternal("state", typeof (StateModule), GetOptions, false);
         }
 
         public override bool Equals(object obj)
