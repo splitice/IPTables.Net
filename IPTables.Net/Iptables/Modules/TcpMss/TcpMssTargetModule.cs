@@ -58,7 +58,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
-                sb.Append(OptionClampMssToPmtuLong);
+                sb.Append(OptionSetMss);
                 sb.Append(" ");
                 sb.Append(SetMss);
             }
