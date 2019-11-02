@@ -10,7 +10,7 @@ namespace IPTables.Net.Tests
         [Test]
         public void TestMssRange()
         {
-            String rule = "-A INPUT -m tcpmss --mss 10:100 -j ACCEPT";
+            String rule = "-A INPUT -m tcpmss --set-mss 10:100 -j ACCEPT";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
