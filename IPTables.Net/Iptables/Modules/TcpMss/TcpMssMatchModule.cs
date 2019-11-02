@@ -7,7 +7,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
 {
     public class TcpMssMatchModule : ModuleBase, IIpTablesModule, IEquatable<TcpMssMatchModule>
     {
-        private const String OptionMss= "--mss";
+        private const String OptionMss= "--set-mss";
 
         public ValueOrNot<PortOrRange> MssRange;
 
