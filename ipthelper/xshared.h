@@ -8,6 +8,8 @@
 #include <linux/netfilter_ipv4/ip_tables.h>
 #include <linux/netfilter_ipv6/ip6_tables.h>
 
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+
 enum {
 	OPT_NONE = 0,
 	OPT_NUMERIC = 1 << 0,

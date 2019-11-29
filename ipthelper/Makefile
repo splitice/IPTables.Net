@@ -34,7 +34,7 @@ error:
 	$(error Invalid configuration, please check your inputs)
 endif
 
-SOURCEFILES := ct.cpp ip6tables.c iptables.c ipthelper.c libnetlink.cpp xshared.c xtables.c
+SOURCEFILES := ct.cpp ip6tables.c iptables.c ipthelper.c libnetlink.cpp xshared.c xtables.c xtoptions.c
 EXTERNAL_LIBS := 
 EXTERNAL_LIBS_COPIED := $(foreach lib, $(EXTERNAL_LIBS),$(BINARYDIR)/$(notdir $(lib)))
 
