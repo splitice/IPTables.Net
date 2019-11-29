@@ -46,6 +46,7 @@
 #include <linux/netfilter_ipv4/ip_tables.h>
 #include <linux/netfilter_ipv6/ip6_tables.h>
 #include <libiptc/libxtc.h>
+#include <xtables-version.h>
 
 #ifndef NO_SHARED_LIBS
 #include <dlfcn.h>
@@ -67,6 +68,8 @@
 #ifndef PROC_SYS_MODPROBE
 #define PROC_SYS_MODPROBE "/proc/sys/kernel/modprobe"
 #endif
+
+#define XTABLES_LIBDIR "/usr/lib/x86_64-linux-gnu/xtables/ "
 
 /* we need this for ip6?tables-restore.  ip6?tables-restore.c sets line to the
  * current line of the input file, in order  to give a more precise error
@@ -853,8 +856,8 @@ void xtables_register_match(struct xtables_match *me)
 		xtables_check_options(me->name, me->extra_opts);
 
 	/* ignore not interested match */
-	if (me->family != afinfo->family && me->family != AF_UNSPEC)
-		return;
+	//if (me->family != afinfo->family && me->family != AF_UNSPEC)
+	//	return;
 
 	/* place on linked list of matches pending full registration */
 	me->next = xtables_pending_matches;
@@ -950,8 +953,8 @@ void xtables_register_target(struct xtables_target *me)
 		xtables_check_options(me->name, me->extra_opts);
 
 	/* ignore not interested target */
-	if (me->family != afinfo->family && me->family != AF_UNSPEC)
-		return;
+	//if (me->family != afinfo->family && me->family != AF_UNSPEC)
+	//	return;
 
 	/* place on linked list of targets pending full registration */
 	me->next = xtables_pending_targets;

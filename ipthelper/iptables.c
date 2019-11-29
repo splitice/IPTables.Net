@@ -37,7 +37,7 @@
 #include <limits.h>
 #include <unistd.h>
 #include "iptables.h"
-#include <xtables.h>
+#include "xtables.h"
 #include <fcntl.h>
 #include <assert.h>
 #ifdef __cplusplus
@@ -1401,7 +1401,7 @@ int do_command4(int argc, char *argv[], char **table, void **handle)
 			break;
 		}
 		cs.invert = FALSE;
-	}
+	}	
 
 	for (matchp = cs.matches; matchp; matchp = matchp->next)
 		xtables_option_mfcall(matchp->match);

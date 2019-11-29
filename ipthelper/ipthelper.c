@@ -37,7 +37,7 @@
 #include <stdarg.h>
 #include <limits.h>
 #include <unistd.h>
-#include <xtables.h>
+#include "xtables.h"
 #include <fcntl.h>
 #include <assert.h>
 #include "ipthelper.h"
