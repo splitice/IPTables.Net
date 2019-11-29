@@ -69,7 +69,7 @@
 #define PROC_SYS_MODPROBE "/proc/sys/kernel/modprobe"
 #endif
 
-#define XTABLES_LIBDIR "/usr/lib/x86_64-linux-gnu/xtables/ "
+#define XTABLES_LIBDIR "/usr/lib/x86_64-linux-gnu/xtables/"
 
 /* we need this for ip6?tables-restore.  ip6?tables-restore.c sets line to the
  * current line of the input file, in order  to give a more precise error
