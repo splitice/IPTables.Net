@@ -1518,7 +1518,7 @@ int do_command4(int argc, char *argv[], char **table, void **handle)
 	free(smasks);
 	free(daddrs);
 	free(dmasks);
-	xtables_free_opts(1);
+	//xtables_free_opts(1);
 
 	return ret;
 }
