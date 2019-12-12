@@ -907,7 +907,7 @@ void xtables_register_match(struct xtables_match *me)
 		exit(1);
 	}
 
-/*
+
 	if (strcmp(me->version, XTABLES_VERSION) != 0) {
 		fprintf(stderr, "%s: match \"%s\" has version \"%s\", "
 		        "but \"%s\" is required.\n",
@@ -915,7 +915,6 @@ void xtables_register_match(struct xtables_match *me)
 			me->version, XTABLES_VERSION);
 		exit(1);
 	}
-	*/
 
 	if (strlen(me->name) >= XT_EXTENSION_MAXNAMELEN) {
 		fprintf(stderr, "%s: match `%s' has invalid name\n",

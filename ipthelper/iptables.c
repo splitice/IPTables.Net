@@ -179,7 +179,7 @@ iptables_exit_error(enum xtables_exittype status, const char *msg, ...)
 		memcpy(errbuffer + buffer_length, UPGRADE_MSG, sizeof(UPGRADE_MSG));
 	}
 	/* On error paths, make sure that we don't leak memory */
-	xtables_free_opts(1);
+	//xtables_free_opts(1);
 	
 	if (memcmp(&buf,&buf_zero, sizeof(buf_zero)) != 0) 
 	{
@@ -915,103 +915,6 @@ static void clear_rule_matches(struct xtables_rule_match **matches)
 	}
 
 	*matches = NULL;
-}
-
-static void command_jump(struct iptables_command_state *cs)
-{
-	size_t size;
-
-	set_option(&cs->options, OPT_JUMP, &cs->fw.ip.invflags, cs->invert);
-	cs->jumpto = parse_target(optarg);
-	/* TRY_LOAD (may be chain name) */
-	cs->target = xtables_find_target(cs->jumpto, XTF_TRY_LOAD);
-
-	if (cs->target == NULL)
-		return;
-
-	size = XT_ALIGN(sizeof(struct xt_entry_target))
-		+ cs->target->size;
-
-	cs->target->t = xtables_calloc(1, size);
-	cs->target->t->u.target_size = size;
-
-#ifdef OLD_IPTABLES
-	strcpy(cs->target->t->u.user.name, cs->jumpto);
-#else
-	if (cs->target->real_name == NULL) {
-		strcpy(cs->target->t->u.user.name, cs->jumpto);
-	}
-	else {
-		/* Alias support for userspace side */
-		strcpy(cs->target->t->u.user.name, cs->target->real_name);
-		if (!(cs->target->ext_flags & XTABLES_EXT_ALIAS))
-			fprintf(stderr, "Notice: The %s target is converted into %s target "
-			"in rule listing and saving.\n",
-			cs->jumpto, cs->target->real_name);
-	}
-#endif
-	cs->target->t->u.user.revision = cs->target->revision;
-	xs_init_target(cs->target);
-
-	if (cs->target->x6_options != NULL)
-		iptables_globals.opts = xtables_options_xfrm(iptables_globals.orig_opts, iptables_globals.opts,
-					    cs->target->x6_options,
-					    &cs->target->option_offset);
-	else
-		iptables_globals.opts = xtables_merge_options(iptables_globals.orig_opts, iptables_globals.opts,
-					     cs->target->extra_opts,
-					     &cs->target->option_offset);
-	if (iptables_globals.opts == NULL)
-		xtables_error(OTHER_PROBLEM, "can't alloc memory!");
-}
-
-static void command_match(struct iptables_command_state *cs)
-{
-	struct xtables_match *m;
-	size_t size;
-
-	if (cs->invert)
-		xtables_error(PARAMETER_PROBLEM,
-			   "unexpected ! flag before --match");
-
-	m = xtables_find_match(optarg, XTF_LOAD_MUST_SUCCEED, &cs->matches);
-	if(m == NULL){
-		xtables_error(PARAMETER_PROBLEM,
-			   "unable to load match module %s", optarg);
-	   return;
-	}
-	size = XT_ALIGN(sizeof(struct xt_entry_match)) + m->size;
-	m->m = xtables_calloc(1, size);
-	m->m->u.match_size = size;
-	
-	//OLD --
-#ifdef OLD_IPTABLES
-	strcpy(m->m->u.user.name, m->name);
-#else
-	if (m->real_name == NULL) {
-		strcpy(m->m->u.user.name, m->name);
-	}
-	else {
-		strcpy(m->m->u.user.name, m->real_name);
-		if (!(m->ext_flags & XTABLES_EXT_ALIAS))
-			fprintf(stderr, "Notice: the %s match is converted into %s match "
-			"in rule listing and saving.\n", m->name, m->real_name);
-	}
-#endif
-	
-	m->m->u.user.revision = m->revision;
-	xs_init_match(m);
-	if (m == m->next)
-		return;
-	/* Merge options for non-cloned matches */
-	if (m->x6_options != NULL)
-		iptables_globals.opts = xtables_options_xfrm(iptables_globals.orig_opts, iptables_globals.opts,
-					    m->x6_options, &m->option_offset);
-	else if (m->extra_opts != NULL)
-		iptables_globals.opts = xtables_merge_options(iptables_globals.orig_opts, iptables_globals.opts,
-					     m->extra_opts, &m->option_offset);
-	if (iptables_globals.opts == NULL)
-		xtables_error(OTHER_PROBLEM, "can't alloc memory!");
 }
 
 EXPORT void* init_handle4(const char* table){
