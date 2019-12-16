@@ -13,6 +13,7 @@ using NUnit.Framework;
 namespace IPTables.Net.Tests
 {
     [TestFixture]
+    [Category("NotWorkingOnTravis")]
     class ConntrackLibraryTests
     {
         public static bool IsLinux
