@@ -32,6 +32,8 @@ script:
   - cd ipthelper
   - CXX="g++-4.8" ADDITIONAL_CFLAGS="-DOLD_IPTABLES" CONFIG="Release" sudo -E bash install.sh
   - CXX="g++-4.8" ADDITIONAL_CFLAGS="-DOLD_IPTABLES" CONFIG="Debug" sudo -E bash install.sh
+  - ldconfig
+  - ldconfig -p | grep ipthelper
   - cd ..
   - bash travis-ci/autoversion.sh IPTables.Net
   - bash travis-ci/autoversion.sh IPTables.Net.Tests
