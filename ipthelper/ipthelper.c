@@ -37,7 +37,7 @@
 #include <stdarg.h>
 #include <limits.h>
 #include <unistd.h>
-#include "xtables.h"
+#include <xtables.h>
 #include <fcntl.h>
 #include <assert.h>
 #include "ipthelper.h"
@@ -57,6 +57,9 @@ char* errbuffer = NULL;
 jmp_buf buf = { };
 
 int stdout_save;
+
+int
+ipv6_prefix_length(const struct in6_addr *a);
 
 
 char **split_commandline(const char *cmdline, int *argc)

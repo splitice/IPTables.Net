@@ -37,12 +37,13 @@
 #include <limits.h>
 //#include <iptables.h>
 #include <xtables.h>
+#include "xshared.h"
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include "xshared.h"
+#include <xtables.h>
 #include "iptables.h"
 #include "ipthelper.h"
 
@@ -2003,7 +2004,7 @@ int do_command6(int argc, char *argv[], char **table, void **handle)
 	if (verbose > 1)
 		dump_entries6(*handle);
 
-	xtables_rule_matches_free(&cs.matches);
+	clear_rule_matches(&cs.matches);
 
 	if (e != NULL) {
 		free(e);

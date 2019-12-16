@@ -37,7 +37,8 @@
 #include <limits.h>
 #include <unistd.h>
 #include "iptables.h"
-#include "xtables.h"
+#include <xtables.h>
+#include "xshared.h"
 #include <fcntl.h>
 #include <assert.h>
 #ifdef __cplusplus
@@ -45,7 +46,7 @@
 #include <string>
 #endif
 #include "ipthelper.h"
-#include "xshared.h"
+//#include <xshared.h>
 #include <setjmp.h>
 
 #ifndef TRUE

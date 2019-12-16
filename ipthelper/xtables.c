@@ -196,8 +196,8 @@ static const char *xtables_libdir;
 const char *xtables_modprobe_program;
 
 /* Keep track of matches/targets pending full registration: linked lists. */
-struct xtables_match *xtables_pending_matches;
-struct xtables_target *xtables_pending_targets;
+struct xtables_match *xtables_pending_matches = NULL;
+struct xtables_target *xtables_pending_targets = NULL;
 
 /* Keep track of fully registered external matches/targets: linked lists. */
 struct xtables_match *xtables_matches;
