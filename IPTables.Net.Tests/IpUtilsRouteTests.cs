@@ -34,5 +34,13 @@ namespace IPTables.Net.Tests
             var one = ipUtils.ParseObjectInternal("local default dev lo  table 100  scope host", "to");
             ipUtils.ExportObject(one);
         }
+        [Test]
+        public void TestParseRuleAnycastV6()
+        {
+            var systemFactory = new MockIptablesSystemFactory();
+            var ipUtils = new IpRouteController(systemFactory);
+            var one = ipUtils.ParseObjectInternal("anycast fe80:: dev tap0 table local proto kernel metric 0 pref medium", "to");
+            ipUtils.ExportObject(one);
+        }
     }
 }
