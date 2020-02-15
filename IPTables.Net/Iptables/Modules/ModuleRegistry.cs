@@ -12,6 +12,7 @@ using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Ct;
 using IPTables.Net.Iptables.Modules.Devgroup;
 using IPTables.Net.Iptables.Modules.Dnat;
+using IPTables.Net.Iptables.Modules.Dynjmp;
 using IPTables.Net.Iptables.Modules.HashLimit;
 using IPTables.Net.Iptables.Modules.HashRoute;
 using IPTables.Net.Iptables.Modules.Helper;
@@ -86,7 +87,9 @@ namespace IPTables.Net.Iptables.Modules
             TProxyModule.GetModuleEntry,
             NetflowModule.GetModuleEntry,
             NetflowMatchModule.GetModuleEntry,
-            CtNetflowMatchModule.GetModuleEntry
+            CtNetflowMatchModule.GetModuleEntry,
+            DynjmpModule.GetModuleEntry,
+            SynjmpModule.GetModuleEntry
         };
 
         public static List<ModuleEntry> PreloadDuplicateModules = new List<ModuleEntry>(); 

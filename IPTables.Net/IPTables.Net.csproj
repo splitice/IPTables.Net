@@ -81,6 +81,8 @@
     <Compile Include="Iptables\IpTablesRuleDefinition.cs" />
     <Compile Include="Iptables\IPTablesTables.cs" />
     <Compile Include="Iptables\Modules\BpfL4\BpfModule.cs" />
+    <Compile Include="Iptables\Modules\Dynjmp\SynjmpModule.cs" />
+    <Compile Include="Iptables\Modules\Dynjmp\DynjmpModule.cs" />
     <Compile Include="Iptables\Modules\HashRoute\HashRouteTargetModule.cs" />
     <Compile Include="Iptables\Modules\HashRoute\HashRouteMatchModule.cs" />
     <Compile Include="Iptables\Modules\Devgroup\DevgroupModule.cs" />
