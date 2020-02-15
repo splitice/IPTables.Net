@@ -72,7 +72,7 @@ namespace IPTables.Net.Iptables
             get { return _rules.Cast<INetfilterRule>(); }
         } 
 
-        internal NetfilterSystem System
+        public NetfilterSystem System
         {
             get { return _system; }
         }
