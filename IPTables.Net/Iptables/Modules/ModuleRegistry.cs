@@ -37,6 +37,7 @@ using IPTables.Net.Iptables.Modules.StringMatch;
 using IPTables.Net.Iptables.Modules.SynProxy;
 using IPTables.Net.Iptables.Modules.Tcp;
 using IPTables.Net.Iptables.Modules.TcpMss;
+using IPTables.Net.Iptables.Modules.Ts3Init;
 using IPTables.Net.Iptables.Modules.U32;
 using IPTables.Net.Iptables.Modules.Udp;
 
@@ -88,8 +89,13 @@ namespace IPTables.Net.Iptables.Modules
             NetflowModule.GetModuleEntry,
             NetflowMatchModule.GetModuleEntry,
             CtNetflowMatchModule.GetModuleEntry,
-            DynjmpModule.GetModuleEntry,
-            SynjmpModule.GetModuleEntry
+            Ts3InitGetCookieModule.GetModuleEntry,
+            SynjmpModule.GetModuleEntry,
+            Ts3InitGetCookieModule.GetModuleEntry,
+            Ts3InitGetCookieMatchModule.GetModuleEntry,
+            Ts3InitGetPuzzleModule.GetModuleEntry,
+            Ts3InitReset.GetModuleEntry,
+            Ts3InitSetCookieModule.GetModuleEntry
         };
 
         public static List<ModuleEntry> PreloadDuplicateModules = new List<ModuleEntry>(); 
