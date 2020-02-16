@@ -17,10 +17,12 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         private const String OptionAddSet = "--add-set";
         private const String OptionDelSet = "--del-set";
         private const String OptionMapSet = "--map-set";
+        private const String OptionExist = "--exist";
 
         public ValueOrNot<String> MatchSet;
         public String MatchSetFlags;
         public MatchMode MatchSetMode;
+        public bool Exist;
 
         public SetTargetModule(int version) : base(version)
         {
@@ -45,6 +47,9 @@ namespace IPTables.Net.Iptables.Modules.IpSet
                     MatchSetFlags = parser.GetNextArg(2);
                     MatchSetMode = MatchMode.Map;
                     return 2;
+                case OptionExist:
+                    Exist = true;
+                    return 0;
             }
 
             return 0;
@@ -68,6 +73,11 @@ namespace IPTables.Net.Iptables.Modules.IpSet
                 sb.Append(" " + MatchSetFlags);
             }
 
+            if (Exist)
+            {
+                sb.Append(" " + OptionExist);
+            }
+
             return sb.ToString();
         }
 
@@ -75,7 +85,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         {
             var options = new HashSet<string>
             {
-                OptionAddSet, OptionDelSet, OptionMapSet
+                OptionAddSet, OptionDelSet, OptionMapSet, OptionExist
             };
             return options;
         }
