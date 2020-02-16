@@ -89,7 +89,6 @@ namespace IPTables.Net.Iptables.Modules
             NetflowModule.GetModuleEntry,
             NetflowMatchModule.GetModuleEntry,
             CtNetflowMatchModule.GetModuleEntry,
-            Ts3InitGetCookieModule.GetModuleEntry,
             SynjmpModule.GetModuleEntry,
             Ts3InitGetCookieModule.GetModuleEntry,
             Ts3InitGetCookieMatchModule.GetModuleEntry,
