@@ -123,51 +123,67 @@ namespace IPTables.Net.Iptables
                     {
                         //Start transaction
                         client.StartTransaction();
-
-                        //Load all chains, figure out what to add
-                        var tableChains = new Dictionary<string, List<IpTablesChain>>();
-                        foreach (IpTablesChain chain in Chains)
+                        try
                         {
-                            if (!tableChains.ContainsKey(chain.Table))
+                            //Load all chains, figure out what to add
+                            var tableChains = new Dictionary<string, List<IpTablesChain>>();
+                            foreach (IpTablesChain chain in Chains)
                             {
-                                var chains = _system.GetChains(client, chain.Table, _ipVersion).ToList();
-                                tableChains.Add(chain.Table, chains);
+                                if (!tableChains.ContainsKey(chain.Table))
+                                {
+                                    var chains = _system.GetChains(client, chain.Table, _ipVersion).ToList();
+                                    tableChains.Add(chain.Table, chains);
+                                }
+
+                                if (
+                                    tableChains[chain.Table].FirstOrDefault(
+                                        a => a.Name == chain.Name && a.Table == chain.Table) ==
+                                    null)
+                                {
+                                    //Chain doesnt exist, to create
+                                    chainsToAdd.Add(chain);
+                                }
                             }
-                            if (
-                                tableChains[chain.Table].FirstOrDefault(
-                                    a => a.Name == chain.Name && a.Table == chain.Table) ==
-                                null)
+
+                            //Add the new chains / rules
+                            foreach (var chain in chainsToAdd)
                             {
-                                //Chain doesnt exist, to create
-                                chainsToAdd.Add(chain);
+                                tableChains[chain.Table].Add(_system.AddChain(client, chain));
+                            }
+
+                            chainsToAdd.Clear();
+
+                            //Special case
+                            if (client is IPTablesLibAdapterClient)
+                            {
+                                //Sync chain adds before starting rule adds
+                                client.EndTransactionCommit();
+                                client.StartTransaction();
+                            }
+
+                            //Update chains with differing rules
+                            foreach (IpTablesChain chain in Chains)
+                            {
+                                IpTablesChain realChain =
+                                    tableChains[chain.Table].First(a => a.Name == chain.Name && a.Table == chain.Table);
+                                if (realChain != null)
+                                {
+                                    //Update chain
+                                    realChain.SyncInternal(client, chain.Rules, sync);
+                                }
                             }
                         }
-
-                        //Add the new chains / rules
-                        foreach (var chain in chainsToAdd)
+                        catch
                         {
-                            tableChains[chain.Table].Add(_system.AddChain(client, chain));
-                        }
-                        chainsToAdd.Clear();
-
-                        //Special case
-                        if (client is IPTablesLibAdapterClient)
-                        {
-                            //Sync chain adds before starting rule adds
-                            client.EndTransactionCommit();
-                            client.StartTransaction();
-                        }
-
-                        //Update chains with differing rules
-                        foreach (IpTablesChain chain in Chains)
-                        {
-                            IpTablesChain realChain =
-                                tableChains[chain.Table].First(a => a.Name == chain.Name && a.Table == chain.Table);
-                            if (realChain != null)
+                            try
                             {
-                                //Update chain
-                                realChain.SyncInternal(client, chain.Rules, sync);
+                                client.EndTransactionRollback();
                             }
+                            catch
+                            {
+                            }
+
+                            throw;
                         }
 
                         //End Transaction: COMMIT
@@ -179,15 +195,30 @@ namespace IPTables.Net.Iptables
                             //Needs new transaction, bug in libiptc?
                             client.StartTransaction();
 
-                            foreach (string table in Chains.Select(a => a.Table).Distinct())
+                            try
                             {
-                                foreach (IpTablesChain chain in _system.GetChains(table, _ipVersion))
+                                foreach (string table in Chains.Select(a => a.Table).Distinct())
                                 {
-                                    if (!_chains.HasChain(chain.Name, chain.Table) && canDeleteChain(chain))
+                                    foreach (IpTablesChain chain in _system.GetChains(table, _ipVersion))
                                     {
-                                        chain.Delete(client);
+                                        if (!_chains.HasChain(chain.Name, chain.Table) && canDeleteChain(chain))
+                                        {
+                                            chain.Delete(client);
+                                        }
                                     }
                                 }
+                            }
+                            catch
+                            {
+                                try
+                                {
+                                    client.EndTransactionRollback();
+                                }
+                                catch
+                                {
+                                }
+
+                                throw;
                             }
 
                             //End Transaction: COMMIT
