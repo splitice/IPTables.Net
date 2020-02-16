@@ -81,6 +81,7 @@
     <Compile Include="Iptables\IpTablesRuleDefinition.cs" />
     <Compile Include="Iptables\IPTablesTables.cs" />
     <Compile Include="Iptables\Modules\BpfL4\BpfModule.cs" />
+    <Compile Include="Iptables\Modules\IpSet\SetTargetModule.cs" />
     <Compile Include="Iptables\Modules\Ts3Init\Ts3InitGetCookieMatchModule.cs" />
     <Compile Include="Iptables\Modules\Ts3Init\Ts3InitGetPuzzleModule.cs" />
     <Compile Include="Iptables\Modules\Ts3Init\Ts3InitSetCookieModule.cs" />
@@ -103,7 +104,7 @@
     <Compile Include="Iptables\NativeLibrary\IptcInterface.cs" />
     <Compile Include="Iptables\Modules\Bpf\BpfModule.cs" />
     <Compile Include="Iptables\Modules\Ct\CtTargetModule.cs" />
-    <Compile Include="Iptables\Modules\IpSet\IpSetModule.cs" />
+    <Compile Include="Iptables\Modules\IpSet\SetMatchModule.cs" />
     <Compile Include="Iptables\Modules\Helper\HelperModule.cs" />
     <Compile Include="Iptables\Modules\Length\LengthModule.cs" />
     <Compile Include="Iptables\Modules\Nfqueue\NfqueueModule.cs" />

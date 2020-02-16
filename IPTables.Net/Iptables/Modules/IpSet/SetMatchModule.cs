@@ -7,7 +7,7 @@ using IPTables.Net.Iptables.Helpers;
 
 namespace IPTables.Net.Iptables.Modules.IpSet
 {
-    public class IpSetModule : ModuleBase, IEquatable<IpSetModule>, IIpTablesModule
+    public class SetMatchModule : ModuleBase, IEquatable<SetMatchModule>, IIpTablesModule
     {
         public enum MatchMode
         {
@@ -39,7 +39,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         private int _bytesValue;
         public MatchMode BytesMatch = MatchMode.None;
 
-        public IpSetModule(int version) : base(version)
+        public SetMatchModule(int version) : base(version)
         {
         }
 
@@ -69,7 +69,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
             }
         }
 
-        public bool Equals(IpSetModule other)
+        public bool Equals(SetMatchModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -203,7 +203,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("set", typeof(IpSetModule), GetOptions);
+            return GetModuleEntryInternal("set", typeof(SetMatchModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -211,7 +211,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((IpSetModule) obj);
+            return Equals((SetMatchModule) obj);
         }
 
         public override int GetHashCode()
