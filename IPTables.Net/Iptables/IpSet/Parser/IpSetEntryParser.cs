@@ -73,9 +73,6 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                     case "mac":
                         entry.Mac = optionComponents[i];
                         break;
-                    case "timeout":
-                        entry.Timeout = int.Parse(optionComponents[i]);
-                        break;
                 }
             }
         }
@@ -99,6 +96,11 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                 }
                 _entry.Set = set;
                 set.Entries.Add(_entry);
+            }
+            else if (option == "timeout")
+            {
+                _entry.Timeout = int.Parse(GetNextArg());
+                return 1;
             }
             else
             {
