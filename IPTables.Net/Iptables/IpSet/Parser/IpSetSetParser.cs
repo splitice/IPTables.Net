@@ -49,6 +49,9 @@ namespace IPTables.Net.Iptables.IpSet.Parser
             {
                 switch (option)
                 {
+                    case "timeout":
+                        _set.Timeout = int.Parse(GetNextArg());
+                        break;
                     case "family":
                         _set.Family = GetNextArg();
                         break;
