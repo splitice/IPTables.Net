@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
+using System.Reflection.Emit;
 using System.Text;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
@@ -22,6 +23,8 @@ namespace IPTables.Net.Iptables.IpSet
         private int _port;
         private String _mac;
         private IpSetSet _set;
+        private int _timeout;
+
         #endregion
 
 
@@ -55,6 +58,13 @@ namespace IPTables.Net.Iptables.IpSet
             get { return _set; }
             internal set { _set = value; }
         }
+
+        public int Timeout
+        {
+            get => _timeout;
+            set => _timeout = value;
+        }
+
         #endregion
 
         #region Constructor
@@ -103,7 +113,7 @@ namespace IPTables.Net.Iptables.IpSet
 
         protected bool Equals(IpSetEntry other)
         {
-            return _set.Equals(other.Set) && KeyEquals(other);
+            return _set.Equals(other.Set) && KeyEquals(other) && other.Timeout == _timeout;
         }
 
         public override bool Equals(object obj)
@@ -122,6 +132,7 @@ namespace IPTables.Net.Iptables.IpSet
                 hashCode = (hashCode*397) ^ (_protocol != null ? _protocol.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ _port.GetHashCode();
                 hashCode = (hashCode*397) ^ (_mac != null ? _mac.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ _timeout.GetHashCode();
                 return hashCode;
             }
         }
@@ -165,7 +176,13 @@ namespace IPTables.Net.Iptables.IpSet
 
         public string GetFullCommand(String command = "add")
         {
-            return String.Format("{0} {1} {2}", command, Set.Name, GetKeyCommand());
+            String ret = String.Format("{0} {1} {2}", command, Set.Name, GetKeyCommand());
+            if (_timeout != 0)
+            {
+                ret += " timeout " + _timeout;
+            }
+
+            return ret;
         }
     }
 }

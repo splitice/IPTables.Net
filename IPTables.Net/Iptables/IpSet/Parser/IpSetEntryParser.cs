@@ -73,6 +73,9 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                     case "mac":
                         entry.Mac = optionComponents[i];
                         break;
+                    case "timeout":
+                        entry.Timeout = int.Parse(optionComponents[i]);
+                        break;
                 }
             }
         }
