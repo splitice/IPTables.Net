@@ -92,7 +92,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                 var set = _sets.GetSetByName(option);
                 if (set == null)
                 {
-                    throw new IpTablesNetException(String.Format("The set {0} does not exist", option));
+                    throw new IpTablesNetException($"The set {option} does not exist");
                 }
                 _entry.Set = set;
                 set.Entries.Add(_entry);

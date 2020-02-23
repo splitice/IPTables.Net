@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Modules.Bpf;
-using IPTables.Net.Iptables.Modules.BpfL4;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.Modules.Connlimit;
 using IPTables.Net.Iptables.Modules.Connmark;
@@ -14,7 +13,6 @@ using IPTables.Net.Iptables.Modules.Devgroup;
 using IPTables.Net.Iptables.Modules.Dnat;
 using IPTables.Net.Iptables.Modules.Dynjmp;
 using IPTables.Net.Iptables.Modules.HashLimit;
-using IPTables.Net.Iptables.Modules.HashRoute;
 using IPTables.Net.Iptables.Modules.Helper;
 using IPTables.Net.Iptables.Modules.IpSet;
 using IPTables.Net.Iptables.Modules.Length;
@@ -34,9 +32,9 @@ using IPTables.Net.Iptables.Modules.Socket;
 using IPTables.Net.Iptables.Modules.State;
 using IPTables.Net.Iptables.Modules.Statistic;
 using IPTables.Net.Iptables.Modules.StringMatch;
-using IPTables.Net.Iptables.Modules.SynProxy;
 using IPTables.Net.Iptables.Modules.Tcp;
 using IPTables.Net.Iptables.Modules.TcpMss;
+using IPTables.Net.Iptables.Modules.TProxy;
 using IPTables.Net.Iptables.Modules.Ts3Init;
 using IPTables.Net.Iptables.Modules.U32;
 using IPTables.Net.Iptables.Modules.Udp;
@@ -75,13 +73,11 @@ namespace IPTables.Net.Iptables.Modules
             NflogModule.GetModuleEntry,
             NfqueueModule.GetModuleEntry,
             StringModule.GetModuleEntry,
-            SynProxyModule.GetModuleEntry,
             SetMatchModule.GetModuleEntry,
             SetTargetModule.GetModuleEntry,
             BpfModule.GetModuleEntry,
-            BpfL4Module.GetModuleEntry,
-            HashRouteMatchModule.GetModuleEntry,
-            HashRouteTargetModule.GetModuleEntry,
+            DynjmpModule.GetModuleEntry,
+            SynjmpModule.GetModuleEntry,
             DevgroupModule.GetModuleEntry,
             StatisticModule.GetModuleEntry,
             U32Module.GetModuleEntry,
@@ -90,7 +86,6 @@ namespace IPTables.Net.Iptables.Modules
             NetflowModule.GetModuleEntry,
             NetflowMatchModule.GetModuleEntry,
             CtNetflowMatchModule.GetModuleEntry,
-            SynjmpModule.GetModuleEntry,
             Ts3InitGetCookieModule.GetModuleEntry,
             Ts3InitGetCookieMatchModule.GetModuleEntry,
             Ts3InitGetPuzzleModule.GetModuleEntry,

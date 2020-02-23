@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Text;
-using IPTables.Net.Iptables.DataTypes;
-using IPTables.Net.Iptables.Modules.Dnat;
 
-namespace IPTables.Net.Iptables.Modules.SynProxy
+namespace IPTables.Net.Iptables.Modules.Netflow
 {
     public class NetflowModule : ModuleBase, IIpTablesModule, IEquatable<NetflowModule>
     {

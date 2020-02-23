@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
-using IPTables.Net.Iptables.Modules.Dnat;
 
-namespace IPTables.Net.Iptables.Modules.SynProxy
+namespace IPTables.Net.Iptables.Modules.TProxy
 {
     public class TProxyModule : ModuleBase, IIpTablesModule//, IEquatable<TProxyModule>
     {
