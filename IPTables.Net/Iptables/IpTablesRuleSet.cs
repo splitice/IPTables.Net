@@ -64,6 +64,9 @@ namespace IPTables.Net.Iptables
         {
             get { return _ipVersion; }
         }
+
+        public IpTablesSystem System => _system;
+
         #endregion
 
         #region Methods
