@@ -97,9 +97,9 @@ namespace IPTables.Net.Iptables
         /// </summary>
         /// <param name="name"></param>
         /// <param name="table"></param>
-        public void AddChain(String name, String table)
+        public IpTablesChain AddChain(String name, String table)
         {
-            _chains.AddChain(name, table, _system);
+            return _chains.AddChain(name, table, _system);
         }
 
         /// <summary>
