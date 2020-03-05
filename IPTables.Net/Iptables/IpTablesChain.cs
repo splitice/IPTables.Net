@@ -99,11 +99,7 @@ namespace IPTables.Net.Iptables
 
         public static bool ValidateChainName(String chainName)
         {
-            if (chainName.Length > 30)
-            {
-                return false;
-            }
-            return true;
+            return (chainName.Length <= 30);
         }
 
         internal void SyncInternal(INetfilterAdapterClient client, IEnumerable<IpTablesRule> with, INetfilterSync<IpTablesRule> sync)
