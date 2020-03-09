@@ -18,7 +18,7 @@ namespace IPTables.Net.Iptables.IpSet
     public class IpSetEntry
     {
         #region Fields
-        private IpCidr _cidr;
+
         private String _protocol;
         private int _port;
         private String _mac;
@@ -29,11 +29,8 @@ namespace IPTables.Net.Iptables.IpSet
 
 
         #region Properties
-        public IpCidr Cidr
-        {
-            get { return _cidr; }
-            set { _cidr = value; }
-        }
+        public IpCidr Cidr { get; set; }
+        public IpCidr Cidr2 { get; set; }
 
         public string Protocol
         {
@@ -72,7 +69,7 @@ namespace IPTables.Net.Iptables.IpSet
         public IpSetEntry(IpSetSet set, IpCidr? cidr = null, string protocol = null, int port = -1, string mac = null)
         {
             _set = set;
-            _cidr = cidr.HasValue?cidr.Value:IpCidr.Any;
+            Cidr = cidr.HasValue?cidr.Value:IpCidr.Any;
             _protocol = protocol;
             _port = port;
             _mac = mac;
@@ -83,9 +80,9 @@ namespace IPTables.Net.Iptables.IpSet
         public String GetKeyCommand()
         {
             List<String> parts = new List<string>();
-            if (_cidr.Prefix != 0)
+            if (Cidr.Prefix != 0)
             {
-                parts.Add(_cidr.ToString());
+                parts.Add(Cidr.ToString());
             }
             if (_mac != null)
             {
@@ -102,6 +99,10 @@ namespace IPTables.Net.Iptables.IpSet
                     parts.Add(_port.ToString());
                 }
                 
+            }
+            if (Cidr2.Prefix != 0)
+            {
+                parts.Add(Cidr2.ToString());
             }
             if (parts.Count == 0)
             {
@@ -128,7 +129,7 @@ namespace IPTables.Net.Iptables.IpSet
         {
             unchecked
             {
-                int hashCode = _cidr.GetHashCode();
+                int hashCode = Cidr.GetHashCode();
                 hashCode = (hashCode*397) ^ (_protocol != null ? _protocol.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ _port.GetHashCode();
                 hashCode = (hashCode*397) ^ (_mac != null ? _mac.GetHashCode() : 0);
@@ -167,7 +168,7 @@ namespace IPTables.Net.Iptables.IpSet
 
         public bool KeyEquals(IpSetEntry other)
         {
-            bool r = _port == other._port && _cidr.Equals(other._cidr) && string.Equals(_mac, other._mac);
+            bool r = _port == other._port && Cidr.Equals(other.Cidr) && string.Equals(_mac, other._mac);
             if (!r) return false;
 
             return string.Equals(_protocol, other._protocol) ||

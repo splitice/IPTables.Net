@@ -15,21 +15,39 @@ namespace IPTables.Net.Iptables.IpSet
         /// <returns></returns>
         public static String TypeToString(IpSetType type)
         {
-            switch (type)
+            String mode;
+            if ((type & IpSetType.Hash) == IpSetType.Hash)
             {
-                case IpSetType.BitmapPort:
-                    return "bitmap:port";
-                case IpSetType.HashNet:
-                    return "hash:net";
-                case IpSetType.HashNetPort:
-                    return "hash:net,port";
-                case IpSetType.HashIp:
-                    return "hash:ip";
-                case IpSetType.HashIpPort:
-                    return "hash:ip,port";
+                mode = "hash:";
+            } else if ((type & IpSetType.Bitmap) == IpSetType.Bitmap)
+            {
+                mode = "bitmap:";
+            }
+            else
+            {
+                return null;
             }
 
-            return null;
+            List<String> types = new List<string>();
+            if ((type & IpSetType.Ip) == IpSetType.Ip)
+            {
+                types.Add("ip");
+            }
+            if ((type & IpSetType.Net) == IpSetType.Net)
+            {
+                types.Add("net");
+            }
+            if ((type & IpSetType.Port) == IpSetType.Port)
+            {
+                types.Add("port");
+            }
+            if ((type & IpSetType.Ip2) == IpSetType.Ip2)
+            {
+                types.Add("ip");
+            }
+
+            if (types.Count == 0) return null;
+            return mode + string.Join(",", types);
         }
 
         /// <summary>
@@ -39,21 +57,33 @@ namespace IPTables.Net.Iptables.IpSet
         /// <returns></returns>
         public static IpSetType StringToType(String str)
         {
-            switch (str)
+            IpSetType ret = 0;
+            var parts = str.Split(new char[] { ':' });
+            if (parts[0] == "hash")
             {
-                case "bitmap:port":
-                    return IpSetType.BitmapPort;
-                case "hash:net":
-                    return IpSetType.HashNet;
-                case "hash:net,port":
-                    return IpSetType.HashNetPort;
-                case "hash:ip":
-                    return IpSetType.HashIp;
-                case "hash:ip,port":
-                    return IpSetType.HashIpPort;
+                ret |= IpSetType.Hash;
+            } else if (parts[0] == "bitmap")
+            {
+                ret |= IpSetType.Bitmap;
+            }
+            else
+            {
+                throw new IpTablesNetException(String.Format("Unknown set type: {0}", str));
             }
 
-            throw new IpTablesNetException(String.Format("Unknown set type: {0}", str));
+            var types = parts[1].Split(',');
+            foreach (var t in types)
+            {
+                if (t == "ip")
+                {
+                    if ((ret & IpSetType.Ip) == IpSetType.Ip) ret |= IpSetType.Ip2;
+                    else ret |= IpSetType.Ip;
+                } else if (t == "port") ret |= IpSetType.Port;
+                else if (t == "net") ret |= IpSetType.Net;
+                else throw new IpTablesNetException(String.Format("Unknown set type: {0}", str));
+            }
+
+            return ret;
         }
 
         /// <summary>

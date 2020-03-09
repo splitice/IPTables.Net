@@ -19,7 +19,7 @@ namespace IPTables.Net.Tests
             var set = IpSetSet.Parse(toParse, null);
 
             Assert.AreEqual("test_set", set.Name);
-            Assert.AreEqual(IpSetType.HashIp, set.Type);
+            Assert.AreEqual(IpSetType.Hash | IpSetType.Ip, set.Type);
             Assert.AreEqual(10, set.HashSize);
             Assert.AreEqual(14, set.MaxElem);
 
