@@ -59,7 +59,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                         _set.HashSize = int.Parse(GetNextArg());
                         break;
                     case "maxelem":
-                        _set.MaxElem = int.Parse(GetNextArg());
+                        _set.MaxElem = UInt32.Parse(GetNextArg());
                         break;
                 }
 

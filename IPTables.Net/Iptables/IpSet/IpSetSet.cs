@@ -20,7 +20,7 @@ namespace IPTables.Net.Iptables.IpSet
         private int _timeout;
         private string _family = "inet";
         private int _hashSize = 1024;
-        private int _maxElem = 65536;
+        private UInt32 _maxElem = 65536;
         private List<IpSetEntry> _entries;
         private IpTablesSystem _system;
         private IpSetSyncMode _syncMode = IpSetSyncMode.SetAndEntries;
@@ -55,7 +55,7 @@ namespace IPTables.Net.Iptables.IpSet
             set { _timeout = value; }
         }
 
-        public int MaxElem
+        public UInt32 MaxElem
         {
             get { return _maxElem; }
             set { _maxElem = value; }
