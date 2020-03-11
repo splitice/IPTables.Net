@@ -141,7 +141,7 @@ namespace IPTables.Net.Iptables.IpSet
             {
                 command += String.Format(" hashsize {0} maxelem {1}", _hashSize, _maxElem);
             }
-            if (_timeout != 0)
+            if (_timeout > 0)
             {
                 command += " timeout "+_timeout;
             }
