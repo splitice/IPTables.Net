@@ -6,7 +6,7 @@ using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
-    public struct IpCidr : IEquatable<IpCidr>
+    public struct IpCidr : IEquatable<IpCidr>, IComparable<IpCidr>
     {
         public static IpCidr Any = new IpCidr(IPAddress.Any, 0);
 
@@ -91,6 +91,26 @@ namespace IPTables.Net.Iptables.DataTypes
         public static bool operator !=(IpCidr a, IpCidr b)
         {
             return !(a == b);
+        }
+
+        public int CompareTo(IpCidr other)
+        {
+            var result = Address.AddressFamily.CompareTo(other.Address.AddressFamily);
+            if (result != 0)
+                return result;
+
+            var xBytes = Address.GetAddressBytes();
+            var yBytes = other.Address.GetAddressBytes();
+
+            var octets = Math.Min(xBytes.Length, yBytes.Length);
+            for (var i = 0; i < octets; i++)
+            {
+                var octetResult = xBytes[i].CompareTo(yBytes[i]);
+                if (octetResult != 0)
+                    return octetResult;
+            }
+
+            return Prefix.CompareTo(other.Prefix);
         }
 
         public override string ToString()
