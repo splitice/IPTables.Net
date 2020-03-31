@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Adapter.Client;
@@ -63,6 +64,16 @@ namespace IPTables.Net.Iptables
         public int IpVersion
         {
             get { return _ipVersion; }
+        }
+
+        public AddressFamily AddressFamily
+        {
+            get
+            {
+                if (_ipVersion == 4) return AddressFamily.InterNetwork;
+                if (_ipVersion == 6) return AddressFamily.InterNetworkV6;
+                return AddressFamily.Unknown;
+            }
         }
 
         public IpTablesSystem System => _system;
