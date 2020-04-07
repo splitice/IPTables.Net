@@ -135,5 +135,18 @@ namespace IPTables.Net.Iptables.DataTypes
 
             return false;
         }
+
+        public bool Contains(IPAddress addr)
+        {
+            var thisNetwork = GetIPNetwork();
+            var innerNetwork = addr.ToInt();
+            if (thisNetwork.Network.ToInt() <= innerNetwork &&
+                thisNetwork.Broadcast.ToInt() >= innerNetwork)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
