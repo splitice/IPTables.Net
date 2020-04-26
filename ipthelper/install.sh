@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 CONFIG=$(printenv CONFIG)
 if [[ -z "$CONFIG" ]]; then
 	CONFIG="Release"
