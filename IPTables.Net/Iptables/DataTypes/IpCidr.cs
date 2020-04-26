@@ -6,7 +6,7 @@ using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
-    public struct IpCidr : IEquatable<IpCidr>, IComparable<IpCidr>
+    public struct IpCidr : IEquatable<IpCidr>, IComparable<IpCidr>, IComparable
     {
         public static IpCidr Any = new IpCidr(IPAddress.Any, 0);
 
@@ -120,6 +120,15 @@ namespace IPTables.Net.Iptables.DataTypes
                 return Address.ToString();
             }
             return Address + "/" + Prefix;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is IpCidr)
+            {
+                return CompareTo((IpCidr) obj);
+            }
+            return 0;
         }
 
         public bool Contains(IpCidr cidr)
