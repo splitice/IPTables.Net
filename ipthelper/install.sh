@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 CONFIG=$(printenv CONFIG)
 if [[ -z "$CONFIG" ]]; then
 	CONFIG="Release"
@@ -10,6 +8,8 @@ CXX=$(printenv CXX)
 if [[ -z "$CXX" ]]; then
 	CXX="g++"
 fi
+
+set -e
 
 make LIBRARY_PATH=$(printenv LIBRARY_PATH) ADDITIONAL_CFLAGS=$(printenv ADDITIONAL_CFLAGS) CXX="$CXX" CONFIG="$CONFIG" 
 cp $CONFIG/libipthelper.so /usr/lib/
