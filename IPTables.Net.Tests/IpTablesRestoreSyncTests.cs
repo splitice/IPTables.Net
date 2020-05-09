@@ -63,7 +63,7 @@ namespace IPTables.Net.Tests
             using (var client = system.GetTableAdapter(4))
             {
                 mock.TestSync(client, rulesOriginal, rulesNew);
-                CollectionAssert.AreEqual((client as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
 
@@ -88,7 +88,7 @@ namespace IPTables.Net.Tests
             using (var client = system.GetTableAdapter(4))
             {
                 mock.TestSync(client, rulesOriginal, rulesNew);
-                CollectionAssert.AreEqual((client as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
 
@@ -113,7 +113,7 @@ namespace IPTables.Net.Tests
             using (var client = system.GetTableAdapter(4))
             {
                 mock.TestSync(client, rulesOriginal, rulesNew);
-                CollectionAssert.AreEqual((client as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
 
@@ -139,7 +139,7 @@ namespace IPTables.Net.Tests
             using (var client = system.GetTableAdapter(4))
             {
                 mock.TestSync(client, rulesOriginal, rulesNew);
-                CollectionAssert.AreEqual((client as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             };
         }
 
@@ -164,12 +164,12 @@ namespace IPTables.Net.Tests
             using (var client = system.GetTableAdapter(4))
             {
                 mock.TestSync(client, rulesOriginal, rulesNew);
-                CollectionAssert.AreEqual((client as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             };
         }
 
         [Test]
-        public void TestDeleteMultiples()
+        public void TestDeleteMultiplesStart()
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
@@ -182,17 +182,105 @@ namespace IPTables.Net.Tests
                                                }, system);
             IpTablesRuleSet rulesNew = new IpTablesRuleSet(4, new List<String>()
                                                {
-                                                   "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 5"
+                                                   "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10"
                                                }, system);
 
-            List<String> expectedCommands = new List<String>() { "*filter", "-D INPUT 1", "-D INPUT 2", "COMMIT" };
+            List<String> expectedCommands = new List<String>() { "*filter", "-D INPUT 2", "-D INPUT 2", "COMMIT" };
 
             using (var client = system.GetTableAdapter(4))
             {
                 mock.TestSync(client, rulesOriginal, rulesNew);
-                CollectionAssert.AreEqual((client as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
+
+        [Test]
+        public void TestDeleteMultiplesEnd()
+        {
+            var mock = new MockIptablesSystemFactory();
+            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4, new List<String>()
+            {
+                "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
+                "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 5",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2"
+            }, system);
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4, new List<String>()
+            {
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2"
+            }, system);
+
+            List<String> expectedCommands = new List<String>() { "*filter", "-D INPUT 1", "-D INPUT 1", "COMMIT" };
+
+            using (var client = system.GetTableAdapter(4))
+            {
+                mock.TestSync(client, rulesOriginal, rulesNew);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
+            }
+        }
+
+
+        [Test]
+        public void TestDeleteMultiplesMiddle()
+        {
+            var mock = new MockIptablesSystemFactory();
+            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4, new List<String>()
+            {
+                "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
+                "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 5",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 3"
+            }, system);
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4, new List<String>()
+            {
+                "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 3"
+            }, system);
+
+            List<String> expectedCommands = new List<String>() { "*filter", "-D INPUT 2", "-D INPUT 2", "COMMIT" };
+
+            using (var client = system.GetTableAdapter(4))
+            {
+                mock.TestSync(client, rulesOriginal, rulesNew);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
+            }
+        }
+
+
+        [Test]
+        public void TestDeleteMultiplesMiddleSplit()
+        {
+            var mock = new MockIptablesSystemFactory();
+            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4, new List<String>()
+            {
+                "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
+                "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 5",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 1",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 3"
+            }, system);
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4, new List<String>()
+            {
+                "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 1",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 3"
+            }, system);
+
+            List<String> expectedCommands = new List<String>() { "*filter", "-D INPUT 2", "-D INPUT 3", "COMMIT" };
+
+            using (var client = system.GetTableAdapter(4))
+            {
+                mock.TestSync(client, rulesOriginal, rulesNew);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
+            }
+        }
+
+
 
         [Test]
         public void TestInsertMiddle()
@@ -218,11 +306,25 @@ namespace IPTables.Net.Tests
                                                 "-D INPUT 2",
                                                 rulesNew.Chains.First().Rules[1].GetActionCommand(),
                                                 rulesNew.Chains.First().Rules[2].GetActionCommand(), "COMMIT" };
-
+            List<String> commands;
             using (var client = system.GetTableAdapter(4))
             {
                 mock.TestSync(client, rulesOriginal, rulesNew);
-                CollectionAssert.AreEqual((client as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
+                commands = (client as IMockIpTablesRestoreGetOutput).GetOutput().ToList();
+                CollectionAssert.AreEqual(expectedCommands, commands);
+            }
+
+            //CheckCommands(rulesOriginal, commands, rulesNew);
+        }
+
+        private void CheckCommands(IpTablesRuleSet rulesOriginal, List<string> commands, IpTablesRuleSet rulesNew)
+        {
+            foreach (var c in commands)
+            {
+                if (c.StartsWith("-"))
+                {
+                    //rulesOriginal.Apply(rul)
+                }
             }
         }
 
@@ -267,7 +369,7 @@ namespace IPTables.Net.Tests
             using (var client = system.GetTableAdapter(4))
             {
                 mock.TestSync(client, rulesOriginal, rulesNew, CommentComparer);
-                CollectionAssert.AreEqual((client as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
 
@@ -295,7 +397,7 @@ namespace IPTables.Net.Tests
             using (var client = system.GetTableAdapter(4))
             {
                 mock.TestSync(client, rulesOriginal, rulesNew, CommentComparer);
-                CollectionAssert.AreEqual((client as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
 
@@ -325,7 +427,77 @@ namespace IPTables.Net.Tests
             using (var client = system.GetTableAdapter(4))
             {
                 mock.TestSync(client, rulesOriginal, rulesNew, CommentComparer);
-                CollectionAssert.AreEqual((client as IMockIpTablesRestoreGetOutput).GetOutput(), expectedCommands);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
+            }
+        }
+
+
+        [Test]
+        public void TestUpdateMiddleTwo()
+        {
+            var mock = new MockIptablesSystemFactory();
+            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4, new List<String>()
+            {
+                "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10 -m comment --comment \"ID1\"",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2 -m comment --comment \"ID2\"",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2 -m comment --comment \"ID3\"",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2 -m comment --comment \"ID4\""
+            }, system);
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4, new List<String>()
+            {
+                "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10 -m comment --comment \"ID1\"",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 28 -m comment --comment \"ID2\"",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 1 -m comment --comment \"ID3\"",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2 -m comment --comment \"ID4\""
+            }, system);
+
+            List<String> expectedCommands = new List<String>()
+            {
+                "*filter",
+                rulesNew.Chains.First().Rules[1].GetActionCommand("-R"),
+                rulesNew.Chains.First().Rules[2].GetActionCommand("-R"),
+                "COMMIT"
+            };
+
+            using (var client = system.GetTableAdapter(4))
+            {
+                mock.TestSync(client, rulesOriginal, rulesNew, CommentComparer);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
+            }
+        }
+
+
+        [Test]
+        public void TestDeleteAndUpdate()
+        {
+            var mock = new MockIptablesSystemFactory();
+            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4, new List<String>()
+            {
+                "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10 -m comment --comment \"ID1\"",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2 -m comment --comment \"ID2\"",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2 -m comment --comment \"ID3\"",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2 -m comment --comment \"ID4\""
+            }, system);
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4, new List<String>()
+            {
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 28 -m comment --comment \"ID2\"",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 1 -m comment --comment \"ID3\"",
+                "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2 -m comment --comment \"ID4\""
+            }, system);
+            
+
+            using (var client = system.GetTableAdapter(4))
+            {
+                mock.TestSync(client, rulesOriginal, rulesNew, CommentComparer);
+                var commands = (client as IMockIpTablesRestoreGetOutput).GetOutput().ToList();
+                Assert.AreEqual(5, commands.Count);
+                Assert.True(commands[1].StartsWith("-D INPUT 1"));
+                Assert.True(commands[2].StartsWith("-R INPUT 1"));
+                Assert.True(commands[3].StartsWith("-R INPUT 2"));
             }
         }
     }

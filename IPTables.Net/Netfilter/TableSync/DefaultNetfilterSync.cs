@@ -50,12 +50,15 @@ namespace IPTables.Net.Netfilter.TableSync
             _debug = debug;
         } 
 
-        public void SyncChainRules(INetfilterAdapterClient client, IEnumerable<T> with, IEnumerable<T> currentRules)
+        public void SyncChainRules(INetfilterAdapterClient client, IEnumerable<T> with, IEnumerable<T> currentRulesEnum)
         {
             //Copy the rules
-            currentRules = new List<T>(currentRules.ToArray());
+            var currentRules = new List<T>(currentRulesEnum);
 
+            
             int i = 0, len = with.Count();
+
+            bool shouldUpdate = currentRules.Count == len;
             foreach (T cR in currentRules)
             {
                 //Delete any extra rules
@@ -85,22 +88,22 @@ namespace IPTables.Net.Netfilter.TableSync
                 {
                     //No need to make any changes
                     i++;
+                    continue;
                 }
-                else 
+                
+                //Debug:
+                if (_ruleComparerForUpdate(cR, withRule) || shouldUpdate)
                 {
-                    //Debug:
-                    if (_ruleComparerForUpdate(cR, withRule))
+                    //Replace this rule
+                    cR.ReplaceRule(client, withRule);
+                    i++;
+                }
+                else
+                {
+                    // Don't delete if this is non deletable
+                    if (_shouldDelete(cR))
                     {
-                        //Replace this rule
-                        cR.ReplaceRule(client, withRule);
-                        i++;
-                    }
-                    else
-                    {
-                        if (_shouldDelete(cR))
-                        {
-                            cR.DeleteRule(client);
-                        }
+                        cR.DeleteRule(client);
                     }
                 }
             }
