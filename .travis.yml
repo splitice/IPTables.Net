@@ -44,5 +44,4 @@ script:
   - xbuild /p:Configuration=Release IPTables.Net.sln
   - xbuild /p:Configuration=Debug IPTables.Net.sln
   - iptables -V
-  - sudo nunit-console -framework=4.0 ./IPTables.Net.Tests/bin/Debug/IPTables.Net.Tests.dll -exclude Integration,NotWorkingOnMono,NotWorkingOnTravis
-  - travis_retry bash travis-ci/nuget-upload.sh IPTables.Net
+  - bash travis-ci/test-and-publish.sh
