@@ -77,7 +77,6 @@
     <Compile Include="SingleCommentRuleParseTests.cs" />
     <Compile Include="SingleDnatRuleParseTests.cs" />
     <Compile Include="SingleConnmarkRuleParseTests.cs" />
-    <Compile Include="SingleHashrouteTests.cs" />
     <Compile Include="SingleMssRuleParseTests.cs" />
     <Compile Include="SingleSdnatRuleParseTests.cs" />
     <Compile Include="SingleStatisticParseTests.cs" />
@@ -87,7 +86,6 @@
     <Compile Include="SingleHashlimitRuleParseTests.cs" />
     <Compile Include="IPTablesRuleTests.cs" />
     <Compile Include="SingleNfacctRuleParseTests.cs" />
-    <Compile Include="SingleSynProxyRuleParseTests.cs" />
     <Compile Include="SingleNqueueRuleParseTests.cs" />
     <Compile Include="SingleNflogRuleParseTests.cs" />
     <Compile Include="SingleMultiportRuleParseTests.cs" />
