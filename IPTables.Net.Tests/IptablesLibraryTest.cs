@@ -12,7 +12,6 @@ namespace IPTables.Net.Tests
 {
     [TestFixture(4)]
     [TestFixture(6)]
-    [Category("NotWorkingOnTravis")]
     class IptablesLibraryTest
     {
         private int _ipVersion;

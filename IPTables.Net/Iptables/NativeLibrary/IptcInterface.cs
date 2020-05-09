@@ -11,9 +11,9 @@ namespace IPTables.Net.Iptables.NativeLibrary
     public class IptcInterface : IDisposable
     {
         private IntPtr _handle;
-        public const String LibraryV4 = "libip4tc.so";
-        public const String LibraryV6 = "libip6tc.so";
-        public const String Helper = "libipthelper.so";
+        public const String LibraryV4 = "libip4tc";
+        public const String LibraryV6 = "libip6tc";
+        public const String Helper = "libipthelper";
         public const int StringLabelLength = 32;
 
         public const String IPTC_LABEL_ACCEPT = "ACCEPT";
