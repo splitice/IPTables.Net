@@ -23,13 +23,13 @@ namespace IPTables.Net.Tests
         }
 
         [Test]
-        public void TestRuleOutput()
+        public void TestLoad()
         {
             if (IsLinux)
             {
-                Assembly.LoadFile(IptcInterface.LibraryV4);
-                Assembly.LoadFile(IptcInterface.LibraryV6);
-                Assembly.LoadFile(IptcInterface.Helper);
+                Assembly.Load(IptcInterface.LibraryV4);
+                Assembly.Load(IptcInterface.LibraryV6);
+                Assembly.Load(IptcInterface.Helper);
             }   
         }
     }
