@@ -39,23 +39,16 @@ namespace IPTables.Net.TestFramework
             throw new NotImplementedException();
         }
 
-        public void TestSync(INetfilterAdapterClient client, IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, Func<IpTablesRule, IpTablesRule, bool> commentComparer = null)
+        public void TestSync<TSync>(INetfilterAdapterClient client, IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, TSync sync, List<string> expectedCommands = null) where TSync: INetfilterSync<IpTablesRule>
         {
             IpTablesChain chain = rulesOriginal.Chains.First();
 
-            DefaultNetfilterSync<IpTablesRule> sync = new DefaultNetfilterSync<IpTablesRule>(commentComparer,null);
+            chain.Sync(client, rulesNew.Chains.First().Rules, sync);
 
-            if (commentComparer == null)
-                chain.Sync(client, rulesNew.Chains.First().Rules, sync);
-            else
-                chain.Sync(client, rulesNew.Chains.First().Rules, sync);
-        }
-
-        public void TestSync(INetfilterAdapterClient client, IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, List<string> expectedCommands, Func<IpTablesRule, IpTablesRule, bool> commentComparer = null)
-        {
-            TestSync(client, rulesOriginal, rulesNew, commentComparer);
-
-            CollectionAssert.AreEqual(expectedCommands, ExecutionLog.Select(a => a.Value).ToList());
+            if (expectedCommands != null)
+            {
+                CollectionAssert.AreEqual(expectedCommands, ExecutionLog.Select(a => a.Value).ToList());
+            }
         }
     }
 }

@@ -43,7 +43,7 @@ namespace IPTables.Net.Netfilter.TableSync
             }
         }
 
-        public DefaultNetfilterSync(Func<T, T, bool> ruleComparerForUpdate, Func<T, bool> shouldDelete = null, bool debug = false)
+        public DefaultNetfilterSync(Func<T, T, bool> ruleComparerForUpdate = null, Func<T, bool> shouldDelete = null, bool debug = false)
         {
             ShouldDelete = shouldDelete;
             RuleComparerForUpdate = ruleComparerForUpdate;

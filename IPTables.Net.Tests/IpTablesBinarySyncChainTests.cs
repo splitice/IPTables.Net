@@ -7,6 +7,7 @@ using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Netfilter;
+using IPTables.Net.Netfilter.TableSync;
 using IPTables.Net.TestFramework;
 using NUnit.Framework;
 
@@ -34,7 +35,8 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { rulesNew.Chains.First().Rules[2].GetActionCommand() };
 
-            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, expectedCommands);
+            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
         [Test]
@@ -55,7 +57,8 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { };
 
-            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, expectedCommands);
+            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
         [Test]
@@ -76,7 +79,8 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { };
 
-            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, expectedCommands);
+            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
         [Test]
@@ -98,7 +102,8 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { rulesNew.Chains.First().Rules[2].GetActionCommand() };
 
-            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, expectedCommands);
+            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
         [Test]
@@ -119,7 +124,8 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { "-D INPUT 2" };
 
-            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, expectedCommands);
+            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
         [Test]
@@ -141,7 +147,8 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { "-D INPUT 1", "-D INPUT 2" };
 
-            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, expectedCommands);
+            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
         [Test]
@@ -169,7 +176,8 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[2].GetActionCommand()
                                             };
 
-            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, expectedCommands);
+            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
         /// <summary>
@@ -211,7 +219,8 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[1].GetActionCommand("-R")
                                             };
 
-            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, expectedCommands, CommentComparer);
+            var sync = new DefaultNetfilterSync<IpTablesRule>(CommentComparer);
+            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
         [Test]
@@ -236,7 +245,8 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[0].GetActionCommand("-R")
                                             };
 
-            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, expectedCommands, CommentComparer);
+            var sync = new DefaultNetfilterSync<IpTablesRule>(CommentComparer);
+            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
         [Test]
@@ -263,7 +273,8 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[1].GetActionCommand("-R")
                                             };
 
-            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, expectedCommands, CommentComparer);
+            var sync = new DefaultNetfilterSync<IpTablesRule>(CommentComparer);
+            mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
     }
 }

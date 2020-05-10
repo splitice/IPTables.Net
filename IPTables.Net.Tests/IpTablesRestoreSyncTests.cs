@@ -6,6 +6,7 @@ using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Netfilter;
+using IPTables.Net.Netfilter.TableSync;
 using IPTables.Net.TestFramework;
 using IPTables.Net.TestFramework.IpTablesRestore;
 using NUnit.Framework;
@@ -35,7 +36,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew);
+                var sync = new DefaultNetfilterSync<IpTablesRule>();
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 var output = (client as IMockIpTablesRestoreGetOutput).GetOutput();
                 CollectionAssert.AreEqual(output, expectedCommands);
             }
@@ -62,7 +64,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew);
+                var sync = new DefaultNetfilterSync<IpTablesRule>();
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
@@ -87,7 +90,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew);
+                var sync = new DefaultNetfilterSync<IpTablesRule>();
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
@@ -112,7 +116,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew);
+                var sync = new DefaultNetfilterSync<IpTablesRule>();
+                mock.TestSync(client, rulesOriginal, rulesNew,sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
@@ -138,7 +143,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew);
+                var sync = new DefaultNetfilterSync<IpTablesRule>();
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             };
         }
@@ -163,7 +169,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew);
+                var sync = new DefaultNetfilterSync<IpTablesRule>();
+                mock.TestSync(client, rulesOriginal, rulesNew,sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             };
         }
@@ -189,7 +196,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew);
+                var sync = new DefaultNetfilterSync<IpTablesRule>();
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
@@ -215,7 +223,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew);
+                var sync = new DefaultNetfilterSync<IpTablesRule>();
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
@@ -244,7 +253,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew);
+                var sync = new DefaultNetfilterSync<IpTablesRule>();
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
@@ -275,7 +285,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew);
+                var sync = new DefaultNetfilterSync<IpTablesRule>();
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
@@ -309,7 +320,8 @@ namespace IPTables.Net.Tests
             List<String> commands;
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew);
+                var sync = new DefaultNetfilterSync<IpTablesRule>();
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 commands = (client as IMockIpTablesRestoreGetOutput).GetOutput().ToList();
                 CollectionAssert.AreEqual(expectedCommands, commands);
             }
@@ -368,7 +380,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew, CommentComparer);
+                var sync = new DefaultNetfilterSync<IpTablesRule>(CommentComparer);
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
@@ -396,7 +409,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew, CommentComparer);
+                var sync = new DefaultNetfilterSync<IpTablesRule>(CommentComparer);
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
@@ -426,7 +440,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew, CommentComparer);
+                var sync = new DefaultNetfilterSync<IpTablesRule>(CommentComparer);
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
@@ -463,7 +478,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew, CommentComparer);
+                var sync = new DefaultNetfilterSync<IpTablesRule>(CommentComparer);
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
         }
@@ -492,7 +508,8 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                mock.TestSync(client, rulesOriginal, rulesNew, CommentComparer);
+                var sync = new DefaultNetfilterSync<IpTablesRule>(CommentComparer);
+                mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 var commands = (client as IMockIpTablesRestoreGetOutput).GetOutput().ToList();
                 Assert.AreEqual(5, commands.Count);
                 Assert.True(commands[1].StartsWith("-D INPUT 1"));
