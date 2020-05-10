@@ -429,7 +429,7 @@ namespace IPTables.Net.Iptables
         /// <param name="defaultTable"></param>
         /// <param name="createChain"></param>
         /// <returns></returns>
-        internal static IpTablesRule Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
+        public static IpTablesRule Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
             int version = 4, String defaultTable = "filter", ChainCreateMode createChain = ChainCreateMode.CreateNewChainIfNeeded)
         {
             CommandParser parser;
