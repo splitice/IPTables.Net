@@ -73,7 +73,7 @@ namespace IPTables.Net.Iptables
             var ipRule = new IpTablesRule(system, new IpTablesChain(defaultTable, null, version, system));
             var ipCmd = new IpTablesCommand(null, defaultTable, IpTablesCommandType.Unknown, -1, ipRule);
 
-            var parser = new CommandParser(arguments, ipCmd, chains, defaultTable);
+            var parser = new CommandParser(arguments, ipCmd, chains);
             parserOut = parser;
             try
             {

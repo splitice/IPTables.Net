@@ -381,7 +381,8 @@ namespace IPTables.Net.Iptables
             {
                 var command = new IpTablesCommand(Chain.Name, Chain.Table, IpTablesCommandType.Add);
                 command.Rule = this;
-                var parser = new CommandParser(arguments, command, chains, Chain.Table);
+                command.Table = Chain.Table;
+                var parser = new CommandParser(arguments, command, chains);
 
                 //Parse the extra options
                 bool not = false;

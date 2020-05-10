@@ -19,7 +19,7 @@ namespace IPTables.Net.Iptables.Modules
         private ModuleEntry? _polyfill = null;
         private IpTablesCommand _ipCommand;
 
-        public CommandParser(string[] arguments, IpTablesCommand ipCommand, IpTablesChainSet chains, String defaultTable)
+        public CommandParser(string[] arguments, IpTablesCommand ipCommand, IpTablesChainSet chains)
         {
             _arguments = arguments;
             _ipCommand = ipCommand;
