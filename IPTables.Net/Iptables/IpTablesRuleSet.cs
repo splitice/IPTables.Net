@@ -12,7 +12,7 @@ namespace IPTables.Net.Iptables
     /// <summary>
     /// A List of rules (and chains!) in an IPTables system
     /// </summary>
-    public class IpTablesRuleSet
+    public class IpTablesRuleSet: IEquatable<IpTablesRuleSet>
     {
         #region Fields
         /// <summary>
@@ -284,7 +284,7 @@ namespace IPTables.Net.Iptables
 
         #endregion
 
-        protected bool Equals(IpTablesRuleSet other)
+        public bool Equals(IpTablesRuleSet other)
         {
             return _chains.Equals(other._chains) && Equals(_system, other._system) && _ipVersion == other._ipVersion;
         }

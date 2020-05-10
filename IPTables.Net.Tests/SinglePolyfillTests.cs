@@ -47,7 +47,7 @@ namespace IPTables.Net.Tests
             String rule = "-A INPUT -m unknown --unknown --unknown-2 1111 -p tcp -d 1.1.1.1 -m tcp --dport 80";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains, 4), IpTablesRule.Parse(rule, null, chains, 4));
+            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule, null, chains, 4)));
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace IPTables.Net.Tests
                 "-A INPUT -m unknown --unknown --unknown-2 1111 -m unknown2 --unknown2 -p tcp -d 1.1.1.1 -m tcp --dport 80";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains, 4), IpTablesRule.Parse(rule, null, chains, 4));
+            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule, null, chains, 4)));
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace IPTables.Net.Tests
                 "-A INPUT -m unknown2 --unknown2 -m unknown --unknown --unknown-2 1111 -p tcp -d 1.1.1.1 -m tcp --dport 80";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains, 4), IpTablesRule.Parse(rule2, null, chains));
+            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule2, null, chains)));
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace IPTables.Net.Tests
                 "-A INPUT -m unknown2 --unknown2 -m unknown --unknown --unknown-2 \'this has spaces & a symbol\' -p tcp -d 1.1.1.1 -m tcp --dport 80";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.AreEqual(IpTablesRule.Parse(rule, null, chains, 4), IpTablesRule.Parse(rule2, null, chains));
+            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule2, null, chains)));
         }
 
         public void TestPolyfillArgumentsComparison5()

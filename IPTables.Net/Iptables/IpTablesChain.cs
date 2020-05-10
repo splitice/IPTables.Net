@@ -166,9 +166,10 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public bool CompareRules(IpTablesChain ipTablesChain)
+        public bool CompareRules(IpTablesChain ipTablesChain, IEqualityComparer<IpTablesRule> eqc = null)
         {
-            return Enumerable.SequenceEqual(_rules, ipTablesChain._rules);
+            eqc = eqc ?? new IpTablesRule.ValueComparison();
+            return Enumerable.SequenceEqual(_rules, ipTablesChain._rules, eqc);
         }
     }
 }

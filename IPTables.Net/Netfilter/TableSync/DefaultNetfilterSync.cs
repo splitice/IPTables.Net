@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IPTables.Net.Iptables;
 
 namespace IPTables.Net.Netfilter.TableSync
 {
@@ -25,7 +26,7 @@ namespace IPTables.Net.Netfilter.TableSync
         }
 
         private Func<T, T, bool> _ruleComparerForUpdate;
-        private bool _debug;
+        private IEqualityComparer<INetfilterRule> _comparer = null;
 
         public Func<T, T, bool> RuleComparerForUpdate
         {
@@ -43,11 +44,11 @@ namespace IPTables.Net.Netfilter.TableSync
             }
         }
 
-        public DefaultNetfilterSync(Func<T, T, bool> ruleComparerForUpdate = null, Func<T, bool> shouldDelete = null, bool debug = false)
+        public DefaultNetfilterSync(Func<T, T, bool> ruleComparerForUpdate = null, Func<T, bool> shouldDelete = null, IEqualityComparer<INetfilterRule> comparer = null)
         {
             ShouldDelete = shouldDelete;
             RuleComparerForUpdate = ruleComparerForUpdate;
-            _debug = debug;
+            _comparer = comparer ?? new IpTablesRule.ValueComparison();
         } 
 
         public void SyncChainRules(INetfilterAdapterClient client, IEnumerable<T> with, INetfilterChain<T> chain)
@@ -74,16 +75,7 @@ namespace IPTables.Net.Netfilter.TableSync
                 //Get the rule for comparison
                 T withRule = with.ElementAt(i);
 
-                bool eq;
-                if (_debug)
-                {
-                    eq = cR.DebugEquals(withRule, true);
-                }
-                else
-                {
-                    eq = cR.Equals(withRule);
-                }
-
+                bool eq = _comparer.Equals(cR,withRule);
                 if (eq)
                 {
                     //No need to make any changes

@@ -26,7 +26,7 @@ namespace IPTables.Net.Tests
             catch (Exception ex)
             {
                 Console.WriteLine("Sync:");
-                DumpRuleset(rulesOrig);
+                DumpRuleset(rulesSynced);
                 Console.WriteLine("New:");
                 DumpRuleset(rulesNew);
                 throw;
@@ -535,6 +535,45 @@ namespace IPTables.Net.Tests
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
+
+                TestApply(rulesOriginal, rulesSynced, rulesNew, expectedCommands);
+            }
+        }
+
+        [Test]
+        public void TestUpdateUnlabelled()
+        {
+            var mock = new MockIptablesSystemFactory();
+            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4, new List<String>()
+                                               {
+                                                   "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
+                                                   "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2",
+                                                   "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2",
+                                                   "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2"
+                                               }, system);
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4, new List<String>()
+                                               {
+                                                   "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10",
+                                                   "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 28",
+                                                   "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 11",
+                                                   "-A INPUT -p udp -j DROP -m connlimit --connlimit-above 2"
+                                               }, system);
+
+            List<String> expectedCommands = new List<String>
+                                            {
+                                                "*filter", rulesNew.Chains.First().Rules[1].GetActionCommand("-R"), rulesNew.Chains.First().Rules[2].GetActionCommand("-R"), "COMMIT"
+                                            };
+
+
+            using (var client = system.GetTableAdapter(4))
+            {
+                var sync = new DefaultNetfilterSync<IpTablesRule>();
+                var rulesSynced = rulesOriginal.DeepClone();
+                mock.TestSync(client, rulesSynced, rulesNew, sync);
+                var output = (client as IMockIpTablesRestoreGetOutput).GetOutput();
+                CollectionAssert.AreEqual(expectedCommands, output);
 
                 TestApply(rulesOriginal, rulesSynced, rulesNew, expectedCommands);
             }

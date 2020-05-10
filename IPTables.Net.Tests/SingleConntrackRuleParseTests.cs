@@ -18,7 +18,7 @@ namespace IPTables.Net.Tests
             IpTablesRule irule2 = IpTablesRule.Parse(rule2, null, chains, 4);
 
             irule2.Equals(irule1);
-            Assert.AreEqual(irule1, irule2);
+            Assert.IsTrue(irule2.Compare(irule1));
         }
     }
 }

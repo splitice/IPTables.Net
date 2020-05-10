@@ -12,13 +12,58 @@ namespace IPTables.Net.Iptables
     /// <summary>
     /// An IPTables Rule, which is tied to a specific system (ready to be added, removed, updated etc)
     /// </summary>
-    public class IpTablesRule : IEquatable<IpTablesRule>, INetfilterRule
+    public class IpTablesRule : INetfilterRule
     {
         public enum ChainCreateMode
         {
             CreateNewChainIfNeeded,
             DontCreateErrorInstead,
             ReturnNewChain
+        }
+
+        public class ValueComparison : IEqualityComparer<IpTablesRule>, IEqualityComparer<INetfilterRule>
+        {
+            public bool Equals(IpTablesRule x, IpTablesRule y)
+            {
+                return x.Compare(y);
+            }
+
+            public int GetHashCode(IpTablesRule obj)
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool Equals(INetfilterRule x, INetfilterRule y)
+            {
+                if (x.GetType() != y.GetType())
+                {
+                    return false;
+                }
+
+                var xI = (IpTablesRule) x;
+                return Equals(xI, y as IpTablesRule);
+            }
+
+            public int GetHashCode(INetfilterRule obj)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public class DebugComparison: ValueComparison
+        {
+            public new bool Equals(IpTablesRule x, IpTablesRule y)
+            {
+                var ret = base.Equals(x, y);
+                if (!ret)
+                {
+                    var diff = x._moduleData.DictionaryDiffering(y.ModuleDataInternal);
+                    Console.WriteLine("1: {0}\r\n2: {1}\r\nDifference: {2}", x.GetActionCommand(), y.GetActionCommand(),
+                        diff);
+                }
+
+                return ret;
+            }
         }
 
         #region Fields
@@ -144,61 +189,11 @@ namespace IPTables.Net.Iptables
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Equality comparison, for this to be equal the module data must match
-        /// </summary>
-        /// <param name="rule"></param>
-        /// <returns></returns>
-        public bool DebugEquals(IpTablesRule rule, bool debug)
-        {
-            if (!Chain.Equals(rule.Chain))
-            {
-                return false;
-            }
-
-            var diff = _moduleData.DictionaryDiffering(rule.ModuleDataInternal);
-            var ret = diff == default(string);
-            if (debug && !ret)
-            {
-                Console.WriteLine("1: {0}\r\n2: {1}\r\nDifference: {2}", GetActionCommand(), rule.GetActionCommand(),
-                    diff);
-            }
-
-            return ret;
-        }
+        
 
         public INetfilterRule ShallowClone()
         {
             return new IpTablesRule(this);
-        }
-
-
-
-        public bool DebugEquals(INetfilterRule obj, bool debug)
-        {
-            if (obj is IpTablesRule)
-            {
-                return DebugEquals(obj as IpTablesRule, debug);
-            }
-
-            return Equals(obj);
-        }
-
-
-        public bool Equals(IpTablesRule other)
-        {
-            return DebugEquals(other, false);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is IpTablesRule)
-            {
-                return Equals(obj as IpTablesRule);
-            }
-
-            return base.Equals(obj);
         }
 
         /// <summary>
@@ -523,6 +518,17 @@ namespace IPTables.Net.Iptables
         internal void LoadModule(ModuleEntry entry)
         {
             GetModuleForParseInternal(entry.Name, entry.Activator, Chain.IpVersion);
+        }
+
+        public bool Compare(IpTablesRule y)
+        {
+            if (!Chain.Equals(y.Chain))
+            {
+                return false;
+            }
+
+            var diff = _moduleData.DictionaryDiffering(y.ModuleDataInternal);
+            return diff == default(string);
         }
     }
 }

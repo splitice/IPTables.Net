@@ -23,6 +23,5 @@ namespace IPTables.Net.Netfilter
         INetfilterChain Chain { get; set; }
 
         INetfilterRule ShallowClone();
-        bool DebugEquals(INetfilterRule rule, bool debug);
     }
 }
