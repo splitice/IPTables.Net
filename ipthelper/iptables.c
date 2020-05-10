@@ -149,7 +149,7 @@ struct xtables_globals iptables_globals = {
 	.program_version = "1.1.1",
 	.orig_opts = original_opts,
 	.opts = NULL,
-#ifndef OPT_IPTABLES
+#ifndef OLD_IPTABLES
 	.compat_rev = xtables_compatible_revision,
 #endif
 	.exit_err = iptables_exit_error
