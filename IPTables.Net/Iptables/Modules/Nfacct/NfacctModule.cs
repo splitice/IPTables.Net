@@ -22,7 +22,7 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
             return string.Equals(Name, other.Name);
         }
 
-        public int Feed(RuleParser parser, bool not)
+        public int Feed(CommandParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

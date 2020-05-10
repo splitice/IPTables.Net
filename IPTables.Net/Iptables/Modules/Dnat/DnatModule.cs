@@ -33,7 +33,7 @@ namespace IPTables.Net.Iptables.Modules.Dnat
             get { return false; }
         }
 
-        public int Feed(RuleParser parser, bool not)
+        public int Feed(CommandParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

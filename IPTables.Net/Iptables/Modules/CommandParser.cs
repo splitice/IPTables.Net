@@ -7,46 +7,39 @@ using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Modules
 {
-    public class RuleParser
+    public class CommandParser
     {
         private readonly string[] _arguments;
         private readonly IpTablesChainSet _chains;
-        private readonly IpTablesRule _ipRule;
         private readonly ModuleRegistry _moduleRegistry = ModuleRegistry.Instance;
         private readonly List<ModuleEntry> _parsers;
         public int Position = 0;
 
-        private String _chainName;
-        private String _tableName;
+        public IpTablesCommand Command;
         private ModuleEntry? _polyfill = null;
+        private IpTablesCommand _ipCommand;
 
-        public RuleParser(string[] arguments, IpTablesRule ipRule, IpTablesChainSet chains, String defaultTable)
+        public CommandParser(string[] arguments, IpTablesCommand ipCommand, IpTablesChainSet chains, String defaultTable)
         {
             _arguments = arguments;
-            _ipRule = ipRule;
+            _ipCommand = ipCommand;
             _parsers = ModuleRegistry.PreloadDuplicateModules.ToList();
             _chains = chains;
-            _tableName = defaultTable;
         }
 
         public String ChainName
         {
-            get { return _chainName; }
+            get { return _ipCommand.ChainName; }
         }
 
         public IpTablesChain GetChainFromSet()
         {
-            return _chains.GetChainOrDefault(_chainName, _tableName);
-        }
-
-        public String GetChainName()
-        {
-            return _chainName;
+            return _chains.GetChainOrDefault(_ipCommand.ChainName, _ipCommand.Table);
         }
 
         public IpTablesChain GetNewChain(NetfilterSystem system, int ipVersion)
         {
-            return new IpTablesChain(_tableName, _chainName, ipVersion, system);
+            return new IpTablesChain(_ipCommand.Table, _ipCommand.ChainName, ipVersion, system);
         }
 
         public IpTablesChain CreateChain(NetfilterSystem system, int ipVersion)
@@ -88,14 +81,29 @@ namespace IPTables.Net.Iptables.Modules
                 LoadParserModule(GetNextArg(), version);
                 return 1;
             }
-            if (option == "-A")
+            if (option == "-A" || option == "-D" || option == "-R" || option == "-I")
             {
-                _chainName = GetNextArg();
+                _ipCommand.ChainName = GetNextArg();
+                _ipCommand.Type = IpTablesCommand.GetCommandType(option);
+                if (option == "-D" || option == "-R" || option == "-I")
+                {
+                    var nextArg = GetNextArg(2);
+                    uint offset;
+                    if (uint.TryParse(nextArg, out offset))
+                    {
+                        _ipCommand.Offset = (int)offset;
+                        return 2;
+                    }
+                    else
+                    {
+                        _ipCommand.Offset = -1;
+                    }
+                }
                 return 1;
             }
             if (option == "-t")
             {
-                _tableName = GetNextArg();
+                _ipCommand.Table = GetNextArg();
                 return 1;
             }
             if (option == "-j")
@@ -107,7 +115,7 @@ namespace IPTables.Net.Iptables.Modules
             ModuleEntry mQuick;
             if (ModuleRegistry.PreloadOptions.TryGetValue(option, out mQuick))
             {
-                IIpTablesModule module = _ipRule.GetModuleForParseInternal(mQuick.Name, mQuick.Activator, version);
+                IIpTablesModule module = _ipCommand.Rule.GetModuleForParseInternal(mQuick.Name, mQuick.Activator, version);
                 return module.Feed(this, not);
             }
 
@@ -117,14 +125,14 @@ namespace IPTables.Net.Iptables.Modules
                 ModuleEntry m = _parsers[index];
                 if (m.Options.Contains(option))
                 {
-                    IIpTablesModule module = _ipRule.GetModuleForParseInternal(m.Name, m.Activator, version);
+                    IIpTablesModule module = _ipCommand.Rule.GetModuleForParseInternal(m.Name, m.Activator, version);
                     return module.Feed(this, not);
                 }
             }
 
             if (_polyfill != null)
             {
-                IIpTablesModule module = _ipRule.GetModuleForParseInternal(_polyfill.Value.Name, _polyfill.Value.Activator, version);
+                IIpTablesModule module = _ipCommand.Rule.GetModuleForParseInternal(_polyfill.Value.Name, _polyfill.Value.Activator, version);
                 return module.Feed(this, not);
             }
 
@@ -151,7 +159,7 @@ namespace IPTables.Net.Iptables.Modules
                 {
                     _polyfill = entry;
                 }
-                _ipRule.LoadModule(entry);
+                _ipCommand.Rule.LoadModule(entry);
             }
             if (!entry.Polyfill)
             {

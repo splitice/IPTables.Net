@@ -78,6 +78,8 @@
     <Compile Include="Iptables\IpSet\IpSetSyncMode.cs" />
     <Compile Include="Iptables\IpSet\IpSetType.cs" />
     <Compile Include="Iptables\IpSet\IpSetTypeHelper.cs" />
+    <Compile Include="Iptables\IpTablesCommand.cs" />
+    <Compile Include="Iptables\IpTablesCommandType.cs" />
     <Compile Include="Iptables\IpTablesRuleDefinition.cs" />
     <Compile Include="Iptables\IPTablesTables.cs" />
     <Compile Include="Iptables\Modules\IpSet\SetTargetModule.cs" />
@@ -203,7 +205,7 @@
     <Compile Include="Iptables\Modules\Udp\UdpModule.cs" />
     <Compile Include="Iptables\Modules\ModuleEntry.cs" />
     <Compile Include="Iptables\Modules\ModuleRegistry.cs" />
-    <Compile Include="Iptables\Modules\RuleParser.cs" />
+    <Compile Include="Iptables\Modules\CommandParser.cs" />
     <Compile Include="Iptables\Modules\Snat\SnatModule.cs" />
     <Compile Include="Iptables\Modules\Dnat\DnatModule.cs" />
     <Compile Include="Iptables\Modules\Connlimit\ConnlimitModule.cs" />

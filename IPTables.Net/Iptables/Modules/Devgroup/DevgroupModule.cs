@@ -23,7 +23,7 @@ namespace IPTables.Net.Iptables.Modules.Devgroup
             return SrcGroup.Equals(other.SrcGroup) && DstGroup.Equals(other.DstGroup);
         }
 
-        public int Feed(RuleParser parser, bool not)
+        public int Feed(CommandParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

@@ -52,7 +52,6 @@
     <Compile Include="CheckVersion.cs" />
     <Compile Include="CheckInternalTables.cs" />
     <Compile Include="EscapeHelperTests.cs" />
-    <Compile Include="IptablesNativeLibsTest.cs" />
     <Compile Include="IptablesLibraryTest.cs" />
     <Compile Include="IpUtilsRouteTests.cs" />
     <Compile Include="IpUtilsRuleTests.cs" />

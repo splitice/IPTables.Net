@@ -81,7 +81,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             get { return true; }
         }
 
-        public int Feed(RuleParser parser, bool not)
+        public int Feed(CommandParser parser, bool not)
         {
             String current = parser.GetCurrentArg();
             switch (current)

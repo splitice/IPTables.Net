@@ -76,7 +76,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
             return Equals(MatchSet, other.MatchSet) && string.Equals(MatchSetFlags, other.MatchSetFlags) && ReturnNoMatch.Equals(other.ReturnNoMatch) && UpdateCounters.Equals(other.UpdateCounters) && UpdateSubCounters.Equals(other.UpdateSubCounters) && _packetsValue == other._packetsValue && PacketsMatch == other.PacketsMatch && _bytesValue == other._bytesValue && BytesMatch == other.BytesMatch;
         }
 
-        public int Feed(RuleParser parser, bool not)
+        public int Feed(CommandParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

@@ -38,7 +38,7 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
             get { return false; }
         }
 
-        public int Feed(RuleParser parser, bool not)
+        public int Feed(CommandParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

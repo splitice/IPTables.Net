@@ -29,7 +29,7 @@ namespace IPTables.Net.Iptables.Modules.Polyfill
             get { return true; }
         }
 
-        public int Feed(RuleParser parser, bool not)
+        public int Feed(CommandParser parser, bool not)
         {
             String current = parser.GetCurrentArg();
             _data.Add(current, new List<string> ());

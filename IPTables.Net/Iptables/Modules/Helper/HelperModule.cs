@@ -21,7 +21,7 @@ namespace IPTables.Net.Iptables.Modules.Helper
             return Helper.Equals(other.Helper);
         }
 
-        public int Feed(RuleParser parser, bool not)
+        public int Feed(CommandParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

@@ -40,7 +40,7 @@ namespace IPTables.Net.Iptables.Modules.Limit
             get { return true; }
         }
 
-        public int Feed(RuleParser parser, bool not)
+        public int Feed(CommandParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {

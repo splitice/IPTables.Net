@@ -8,7 +8,11 @@ namespace IPTables.Net.Exceptions
     {
         public IpTablesParserException(String rule, Exception previousException): base("Error parsing rule: "+rule, previousException)
         {
-            
+
+        }
+        public IpTablesParserException(String rule) : base("Error parsing rule: " + rule)
+        {
+
         }
 
         public IpTablesParserException()

@@ -23,7 +23,7 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
             get { return false; }
         }
 
-        public int Feed(RuleParser parser, bool not)
+        public int Feed(CommandParser parser, bool not)
         {
             return 0;
         }
