@@ -369,8 +369,10 @@ namespace IPTables.Net.Iptables
         /// <param name="version"></param>
         /// <param name="chains"></param>
         /// <param name="createChain"></param>
-        public void AppendToRule(String rule, int version, IpTablesChainSet chains = null, bool createChain = false)
+        public void AppendToRule(String rule, int version = -1, IpTablesChainSet chains = null, bool createChain = false)
         {
+            if (version == -1) version = IpVersion;
+
             Cow();
             string[] arguments = ArgumentHelper.SplitArguments(rule);
             int count = arguments.Length;
@@ -396,7 +398,7 @@ namespace IPTables.Net.Iptables
                 }
 
                 //Only replace the chain if a new one has been supplied
-                if (parser.ChainName != null)
+                if (chains != null && parser.ChainName != null)
                 {
                     var chain = parser.GetChainFromSet();
                     if (chain == null)
