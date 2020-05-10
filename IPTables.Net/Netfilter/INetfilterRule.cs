@@ -20,8 +20,9 @@ namespace IPTables.Net.Netfilter
 
         PacketCounters Counters { get; }
 
-        INetfilterChain Chain { get; }
+        INetfilterChain Chain { get; set; }
 
+        INetfilterRule ShallowClone();
         bool DebugEquals(INetfilterRule rule, bool debug);
     }
 }

@@ -10,7 +10,7 @@ namespace IPTables.Net.Exceptions
         {
 
         }
-        public IpTablesParserException(String rule) : base("Error parsing rule: " + rule)
+        public IpTablesParserException(String rule, String msg) : base("Error parsing rule \"" + rule+"\" due to: " + msg)
         {
 
         }

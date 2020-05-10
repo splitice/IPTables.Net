@@ -80,6 +80,11 @@ namespace IPTables.Net.Netfilter
         {
             return _chains.FirstOrDefault(a => a.Name == chain && a.Table == table);
         }
+        
+        public T GetChain(string chain, string table)
+        {
+            return _chains.First(a => a.Name == chain && a.Table == table);
+        }
 
         public IEnumerable<INetfilterChain> Chains
         {

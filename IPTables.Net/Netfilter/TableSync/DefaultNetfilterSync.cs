@@ -50,10 +50,10 @@ namespace IPTables.Net.Netfilter.TableSync
             _debug = debug;
         } 
 
-        public void SyncChainRules(INetfilterAdapterClient client, IEnumerable<T> with, IEnumerable<T> currentRulesEnum)
+        public void SyncChainRules(INetfilterAdapterClient client, IEnumerable<T> with, INetfilterChain<T> chain)
         {
             //Copy the rules
-            var currentRules = new List<T>(currentRulesEnum);
+            var currentRules = new List<T>(chain.Rules);
 
             
             int i = 0, len = with.Count();
@@ -111,21 +111,15 @@ namespace IPTables.Net.Netfilter.TableSync
             //Get rules to be added
             foreach (T rR in with.Skip(i))
             {
-                rR.AddRule(client);
+                var newRule = rR.ShallowClone();
+                newRule.Chain = chain;
+                newRule.AddRule(client);
             }
         }
 
         public void SyncChains()
         {
             
-        }
-
-        public void SyncChainRules(INetfilterAdapterClient client, IEnumerable<INetfilterRule> with, IEnumerable<INetfilterRule> currentRules)
-        {
-            var withCast = with.Cast<T>();
-            var currentRulesCast = currentRules.Cast<T>();
-
-            SyncChainRules(client, withCast, currentRulesCast);
         }
     }
 }

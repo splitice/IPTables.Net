@@ -57,5 +57,41 @@ namespace IPTables.Net.Iptables
         {
             _chains.Remove(chain);
         }
+
+        protected bool Equals(IpTablesChainSet other)
+        {
+            if (_ipVersion != other._ipVersion) return false;
+            if (_chains.Count != other._chains.Count) return false;
+            foreach (var c in _chains)
+            {
+                if (!other.Chains.Contains(c))
+                {
+                    return false;
+                }
+
+                var c2 = other.Chains.First(a => a.Equals(c));
+                if (!c2.CompareRules(c))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((IpTablesChainSet) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = _ipVersion;
+            hashCode = (hashCode * 397) ^ _chains.Count;
+            return hashCode;
+        }
     }
 }

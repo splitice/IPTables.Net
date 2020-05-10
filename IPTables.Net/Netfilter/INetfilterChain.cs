@@ -16,4 +16,9 @@ namespace IPTables.Net.Netfilter
 
         void AddRule(INetfilterRule rule);
     }
+
+    public interface INetfilterChain<T> : INetfilterChain
+    {
+        IEnumerable<T> Rules { get; }
+    }
 }

@@ -82,6 +82,29 @@ namespace IPTables.Net.Iptables
 
         #region Methods
 
+        public void ApplyCommand(IpTablesCommand command)
+        {
+            var chain = Chains.GetChain(command.ChainName, command.Table);
+
+            switch (command.Type)
+            {
+                case IpTablesCommandType.Add:
+                    chain.AddRule(command.Rule);
+                    return;
+                case IpTablesCommandType.Delete:
+                    chain.DeleteRule(command.Offset);
+                    return;
+                case IpTablesCommandType.Replace:
+                    chain.ReplaceRule(command.Offset, command.Rule);
+                    return;
+                case IpTablesCommandType.Insert:
+                    chain.InsertRule(command.Offset, command.Rule);
+                    return;
+            }
+
+            throw new IpTablesNetException("Unknown command");
+        }
+
         /// <summary>
         /// Add an IPTables rule to the set
         /// </summary>
@@ -260,5 +283,45 @@ namespace IPTables.Net.Iptables
         }
 
         #endregion
+
+        protected bool Equals(IpTablesRuleSet other)
+        {
+            return _chains.Equals(other._chains) && Equals(_system, other._system) && _ipVersion == other._ipVersion;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((IpTablesRuleSet) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = (_chains != null ? _chains.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (_system != null ? _system.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ _ipVersion;
+                return hashCode;
+            }
+        }
+
+        public IpTablesRuleSet DeepClone()
+        {
+            IpTablesRuleSet rs = new IpTablesRuleSet(IpVersion, System);
+            foreach (var chain in _chains)
+            {
+                rs.AddChain(chain.Name, chain.Table);
+            }
+
+            foreach (var rule in Rules)
+            {
+                rs.AddRule(rule.GetActionCommand());
+            }
+
+            return rs;
+        }
     }
 }

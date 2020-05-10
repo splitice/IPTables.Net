@@ -61,6 +61,17 @@ namespace IPTables.Net.NfTables
         INetfilterChain INetfilterRule.Chain
         {
             get { return _chain; }
+            set { _chain = (NfTablesChain)value; }
+        }
+
+        public INetfilterRule DeepClone()
+        {
+            throw new NotImplementedException();
+        }
+
+        public INetfilterRule ShallowClone()
+        {
+            throw new NotImplementedException();
         }
 
         public bool DebugEquals(INetfilterRule rule, bool debug)

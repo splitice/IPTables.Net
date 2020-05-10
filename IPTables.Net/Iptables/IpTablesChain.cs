@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
@@ -7,7 +8,7 @@ using IPTables.Net.Netfilter.TableSync;
 
 namespace IPTables.Net.Iptables
 {
-    public class IpTablesChain : INetfilterChain, IEquatable<IpTablesChain>
+    public class IpTablesChain : INetfilterChain<IpTablesRule>, IEquatable<IpTablesChain>
     {
         private readonly String _name;
         private readonly List<IpTablesRule> _rules;
@@ -53,10 +54,17 @@ namespace IPTables.Net.Iptables
             get { return _rules; }
         }
 
+        public INetfilterChain<T> Cast<T>() where T : INetfilterRule
+        {
+            throw new IpTablesNetException("Unable to cast");
+        }
+
         public int IpVersion
         {
             get { return _ipVersion; }
         }
+
+        IEnumerable<IpTablesRule> INetfilterChain<IpTablesRule>.Rules => Rules;
 
         public void AddRule(INetfilterRule rule)
         {
@@ -67,6 +75,20 @@ namespace IPTables.Net.Iptables
             Rules.Add(ruleCast);
         }
 
+        public void DeleteRule(int offset)
+        {
+            Rules.RemoveAt(offset);
+        }
+
+        public void InsertRule(int offset, IpTablesRule rule)
+        {
+            Rules.Insert(offset, rule);
+        }
+
+        public void ReplaceRule(int offset, IpTablesRule rule)
+        {
+            Rules[offset] = rule;
+        }
         IEnumerable<INetfilterRule> INetfilterChain.Rules
         {
             get { return _rules.Cast<INetfilterRule>(); }
@@ -104,7 +126,7 @@ namespace IPTables.Net.Iptables
 
         internal void SyncInternal(INetfilterAdapterClient client, IEnumerable<IpTablesRule> with, INetfilterSync<IpTablesRule> sync)
         {
-            sync.SyncChainRules(client, with, Rules);
+            sync.SyncChainRules(client, with, this);
         }
 
         public int GetRulePosition(IpTablesRule rule)
@@ -142,6 +164,11 @@ namespace IPTables.Net.Iptables
                 hashCode = (hashCode * 397) ^ _ipVersion.GetHashCode();
                 return hashCode;
             }
+        }
+
+        public bool CompareRules(IpTablesChain ipTablesChain)
+        {
+            return Enumerable.SequenceEqual(_rules, ipTablesChain._rules);
         }
     }
 }

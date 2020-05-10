@@ -2,13 +2,8 @@
 
 namespace IPTables.Net.Netfilter.TableSync
 {
-    public interface INetfilterSync
+    public interface INetfilterSync<T>
     {
-        void SyncChainRules(INetfilterAdapterClient client, IEnumerable<INetfilterRule> with, IEnumerable<INetfilterRule> currentRules);
-    }
-
-    public interface INetfilterSync<T>: INetfilterSync
-    {
-        void SyncChainRules(INetfilterAdapterClient client, IEnumerable<T> with, IEnumerable<T> currentRules);
+        void SyncChainRules(INetfilterAdapterClient client, IEnumerable<T> with, INetfilterChain<T> currentChain);
     }
 }

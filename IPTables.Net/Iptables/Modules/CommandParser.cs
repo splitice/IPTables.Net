@@ -91,7 +91,11 @@ namespace IPTables.Net.Iptables.Modules
                     uint offset;
                     if (uint.TryParse(nextArg, out offset))
                     {
-                        _ipCommand.Offset = (int)offset;
+                        if (offset == 0)
+                        {
+                            throw new Exception("Invalid offset");
+                        }
+                        _ipCommand.Offset = ((int)offset - 1);
                         return 2;
                     }
                     else
