@@ -519,6 +519,8 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 
 	if(pid == -1){
 		if (!setjmp(buf)) {
+			ptr = buffer;
+			
 			/* print counters for iptables-save */
 			if (counters > 0)
 				ptr += sprintf(ptr, "[%llu:%llu] ", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
@@ -635,7 +637,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 
 		capture_cleanup();
 
-		write_output(ptr);
+		write_output(buffer);
 	}
 
 	// parent
