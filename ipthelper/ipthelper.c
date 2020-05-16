@@ -884,7 +884,7 @@ EXPORT int execute_command6(const char* rule, void *h){
 
 EXPORT int init_helper4(void){
 	int c;
-	stdout.shm = -1;
+	stdout_pipe.shm = -1;
 	if ( ! setjmp(buf) ) {
 		c = xtables_init_all(&iptables_globals, NFPROTO_IPV4);
 	}else{
@@ -896,7 +896,7 @@ EXPORT int init_helper4(void){
 
 EXPORT int init_helper6(void) {
 	int c;
-	stdout.shm = -1;
+	stdout_pipe.shm = -1;
 	if (!setjmp(buf)) {
 		c = xtables_init_all(&iptables_globals, NFPROTO_IPV6);
 	}
