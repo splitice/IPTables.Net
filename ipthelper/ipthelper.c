@@ -51,6 +51,7 @@
 #else
 #include <wordexp.h>
 #endif
+#include <setjmp.h>
 
 char* errbuffer = NULL;
 jmp_buf buf = { };
@@ -517,118 +518,122 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 	pid = fork();
 
 	if(pid == -1){
-		memset(buffer, 0, sizeof(buffer));
-		ptr = buffer;
-		
-		/* print counters for iptables-save */
-		if (counters > 0)
-			ptr += sprintf(ptr, "[%llu:%llu] ", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
-
-		/* print chain name */
-		ptr += sprintf(ptr, "-A %s", chain);
-
-		/* Print IP part. */
-		print_ip("-s",
-			e->ip.src.s_addr,
-			e->ip.smsk.s_addr,
-			e->ip.invflags & IPT_INV_SRCIP);
-
-		print_ip("-d",
-			e->ip.dst.s_addr,
-			e->ip.dmsk.s_addr,
-			e->ip.invflags & IPT_INV_DSTIP);
-
-		print_iface('i',
-			e->ip.iniface,
-			e->ip.iniface_mask,
-			e->ip.invflags & IPT_INV_VIA_IN);
-
-		print_iface('o',
-			e->ip.outiface,
-			e->ip.outiface_mask,
-			e->ip.invflags & IPT_INV_VIA_OUT);
-
-		print_proto(e->ip.proto, e->ip.invflags & XT_INV_PROTO);
-
-		if (e->ip.flags & IPT_F_FRAG)
-			ptr += sprintf(ptr,
-				"%s -f",
-				e->ip.invflags & IPT_INV_FRAG ? " !" : "");
-
-		/* Print matchinfo part */
-		if (e->target_offset) {
-			IPT_MATCH_ITERATE(e, print_match_save, &e->ip);
-		}
-
-		/* print counters for iptables -R */
-		if (counters < 0)
-			ptr += sprintf(ptr, " -c %llu %llu", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
-
-		/* Print target name */
-		target_name = iptc_get_target(e, h);
-	#ifdef OLD_IPTABLES
-		if (target_name && (*target_name != '\0'))
-	#ifdef IPT_F_GOTO
-			ptr += sprintf(ptr, " -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
-	#else
-		ptr += sprintf(ptr, " -j %s", target_name);
-	#endif
-	#endif
-
-		/* Print targinfo part */
-		t = ipt_get_target((struct ipt_entry *)e);
-		if (t->u.user.name[0]) {
-			const struct xtables_target *target =
-				xtables_find_target(t->u.user.name, XTF_TRY_LOAD);
-
-			if (!target) {
-				xtables_error(PARAMETER_PROBLEM,
-					"Can't find library for target `%s'\n",
-					t->u.user.name);
-				write_output(ptr);
-			}
+		if (!setjmp(buf)) {
+			ptr = buffer;
 			
-	#ifndef OLD_IPTABLES
-			ptr += sprintf(ptr, " -j %s", target->alias ? target->alias(t) : target_name);
-	#endif
+			/* print counters for iptables-save */
+			if (counters > 0)
+				ptr += sprintf(ptr, "[%llu:%llu] ", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
 
-			if (target) {
-				if (target->save) {
-					capture_stdout();
-					target->save(&e->ip, t);
-					if (!restore_stdout())
-					{
-						xtables_error(OTHER_PROBLEM, "Unable to capture stdout, errno: %d", errno);
-					}
+			/* print chain name */
+			ptr += sprintf(ptr, "-A %s", chain);
+
+			/* Print IP part. */
+			print_ip("-s",
+				e->ip.src.s_addr,
+				e->ip.smsk.s_addr,
+				e->ip.invflags & IPT_INV_SRCIP);
+
+			print_ip("-d",
+				e->ip.dst.s_addr,
+				e->ip.dmsk.s_addr,
+				e->ip.invflags & IPT_INV_DSTIP);
+
+			print_iface('i',
+				e->ip.iniface,
+				e->ip.iniface_mask,
+				e->ip.invflags & IPT_INV_VIA_IN);
+
+			print_iface('o',
+				e->ip.outiface,
+				e->ip.outiface_mask,
+				e->ip.invflags & IPT_INV_VIA_OUT);
+
+			print_proto(e->ip.proto, e->ip.invflags & XT_INV_PROTO);
+
+			if (e->ip.flags & IPT_F_FRAG)
+				ptr += sprintf(ptr,
+					"%s -f",
+					e->ip.invflags & IPT_INV_FRAG ? " !" : "");
+
+			/* Print matchinfo part */
+			if (e->target_offset) {
+				IPT_MATCH_ITERATE(e, print_match_save, &e->ip);
+			}
+
+			/* print counters for iptables -R */
+			if (counters < 0)
+				ptr += sprintf(ptr, " -c %llu %llu", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
+
+			/* Print target name */
+			target_name = iptc_get_target(e, h);
+		#ifdef OLD_IPTABLES
+			if (target_name && (*target_name != '\0'))
+		#ifdef IPT_F_GOTO
+				ptr += sprintf(ptr, " -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
+		#else
+			ptr += sprintf(ptr, " -j %s", target_name);
+		#endif
+		#endif
+
+			/* Print targinfo part */
+			t = ipt_get_target((struct ipt_entry *)e);
+			if (t->u.user.name[0]) {
+				const struct xtables_target *target =
+					xtables_find_target(t->u.user.name, XTF_TRY_LOAD);
+
+				if (!target) {
+					xtables_error(PARAMETER_PROBLEM,
+						"Can't find library for target `%s'\n",
+						t->u.user.name);
+					write_output(ptr);
 				}
-				else {
-					/* If the target size is greater than xt_entry_target
-					* there is something to be saved, we just don't know
-					* how to print it */
-					if (t->u.target_size !=
-						sizeof(struct xt_entry_target)) {
-						xtables_error(PARAMETER_PROBLEM,
-							"Target `%s' is missing "
-							"save function\n",
-							t->u.user.name);
-						write_output(ptr);
+				
+		#ifndef OLD_IPTABLES
+				ptr += sprintf(ptr, " -j %s", target->alias ? target->alias(t) : target_name);
+		#endif
+
+				if (target) {
+					if (target->save) {
+						capture_stdout();
+						target->save(&e->ip, t);
+						if (!restore_stdout())
+						{
+							xtables_error(OTHER_PROBLEM, "Unable to capture stdout, errno: %d", errno);
+						}
+					}
+					else {
+						/* If the target size is greater than xt_entry_target
+						* there is something to be saved, we just don't know
+						* how to print it */
+						if (t->u.target_size !=
+							sizeof(struct xt_entry_target)) {
+							xtables_error(PARAMETER_PROBLEM,
+								"Target `%s' is missing "
+								"save function\n",
+								t->u.user.name);
+							write_output(ptr);
+						}
 					}
 				}
 			}
-		}
 
-	#ifndef OLD_IPTABLES
-		else if (target_name && (*target_name != '\0')) {
-	#ifdef IPT_F_GOTO
-			ptr += sprintf(ptr, " -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
-	#else
-			ptr += sprintf(ptr, " -j %s", target_name);
-	#endif
-		}
-	#endif
+		#ifndef OLD_IPTABLES
+			else if (target_name && (*target_name != '\0')) {
+		#ifdef IPT_F_GOTO
+				ptr += sprintf(ptr, " -%c %s", e->ip.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
+		#else
+				ptr += sprintf(ptr, " -j %s", target_name);
+		#endif
+			}
+		#endif
 
-		*ptr = '\0';
-		ptr = buffer;
+			*ptr = '\0';
+			ptr = buffer;
+		}else {
+			ptr = NULL;
+		}
+		memset(&buf, 0, sizeof(buf));
 
 		capture_cleanup();
 
@@ -711,101 +716,104 @@ extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, cons
 	const char *target_name;
 	char cbuf[BUFSIZ];
 	
-	/* print counters for iptables-save */
-	if (counters > 0)
-		ptr += sprintf(ptr,"[%llu:%llu] ", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
+	if ( ! setjmp(buf) ) {
+		/* print counters for iptables-save */
+		if (counters > 0)
+			ptr += sprintf(ptr,"[%llu:%llu] ", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
 
-	/* print chain name */
-	ptr += sprintf(ptr,"-A %s", chain);
+		/* print chain name */
+		ptr += sprintf(ptr,"-A %s", chain);
 
-	/* Print IP part. */
-	print_ip6("-s", &e->ipv6.src, &e->ipv6.smsk,
-		e->ipv6.invflags & IP6T_INV_SRCIP);
+		/* Print IP part. */
+		print_ip6("-s", &e->ipv6.src, &e->ipv6.smsk,
+			e->ipv6.invflags & IP6T_INV_SRCIP);
 
-	print_ip6("-d", &e->ipv6.dst, &e->ipv6.dmsk,
-		e->ipv6.invflags & IP6T_INV_DSTIP);
+		print_ip6("-d", &e->ipv6.dst, &e->ipv6.dmsk,
+			e->ipv6.invflags & IP6T_INV_DSTIP);
 
-	print_iface('i', e->ipv6.iniface, e->ipv6.iniface_mask,
-		e->ipv6.invflags & IP6T_INV_VIA_IN);
+		print_iface('i', e->ipv6.iniface, e->ipv6.iniface_mask,
+			e->ipv6.invflags & IP6T_INV_VIA_IN);
 
-	print_iface('o', e->ipv6.outiface, e->ipv6.outiface_mask,
-		e->ipv6.invflags & IP6T_INV_VIA_OUT);
+		print_iface('o', e->ipv6.outiface, e->ipv6.outiface_mask,
+			e->ipv6.invflags & IP6T_INV_VIA_OUT);
 
-	print_proto(e->ipv6.proto, e->ipv6.invflags & XT_INV_PROTO);
+		print_proto(e->ipv6.proto, e->ipv6.invflags & XT_INV_PROTO);
 
-	/* Print matchinfo part */
-	if (e->target_offset) {
-		IP6T_MATCH_ITERATE(e, print_match_save6, &e->ipv6);
-	}
-
-	/* print counters for iptables -R */
-	if (counters < 0)
-		ptr += sprintf(ptr," -c %llu %llu", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
-
-	/* Print target name */
-	target_name = ip6tc_get_target(e, h);
-#ifdef OLD_IPTABLES
-	if (target_name && (*target_name != '\0'))
-#ifdef IPT_F_GOTO
-		ptr += sprintf(ptr," -%c %s", e->ipv6.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
-#else
-		ptr += sprintf(ptr," -j %s", target_name);
-#endif
-#endif
-
-	/* Print targinfo part */
-	t = ip6t_get_target((struct ip6t_entry *)e);
-	if (t->u.user.name[0]) {
-		const struct xtables_target *target =
-			xtables_find_target(t->u.user.name, XTF_TRY_LOAD);
-
-		if (!target) {
-			xtables_error(PARAMETER_PROBLEM, "Can't find library for target `%s'\n",
-				t->u.user.name);
-			return NULL;
+		/* Print matchinfo part */
+		if (e->target_offset) {
+			IP6T_MATCH_ITERATE(e, print_match_save6, &e->ipv6);
 		}
-		
-#ifndef OLD_IPTABLES
-		ptr += sprintf(ptr, " -j %s", target->alias ? target->alias(t) : target_name);
-#endif
 
-		if (target){
-			if (target->save){
-				capture_stdout();
-				target->save(&e->ipv6, t);
-				if (!restore_stdout())
-				{
-					xtables_error(OTHER_PROBLEM, "Unable to capture stdout, errno: %d", errno);
+		/* print counters for iptables -R */
+		if (counters < 0)
+			ptr += sprintf(ptr," -c %llu %llu", (unsigned long long)e->counters.pcnt, (unsigned long long)e->counters.bcnt);
+
+		/* Print target name */
+		target_name = ip6tc_get_target(e, h);
+	#ifdef OLD_IPTABLES
+		if (target_name && (*target_name != '\0'))
+	#ifdef IPT_F_GOTO
+			ptr += sprintf(ptr," -%c %s", e->ipv6.flags & IPT_F_GOTO ? 'g' : 'j', target_name);
+	#else
+			ptr += sprintf(ptr," -j %s", target_name);
+	#endif
+	#endif
+
+		/* Print targinfo part */
+		t = ip6t_get_target((struct ip6t_entry *)e);
+		if (t->u.user.name[0]) {
+			const struct xtables_target *target =
+				xtables_find_target(t->u.user.name, XTF_TRY_LOAD);
+
+			if (!target) {
+				xtables_error(PARAMETER_PROBLEM, "Can't find library for target `%s'\n",
+					t->u.user.name);
+				return NULL;
+			}
+			
+	#ifndef OLD_IPTABLES
+			ptr += sprintf(ptr, " -j %s", target->alias ? target->alias(t) : target_name);
+	#endif
+
+			if (target){
+				if (target->save){
+					capture_stdout();
+					target->save(&e->ipv6, t);
+					if (!restore_stdout())
+					{
+						xtables_error(OTHER_PROBLEM, "Unable to capture stdout, errno: %d", errno);
+					}
+				}
+				else {
+					/* If the target size is greater than xt_entry_target
+					* there is something to be saved, we just don't know
+					* how to print it */
+					if (t->u.target_size !=
+						sizeof(struct xt_entry_target)) {
+						xtables_error(PARAMETER_PROBLEM, "Target `%s' is missing "
+							"save function\n",
+							t->u.user.name);
+						return NULL;
+					}
 				}
 			}
-			else {
-				/* If the target size is greater than xt_entry_target
-				* there is something to be saved, we just don't know
-				* how to print it */
-				if (t->u.target_size !=
-					sizeof(struct xt_entry_target)) {
-					xtables_error(PARAMETER_PROBLEM, "Target `%s' is missing "
-						"save function\n",
-						t->u.user.name);
-					return NULL;
-				}
-			}
 		}
+
+	#ifndef OLD_IPTABLES
+		else if (target_name && (*target_name != '\0')){
+	#ifdef IPT_F_GOTO
+			ptr += sprintf(ptr, " -%c %s", e->ipv6.flags & IP6T_F_GOTO ? 'g' : 'j', target_name);
+	#else
+			ptr += sprintf(ptr, " -j %s", target_name);
+	#endif
+		}
+	#endif
+
+		*ptr = '\0';
+		ptr = buffer;
+	}else{
+		ptr = NULL;
 	}
-
-#ifndef OLD_IPTABLES
-	else if (target_name && (*target_name != '\0')){
-#ifdef IPT_F_GOTO
-		ptr += sprintf(ptr, " -%c %s", e->ipv6.flags & IP6T_F_GOTO ? 'g' : 'j', target_name);
-#else
-		ptr += sprintf(ptr, " -j %s", target_name);
-#endif
-	}
-#endif
-
-	*ptr = '\0';
-	ptr = buffer;
-
 	memset(&buf, 0, sizeof(buf));
 
 	capture_cleanup();
@@ -822,7 +830,12 @@ EXPORT int execute_command4(const char* rule, void *h){
 		return 4;
 	}
 	
-	ret = do_command4(newargc, newargv, &table, &h);
+	if ( ! setjmp(buf) ) {
+		ret = do_command4(newargc, newargv, &table, &h);
+	}else{
+		ret = 0;
+	}
+	memset(&buf, 0, sizeof(buf));
 	
 	free(newargv);
 	capture_cleanup();
@@ -838,7 +851,12 @@ EXPORT int execute_command6(const char* rule, void *h){
 		return 4;
 	}
 	
-	ret = do_command6(newargc, newargv, &table, &h);
+	if ( ! setjmp(buf) ) {
+		ret = do_command6(newargc, newargv, &table, &h);
+	}else{
+		ret = 0;
+	}
+	memset(&buf, 0, sizeof(buf));
 	
 	free(newargv);
 	capture_cleanup();
@@ -847,14 +865,23 @@ EXPORT int execute_command6(const char* rule, void *h){
 
 EXPORT int init_helper4(void){
 	int c;
-	
-	c = xtables_init_all(&iptables_globals, NFPROTO_IPV4);
+	if ( ! setjmp(buf) ) {
+		c = xtables_init_all(&iptables_globals, NFPROTO_IPV4);
+	}else{
+		c = 0;
+	}
+	memset(&buf, 0, sizeof(buf));
 	return c;
 }
 
 EXPORT int init_helper6(void) {
 	int c;
-	c = xtables_init_all(&iptables_globals, NFPROTO_IPV6);
+	if (!setjmp(buf)) {
+		c = xtables_init_all(&iptables_globals, NFPROTO_IPV6);
+	}
+	else {
+		c = 0;
+	}
 	return c;
 }
 
