@@ -645,6 +645,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public String GetRuleString(String chain, IntPtr rule, bool counters = false)
         {
+            Debug.Assert(rule != IntPtr.Zero && rule != null, "A valid rule must be provided");
             RequireHandle();
 
             IntPtr ptr;
@@ -656,7 +657,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
             {
                 ptr = output_rule6(rule, _handle, chain, counters ? 1 : 0);
             }
-            if (ptr == IntPtr.Zero)
+            if (ptr == IntPtr.Zero || ptr == null)
             {
                 throw new IpTablesNetException("IPTCH Error: " + LastError().Trim());
             }

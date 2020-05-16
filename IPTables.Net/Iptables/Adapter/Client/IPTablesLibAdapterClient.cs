@@ -194,6 +194,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             IpTablesChainSet chains = new IpTablesChainSet(_ipVersion);
             
             var ipc = GetInterface(table);
+            Debug.Assert(ipc != null, "Unable to get interface for "+table);
 
             foreach (String chain in ipc.GetChains())
             {
@@ -204,9 +205,9 @@ namespace IPTables.Net.Iptables.Adapter.Client
             Debug.Assert(_ipVersion == chains.IpVersion);
             foreach (var chain in chains)
             {
-                foreach (var ipc_rule in ipc.GetRules(chain.Name))
+                foreach (var ipcRule in ipc.GetRules(chain.Name))
                 {
-                    String rule = ipc.GetRuleString(chain.Name, ipc_rule);
+                    String rule = ipc.GetRuleString(chain.Name, ipcRule);
                     if (rule == null)
                     {
                         throw new IpTablesNetException("Unable to get string version of rule");

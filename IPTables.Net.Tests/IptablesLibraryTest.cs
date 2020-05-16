@@ -58,7 +58,7 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
-                Process.Start("/sbin/"+GetBinary(), "-D test -j ACCEPT").WaitForExit();
+                Process.Start("/sbin/"+GetBinary(), "-F test").WaitForExit();
                 Process.Start("/sbin/"+GetBinary(), "-X test").WaitForExit();
                 Process.Start("/sbin/"+GetBinary(), "-F test2").WaitForExit();
                 Process.Start("/sbin/"+GetBinary(), "-X test2").WaitForExit();
