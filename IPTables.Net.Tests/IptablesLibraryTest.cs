@@ -77,9 +77,9 @@ namespace IPTables.Net.Tests
                 var system = new IpTablesSystem(null, new IPTablesLibAdapter());
                 using (var client = system.GetTableAdapter(_ipVersion))
                 {
-                    Debug.Assert(client is IPTablesLibAdapterClient);
+                    Assert.IsTrue(client is IPTablesLibAdapterClient);
                     var rules = client.ListRules("filter");
-                    Debug.Assert(rules != null, "Expected to find filter table");
+                    Assert.IsTrue(rules != null, "Expected to find filter table");
                     foreach (var chain in rules.Chains)
                     {
                         Assert.AreEqual(_ipVersion, chain.IpVersion, "Incorrect IP Version for chain: " + chain);
@@ -104,7 +104,7 @@ namespace IPTables.Net.Tests
                 var system = new IpTablesSystem(null, new IPTablesLibAdapter());
                 using (var client = system.GetTableAdapter(_ipVersion))
                 {
-                    Debug.Assert(client is IPTablesLibAdapterClient);
+                    Assert.IsTrue(client is IPTablesLibAdapterClient);
                     var rules = client.ListRules("filter");
                     var chain = new IpTablesChainSet(4);
                     foreach (var c in rules.Chains)
@@ -120,7 +120,7 @@ namespace IPTables.Net.Tests
                     var proc = Process.Start("/sbin/" + GetBinary(), "-L test2");
                     proc.WaitForExit();
                     String listOutput = proc.StandardOutput.ReadToEnd();
-                    Debug.Assert(listOutput.Contains("anywhere"), "must have created rule");
+                    Assert.IsTrue(listOutput.Contains("anywhere"), "must have created rule");
                 }
                 Assert.AreEqual(0, IptcInterface.RefCount);
             }
