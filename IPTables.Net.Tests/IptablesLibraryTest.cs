@@ -78,6 +78,7 @@ namespace IPTables.Net.Tests
                 {
                     Debug.Assert(client is IPTablesLibAdapterClient);
                     var rules = client.ListRules("filter");
+                    Debug.Assert(rules != null, "Expected to find filter table");
                     foreach (var chain in rules.Chains)
                     {
                         Assert.AreEqual(_ipVersion, chain.IpVersion, "Incorrect IP Version for chain: " + chain);
