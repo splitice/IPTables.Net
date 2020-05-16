@@ -105,7 +105,37 @@ namespace IPTables.Net.Tests
         }
 
         [Test]
-        public void TestAdd()
+        public void TestAddFromEmpty()
+        {
+            var mock = new MockIptablesSystemFactory();
+            var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
+            IpTablesRuleSet rulesOriginal = new IpTablesRuleSet(4, new List<String>()
+            {
+            }, system);
+            rulesOriginal.Chains.AddChain("INPUT", "filter", system);
+
+            IpTablesRuleSet rulesNew = new IpTablesRuleSet(4, new List<String>()
+            {
+                "-A INPUT -d 1.2.3.4/16 -j DROP"
+            }, system);
+
+            List<String> expectedCommands = new List<String> { "*filter", rulesNew.Chains.First().Rules[0].GetActionCommand(), "COMMIT" };
+
+
+            using (var client = system.GetTableAdapter(4))
+            {
+                var sync = new DefaultNetfilterSync<IpTablesRule>();
+                var rulesSynced = rulesOriginal.DeepClone();
+                mock.TestSync(client, rulesSynced, rulesNew, sync);
+                CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
+
+                TestApply(rulesOriginal, rulesSynced, rulesNew, expectedCommands);
+            }
+        }
+
+
+        [Test]
+        public void TestAddAdditional()
         {
             var mock = new MockIptablesSystemFactory();
             var system = new IpTablesSystem(mock, new MockIpTablesRestoreAdapter());
