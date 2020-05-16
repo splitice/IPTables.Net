@@ -519,6 +519,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 
 	if(pid == -1){
 		if (!setjmp(buf)) {
+			memset(buffer, 0, sizeof(buffer));
 			ptr = buffer;
 			
 			/* print counters for iptables-save */
