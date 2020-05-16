@@ -513,9 +513,9 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 	int rb;
 	int socks[2];
 
-	socketpair(PF_LOCAL, SOCK_STREAM, 0, socks)
+	socketpair(PF_LOCAL, SOCK_STREAM, 0, socks);
 
-	pid = fork()
+	pid = fork();
 
 	if(pid == -1){
 		if (!setjmp(buf)) {
