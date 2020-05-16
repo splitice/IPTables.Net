@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Adapter.Client;
 using IPTables.Net.Iptables.NativeLibrary;
@@ -91,6 +92,38 @@ namespace IPTables.Net.Tests
                 }
                 Assert.AreEqual(0, IptcInterface.RefCount);
             }   
+        }
+
+
+        [Test]
+        public void TestRuleAdd()
+        {
+            if (IsLinux)
+            {
+                Assert.AreEqual(0, IptcInterface.RefCount);
+                var system = new IpTablesSystem(null, new IPTablesLibAdapter());
+                using (var client = system.GetTableAdapter(_ipVersion))
+                {
+                    Debug.Assert(client is IPTablesLibAdapterClient);
+                    var rules = client.ListRules("filter");
+                    var chain = new IpTablesChainSet(4);
+                    foreach (var c in rules.Chains)
+                    {
+                        chain.AddChain(c as IpTablesChain);
+                    }
+                    var rule = IpTablesRule.Parse("-A test2 -p 80 -j ACCEPT", system, chain);
+                    client.StartTransaction();
+                    client.AddRule(rule);
+                    client.EndTransactionCommit();
+
+
+                    var proc = Process.Start("/sbin/" + GetBinary(), "-L test2");
+                    proc.WaitForExit();
+                    String listOutput = proc.StandardOutput.ReadToEnd();
+                    Debug.Assert(listOutput.Contains("anywhere"), "must have created rule");
+                }
+                Assert.AreEqual(0, IptcInterface.RefCount);
+            }
         }
     }
 }
