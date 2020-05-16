@@ -502,6 +502,8 @@ char null_placeholder[] = {0x00};
 	else write(socks[0], null_placeholder, 1); \
 	exit(0);
 
+#define XT_LOCK_NAME "/run/xtables.lock"
+
 /* We want this to be readable, so only print out neccessary fields.
 * Because that's the kind of world I want to live in.  */
 extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const char *chain, int counters)
