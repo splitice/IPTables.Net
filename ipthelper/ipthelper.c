@@ -203,8 +203,14 @@ char **split_commandline(const char *cmdline, int *argc)
 
 char buffer[10240];
 char* ptr = buffer;
-int shm = -1;
-char shm_name[32];
+
+typedef struct {
+	int shm;
+	char shm_name[32];
+	int save;
+} saved_pipe_t;
+
+saved_pipe_t stdout;
 
 void capture_setup()
 {
@@ -212,27 +218,27 @@ void capture_setup()
 	{
 		return;
 	}
-	sprintf(shm_name, "iph_%d", getppid());
-	shm = shm_open(shm_name, O_CREAT | O_RDWR | O_TRUNC, S_IRUSR | S_IWUSR);
+	sprintf(stdout.shm_name, "iph_%d", getppid());
+	stdout.shm = shm_open(stdout.shm_name, O_CREAT | O_RDWR | O_TRUNC, S_IRUSR | S_IWUSR);
 }
 
 void capture_cleanup()
 {
-	if (shm == -1)
+	if (stdout.shm == -1)
 	{
 		return;
 	}
-	close(shm);
-	shm_unlink(shm_name);
-	shm = -1;
+	close(stdout.shm);
+	shm_unlink(stdout.shm_name);
+	stdout.shm = -1;
 }
 
 void capture_stdout()
 {
 	capture_setup();
 	fflush(stdout); //clean everything first
-	stdout_save = dup(STDOUT_FILENO); //save the stdout state
-	dup2(shm, STDOUT_FILENO);
+	stdout.save = dup(STDOUT_FILENO); //save the stdout state
+	dup2(stdout.shm, STDOUT_FILENO);
 }
 
 bool restore_stdout()
@@ -240,8 +246,8 @@ bool restore_stdout()
 	fflush(stdout);
 	
 	int len;
-	lseek(shm, 0, SEEK_SET);
-	while ((len = read(shm, ptr, 1024)) != 0)
+	lseek(stdout.shm, 0, SEEK_SET);
+	while ((len = read(stdout.shm, ptr, 1024)) != 0)
 	{
 		if (len == -1)
 		{
@@ -249,11 +255,11 @@ bool restore_stdout()
 		}
 		ptr += len;
 	}
-	dup2(stdout_save, STDOUT_FILENO); //restore the previous state of stdout
-	close(stdout_save);
+	dup2(stdout.save, STDOUT_FILENO); //restore the previous state of stdout
+	close(stdout.save);
 	
-	lseek(shm, 0, SEEK_SET);
-	ftruncate(shm, 0);
+	lseek(stdout.shm, 0, SEEK_SET);
+	ftruncate(stdout.shm, 0);
 	
 	return true;
 }
@@ -497,16 +503,16 @@ static void print_proto(uint16_t proto, int invert)
 char null_placeholder[] = {0x00};
 
 #define write_output(what) \
-    close(socks[1]); \
 	if(what) write(socks[0], what, strlen(what) + 1); \
 	else write(socks[0], null_placeholder, 1); \
+    close(socks[0]); \
 	exit(0);
 
 #define XT_LOCK_NAME "/run/xtables.lock"
 
 /* We want this to be readable, so only print out neccessary fields.
 * Because that's the kind of world I want to live in.  */
-extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const char *chain, int counters)
+extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const char *chain, int counters, char** error)
 {
 	const struct xt_entry_target *t;
 	const char *target_name;
@@ -520,7 +526,8 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 	pid = fork();
 	unlink(XT_LOCK_NAME);
 
-	if(pid == -1){
+	if(pid > 0){
+		//capture_stderr();
 		if (!setjmp(buf)) {
 			memset(buffer, 0, sizeof(buffer));
 			ptr = buffer;
@@ -590,6 +597,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 					xtables_error(PARAMETER_PROBLEM,
 						"Can't find library for target `%s'\n",
 						t->u.user.name);
+					capture_cleanup();
 					write_output(ptr);
 				}
 				
@@ -616,6 +624,8 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 								"Target `%s' is missing "
 								"save function\n",
 								t->u.user.name);
+
+							capture_cleanup();
 							write_output(ptr);
 						}
 					}
@@ -635,23 +645,28 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 			*ptr = '\0';
 			ptr = buffer;
 		}else {
+			// an error occurred
 			ptr = NULL;
 		}
 		memset(&buf, 0, sizeof(buf));
 
 		capture_cleanup();
 
-		write_output(buffer);
+		write_output(ptr);
+	}else if (pid == 0) {
+		// parent
+		rb = read(socks[0], buffer, sizeof(buffer));
+		close(socks[0]);
+		if(rb == 0 && buffer[0] == 0x00){
+			return NULL;
+		}
+
+		return buffer;
 	}
 
-	// parent
-	close(socks[1]);
-	rb = read(socks[0], buffer, sizeof(buffer));
-	if(rb == 0 && buffer[0] == 0x00){
-		return NULL;
-	}
 
-	return buffer;
+	errbuffer = "Failed to fork";
+	return NULL;
 }
 
 /* print a given ip including mask if neccessary */
@@ -869,6 +884,7 @@ EXPORT int execute_command6(const char* rule, void *h){
 
 EXPORT int init_helper4(void){
 	int c;
+	stdout.shm = -1;
 	if ( ! setjmp(buf) ) {
 		c = xtables_init_all(&iptables_globals, NFPROTO_IPV4);
 	}else{
@@ -880,6 +896,7 @@ EXPORT int init_helper4(void){
 
 EXPORT int init_helper6(void) {
 	int c;
+	stdout.shm = -1;
 	if (!setjmp(buf)) {
 		c = xtables_init_all(&iptables_globals, NFPROTO_IPV6);
 	}
