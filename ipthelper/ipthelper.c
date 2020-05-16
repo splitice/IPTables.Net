@@ -516,6 +516,7 @@ extern EXPORT const char* output_rule4(const struct ipt_entry *e, void *h, const
 	socketpair(PF_LOCAL, SOCK_STREAM, 0, socks);
 
 	pid = fork();
+	unlink(XT_LOCK_NAME);
 
 	if(pid == -1){
 		if (!setjmp(buf)) {
