@@ -494,7 +494,7 @@ static void print_proto(uint16_t proto, int invert)
 	}
 }
 
-char null_placeholder[] = {0x00}
+char null_placeholder[] = {0x00};
 
 #define write_output(what) \
     close(socks[1]); \
