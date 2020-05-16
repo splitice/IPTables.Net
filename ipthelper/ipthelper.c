@@ -210,35 +210,35 @@ typedef struct {
 	int save;
 } saved_pipe_t;
 
-saved_pipe_t stdout;
+saved_pipe_t stdout_pipe;
 
 void capture_setup()
 {
-	if (shm != -1)
+	if (stdout_pipe.shm != -1)
 	{
 		return;
 	}
-	sprintf(stdout.shm_name, "iph_%d", getppid());
-	stdout.shm = shm_open(stdout.shm_name, O_CREAT | O_RDWR | O_TRUNC, S_IRUSR | S_IWUSR);
+	sprintf(stdout_pipe.shm_name, "iph_%d", getppid());
+	stdout_pipe.shm = shm_open(stdout_pipe.shm_name, O_CREAT | O_RDWR | O_TRUNC, S_IRUSR | S_IWUSR);
 }
 
 void capture_cleanup()
 {
-	if (stdout.shm == -1)
+	if (stdout_pipe.shm == -1)
 	{
 		return;
 	}
-	close(stdout.shm);
-	shm_unlink(stdout.shm_name);
-	stdout.shm = -1;
+	close(stdout_pipe.shm);
+	shm_unlink(stdout_pipe.shm_name);
+	stdout_pipe.shm = -1;
 }
 
 void capture_stdout()
 {
 	capture_setup();
 	fflush(stdout); //clean everything first
-	stdout.save = dup(STDOUT_FILENO); //save the stdout state
-	dup2(stdout.shm, STDOUT_FILENO);
+	stdout_pipe.save = dup(STDOUT_FILENO); //save the stdout state
+	dup2(stdout_pipe.shm, STDOUT_FILENO);
 }
 
 bool restore_stdout()
@@ -246,8 +246,8 @@ bool restore_stdout()
 	fflush(stdout);
 	
 	int len;
-	lseek(stdout.shm, 0, SEEK_SET);
-	while ((len = read(stdout.shm, ptr, 1024)) != 0)
+	lseek(stdout_pipe.shm, 0, SEEK_SET);
+	while ((len = read(stdout_pipe.shm, ptr, 1024)) != 0)
 	{
 		if (len == -1)
 		{
@@ -255,11 +255,11 @@ bool restore_stdout()
 		}
 		ptr += len;
 	}
-	dup2(stdout.save, STDOUT_FILENO); //restore the previous state of stdout
-	close(stdout.save);
+	dup2(stdout_pipe.save, STDOUT_FILENO); //restore the previous state of stdout
+	close(stdout_pipe.save);
 	
-	lseek(stdout.shm, 0, SEEK_SET);
-	ftruncate(stdout.shm, 0);
+	lseek(stdout_pipe.shm, 0, SEEK_SET);
+	ftruncate(stdout_pipe.shm, 0);
 	
 	return true;
 }
