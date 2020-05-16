@@ -498,8 +498,8 @@ char null_placeholder[] = {0x00}
 
 #define write_output(what) \
     close(socks[1]); \
-	if(what) write(socks[0], what, strlen(what) + 1);
-	else write(socks[0], null_placeholder, 1);
+	if(what) write(socks[0], what, strlen(what) + 1); \
+	else write(socks[0], null_placeholder, 1); \
 	exit(0);
 
 /* We want this to be readable, so only print out neccessary fields.
