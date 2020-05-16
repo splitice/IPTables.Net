@@ -506,7 +506,7 @@ char null_placeholder[] = {0x00};
 	if(what) write(socks[0], what, strlen(what) + 1); \
 	else write(socks[0], null_placeholder, 1); \
     close(socks[0]); \
-	exit(0);
+	_exit(2);
 
 #define XT_LOCK_NAME "/run/xtables.lock"
 
