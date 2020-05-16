@@ -53,7 +53,6 @@
 #endif
 
 char* errbuffer = NULL;
-jmp_buf buf = { };
 
 int stdout_save;
 
@@ -805,8 +804,6 @@ extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, cons
 
 	*ptr = '\0';
 	ptr = buffer;
-
-	memset(&buf, 0, sizeof(buf));
 
 	capture_cleanup();
 		
