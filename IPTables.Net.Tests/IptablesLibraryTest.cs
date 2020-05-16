@@ -117,7 +117,7 @@ namespace IPTables.Net.Tests
                     client.EndTransactionCommit();
 
 
-                    var proc = Process.Start("/sbin/" + GetBinary(), "-L test2");
+                    var proc = Process.Start(new ProcessStartInfo("/sbin/" + GetBinary(), "-L test2"){RedirectStandardOutput = true});
                     proc.WaitForExit();
                     String listOutput = proc.StandardOutput.ReadToEnd();
                     Assert.IsTrue(listOutput.Contains("anywhere"), "must have created rule");
