@@ -104,7 +104,7 @@ namespace IPTables.Net.Netfilter.Utils
 
             var doc = XDocument.Parse(output);
             var usages = from node in doc.Descendants("obj")
-                         select new NfAcctUsage(node.Descendants("name").First().Value, ulong.Parse(node.Descendants("pkts").First().Value), ulong.Parse(node.Descendants("bytes").First().Value));
+                         select new NfAcctUsage(node.Descendants("name").First().Value, ulong.Parse(node.Descendants("bytes").First().Value), ulong.Parse(node.Descendants("pkts").First().Value));
 
             return usages.ToList();
         }
