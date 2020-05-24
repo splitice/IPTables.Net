@@ -475,6 +475,16 @@ namespace IPTables.Net.Iptables
         }
 
         /// <summary>
+        /// Returns true if the module exists in this rule
+        /// </summary>
+        /// <param name="moduleName"></param>
+        /// <returns></returns>
+        public bool HasModule(string moduleName)
+        {
+            return _moduleData.ContainsKey(moduleName);
+        }
+
+        /// <summary>
         /// Get the data model for a module, if it doesnt exist add it
         /// </summary>
         /// <typeparam name="T"></typeparam>
