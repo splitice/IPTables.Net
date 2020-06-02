@@ -18,11 +18,13 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         private const String OptionDelSet = "--del-set";
         private const String OptionMapSet = "--map-set";
         private const String OptionExist = "--exist";
+        private const String OptionTimeout = "--timeout";
 
         public ValueOrNot<String> MatchSet;
         public String MatchSetFlags;
         public MatchMode MatchSetMode;
         public bool Exist;
+        public int Timeout = -1;
 
         public SetTargetModule(int version) : base(version)
         {
@@ -50,6 +52,9 @@ namespace IPTables.Net.Iptables.Modules.IpSet
                 case OptionExist:
                     Exist = true;
                     return 0;
+                case OptionTimeout:
+                    Timeout = int.Parse(parser.GetNextArg());
+                    return 1;
             }
 
             return 0;
@@ -78,6 +83,11 @@ namespace IPTables.Net.Iptables.Modules.IpSet
                 sb.Append(" " + OptionExist);
             }
 
+            if (Timeout >= 0)
+            {
+                sb.Append(OptionTimeout + " " + Timeout);
+            }
+
             return sb.ToString();
         }
 
@@ -85,7 +95,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         {
             var options = new HashSet<string>
             {
-                OptionAddSet, OptionDelSet, OptionMapSet, OptionExist
+                OptionAddSet, OptionDelSet, OptionMapSet, OptionExist, OptionTimeout
             };
             return options;
         }
@@ -99,7 +109,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return MatchSet.Equals(other.MatchSet) && string.Equals(MatchSetFlags, other.MatchSetFlags) && MatchSetMode == other.MatchSetMode && Exist == other.Exist;
+            return MatchSet.Equals(other.MatchSet) && string.Equals(MatchSetFlags, other.MatchSetFlags) && MatchSetMode == other.MatchSetMode && Exist == other.Exist && Timeout == other.Timeout;
         }
 
         public override bool Equals(object obj)
