@@ -99,7 +99,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return MatchSet.Equals(other.MatchSet) && string.Equals(MatchSetFlags, other.MatchSetFlags) && MatchSetMode == other.MatchSetMode;
+            return MatchSet.Equals(other.MatchSet) && string.Equals(MatchSetFlags, other.MatchSetFlags) && MatchSetMode == other.MatchSetMode && Exist == other.Exist;
         }
 
         public override bool Equals(object obj)
