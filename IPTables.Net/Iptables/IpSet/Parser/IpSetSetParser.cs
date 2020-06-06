@@ -1,4 +1,5 @@
 ﻿using System;
+using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.IpSet.Parser
 {
@@ -45,29 +46,30 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                 _set.Type = IpSetTypeHelper.StringToType(GetNextArg());
                 return 1;
             }
-            else
-            {
-                switch (option)
-                {
-                    case "timeout":
-                        _set.Timeout = int.Parse(GetNextArg());
-                        break;
-                    case "family":
-                        _set.Family = GetNextArg();
-                        break;
-                    case "hashsize":
-                        _set.HashSize = int.Parse(GetNextArg());
-                        break;
-                    case "maxelem":
-                        _set.MaxElem = UInt32.Parse(GetNextArg());
-                        break;
-                    default:
-                        _set.CreateOptions.Add(GetNextArg());
-                        return 0;
-                }
 
-                return 1;
+            switch (option)
+            {
+                case "timeout":
+                    _set.Timeout = int.Parse(GetNextArg());
+                    break;
+                case "family":
+                    _set.Family = GetNextArg();
+                    break;
+                case "hashsize":
+                    _set.HashSize = int.Parse(GetNextArg());
+                    break;
+                case "maxelem":
+                    _set.MaxElem = UInt32.Parse(GetNextArg());
+                    break;
+                case "range":
+                    _set.BitmapRange = PortOrRange.Parse(GetNextArg(), '-');
+                    break;
+                default:
+                    _set.CreateOptions.Add(GetNextArg());
+                    return 0;
             }
+
+            return 1;
         }
     }
 }

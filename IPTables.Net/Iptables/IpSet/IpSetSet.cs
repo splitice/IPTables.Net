@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
+using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.IpSet.Parser;
 using IPTables.Net.Netfilter;
 using IPTables.Net.Supporting;
@@ -20,6 +21,7 @@ namespace IPTables.Net.Iptables.IpSet
         private int _timeout;
         private string _family = "inet";
         private int _hashSize = 1024;
+        private PortOrRange _bitmapRange = new PortOrRange(1, 65535, '-');
         private UInt32 _maxElem = 65536;
         private List<IpSetEntry> _entries;
         private IpTablesSystem _system;
@@ -105,11 +107,17 @@ namespace IPTables.Net.Iptables.IpSet
             get { return _createOptions; }
         }
 
+        public PortOrRange BitmapRange
+        {
+            get { return _bitmapRange;  }
+            set { _bitmapRange = value; }
+        }
+
         #endregion
 
         #region Constructor
 
-        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, List<string> createOptions, List<IpSetEntry> entries = null)
+        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, List<string> createOptions, PortOrRange bitmapRange, List<IpSetEntry> entries = null)
         {
             _type = type;
             _name = name;
@@ -119,6 +127,7 @@ namespace IPTables.Net.Iptables.IpSet
             _syncMode = syncMode;
             _createOptions = createOptions == null ? new List<string>() : createOptions.ToList();
             _entries = entries == null ? new List<IpSetEntry>() : entries.ToList();
+            _bitmapRange = bitmapRange;
         }
 
         internal IpSetSet(IpTablesSystem system)
@@ -143,7 +152,7 @@ namespace IPTables.Net.Iptables.IpSet
             }
             else if ((_type & IpSetType.Bitmap) == IpSetType.Bitmap)
             {
-                command += " range 1-65535";
+                command += " range "+_bitmapRange;
             }
             if ((_type & IpSetType.Hash) == IpSetType.Hash)
             {
