@@ -117,7 +117,18 @@ namespace IPTables.Net.Iptables.IpSet
 
         #region Constructor
 
-        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, List<string> createOptions, PortOrRange bitmapRange, List<IpSetEntry> entries = null)
+        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, List<string> createOptions = null, List<IpSetEntry> entries = null)
+        {
+            _type = type;
+            _name = name;
+            _timeout = timeout;
+            _family = family;
+            _system = system;
+            _syncMode = syncMode;
+            _createOptions = createOptions == null ? new List<string>() : createOptions.ToList();
+            _entries = entries == null ? new List<IpSetEntry>() : entries.ToList();
+        }
+        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, PortOrRange bitmapRange, List<string> createOptions = null, List<IpSetEntry> entries = null)
         {
             _type = type;
             _name = name;
