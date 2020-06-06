@@ -193,7 +193,7 @@ namespace IPTables.Net.Tests
 
             IpSetSets rulesNew = new IpSetSets(new List<String>()
             {
-                "create test bitmap:port bitmap:port range 1-65535",
+                "create test bitmap:port range 1-65535",
                 "add test 81",
                 "add test 80"
             }, iptables);
