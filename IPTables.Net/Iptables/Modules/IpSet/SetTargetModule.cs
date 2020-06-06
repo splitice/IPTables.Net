@@ -85,7 +85,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
 
             if (Timeout >= 0)
             {
-                sb.Append(OptionTimeout + " " + Timeout);
+                sb.Append(" " + OptionTimeout + " " + Timeout);
             }
 
             return sb.ToString();
