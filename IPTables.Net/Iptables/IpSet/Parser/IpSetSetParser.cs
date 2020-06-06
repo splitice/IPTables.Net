@@ -65,7 +65,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                     _set.BitmapRange = PortOrRange.Parse(GetNextArg(), '-');
                     break;
                 default:
-                    _set.CreateOptions.Add(GetNextArg());
+                    _set.CreateOptions.Add(GetCurrentArg());
                     return 0;
             }
 
