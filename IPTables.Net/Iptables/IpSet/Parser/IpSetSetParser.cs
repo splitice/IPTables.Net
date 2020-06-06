@@ -61,6 +61,9 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                     case "maxelem":
                         _set.MaxElem = UInt32.Parse(GetNextArg());
                         break;
+                    default:
+                        _set.CreateOptions.Add(GetNextArg());
+                        return 0;
                 }
 
                 return 1;

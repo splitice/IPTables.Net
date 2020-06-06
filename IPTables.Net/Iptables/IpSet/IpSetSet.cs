@@ -25,6 +25,7 @@ namespace IPTables.Net.Iptables.IpSet
         private IpTablesSystem _system;
         private IpSetSyncMode _syncMode = IpSetSyncMode.SetAndEntries;
         private string[] _typeComponents;
+        private List<string> _createOptions;
 
         internal string InternalName
         {
@@ -99,11 +100,16 @@ namespace IPTables.Net.Iptables.IpSet
             get { return _system; }
         }
 
+        public List<String> CreateOptions
+        {
+            get { return _createOptions; }
+        }
+
         #endregion
 
         #region Constructor
 
-        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, List<IpSetEntry> entries = null)
+        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, List<string> createOptions, List<IpSetEntry> entries = null)
         {
             _type = type;
             _name = name;
@@ -111,6 +117,7 @@ namespace IPTables.Net.Iptables.IpSet
             _family = family;
             _system = system;
             _syncMode = syncMode;
+            _createOptions = createOptions == null ? new List<string>() : createOptions.ToList();
             _entries = entries == null ? new List<IpSetEntry>() : entries.ToList();
         }
 
@@ -118,6 +125,7 @@ namespace IPTables.Net.Iptables.IpSet
         {
             _system = system;
             _entries = new List<IpSetEntry>();
+            _createOptions = new List<string>();
         }
 
         #endregion
@@ -144,6 +152,11 @@ namespace IPTables.Net.Iptables.IpSet
             if (_timeout > 0)
             {
                 command += " timeout "+_timeout;
+            }
+
+            foreach (var co in _createOptions)
+            {
+                command += " " + co;
             }
             return command;
         }
