@@ -220,7 +220,7 @@ namespace IPTables.Net.Iptables.IpSet
         public bool SetEquals(IpSetSet set, bool size = false)
         {
             if (!(set.MaxElem == MaxElem && set.Name == Name && set.Timeout == Timeout &&
-                  set.Type == Type))
+                  set.Type == Type && set.BitmapRange.Equals(BitmapRange) && set.CreateOptions.OrderBy(a=>a).SequenceEqual(CreateOptions.OrderBy(a=>a))))
             {
                 return false;
             }
