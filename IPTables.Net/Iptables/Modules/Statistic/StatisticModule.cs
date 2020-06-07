@@ -103,7 +103,7 @@ namespace IPTables.Net.Iptables.Modules.Statistic
                     {
                         sb.Append("! ");
                     }
-                    sb.Append(OptionProbabilityLong + " " + Probability);
+                    sb.Append(OptionProbabilityLong + " " + Probability.ToString("F11"));
                     break;
             }
 
