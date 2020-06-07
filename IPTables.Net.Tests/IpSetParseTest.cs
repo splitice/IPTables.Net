@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.IpSet;
 using NUnit.Framework;
 
@@ -24,6 +25,37 @@ namespace IPTables.Net.Tests
             Assert.AreEqual(14, set.MaxElem);
 
             Assert.AreEqual(toParse,set.GetCommand());
+        }
+
+        [Test]
+        public void TestParseSet2()
+        {
+            String toParse = "test_set hash:ip family inet hashsize 10 maxelem 14 timeout 613";
+
+            var set = IpSetSet.Parse(toParse, null);
+
+            Assert.AreEqual("test_set", set.Name);
+            Assert.AreEqual(IpSetType.Hash | IpSetType.Ip, set.Type);
+            Assert.AreEqual(10, set.HashSize);
+            Assert.AreEqual(14, set.MaxElem);
+            Assert.AreEqual(613, set.Timeout);
+
+            Assert.AreEqual(toParse, set.GetCommand());
+        }
+
+        [Test]
+        public void TestParseSet3()
+        {
+            String toParse = "test_set bitmap:port range 123-234 timeout 613";
+
+            var set = IpSetSet.Parse(toParse, null);
+
+            Assert.AreEqual("test_set", set.Name);
+            Assert.AreEqual(IpSetType.Bitmap | IpSetType.Port, set.Type);
+            Assert.AreEqual(new PortOrRange(123,234,'-'), set.BitmapRange);
+            Assert.AreEqual(613, set.Timeout);
+
+            Assert.AreEqual(toParse, set.GetCommand());
         }
 
         [Test]
