@@ -53,6 +53,11 @@ namespace IPTables.Net.Iptables.Adapter.Client
         public override void AddRule(IpTablesRule rule)
         {
             String command = rule.GetActionCommand();
+            AddRule(command);
+        }
+
+        public void AddRule(String command)
+        {
             ExecutionHelper.ExecuteIptables(_system, command, _iptablesBinary);
         }
 

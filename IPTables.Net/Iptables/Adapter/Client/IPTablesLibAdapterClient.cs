@@ -131,6 +131,17 @@ namespace IPTables.Net.Iptables.Adapter.Client
             }
         }
 
+
+
+        public void AddRule(String command)
+        {
+            var rule = IpTablesRule.Parse(command, _system, null);
+            if (GetInterface(rule.Chain.Table).ExecuteCommand(_iptablesBinary + " " + command) != 1)
+            {
+                throw new IpTablesNetException(String.Format("Failed to add rule \"{0}\" due to error: \"{1}\"", command, GetInterface(rule.Chain.Table).GetErrorString()));
+            }
+        }
+
         public Version GetIptablesVersion()
         {
             IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);

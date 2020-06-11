@@ -11,6 +11,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
         void InsertRule(IpTablesRule rule);
         void ReplaceRule(IpTablesRule rule);
         void AddRule(IpTablesRule rule);
+        void AddRule(String rule);
         Version GetIptablesVersion();
         List<String> GetChains(String table);
     }

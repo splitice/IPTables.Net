@@ -134,6 +134,12 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _builder.AddCommand(rule.Chain.Table, command);
         }
 
+        public void AddRule(String command)
+        {
+            var rule = IpTablesRule.Parse(command, _system, null);
+            _builder.AddCommand(rule.Chain.Table, command);
+        }
+
         public Version GetIptablesVersion()
         {
             IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
