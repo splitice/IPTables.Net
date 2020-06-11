@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
 using log4net;
@@ -77,5 +78,14 @@ namespace IPTables.Net.Iptables.Adapter.Client
         }
 
         public abstract void Dispose();
+
+        private static Regex MatchTable = new Regex("-t ([^\\s]+)");
+
+        protected String ExtractTable(String rule)
+        {
+            var m = MatchTable.Match(rule);
+            if (m.Success) return m.Groups[1].Value;
+            return "filter";
+        }
     }
 }

@@ -136,8 +136,8 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public void AddRule(String command)
         {
-            var rule = IpTablesRule.Parse(command, _system, null);
-            _builder.AddCommand(rule.Chain.Table, command);
+            var table = ExtractTable(command);
+            _builder.AddCommand(table, command);
         }
 
         public Version GetIptablesVersion()
