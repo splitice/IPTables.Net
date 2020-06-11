@@ -256,7 +256,8 @@ namespace IPTables.Net.Iptables
                         GetCommand(true));
                 }
 
-                command += position + " ";
+                command += position;
+                return command;
             }
             else if (opt == "-I")
             {
