@@ -79,6 +79,10 @@ namespace IPTables.Net.Iptables
         {
             Rules.RemoveAt(offset);
         }
+        public void DeleteRule(IpTablesRule rule)
+        {
+            Rules.Remove(rule);
+        }
 
         public void InsertRule(int offset, IpTablesRule rule)
         {
