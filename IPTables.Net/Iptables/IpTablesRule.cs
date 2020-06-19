@@ -489,6 +489,11 @@ namespace IPTables.Net.Iptables
             return _moduleData.ContainsKey(moduleName);
         }
 
+        public bool RemoveModule(string moduleName)
+        {
+            return _moduleData.Remove(moduleName);
+        }
+
         /// <summary>
         /// Get the data model for a module, if it doesnt exist add it
         /// </summary>
