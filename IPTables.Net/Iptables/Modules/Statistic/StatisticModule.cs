@@ -23,10 +23,10 @@ namespace IPTables.Net.Iptables.Modules.Statistic
         public ValueOrNot<uint> Every;
         public uint Packet;
 
-        public float Probability
+        public ValueOrNot<float> Probability
         {
-            get { return Every.Value/2147483648.0f; }
-            set { Every = new ValueOrNot<uint>((uint)Math.Ceiling(value * 2147483648), Every.Not); }
+            get { return new ValueOrNot<float>(Every.Value/2147483648.0f, Every.Not); }
+            set { Every = new ValueOrNot<uint>((uint)Math.Ceiling(value.Value * 2147483648), value.Not); }
         }
 
         public StatisticModule(int version)
@@ -42,8 +42,7 @@ namespace IPTables.Net.Iptables.Modules.Statistic
                     Mode = ParseMode(parser.GetNextArg());
                     return 1;
                 case OptionProbabilityLong:
-                    Every = new ValueOrNot<uint>(0, not);
-                    Probability = float.Parse(parser.GetNextArg());
+                    Probability = new ValueOrNot<float>(float.Parse(parser.GetNextArg()), not);
                     return 1;
                 case OptionPacketLong:
                     Packet = uint.Parse(parser.GetNextArg());
@@ -99,11 +98,7 @@ namespace IPTables.Net.Iptables.Modules.Statistic
                     sb.Append(Every.ToOption(OptionEveryLong) + " " + OptionPacketLong + " " + Packet);
                     break;
                 case Modes.Random:
-                    if (Every.Not)
-                    {
-                        sb.Append("! ");
-                    }
-                    sb.Append(OptionProbabilityLong + " " + Probability.ToString("F11"));
+                    sb.Append(Probability.ToOption(OptionProbabilityLong));
                     break;
             }
 
@@ -137,7 +132,9 @@ namespace IPTables.Net.Iptables.Modules.Statistic
 
         public bool Equals(StatisticModule other)
         {
-            return Mode == other.Mode && Every.Equals(other.Every) && Packet == other.Packet;
+            if (Mode != other.Mode) return false;
+            if (Mode == Modes.Nth) return Every.Equals(other.Every);
+            return Packet.Equals(other.Packet);
         }
 
         public override int GetHashCode()
