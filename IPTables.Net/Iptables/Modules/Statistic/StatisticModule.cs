@@ -23,10 +23,10 @@ namespace IPTables.Net.Iptables.Modules.Statistic
         public ValueOrNot<uint> Every;
         public uint Packet;
 
-        public double Probability
+        public float Probability
         {
-            get { return Every.Value/2147483648.0; }
-            set { Every = new ValueOrNot<uint>((uint)(value * 2147483648), Every.Not); }
+            get { return Every.Value/2147483648.0f; }
+            set { Every = new ValueOrNot<uint>((uint)Math.Ceiling(value * 2147483648), Every.Not); }
         }
 
         public StatisticModule(int version)
@@ -43,7 +43,7 @@ namespace IPTables.Net.Iptables.Modules.Statistic
                     return 1;
                 case OptionProbabilityLong:
                     Every = new ValueOrNot<uint>(0, not);
-                    Probability = double.Parse(parser.GetNextArg());
+                    Probability = float.Parse(parser.GetNextArg());
                     return 1;
                 case OptionPacketLong:
                     Packet = uint.Parse(parser.GetNextArg());
