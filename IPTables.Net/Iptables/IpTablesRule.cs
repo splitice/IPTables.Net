@@ -23,7 +23,7 @@ namespace IPTables.Net.Iptables
 
         public class ValueComparison : IEqualityComparer<IpTablesRule>, IEqualityComparer<INetfilterRule>
         {
-            public bool Equals(IpTablesRule x, IpTablesRule y)
+            public virtual bool Equals(IpTablesRule x, IpTablesRule y)
             {
                 return x.Compare(y);
             }
@@ -33,7 +33,7 @@ namespace IPTables.Net.Iptables
                 throw new NotImplementedException();
             }
 
-            public bool Equals(INetfilterRule x, INetfilterRule y)
+            public virtual bool Equals(INetfilterRule x, INetfilterRule y)
             {
                 if (x.GetType() != y.GetType())
                 {
@@ -52,7 +52,7 @@ namespace IPTables.Net.Iptables
 
         public class DebugComparison: ValueComparison
         {
-            public new bool Equals(IpTablesRule x, IpTablesRule y)
+            public override bool Equals(IpTablesRule x, IpTablesRule y)
             {
                 var ret = base.Equals(x, y);
                 if (!ret)
@@ -63,6 +63,11 @@ namespace IPTables.Net.Iptables
                 }
 
                 return ret;
+            }
+
+            public override bool Equals(INetfilterRule x, INetfilterRule y)
+            {
+                return Equals((IpTablesRule) x, (IpTablesRule) y);
             }
         }
 
