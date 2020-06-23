@@ -147,8 +147,15 @@ namespace IPTables.Net.Iptables.IpSet
 
         public static IpSetEntry Parse(String command, IpSetSets sets, int startOffset = 0)
         {
-            var parts = ArgumentHelper.SplitArguments(command);
-            return Parse(parts, sets, startOffset);
+            try
+            {
+                var parts = ArgumentHelper.SplitArguments(command);
+                return Parse(parts, sets, startOffset);
+            }
+            catch (Exception ex)
+            {
+                throw new IpTablesNetException(String.Format("Failed to parse due to: {0}", ex.Message), ex);
+            }
         }
 
         public static IpSetEntry Parse(String[] arguments, IpSetSets sets, int startOffset = 0)

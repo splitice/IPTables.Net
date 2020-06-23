@@ -44,8 +44,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
         {
             var typeComponents = entry.Set.TypeComponents;
             var optionComponents = value.Split(new char[] { ',' });
-
-
+            
             for (int i = 0; i < optionComponents.Length; i++)
             {
                 switch (typeComponents[i])
