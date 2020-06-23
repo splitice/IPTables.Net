@@ -147,30 +147,30 @@ namespace IPTables.Net.Iptables.IpSet
 
         public static IpSetEntry Parse(String command, IpSetSets sets, int startOffset = 0)
         {
-            try
-            {
-                var parts = ArgumentHelper.SplitArguments(command);
-                return Parse(parts, sets, startOffset);
-            }
-            catch (Exception ex)
-            {
-                throw new IpTablesNetException(String.Format("Failed to parse due to: {0}", ex.Message), ex);
-            }
+            var parts = ArgumentHelper.SplitArguments(command);
+            return Parse(parts, sets, startOffset);
         }
 
         public static IpSetEntry Parse(String[] arguments, IpSetSets sets, int startOffset = 0)
         {
             if (arguments.Length < 2+startOffset) return null;
 
-            IpSetEntry entry = new IpSetEntry(null);
-            var parser = new IpSetEntryParser(arguments, entry, sets);
-
-            for (int i = startOffset; i < arguments.Length; i++)
+            try
             {
-                i += parser.FeedToSkip(i, i == startOffset);
-            }
+                IpSetEntry entry = new IpSetEntry(null);
+                var parser = new IpSetEntryParser(arguments, entry, sets);
 
-            return entry;
+                for (int i = startOffset; i < arguments.Length; i++)
+                {
+                    i += parser.FeedToSkip(i, i == startOffset);
+                }
+
+                return entry;
+            }
+            catch (Exception ex)
+            {
+                throw new IpTablesNetException(String.Format("Failed to parse due to: {0}", ex.Message), ex);
+            }
         }
 
         public bool KeyEquals(IpSetEntry other)
