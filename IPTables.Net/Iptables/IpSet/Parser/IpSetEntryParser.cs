@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 
@@ -50,6 +51,9 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                 switch (typeComponents[i])
                 {
                     case "ip":
+                        if(entry.Cidr.Prefix == 0) entry.Cidr = new IpCidr(IPAddress.Parse(optionComponents[i]));
+                        else entry.Cidr2 = new IpCidr(IPAddress.Parse(optionComponents[i]));
+                        break;
                     case "net":
                         entry.Cidr = IpCidr.Parse(optionComponents[i]);
                         var network = entry.Cidr.GetIPNetwork();
