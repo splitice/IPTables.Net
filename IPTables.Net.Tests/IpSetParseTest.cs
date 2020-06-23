@@ -112,6 +112,26 @@ namespace IPTables.Net.Tests
 
 
         [Test]
+        public void TestParseEntryIpPort()
+        {
+
+            var set = IpSetSet.Parse("test_set hash:ip,port family inet hashsize 10 maxelem 14", null);
+
+            IpSetSets sets = new IpSetSets(null);
+            sets.AddSet(set);
+
+
+            String toParse = "test_set 1.1.1.1,tcp:80";
+            var entry = IpSetEntry.Parse(toParse, sets);
+
+            Assert.AreEqual("test_set", entry.Set.Name);
+            Assert.AreEqual(IPAddress.Parse("1.1.1.1"), entry.Cidr.Address);
+            Assert.AreEqual(80, entry.Port);
+            Assert.AreEqual("tcp", entry.Protocol);
+        }
+
+
+        [Test]
         public void TestParseEntryIpIp()
         {
 
