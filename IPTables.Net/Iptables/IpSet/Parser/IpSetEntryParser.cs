@@ -105,6 +105,11 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                 _entry.Timeout = int.Parse(GetNextArg());
                 return 1;
             }
+            else if (option == "packets" || option == "bytes")
+            {
+                // ignore
+                return 1;
+            }
             else
             {
                 ParseEntry(_entry, option);

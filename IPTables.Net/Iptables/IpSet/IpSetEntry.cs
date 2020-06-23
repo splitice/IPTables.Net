@@ -169,7 +169,7 @@ namespace IPTables.Net.Iptables.IpSet
             }
             catch (Exception ex)
             {
-                throw new IpTablesNetException(String.Format("Failed to parse due to: {0}", ex.Message), ex);
+                throw new IpTablesNetException(String.Format("Failed to parse {0}", string.Join(" ", arguments.Skip(startOffset))), ex);
             }
         }
 

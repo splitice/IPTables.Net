@@ -148,5 +148,38 @@ namespace IPTables.Net.Tests
             Assert.AreEqual(IPAddress.Parse("1.2.3.4"), entry.Cidr.Address);
             Assert.AreEqual(IPAddress.Parse("2.2.2.2"), entry.Cidr2.Address);
         }
+        [Test]
+        public void TestParseEntryIpCounters()
+        {
+
+            var set = IpSetSet.Parse("test_set hash:ip family inet hashsize 10 maxelem 14", null);
+
+            IpSetSets sets = new IpSetSets(null);
+            sets.AddSet(set);
+
+
+            String toParse = "test_set 1.2.3.4 packets 1 bytes 40";
+            var entry = IpSetEntry.Parse(toParse, sets);
+
+            Assert.AreEqual("test_set", entry.Set.Name);
+            Assert.AreEqual(IPAddress.Parse("1.2.3.4"), entry.Cidr.Address);
+        }
+        [Test]
+        public void TestParseEntryIpIpCounters()
+        {
+
+            var set = IpSetSet.Parse("test_set hash:ip,ip family inet hashsize 10 maxelem 14", null);
+
+            IpSetSets sets = new IpSetSets(null);
+            sets.AddSet(set);
+
+
+            String toParse = "test_set 1.2.3.4,2.2.2.2 packets 1 bytes 40";
+            var entry = IpSetEntry.Parse(toParse, sets);
+
+            Assert.AreEqual("test_set", entry.Set.Name);
+            Assert.AreEqual(IPAddress.Parse("1.2.3.4"), entry.Cidr.Address);
+            Assert.AreEqual(IPAddress.Parse("2.2.2.2"), entry.Cidr2.Address);
+        }
     }
 }
