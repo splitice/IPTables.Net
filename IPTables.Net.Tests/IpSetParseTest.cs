@@ -167,7 +167,6 @@ namespace IPTables.Net.Tests
         [Test]
         public void TestParseEntryIpIpCounters()
         {
-
             var set = IpSetSet.Parse("test_set hash:ip,ip family inet hashsize 10 maxelem 14", null);
 
             IpSetSets sets = new IpSetSets(null);

@@ -128,6 +128,11 @@ namespace IPTables.Net.Iptables.IpSet
             return ret;
         }
 
+        public bool HasSet(string name)
+        {
+            return _sets.ContainsKey(name);
+        }
+
         public void AddSet(IpSetSet set)
         {
             _sets.Add(set.Name, set);
