@@ -165,7 +165,7 @@ namespace IPTables.Net.Iptables.IpSet
             {
                 command += " range "+_bitmapRange;
             }
-            if ((_type & IpSetType.Hash) == IpSetType.Hash)
+            if ((_type & IpSetType.Hash | IpSetType.CtHash) != 0)
             {
                 command += String.Format(" hashsize {0} maxelem {1}", _hashSize, _maxElem);
             }

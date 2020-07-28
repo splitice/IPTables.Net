@@ -23,6 +23,10 @@ namespace IPTables.Net.Iptables.IpSet
             {
                 mode = "bitmap:";
             }
+            else if((type & IpSetType.CtHash) == IpSetType.CtHash)
+            {
+                mode = "cthash:";
+            }
             else
             {
                 return null;
@@ -62,7 +66,12 @@ namespace IPTables.Net.Iptables.IpSet
             if (parts[0] == "hash")
             {
                 ret |= IpSetType.Hash;
-            } else if (parts[0] == "bitmap")
+            }
+            else if (parts[0] == "cthash")
+            {
+                ret |= IpSetType.CtHash;
+            }
+            else if (parts[0] == "bitmap")
             {
                 ret |= IpSetType.Bitmap;
             }

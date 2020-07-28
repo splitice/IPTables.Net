@@ -34,6 +34,7 @@ namespace IPTables.Net.Iptables.IpSet
         Net = 4,
         Port = 8,
         Ip = 16,
-        Ip2 = 32
+        Ip2 = 32,
+        CtHash = 64
     }
 }
