@@ -25,5 +25,25 @@ namespace IPTables.Net.Tests
 
             Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule2, null, chains)));
         }
+
+        [Test]
+        public void TestCompare3()
+        {
+            String rule = "-A AAAA -t raw -m hashlimit --hashlimit-name X$a|b|c --hashlimit-above 111/second --hashlimit-burst 500 --hashlimit-mode dstport --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 65000 --hashlimit-htable-max 30000 --hashlimit-htable-expire 6 --hashlimit-htable-gcinterval 600 -g AA";
+            String rule2 = "-A AAAA -t raw -m hashlimit --hashlimit-above 111/sec --hashlimit-burst 500 --hashlimit-mode dstport --hashlimit-name 'X$a|b|c' --hashlimit-htable-size 65000 --hashlimit-htable-max 30000 --hashlimit-htable-gcinterval 600 --hashlimit-htable-expire 6 -g AA";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule2, null, chains)));
+        }
+
+        [Test]
+        public void TestCompare4()
+        {
+            String rule = "-A AAA -p udp -m hashlimit --hashlimit-upto 5000/sec --hashlimit-burst 10000 --hashlimit-mode dstport --hashlimit-name X|gm2nkFUEm3KMQelhNE9A --hashlimit-htable-size 32782 --hashlimit-htable-max 200000 --hashlimit-htable-expire 10000 -m comment --comment \"X|A|B\" -g aaaa";
+            String rule2 = "-A AAA -p udp -g N_RE_gm2nkFUEm3KMQelhNE9A -m hashlimit --hashlimit-name 'X|gm2nkFUEm3KMQelhNE9A' --hashlimit-upto 5000/second --hashlimit-burst 10000 --hashlimit-mode dstport --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 32782 --hashlimit-htable-max 200000 --hashlimit-htable-expire 10000 --hashlimit-htable-gcinterval 1000 -m comment --comment 'X|A|B' -g aaaa";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule2, null, chains)));
+        }
     }
 }
