@@ -83,6 +83,7 @@
     <Compile Include="Iptables\IpTablesRuleDefinition.cs" />
     <Compile Include="Iptables\IPTablesTables.cs" />
     <Compile Include="Iptables\Modules\IpSet\SetTargetModule.cs" />
+    <Compile Include="Iptables\Modules\Rts\RtsModule.cs" />
     <Compile Include="Iptables\Modules\Ts3Init\Ts3InitGetCookieMatchModule.cs" />
     <Compile Include="Iptables\Modules\Ts3Init\Ts3InitGetPuzzleModule.cs" />
     <Compile Include="Iptables\Modules\Ts3Init\Ts3InitSetCookieModule.cs" />

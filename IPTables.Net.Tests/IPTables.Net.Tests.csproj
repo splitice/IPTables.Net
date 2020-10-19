@@ -93,6 +93,7 @@
     <Compile Include="SingleRecentRuleParseTests.cs" />
     <Compile Include="SinglePolyfillTests.cs" />
     <Compile Include="SingleMarkRuleParseTests.cs" />
+    <Compile Include="SingleRtsParseTests.cs" />
     <Compile Include="SingleTcpRuleParseTests.cs" />
     <Compile Include="SingleCoreRuleParseTests.cs" />
     <Compile Include="U32ParserTests.cs" />
