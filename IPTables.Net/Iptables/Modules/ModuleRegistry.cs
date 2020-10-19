@@ -26,6 +26,7 @@ using IPTables.Net.Iptables.Modules.Nflog;
 using IPTables.Net.Iptables.Modules.Nfqueue;
 using IPTables.Net.Iptables.Modules.Polyfill;
 using IPTables.Net.Iptables.Modules.Recent;
+using IPTables.Net.Iptables.Modules.Rts;
 using IPTables.Net.Iptables.Modules.Sdnat;
 using IPTables.Net.Iptables.Modules.Snat;
 using IPTables.Net.Iptables.Modules.Socket;
@@ -90,7 +91,8 @@ namespace IPTables.Net.Iptables.Modules
             Ts3InitGetCookieMatchModule.GetModuleEntry,
             Ts3InitGetPuzzleModule.GetModuleEntry,
             Ts3InitReset.GetModuleEntry,
-            Ts3InitSetCookieModule.GetModuleEntry
+            Ts3InitSetCookieModule.GetModuleEntry,
+            RtsModule.GetModuleEntry
         };
 
         public static List<ModuleEntry> PreloadDuplicateModules = new List<ModuleEntry>(); 
