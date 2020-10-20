@@ -45,5 +45,15 @@ namespace IPTables.Net.Tests
 
             Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule2, null, chains)));
         }
+
+        [Test]
+        public void TestByte1()
+        {
+            String rule = "-A ABC -m hashlimit --hashlimit-name aaaaaaaaaaaaaaaaaaaaaa --hashlimit-above 5kb/second --hashlimit-burst 500 --hashlimit-mode dstip,dstport --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 65000 --hashlimit-htable-max 30000 --hashlimit-htable-expire 6 --hashlimit-htable-gcinterval 600 -j AVS";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule, null, chains, 4)));
+            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).GetActionCommand().Contains("5kb/s"));
+        }
     }
 }

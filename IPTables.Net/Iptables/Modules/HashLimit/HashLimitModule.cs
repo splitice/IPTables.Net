@@ -30,7 +30,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         public String Name;
         public int LimitRate = 3;
         public LimitUnit Unit = LimitUnit.Hour;
-        public HashLimitMode LimitMode = HashLimitMode.Upto;
+        public HashLimitMode LimitMode = HashLimitMode.Upto | HashLimitMode.Packets;
         public String Mode = "";
         public int SrcMask;
         public int DstMask;
@@ -120,7 +120,34 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                 case OptionHashLimitAbove:
                 case OptionHashLimitUpto:
                     string[] s = parser.GetNextArg().Split(new[] {'/'});
-                    LimitRate = int.Parse(s[0]);
+                    if (s[0].EndsWith("b"))
+                    {
+                        LimitMode |= HashLimitMode.Bytes;
+                        String ub = s[0].Substring(s[0].Length - 2, 1);
+                        switch (ub)
+                        {
+                            case "g":
+                            case "G":
+                                LimitRate = int.Parse(s[0].Substring(0, s[0].Length - 2)) * (1024 * 1024 * 1024);
+                                break;
+                            case "m":
+                            case "M":
+                                LimitRate = int.Parse(s[0].Substring(0, s[0].Length - 2)) * (1024 * 1024);
+                                break;
+                            case "k":
+                            case "K":
+                                LimitRate = int.Parse(s[0].Substring(0, s[0].Length - 2)) * 1024;
+                                break;
+                            default:
+                                LimitRate = int.Parse(s[0].Substring(0, s[0].Length - 1));
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        LimitRate = int.Parse(s[0]);
+                    }
+
                     if (s.Length == 2)
                     {
                         Unit = GetUnit(s[1]);
@@ -130,7 +157,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                         throw new IpTablesNetException("Invalid limit format");
                     }
 
-                    LimitMode = current == OptionHashLimitAbove ? HashLimitMode.Above : HashLimitMode.Upto;
+                    LimitMode|= current == OptionHashLimitAbove ? HashLimitMode.Above : HashLimitMode.Upto;
 
                     return 1;
 
@@ -160,7 +187,33 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                 sb.Append(OptionHashLimitAbove);
             }
             sb.Append(" ");
-            sb.Append(LimitRate);
+            if ((LimitMode & HashLimitMode.Bytes) == HashLimitMode.Bytes)
+            {
+                if (LimitRate >= (1024 * 1024 * 1024))
+                {
+                    sb.Append(LimitRate / (1024 * 1024 * 1024));
+                    sb.Append("g");
+                }
+                else if (LimitRate >= (1024 * 1024))
+                {
+                    sb.Append(LimitRate / (1024 * 1024));
+                    sb.Append("m");
+                }
+                else if (LimitRate >= 1024)
+                {
+                    sb.Append(LimitRate / 1024);
+                    sb.Append("k");
+                }
+                else
+                {
+                    sb.Append(LimitRate);
+                }
+                sb.Append("b");
+            }
+            else
+            {
+                sb.Append(LimitRate);
+            }
             sb.Append("/");
             sb.Append(GetUnit(Unit));
 

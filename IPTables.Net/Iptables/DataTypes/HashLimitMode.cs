@@ -5,9 +5,12 @@ using System.Text;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
+    [Flags]
     public enum HashLimitMode
     {
-        Above,
-        Upto
+        Upto = 0,
+        Packets = 0,
+        Above = 1,
+        Bytes = 2
     }
 }
