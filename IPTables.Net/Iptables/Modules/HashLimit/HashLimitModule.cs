@@ -25,10 +25,10 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         private const int DefaultMaskIpv4 = 32;
         private const int DefaultMaskIpv6 = 128;
 
-        public int Burst = 5;
+        public UInt64 Burst = 5;
 
         public String Name;
-        public int LimitRate = 3;
+        public UInt64 LimitRate = 3;
         public LimitUnit Unit = LimitUnit.Hour;
         public HashLimitMode LimitMode = HashLimitMode.Upto | HashLimitMode.Packets;
         public String Mode = "";
@@ -81,6 +81,25 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             get { return true; }
         }
 
+        private UInt64 ParseByte(String b)
+        {
+            String ub = b.Substring(b.Length - 2, 1);
+            switch (ub)
+            {
+                case "g":
+                case "G":
+                    return UInt64.Parse(b.Substring(0, b.Length - 2)) * (1024 * 1024 * 1024);
+                case "m":
+                case "M":
+                    return UInt64.Parse(b.Substring(0, b.Length - 2)) * (1024 * 1024);
+                case "k":
+                case "K":
+                    return UInt64.Parse(b.Substring(0, b.Length - 2)) * 1024;
+                default:
+                    return UInt64.Parse(b.Substring(0, b.Length - 1));
+            }
+        }
+
         public int Feed(CommandParser parser, bool not)
         {
             String current = parser.GetCurrentArg();
@@ -123,29 +142,11 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                     if (s[0].EndsWith("b"))
                     {
                         LimitMode |= HashLimitMode.Bytes;
-                        String ub = s[0].Substring(s[0].Length - 2, 1);
-                        switch (ub)
-                        {
-                            case "g":
-                            case "G":
-                                LimitRate = int.Parse(s[0].Substring(0, s[0].Length - 2)) * (1024 * 1024 * 1024);
-                                break;
-                            case "m":
-                            case "M":
-                                LimitRate = int.Parse(s[0].Substring(0, s[0].Length - 2)) * (1024 * 1024);
-                                break;
-                            case "k":
-                            case "K":
-                                LimitRate = int.Parse(s[0].Substring(0, s[0].Length - 2)) * 1024;
-                                break;
-                            default:
-                                LimitRate = int.Parse(s[0].Substring(0, s[0].Length - 1));
-                                break;
-                        }
+                        LimitRate = ParseByte(s[0]);
                     }
                     else
                     {
-                        LimitRate = int.Parse(s[0]);
+                        LimitRate = UInt64.Parse(s[0]);
                     }
 
                     if (s.Length == 2)
@@ -162,7 +163,15 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                     return 1;
 
                 case OptionHashLimitBurst:
-                    Burst = int.Parse(parser.GetNextArg());
+                    if ((LimitMode & HashLimitMode.Bytes) == HashLimitMode.Bytes)
+                    {
+                        Burst = ParseByte(parser.GetNextArg());
+                    }
+                    else
+                    {
+                        Burst = UInt64.Parse(parser.GetNextArg());
+                    }
+
                     return 1;
             }
 
@@ -189,26 +198,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             sb.Append(" ");
             if ((LimitMode & HashLimitMode.Bytes) == HashLimitMode.Bytes)
             {
-                if (LimitRate >= (1024 * 1024 * 1024))
-                {
-                    sb.Append(LimitRate / (1024 * 1024 * 1024));
-                    sb.Append("g");
-                }
-                else if (LimitRate >= (1024 * 1024))
-                {
-                    sb.Append(LimitRate / (1024 * 1024));
-                    sb.Append("m");
-                }
-                else if (LimitRate >= 1024)
-                {
-                    sb.Append(LimitRate / 1024);
-                    sb.Append("k");
-                }
-                else
-                {
-                    sb.Append(LimitRate);
-                }
-                sb.Append("b");
+                OutputByte(sb, LimitRate);
             }
             else
             {
@@ -220,7 +210,14 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             sb.Append(" ");
             sb.Append(OptionHashLimitBurst);
             sb.Append(" ");
-            sb.Append(Burst);
+            if ((LimitMode & HashLimitMode.Bytes) == HashLimitMode.Bytes)
+            {
+                OutputByte(sb, LimitRate);
+            }
+            else
+            {
+                sb.Append(Burst);
+            }
 
             sb.Append(" ");
             sb.Append(OptionHashLimitMode);
@@ -258,6 +255,30 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             sb.Append(HtableGcInterval);
 
             return sb.ToString();
+        }
+
+        private void OutputByte(StringBuilder sb, ulong limitRate)
+        {
+            if (limitRate >= (1024 * 1024 * 1024))
+            {
+                sb.Append(limitRate / (1024 * 1024 * 1024));
+                sb.Append("g");
+            }
+            else if (limitRate >= (1024 * 1024))
+            {
+                sb.Append(limitRate / (1024 * 1024));
+                sb.Append("m");
+            }
+            else if (limitRate >= 1024)
+            {
+                sb.Append(limitRate / 1024);
+                sb.Append("k");
+            }
+            else
+            {
+                sb.Append(limitRate);
+            }
+            sb.Append("b");
         }
 
         private LimitUnit GetUnit(String strUnit)
@@ -339,9 +360,9 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         {
             unchecked
             {
-                int hashCode = Burst;
+                int hashCode = Burst.GetHashCode();
                 hashCode = (hashCode * 397) ^ (Name != null ? Name.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ LimitRate;
+                hashCode = (hashCode * 397) ^ LimitRate.GetHashCode();
                 hashCode = (hashCode * 397) ^ (int)Unit;
                 hashCode = (hashCode * 397) ^ (int)LimitMode;
                 hashCode = (hashCode * 397) ^ (Mode != null ? Mode.GetHashCode() : 0);
