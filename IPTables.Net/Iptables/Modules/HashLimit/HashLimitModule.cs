@@ -38,6 +38,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         public int HtableMax = 200000;
         public int HtableExpire = 10000;
         public int HtableGcInterval = 1000;
+        public char Scale = 'b';
 
         public HashLimitModule(int version) : base(version)
         {
@@ -81,23 +82,52 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             get { return true; }
         }
 
-        private UInt64 ParseByte(String b)
+        private UInt64 ParseByte(String b, ref char scale)
         {
             String ub = b.Substring(b.Length - 2, 1);
+            
+
+            UInt64 ret = 0;
             switch (ub)
             {
                 case "g":
                 case "G":
-                    return UInt64.Parse(b.Substring(0, b.Length - 2)) * (1024 * 1024 * 1024);
+                    ret = UInt64.Parse(b.Substring(0, b.Length - 2)) * (1024 * 1024 * 1024);
+                    if (scale == 'b') scale = 'g';
+                    break;
                 case "m":
                 case "M":
-                    return UInt64.Parse(b.Substring(0, b.Length - 2)) * (1024 * 1024);
+                    ret = UInt64.Parse(b.Substring(0, b.Length - 2)) * (1024 * 1024);
+                    if (scale == 'b') scale = 'm';
+                    break;
                 case "k":
                 case "K":
-                    return UInt64.Parse(b.Substring(0, b.Length - 2)) * 1024;
+                    ret = UInt64.Parse(b.Substring(0, b.Length - 2)) * 1024;
+                    if (scale == 'b') scale = 'k';
+                    break;
                 default:
-                    return UInt64.Parse(b.Substring(0, b.Length - 1));
+                    ret = UInt64.Parse(b.Substring(0, b.Length - 1));
+                    scale = 'b';
+                    break;
             }
+
+            if (scale != 'b' && scale != ub.ToLower()[0])
+            {
+                switch (scale)
+                {
+                    case 'g':
+                        ret = (ret / (1024 * 1024 * 1024)) * (1024 * 1024 * 1024);
+                        break;
+                    case 'm':
+                        ret = (ret / (1024 * 1024)) * (1024 * 1024);
+                        break;
+                    case 'k':
+                        ret = (ret / (1024)) * (1024);
+                        break;
+                }
+            }
+
+            return ret;
         }
 
         public int Feed(CommandParser parser, bool not)
@@ -142,7 +172,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                     if (s[0].EndsWith("b"))
                     {
                         LimitMode |= HashLimitMode.Bytes;
-                        LimitRate = ParseByte(s[0]);
+                        LimitRate = ParseByte(s[0], ref Scale);
                     }
                     else
                     {
@@ -165,7 +195,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                 case OptionHashLimitBurst:
                     if ((LimitMode & HashLimitMode.Bytes) == HashLimitMode.Bytes)
                     {
-                        Burst = ParseByte(parser.GetNextArg());
+                        Burst = ParseByte(parser.GetNextArg(), ref Scale);
                     }
                     else
                     {

@@ -64,5 +64,16 @@ namespace IPTables.Net.Tests
             Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule, null, chains, 4)));
             Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).GetActionCommand().Contains("5kb/s"));
         }
+        [Test]
+        public void TestByte3()
+        {
+            String rule2 = "-A ABC -m hashlimit --hashlimit-above 1mb/s --hashlimit-burst 1500 --hashlimit-mode dstip --hashlimit-name r";
+            String rule = "-A ABC -m hashlimit --hashlimit-name r --hashlimit-above 1mb/s --hashlimit-burst 1500 --hashlimit-mode dstip --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 65000 --hashlimit-htable-max 200000 --hashlimit-htable-expire 10000 --hashlimit-htable-gcinterval 1000";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule2, null, chains, 4)));
+        }
+
+
     }
 }
