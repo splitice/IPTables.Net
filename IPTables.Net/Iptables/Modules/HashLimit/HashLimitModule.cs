@@ -93,25 +93,28 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                 case "g":
                 case "G":
                     ret = UInt64.Parse(b.Substring(0, b.Length - 2)) * (1024 * 1024 * 1024);
-                    if (scale == 'b') scale = 'g';
+                    if (scale == 'b') ub = "g";
                     break;
                 case "m":
                 case "M":
                     ret = UInt64.Parse(b.Substring(0, b.Length - 2)) * (1024 * 1024);
-                    if (scale == 'b') scale = 'm';
+                    if (scale == 'b') ub = "m";
                     break;
                 case "k":
                 case "K":
                     ret = UInt64.Parse(b.Substring(0, b.Length - 2)) * 1024;
-                    if (scale == 'b') scale = 'k';
+                    if (scale == 'b') ub = "k";
+                    break;
+                case "b":
+                    ret = UInt64.Parse(b.Substring(0, b.Length - 1));
                     break;
                 default:
-                    ret = UInt64.Parse(b.Substring(0, b.Length - 1));
-                    scale = 'b';
+                    ret = UInt64.Parse(b);
+                    ub = "b";
                     break;
             }
 
-            if (scale != 'b' && scale != ub.ToLower()[0])
+            if (scale != ub.ToLower()[0])
             {
                 switch (scale)
                 {
@@ -125,6 +128,11 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                         ret = (ret / (1024)) * (1024);
                         break;
                 }
+            }
+            
+            if(scale == 'b')
+            {
+                scale = ub[0];
             }
 
             return ret;
