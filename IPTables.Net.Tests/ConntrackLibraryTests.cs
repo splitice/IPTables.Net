@@ -36,6 +36,10 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
+                if (Environment.GetEnvironmentVariable("SKIP_SYSTEM_TESTS") == "1")
+                {
+                    Assert.Ignore();
+                }
                 ConntrackSystem cts = new ConntrackSystem();
                 List<byte[]> list = new List<byte[]>();
                 cts.Dump(false,list.Add);
@@ -47,6 +51,10 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
+                if (Environment.GetEnvironmentVariable("SKIP_SYSTEM_TESTS") == "1")
+                {
+                    Assert.Ignore();
+                }
                 ConntrackSystem cts = new ConntrackSystem();
                 IPAddress addr = IPAddress.Parse("1.1.1.1");
                 UInt32 addr32;
