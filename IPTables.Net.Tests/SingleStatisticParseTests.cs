@@ -72,7 +72,7 @@ namespace IPTables.Net.Tests
         public void TestRandomRounding3()
         {
             String rule = "-A CHAIN -t raw -m statistic --mode random --probability 0.09000000000";
-            String rule2 = "-A CHAIN -t raw -m statistic --mode random --probability 0.08999999985";
+            String rule2 = "-A CHAIN -t raw -m statistic --mode random --probability 0.08999999997";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
