@@ -58,21 +58,27 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Burst == other.Burst && string.Equals(Name, other.Name) && CompareRate((UInt32)LimitRate, (UInt32)other.LimitRate) && Unit == other.Unit && LimitMode == other.LimitMode && string.Equals(Mode, other.Mode) && SrcMask == other.SrcMask && DstMask == other.DstMask && HtableSize == other.HtableSize && HtableMax == other.HtableMax && HtableExpire == other.HtableExpire && HtableGcInterval == other.HtableGcInterval;
+            return Burst == other.Burst && string.Equals(Name, other.Name) && CompareRate(LimitMode, LimitRate, other.LimitRate) && Unit == other.Unit && LimitMode == other.LimitMode && string.Equals(Mode, other.Mode) && SrcMask == other.SrcMask && DstMask == other.DstMask && HtableSize == other.HtableSize && HtableMax == other.HtableMax && HtableExpire == other.HtableExpire && HtableGcInterval == other.HtableGcInterval;
         }
 
-        public static bool CompareRate(UInt32 a, UInt32 b)
+        public static UInt32 ComparablyReduce(UInt64 a)
         {
             if (a >= 5000)
             {
                 a = 10000;
             }
-            if (b >= 5000)
+            return (UInt32)(a / 10000);
+        }
+
+        public static bool CompareRate(HashLimitMode mode, UInt64 a, UInt64 b)
+        {
+            if ((mode & HashLimitMode.Bytes) == 0)
             {
-                b = 10000;
+                var a32 = ComparablyReduce(a);
+                var b32 = ComparablyReduce(b);
+
+                return a32 == b32;
             }
-            a = (a/10000);
-            b = (b/10000);
 
             return a == b;
         }
