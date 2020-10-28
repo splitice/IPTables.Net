@@ -1,5 +1,4 @@
-language: csharp
-solution: IPTables.Net.sln
+language: cpp
 mono:
   - latest
 git:
@@ -34,14 +33,3 @@ script:
   - CXX="g++-4.8" ADDITIONAL_CFLAGS="-DOLD_IPTABLES" CONFIG="Debug" sudo -E bash install.sh
   - sudo ldconfig
   - sudo ldconfig -p | grep ipthelper
-  - cd ..
-  - bash travis-ci/autoversion.sh IPTables.Net
-  - bash travis-ci/autoversion.sh IPTables.Net.Tests
-  - bash travis-ci/autoversion.sh IPTables.Net.TestFramework
-  - export EnableNuGetPackageRestore=false
-  - cert-sync /etc/ssl/certs/ca-certificates.crt
-  - travis_retry mono .nuget/NuGet.exe restore IPTables.Net.sln
-  - xbuild /p:Configuration=Release IPTables.Net.sln
-  - xbuild /p:Configuration=Debug IPTables.Net.sln
-  - iptables -V
-  - bash travis-ci/test-and-publish.sh

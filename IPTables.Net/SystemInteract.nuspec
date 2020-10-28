@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<package>
-	<metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<package >
+	<metadata>
 		<id>IPTables.Net</id>
 		<version>$version$</version>
 		<title>IPTables.Net</title>
@@ -8,14 +8,13 @@
 		<owners>SplitIce</owners>
 		<projectUrl>https://github.com/splitice/IPTables.Net</projectUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<description>IPTables .Net Manipulation Interface</description>
+		<description>System Interact main package</description>
 		<releaseNotes>Automatic Updates via GitHub</releaseNotes>
 		<copyright>Copyright Never</copyright>
-		<language>en-US</language>
 		<dependencies> 
 		</dependencies>
 	</metadata>
 	<files>
-		<file src="bin/Release/IPTables.Net.dll" target="lib" />
+		<file src="bin/Release/netcoreapp3.1/IPTables.Net.dll" target="lib" />
 	</files>
 </package>

@@ -40,7 +40,7 @@ namespace IPTables.Net.Tests
             return "ip6tables";
         }
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void TestStartup()
         {
             if (IsLinux)
@@ -54,7 +54,7 @@ namespace IPTables.Net.Tests
             }
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void TestDestroy()
         {
             if (IsLinux)

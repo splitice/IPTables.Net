@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
 using IPTables.Net.Netfilter.TableSync;
 
+[assembly: InternalsVisibleTo("IPTables.Net.Tests")]
+[assembly: InternalsVisibleTo("IPTables.Net.TestFramework")]
 namespace IPTables.Net.Iptables
 {
     public class IpTablesChain : INetfilterChain<IpTablesRule>, IEquatable<IpTablesChain>

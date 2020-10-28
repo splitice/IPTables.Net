@@ -8,7 +8,10 @@ using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Adapter.Client;
 using IPTables.Net.Iptables.IpSet.Adapter;
 using IPTables.Net.Netfilter;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("IPTables.Net.Tests")]
+[assembly: InternalsVisibleTo("IPTables.Net.TestFramework")]
 namespace IPTables.Net
 {
     /// <summary>

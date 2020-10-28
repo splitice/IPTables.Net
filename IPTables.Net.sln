@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPTables.Net", "IPTables.Net\IPTables.Net.csproj", "{9EFDE056-106C-4618-ACFA-9F67133341C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPTables.Net", "IPTables.Net\IPTables.Net.csproj", "{F111B420-D519-4B50-91E5-F5FF6C707171}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPTables.Net.Tests", "IPTables.Net.Tests\IPTables.Net.Tests.csproj", "{B4EE1115-2025-4276-8390-239E651E2A2B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPTables.Net.Tests", "IPTables.Net.Tests\IPTables.Net.Tests.csproj", "{212BE401-C2D4-4542-ACAA-22F68B99A025}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPTables.Net.TestFramework", "IPTables.Net.TestFramework\IPTables.Net.TestFramework.csproj", "{579C614E-CF11-4606-B69A-2AAE4C52A166}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPTables.Net.TestFramework", "IPTables.Net.TestFramework\IPTables.Net.TestFramework.csproj", "{CACE8E1F-F578-4762-8C93-F09407C380F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,20 +15,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9EFDE056-106C-4618-ACFA-9F67133341C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9EFDE056-106C-4618-ACFA-9F67133341C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9EFDE056-106C-4618-ACFA-9F67133341C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9EFDE056-106C-4618-ACFA-9F67133341C8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B4EE1115-2025-4276-8390-239E651E2A2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B4EE1115-2025-4276-8390-239E651E2A2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B4EE1115-2025-4276-8390-239E651E2A2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B4EE1115-2025-4276-8390-239E651E2A2B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{579C614E-CF11-4606-B69A-2AAE4C52A166}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{579C614E-CF11-4606-B69A-2AAE4C52A166}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{579C614E-CF11-4606-B69A-2AAE4C52A166}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{579C614E-CF11-4606-B69A-2AAE4C52A166}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F111B420-D519-4B50-91E5-F5FF6C707171}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F111B420-D519-4B50-91E5-F5FF6C707171}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F111B420-D519-4B50-91E5-F5FF6C707171}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F111B420-D519-4B50-91E5-F5FF6C707171}.Release|Any CPU.Build.0 = Release|Any CPU
+		{212BE401-C2D4-4542-ACAA-22F68B99A025}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{212BE401-C2D4-4542-ACAA-22F68B99A025}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{212BE401-C2D4-4542-ACAA-22F68B99A025}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{212BE401-C2D4-4542-ACAA-22F68B99A025}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CACE8E1F-F578-4762-8C93-F09407C380F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CACE8E1F-F578-4762-8C93-F09407C380F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CACE8E1F-F578-4762-8C93-F09407C380F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CACE8E1F-F578-4762-8C93-F09407C380F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6AB9760E-4B64-43E1-A77C-2D8DD0862BD4}
 	EndGlobalSection
 EndGlobal
