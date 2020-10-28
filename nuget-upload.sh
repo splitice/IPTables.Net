@@ -15,6 +15,10 @@ if [[ $VERSION =~ $re ]]; then
 
     padded=$(printf "%04d" $REVISION)
     if [[ "$REVISION" != "0" ]]; then
+        LAST_PART=$(echo "$VERSION_STR" | sed 's/.\+\([0-9]\+\)$/\1/')
+        let LAST_PART=$LAST_PART+1
+        VERSION_STR=$(echo "$VERSION_STR" | sed 's/\.\([0-9]\+\)$/.'$LAST_PART'/')
+
         VERSION_STR="$VERSION_STR-cibuild$padded"
     fi
 
