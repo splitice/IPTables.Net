@@ -26,9 +26,17 @@ jobs:
           name: NUnit Tests
           command: SKIP_SYSTEM_TESTS=1 dotnet test IPTables.Net.Tests
       - persist_to_workspace:
-          root: /root/
+          root: /root/repo
           paths: 
-           - repo
+           - .
+  machine_test:
+    machine:
+      image: ubuntu-1604
+    steps:
+      - attach_workspace:
+          at: /root/repo
+
+
   upload:
     docker:
       - image: mcr.microsoft.com/dotnet/core/sdk:3.1-buster
