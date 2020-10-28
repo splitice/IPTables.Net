@@ -20,6 +20,7 @@ namespace IPTables.Net.TestFramework.IpTablesRestore
             StreamWriter sw = new StreamWriter(_output);
             _builder.WriteOutput(sw);
             sw.Flush();
+            _inTransaction = false;
         }
 
         public IEnumerable<String> GetOutput()
@@ -27,6 +28,11 @@ namespace IPTables.Net.TestFramework.IpTablesRestore
             String output = System.Text.Encoding.ASCII.GetString(_output.ToArray());
             _output.SetLength(0);
             return output.Split(new char[] {'\n'}).Select((a)=>a.TrimEnd(new char[]{'\r'})).Where((a)=>a.Length != 0);
+        }
+
+        ~MockIpTablesRestoreAdapterClient()
+        {
+
         }
     }
 }
