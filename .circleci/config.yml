@@ -5,6 +5,7 @@ workflows:
   build_test_upload:
     jobs:
       - build
+      - machine_test
       - upload
 
 jobs:
@@ -22,16 +23,19 @@ jobs:
       - run:
           name: NUnit Tests
           command: SKIP_SYSTEM_TESTS=1 dotnet test IPTables.Net.Tests
-      - persist_to_workspace:
-          root: /root/repo
-          paths: 
-           - .
   machine_test:
     machine:
       image: ubuntu-1604
     steps:
-      - attach_workspace:
-          at: /root/repo
+      - checkout
+      - run: |
+          wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+          sudo dpkg -i packages-microsoft-prod.deb
+
+          sudo apt-get update; \
+            sudo apt-get install -y apt-transport-https && \
+            sudo apt-get update && \
+            sudo apt-get install -y dotnet-sdk-3.1
 
 
   upload:
@@ -40,12 +44,12 @@ jobs:
       
     requires:
      - build
+     - machine_test
       
     working_directory: /root/repo
 
     steps:
-      - attach_workspace:
-          at: /root/repo
+      - checkout
       - run: |
           apt-get update
           apt-get install -y git
