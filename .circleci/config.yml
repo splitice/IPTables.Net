@@ -1,4 +1,8 @@
 version: 2
+workflows:
+  untagged-build:
+    jobs:
+      - upload
 jobs:
   build:
     docker:
@@ -22,10 +26,11 @@ jobs:
           paths: 
            - repo
   upload:
-    requires:
-     - build
     docker:
       - image: mcr.microsoft.com/dotnet/core/sdk:3.1-buster
+      
+    requires:
+     - build
       
     working_directory: ~/repo
 
