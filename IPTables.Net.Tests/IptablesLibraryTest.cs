@@ -114,9 +114,10 @@ namespace IPTables.Net.Tests
                 {
                     Assert.IsTrue(client is IPTablesLibAdapterClient);
                     var rules = client.ListRules("filter");
-                    var chain = new IpTablesChainSet(4);
+                    var chain = new IpTablesChainSet(_ipVersion);
                     foreach (var c in rules.Chains)
                     {
+                        Assert.AreEqual(_ipVersion, c.IpVersion);
                         chain.AddChain(c as IpTablesChain);
                     }
                     var rule = IpTablesRule.Parse("-A test2 -p 80 -j ACCEPT", system, chain);

@@ -424,6 +424,14 @@ namespace IPTables.Net.Iptables.NativeLibrary
         private static int _helperInitCount = 0;
         public bool Disposed = false;
 
+        public int IpVersion
+        {
+            get
+            {
+                return _ipVersion;
+            }
+        }
+
         internal static int RefCount
         {
             get

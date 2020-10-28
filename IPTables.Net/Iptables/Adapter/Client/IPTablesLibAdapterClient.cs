@@ -16,7 +16,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
     {
         private readonly NetfilterSystem _system;
         private bool _inTransaction = false;
-        protected Dictionary<String, IptcInterface> _interfaces = new Dictionary<string, IptcInterface>();
+        protected Dictionary<String, IptcInterface> _interfaces = new Dictionary<String, IptcInterface>();
         private string _iptablesBinary;
         private int _ipVersion;
 
@@ -29,13 +29,17 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         private IptcInterface GetInterface(String table)
         {
+            IptcInterface i;
             if (_interfaces.ContainsKey(table))
             {
-                return _interfaces[table];
+                i = _interfaces[table];
             }
-
-            var i = new IptcInterface(table, _ipVersion, Log);
-            _interfaces.Add(table, i);
+            else
+            {
+                i = new IptcInterface(table, _ipVersion, Log);
+                _interfaces.Add(table, i);
+            }
+            Debug.Assert(i.IpVersion == _ipVersion);
             return i;
         }
 

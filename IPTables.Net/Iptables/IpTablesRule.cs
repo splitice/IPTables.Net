@@ -454,8 +454,9 @@ namespace IPTables.Net.Iptables
         /// <param name="createChain"></param>
         /// <returns></returns>
         public static IpTablesRule Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
-            int version = 4, String defaultTable = "filter", ChainCreateMode createChain = ChainCreateMode.CreateNewChainIfNeeded)
+            int version = -1, String defaultTable = "filter", ChainCreateMode createChain = ChainCreateMode.CreateNewChainIfNeeded)
         {
+            if(version == -1) version = chains.IpVersion;
             CommandParser parser;
             var ipCmd = IpTablesCommand.Parse(rule, system, chains, out parser, version, defaultTable);
             if (ipCmd.Type != IpTablesCommandType.Add)
@@ -481,7 +482,7 @@ namespace IPTables.Net.Iptables
                     chain = parser.CreateChain(system, ipVersion);
                 }
             }
-            Debug.Assert(chain.IpVersion == version);
+            Debug.Assert(chain.IpVersion == version, String.Format("Chain version {0} should match {1}", chain.IpVersion, version));
             ipCmd.Rule.Chain = chain;
 
             return ipCmd.Rule;
