@@ -38,8 +38,14 @@ jobs:
           sudo apt-get update; \
             sudo apt-get install -y apt-transport-https && \
             sudo apt-get update && \
-            sudo apt-get install -y dotnet-sdk-3.1
-
+            sudo apt-get install -y dotnet-sdk-3.1 build-essential iptables-dev libnl-3-dev libnl-3-200 libnetfilter-conntrack3 libnfnetlink-dev libnfnetlink0 libpcap0.8 libpcap0.8-dev
+      - run: |
+          cd ipthelper
+          CONFIG="Release" sudo -E bash install.sh
+          CONFIG="Debug" sudo -E bash install.sh
+          ldconfig
+      - run: |
+          dotnet test
 
   upload:
     docker:
