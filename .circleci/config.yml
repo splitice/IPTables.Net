@@ -6,7 +6,10 @@ workflows:
     jobs:
       - build
       - machine_test
-      - upload
+      - upload:      
+          requires:
+          - build
+          - machine_test
 
 jobs:
   build:
@@ -25,7 +28,7 @@ jobs:
           command: SKIP_SYSTEM_TESTS=1 dotnet test IPTables.Net.Tests
   machine_test:
     machine:
-      image: ubuntu-1604
+      image: ubuntu-2004:202010-01
     steps:
       - checkout
       - run: |
@@ -42,10 +45,6 @@ jobs:
     docker:
       - image: mcr.microsoft.com/dotnet/core/sdk:3.1-buster
       
-    requires:
-     - build
-     - machine_test
-      
     working_directory: /root/repo
 
     steps:
@@ -56,5 +55,4 @@ jobs:
       - run:
           name: NuGet upload
           command: |
-            ls -las /root/repo
             bash nuget-upload.sh IPTables.Net
