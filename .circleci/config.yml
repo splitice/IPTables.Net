@@ -18,8 +18,8 @@ jobs:
           name: NUnit Tests
           command: SKIP_SYSTEM_TESTS=1 dotnet test IPTables.Net.Tests
       - persist_to_workspace:
-          root: /root/repo
-          path: .
+          root: /root/
+          path: repo
   upload:
     requires:
      - build
@@ -34,4 +34,5 @@ jobs:
       - run:
           name: NuGet upload
           command: |
+            ls -las /root/repo
             bash nuget-upload.sh IPTables.Net
