@@ -10,7 +10,7 @@ jobs:
       - checkout
       - run:
           name: Build
-          command: dotnet build
+          command: dotnet build IPTables.Net.sln
       - run:
           name: NUnit Tests
           command: dotnet test IPTables.Net.Tests
