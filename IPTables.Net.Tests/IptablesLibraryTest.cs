@@ -63,6 +63,10 @@ namespace IPTables.Net.Tests
         {
             if (IsLinux)
             {
+                if (Environment.GetEnvironmentVariable("SKIP_SYSTEM_TESTS") == "1")
+                {
+                    Assert.Ignore();
+                }
                 Process.Start("/sbin/"+GetBinary(), "-F test").WaitForExit();
                 Process.Start("/sbin/"+GetBinary(), "-X test").WaitForExit();
                 Process.Start("/sbin/"+GetBinary(), "-F test2").WaitForExit();
