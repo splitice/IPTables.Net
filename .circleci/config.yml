@@ -19,7 +19,8 @@ jobs:
           command: SKIP_SYSTEM_TESTS=1 dotnet test IPTables.Net.Tests
       - persist_to_workspace:
           root: /root/
-          path: repo
+          paths: 
+           - repo
   upload:
     requires:
      - build
