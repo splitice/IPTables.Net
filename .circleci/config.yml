@@ -12,13 +12,10 @@ jobs:
     docker:
       - image: mcr.microsoft.com/dotnet/core/sdk:3.1-buster
       
-    working_directory: ~/repo
+    working_directory: /root/repo
 
     steps:
       - checkout
-      - run: |
-          apt-get update
-          apt-get install -y git
       - run:
           name: Build
           command: dotnet build
@@ -44,11 +41,14 @@ jobs:
     requires:
      - build
       
-    working_directory: ~/repo
+    working_directory: /root/repo
 
     steps:
       - attach_workspace:
           at: /root/repo
+      - run: |
+          apt-get update
+          apt-get install -y git
       - run:
           name: NuGet upload
           command: |
