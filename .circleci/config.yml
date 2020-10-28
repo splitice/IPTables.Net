@@ -18,7 +18,8 @@ jobs:
           name: NUnit Tests
           command: SKIP_SYSTEM_TESTS=1 dotnet test IPTables.Net.Tests
       - persist_to_workspace:
-          root: .
+          root: /home/circleci/repo
+          path: .
   upload:
     requires:
      - build
@@ -29,7 +30,7 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: /home/circleci/repo
       - run:
           name: NuGet upload
           command: |
