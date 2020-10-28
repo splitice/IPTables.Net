@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Dynamitey;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Netfilter;
@@ -60,6 +61,26 @@ namespace IPTables.Net.Iptables
                     var diff = x._moduleData.DictionaryDiffering(y.ModuleDataInternal);
                     Console.WriteLine("1: {0}\r\n2: {1}\r\nDifference: {2}", x.GetActionCommand(), y.GetActionCommand(),
                         diff);
+
+                    IEnumerable<string> list1 = Dynamic.GetMemberNames(x);
+                    list1 = list1.OrderBy(m => m);
+                    IEnumerable<string> list2 = Dynamic.GetMemberNames(y);
+                    list2 = list2.OrderBy(m => m);
+
+                    if (!list1.SequenceEqual(list2))
+                    {
+                        Console.WriteLine("Member Count miss-match");
+                    }
+                    else
+                    {
+                        foreach (var memberName in list1)
+                        {
+                            if (!Dynamic.InvokeGet(x, memberName).Equals(Dynamic.InvokeGet(y, memberName)))
+                            {
+                                Console.WriteLine("{0} did not match", memberName);
+                            }
+                        }
+                    }
                 }
 
                 return ret;
