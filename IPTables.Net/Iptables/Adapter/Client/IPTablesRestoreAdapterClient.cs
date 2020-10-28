@@ -18,7 +18,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
         private readonly NetfilterSystem _system;
         private readonly String _iptablesRestoreBinary;
         private readonly String _iptablesSaveBinary;
-        private bool _inTransaction = false;
+        protected bool _inTransaction = false;
         protected IPTablesRestoreTableBuilder _builder = new IPTablesRestoreTableBuilder();
         private string _iptablesBinary;
         private int _ipVersion;
@@ -291,18 +291,18 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _builder.Clear();
             _inTransaction = false;
         }
-
         ~IPTablesRestoreAdapterClient()
+        {
+            Dispose();
+        }
+
+
+        public override void Dispose()
         {
             if (_inTransaction)
             {
                 throw new IpTablesNetException("Transaction active, must be commited or rolled back.");
             }
-        }
-
-        public override void Dispose()
-        {
-            
         }
     }
 }

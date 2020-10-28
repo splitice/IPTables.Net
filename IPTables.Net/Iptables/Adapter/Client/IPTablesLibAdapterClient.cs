@@ -293,10 +293,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
         ~IPTablesLibAdapterClient()
         {
             Dispose();
-            if (_inTransaction)
-            {
-                throw new IpTablesNetException("Transaction active, must be commited or rolled back.");
-            }
         }
 
         public override void Dispose()
@@ -306,6 +302,11 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 i.Value.Dispose();
             }
             _interfaces.Clear();
+
+            if (_inTransaction)
+            {
+                throw new IpTablesNetException("Transaction active, must be commited or rolled back.");
+            }
         }
     }
 }

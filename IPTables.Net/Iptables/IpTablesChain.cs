@@ -111,8 +111,14 @@ namespace IPTables.Net.Iptables
         {
             client.StartTransaction();
 
-            SyncInternal(client, with, sync);
-
+            try
+            {
+                SyncInternal(client, with, sync);
+            } catch
+            {
+                client.EndTransactionRollback();
+                throw;
+            }
             client.EndTransactionCommit();
         }
 
