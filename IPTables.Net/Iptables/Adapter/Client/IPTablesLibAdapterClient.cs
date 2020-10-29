@@ -55,6 +55,10 @@ namespace IPTables.Net.Iptables.Adapter.Client
             }
 
             String command = "-D " + chainName + " " + position;
+            if (!String.IsNullOrEmpty(table) && table != "filter")
+            {
+                command += " -t " + table;
+            }
 
             if (GetInterface(table).ExecuteCommand(_iptablesBinary + " " + command) != 1)
             {
