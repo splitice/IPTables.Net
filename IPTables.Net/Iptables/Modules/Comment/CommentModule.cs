@@ -9,7 +9,7 @@ namespace IPTables.Net.Iptables.Modules.Comment
     {
         private const String OptionCommentLong = "--comment";
 
-        public String CommentText;
+        public String CommentText { get; set; }
 
         public CommentModule(int version) : base(version)
         {

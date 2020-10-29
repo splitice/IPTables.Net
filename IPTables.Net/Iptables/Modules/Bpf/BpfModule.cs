@@ -9,7 +9,7 @@ namespace IPTables.Net.Iptables.Modules.Bpf
     {
         private const String OptionBytecode = "--bytecode";
 
-        public String ByteCode;
+        public String ByteCode { get; set; }
 
         public BpfModule(int version) : base(version)
         {

@@ -13,10 +13,10 @@ namespace IPTables.Net.Iptables.Modules.Ct
         private const String OptionExpEventsLong = "--expevents";
         private const String OptionNotrack = "--notrack";
 
-        public String Helper;
-        public List<String> CtEvents = new List<string>();
-        public List<String> ExpEvents = new List<string>(); 
-        public bool NoTrack;
+        public String Helper { get; set; }
+        public List<String> CtEvents { get; set; } = new List<string>();
+        public List<String> ExpEvents { get; set; } = new List<string>(); 
+        public bool NoTrack { get; set; }
 
         public CtTargetModule(int version) : base(version)
         {

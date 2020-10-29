@@ -18,11 +18,11 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
         private const String OptionSourceAddr = "--connlimit-saddr";
         private const String OptionDestinationAddr = "--connlimit-daddr";
 
-        public int Above = -1;
+        public int Above { get; set; } = -1;
 
-        public AddrMode LimitMatch = AddrMode.Source;
-        public int Mask = -1;
-        public int Upto = -1;
+        public AddrMode LimitMatch { get; set; } = AddrMode.Source;
+        public int Mask { get; set; } = -1;
+        public int Upto { get; set; } = -1;
 
         public ConnlimitModule(int version) : base(version)
         {

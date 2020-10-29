@@ -12,9 +12,9 @@ namespace IPTables.Net.Iptables.Modules.Dnat
         private const String OptionRandom = "--random";
         private const String OptionPersisent = "--persistent";
 
-        public bool Persistent = false;
-        public bool Random = false;
-        public IPPortOrRange ToDestination = new IPPortOrRange(IPAddress.Any);
+        public bool Persistent { get; set; } = false;
+        public bool Random { get; set; } = false;
+        public IPPortOrRange ToDestination { get; set; } = new IPPortOrRange(IPAddress.Any);
 
         public DnatModule(int version) : base(version)
         {

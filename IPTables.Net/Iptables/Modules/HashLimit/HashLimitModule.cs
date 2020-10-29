@@ -25,20 +25,20 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         private const int DefaultMaskIpv4 = 32;
         private const int DefaultMaskIpv6 = 128;
 
-        public UInt64 Burst = 5;
+        public UInt64 Burst { get; set; } = 5;
 
-        public String Name;
-        public UInt64 LimitRate = 3;
-        public LimitUnit Unit = LimitUnit.Hour;
-        public HashLimitMode LimitMode = HashLimitMode.Upto | HashLimitMode.Packets;
-        public String Mode = "";
-        public int SrcMask;
-        public int DstMask;
-        public int HtableSize = 65000;
-        public int HtableMax = 200000;
-        public int HtableExpire = 10000;
-        public int HtableGcInterval = 1000;
-        public char Scale = 'b';
+        public String Name { get; set; }
+        public UInt64 LimitRate { get; set; } = 3;
+        public LimitUnit Unit { get; set; } = LimitUnit.Hour;
+        public HashLimitMode LimitMode { get; set; } = HashLimitMode.Upto | HashLimitMode.Packets;
+        public String Mode { get; set; } = "";
+        public int SrcMask { get; set; }
+        public int DstMask { get; set; }
+        public int HtableSize { get; set; } = 65000;
+        public int HtableMax { get; set; } = 200000;
+        public int HtableExpire { get; set; } = 10000;
+        public int HtableGcInterval { get; set; } = 1000;
+        public char Scale { get; set; } = 'b';
 
         public HashLimitModule(int version) : base(version)
         {

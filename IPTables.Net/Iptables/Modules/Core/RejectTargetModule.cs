@@ -8,7 +8,7 @@ namespace IPTables.Net.Iptables.Modules.Core
     {
         private const String OptionRejectWith = "--reject-with";
 
-        public String RejectWith = "";
+        public String RejectWith { get; set; } = "";
 
         public RejectTargetModule(int version) : base(version)
         {

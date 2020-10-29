@@ -9,8 +9,8 @@ namespace IPTables.Net.Iptables.Modules.Devgroup
         private const String OptionSrcGroup = "--src-group";
         private const String OptionDstGroup = "--dst-group";
 
-        public ValueOrNot<UInt32> SrcGroup;
-        public ValueOrNot<UInt32> DstGroup;
+        public ValueOrNot<UInt32> SrcGroup { get; set; }
+        public ValueOrNot<UInt32> DstGroup { get; set; }
 
         public DevgroupModule(int version) : base(version)
         {

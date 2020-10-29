@@ -9,8 +9,8 @@ namespace IPTables.Net.Iptables.Modules.Connmark
     {
         private const String OptionMarkLong = "--mark";
 
-        public ValueOrNot<int> Mark = new ValueOrNot<int>();
-        public int Mask = unchecked((int)0xFFFFFFFF);
+        public ValueOrNot<int> Mark { get; set; } = new ValueOrNot<int>();
+        public int Mask { get; set; } = unchecked((int)0xFFFFFFFF);
 
         public ConnmarkLoadableModule(int version) : base(version)
         {

@@ -25,17 +25,17 @@ namespace IPTables.Net.Iptables.Modules.Core
         private const String OptionFragmentShort = "-f";
         private const String OptionSetCountersLong = "--set-counters";
         private const String OptionSetCountersShort = "-c";
-        public ValueOrNot<IpCidr> Destination = new ValueOrNot<IpCidr>();
-        public ValueOrNot<bool> Fragmented = new ValueOrNot<bool>();
-        public ValueOrNot<String> InInterface = new ValueOrNot<String>();
-        public ValueOrNot<String> OutInterface = new ValueOrNot<String>();
+        public ValueOrNot<IpCidr> Destination { get; set; } = new ValueOrNot<IpCidr>();
+        public ValueOrNot<bool> Fragmented { get; set; } = new ValueOrNot<bool>();
+        public ValueOrNot<String> InInterface { get; set; } = new ValueOrNot<String>();
+        public ValueOrNot<String> OutInterface { get; set; } = new ValueOrNot<String>();
 
-        public ValueOrNot<String> Protocol = new ValueOrNot<String>();
-        public ValueOrNot<CounterPacketsAndBytes> SetCounters = new ValueOrNot<CounterPacketsAndBytes>();
-        public ValueOrNot<IpCidr> Source = new ValueOrNot<IpCidr>();
+        public ValueOrNot<String> Protocol { get; set; } = new ValueOrNot<String>();
+        public ValueOrNot<CounterPacketsAndBytes> SetCounters { get; set; } = new ValueOrNot<CounterPacketsAndBytes>();
+        public ValueOrNot<IpCidr> Source { get; set; } = new ValueOrNot<IpCidr>();
         //Target
-        public String Target = null;
-        public TargetMode TargetMode = TargetMode.Jump;
+        public String Target { get; set; } = null;
+        public TargetMode TargetMode { get; set; } = TargetMode.Jump;
 
         public CoreModule(int version) : base(version)
         {
