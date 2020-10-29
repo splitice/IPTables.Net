@@ -98,17 +98,17 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             {
                 case "g":
                 case "G":
-                    ret = UInt64.Parse(b.Substring(0, b.Length - 2)) * (1024 * 1024 * 1024);
+                    ret = UInt64.Parse(b.Substring(0, b.Length - 2));
                     if (scale == 'b') ub = "g";
                     break;
                 case "m":
                 case "M":
-                    ret = UInt64.Parse(b.Substring(0, b.Length - 2)) * (1024 * 1024);
+                    ret = UInt64.Parse(b.Substring(0, b.Length - 2));
                     if (scale == 'b') ub = "m";
                     break;
                 case "k":
                 case "K":
-                    ret = UInt64.Parse(b.Substring(0, b.Length - 2)) * 1024;
+                    ret = UInt64.Parse(b.Substring(0, b.Length - 2));
                     if (scale == 'b') ub = "k";
                     break;
                 case "b":
@@ -118,22 +118,6 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                     ret = UInt64.Parse(b);
                     ub = "b";
                     break;
-            }
-
-            if (scale != ub.ToLower()[0])
-            {
-                switch (scale)
-                {
-                    case 'g':
-                        ret = (ret / (1024 * 1024 * 1024)) * (1024 * 1024 * 1024);
-                        break;
-                    case 'm':
-                        ret = (ret / (1024 * 1024)) * (1024 * 1024);
-                        break;
-                    case 'k':
-                        ret = (ret / (1024)) * (1024);
-                        break;
-                }
             }
 
             if (scale == 'b')
@@ -303,25 +287,8 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
 
         private void OutputByte(StringBuilder sb, ulong limitRate)
         {
-            if (limitRate >= (1024 * 1024 * 1024))
-            {
-                sb.Append(limitRate / (1024 * 1024 * 1024));
-                sb.Append("g");
-            }
-            else if (limitRate >= (1024 * 1024))
-            {
-                sb.Append(limitRate / (1024 * 1024));
-                sb.Append("m");
-            }
-            else if (limitRate >= 1024)
-            {
-                sb.Append(limitRate / 1024);
-                sb.Append("k");
-            }
-            else
-            {
-                sb.Append(limitRate);
-            }
+            sb.Append(limitRate);
+            if (_scale != 'b') sb.Append(_scale);
             sb.Append("b");
         }
 
