@@ -218,7 +218,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         private ulong RoundByte(ulong bytes)
         {
             var mult = GetMultiplyScale();
-            return RoundByte(mult);
+            return RoundByte(bytes, mult);
         }
 
         public UInt32 GetMultiplyScale()
