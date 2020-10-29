@@ -88,7 +88,7 @@ namespace IPTables.Net.Iptables
                     {
                         foreach (var memberName in list1)
                         {
-                            if (!Dynamic.InvokeGet(x, memberName).Equals(Dynamic.InvokeGet(y, memberName)))
+                            if (!Dynamic.InvokeGet(xModule, memberName).Equals(Dynamic.InvokeGet(yModule, memberName)))
                             {
                                 Console.WriteLine("{0} did not match", memberName);
                             }
