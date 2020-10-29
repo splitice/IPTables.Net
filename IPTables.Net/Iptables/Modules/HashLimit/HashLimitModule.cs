@@ -90,31 +90,27 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
 
         private UInt64 ParseByte(String b, ref char scale)
         {
+            b = b.ToLower();
             String ub = b.Substring(b.Length - 2, 1);
 
 
             UInt64 ret = 0;
             switch (ub)
             {
-                case "g":
-                case "G":
+                case "gb":
                     ret = UInt64.Parse(b.Substring(0, b.Length - 2));
                     if (scale == 'b') ub = "g";
                     break;
-                case "m":
-                case "M":
+                case "mb":
                     ret = UInt64.Parse(b.Substring(0, b.Length - 2));
                     if (scale == 'b') ub = "m";
                     break;
-                case "k":
-                case "K":
+                case "kb":
                     ret = UInt64.Parse(b.Substring(0, b.Length - 2));
                     if (scale == 'b') ub = "k";
                     break;
-                case "b":
-                    ret = UInt64.Parse(b.Substring(0, b.Length - 1));
-                    break;
                 default:
+                    if (b.EndsWith('b')) b = b.Substring(0, b.Length - 1);
                     ret = UInt64.Parse(b);
                     ub = "b";
                     break;
