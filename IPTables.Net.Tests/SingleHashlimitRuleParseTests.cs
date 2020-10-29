@@ -88,6 +88,7 @@ namespace IPTables.Net.Tests
             Assert.IsTrue(r1.Compare(r2));
             Assert.IsTrue(r1.GetActionCommand().Contains(" 10kb"), r1.GetActionCommand());
         }
+
         [Test]
         public void TestByte5()
         {

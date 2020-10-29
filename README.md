@@ -1,6 +1,7 @@
 # IPTables.Net
 
-[![Build Status](https://travis-ci.org/splitice/IPTables.Net.png?branch=master)](https://travis-ci.org/splitice/IPTables.Net)
+[![CircleCI](https://circleci.com/gh/splitice/IPTables.Net.svg?style=svg)](https://circleci.com/gh/splitice/IPTables.Net)
+
 
 A library for for interfacing C# with Linux IPTables
 
