@@ -24,6 +24,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
 
         private const int DefaultMaskIpv4 = 32;
         private const int DefaultMaskIpv6 = 128;
+        private char _scale = 'b';
 
         public UInt64 Burst { get; set; } = 5;
 
@@ -38,8 +39,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         public int HtableMax { get; set; } = 200000;
         public int HtableExpire { get; set; } = 10000;
         public int HtableGcInterval { get; set; } = 1000;
-        public char Scale { get; set; } = 'b';
-
+        public char Scale { get => _scale; set => _scale = value; }
         public HashLimitModule(int version) : base(version)
         {
             if (version == 4)
@@ -91,7 +91,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         private UInt64 ParseByte(String b, ref char scale)
         {
             String ub = b.Substring(b.Length - 2, 1);
-            
+
 
             UInt64 ret = 0;
             switch (ub)
@@ -135,8 +135,8 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                         break;
                 }
             }
-            
-            if(scale == 'b')
+
+            if (scale == 'b')
             {
                 scale = ub[0];
             }
@@ -148,7 +148,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         {
             String current = parser.GetCurrentArg();
             switch (current)
-            { 
+            {
                 case OptionHashLimitMode:
                     Mode = parser.GetNextArg();
                     return 1;
@@ -182,11 +182,11 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                 case OptionHashLimit:
                 case OptionHashLimitAbove:
                 case OptionHashLimitUpto:
-                    string[] s = parser.GetNextArg().Split(new[] {'/'});
+                    string[] s = parser.GetNextArg().Split(new[] { '/' });
                     if (s[0].EndsWith("b"))
                     {
                         LimitMode |= HashLimitMode.Bytes;
-                        LimitRate = ParseByte(s[0], ref Scale);
+                        LimitRate = ParseByte(s[0], ref _scale);
                     }
                     else
                     {
@@ -202,14 +202,14 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                         throw new IpTablesNetException("Invalid limit format");
                     }
 
-                    LimitMode|= current == OptionHashLimitAbove ? HashLimitMode.Above : HashLimitMode.Upto;
+                    LimitMode |= current == OptionHashLimitAbove ? HashLimitMode.Above : HashLimitMode.Upto;
 
                     return 1;
 
                 case OptionHashLimitBurst:
                     if ((LimitMode & HashLimitMode.Bytes) == HashLimitMode.Bytes)
                     {
-                        Burst = ParseByte(parser.GetNextArg(), ref Scale);
+                        Burst = ParseByte(parser.GetNextArg(), ref _scale);
                     }
                     else
                     {
@@ -389,7 +389,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("hashlimit", typeof (HashLimitModule), GetOptions);
+            return GetModuleEntryInternal("hashlimit", typeof(HashLimitModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -397,7 +397,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((HashLimitModule) obj);
+            return Equals((HashLimitModule)obj);
         }
 
         public override int GetHashCode()
