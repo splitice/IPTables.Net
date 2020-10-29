@@ -240,7 +240,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             sb.Append(" ");
             if ((LimitMode & HashLimitMode.Bytes) == HashLimitMode.Bytes)
             {
-                OutputByte(sb, LimitRate);
+                OutputByte(sb, Burst);
             }
             else
             {
