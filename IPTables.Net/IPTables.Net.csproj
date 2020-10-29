@@ -8,8 +8,8 @@
     <PackageReference Include="Dynamitey" Version="2.0.10.189" />
     <PackageReference Include="IPNetwork2" Version="2.5.226" />
     <PackageReference Include="log4net" Version="2.0.12" />
-    <PackageReference Include="SystemInteract" Version="1.0.1-cibuild0042" />
-    <PackageReference Include="SystemInteract.Local" Version="1.0.1-cibuild0042" />
+    <PackageReference Include="SystemInteract" Version="1.0.3" />
+    <PackageReference Include="SystemInteract.Local" Version="1.0.3" />
   </ItemGroup>
 
 </Project>
