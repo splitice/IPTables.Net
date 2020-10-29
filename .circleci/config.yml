@@ -12,7 +12,7 @@ workflows:
           filters:
             tags:
               ignore: /skip-ci/
-      - upload::
+      - upload:
           filters:
             tags:
               ignore: /skip-ci/
