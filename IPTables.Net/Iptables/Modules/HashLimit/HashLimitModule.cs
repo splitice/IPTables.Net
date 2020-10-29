@@ -26,6 +26,8 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         private const int DefaultMaskIpv6 = 128;
         private char _scale = 'b';
 
+        public const UInt16 ByteShift = 4;
+
         public UInt64 Burst { get; set; } = 5;
 
         public String Name { get; set; }
@@ -91,7 +93,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         private UInt64 ParseByte(String b, ref char scale)
         {
             b = b.ToLower();
-            String ub = b.Substring(b.Length - 2, 1);
+            String ub = b.Substring(b.Length - 2, 2);
 
 
             UInt64 ret = 0;
@@ -166,7 +168,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                     if (s[0].EndsWith("b"))
                     {
                         LimitMode |= HashLimitMode.Bytes;
-                        LimitRate = ParseByte(s[0], ref _scale);
+                        LimitRate = RoundByte(ParseByte(s[0], ref _scale));
                     }
                     else
                     {
@@ -190,6 +192,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
                     if ((LimitMode & HashLimitMode.Bytes) == HashLimitMode.Bytes)
                     {
                         Burst = ParseByte(parser.GetNextArg(), ref _scale);
+                        Burst = (Burst / LimitRate) * LimitRate;
                     }
                     else
                     {
@@ -200,6 +203,32 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             }
 
             return 0;
+        }
+
+        private ulong RoundByte(ulong bytes)
+        {
+            var mult = GetMultiplyScale();
+            bytes *= mult;
+            UInt32 r32 = (UInt32)(bytes >> ByteShift);
+            UInt64 cost = UInt32.MaxValue / (r32 + 1);
+            UInt64 r = (cost!=0) ? UInt32.MaxValue / cost : UInt32.MaxValue;
+            r = (r - 1) << ByteShift;
+            r /= mult;
+            return r;
+        }
+
+        private UInt32 GetMultiplyScale()
+        {
+            switch (_scale)
+            {
+                case 'k':
+                    return 1024;
+                case 'm':
+                    return 1024 * 1024;
+                case 'g':
+                    return 1024 * 1024 * 1024;
+            }
+            return 1;
         }
 
         public String GetRuleString()

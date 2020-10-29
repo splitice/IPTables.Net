@@ -53,7 +53,9 @@ namespace IPTables.Net.Tests
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
             Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule, null, chains, 4)));
-            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).GetActionCommand().Contains("5kb/s"));
+
+            String outputRule = IpTablesRule.Parse(rule, null, chains, 4).GetActionCommand();
+            Assert.IsTrue(outputRule.Contains("5kb/s"));
         }
         [Test]
         public void TestByte2()
@@ -85,6 +87,17 @@ namespace IPTables.Net.Tests
             var r2 = IpTablesRule.Parse(rule2, null, chains, 4);
             Assert.IsTrue(r1.Compare(r2));
             Assert.IsTrue(r1.GetActionCommand().Contains(" 5kb"), r1.GetActionCommand());
+        }
+        [Test]
+        public void TestByte5()
+        {
+            String rule = "-A ABC -m hashlimit --hashlimit-name C_82 --hashlimit-above 100b/second --hashlimit-burst 200b --hashlimit-mode srcip,dstip --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 16000 --hashlimit-htable-max 256000 --hashlimit-htable-expire 10000 --hashlimit-htable-gcinterval 1000";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            var r1 = IpTablesRule.Parse(rule, null, chains, 4);
+            var outputRule = r1.GetActionCommand();
+            Assert.IsTrue(outputRule.Contains(" 96b/s"), r1.GetActionCommand());
+            Assert.IsTrue(outputRule.Contains(" 192b "), r1.GetActionCommand());
         }
     }
 }
