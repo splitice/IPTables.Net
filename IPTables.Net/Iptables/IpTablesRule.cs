@@ -75,8 +75,7 @@ namespace IPTables.Net.Iptables
                         return false;
                     }
 
-                    IEnumerable<string> list1 = Dynamic.GetMemberNames(xModule);
-                    list1 = list1.OrderBy(m => m);
+                    List<string> list1 = Dynamic.GetMemberNames(xModule).OrderBy(m => m).ToList();
                     IEnumerable<string> list2 = Dynamic.GetMemberNames(yModule);
                     list2 = list2.OrderBy(m => m);
 
@@ -86,12 +85,18 @@ namespace IPTables.Net.Iptables
                     }
                     else
                     {
+                        bool found = false;
                         foreach (var memberName in list1)
                         {
                             if (!Dynamic.InvokeGet(xModule, memberName).Equals(Dynamic.InvokeGet(yModule, memberName)))
                             {
+                                found = true;
                                 Console.WriteLine("{0} did not match", memberName);
                             }
+                        }
+                        if (!found)
+                        {
+                            Console.WriteLine("Out of {0} members all matched unexpectedly", list1.Count);
                         }
                     }
                 }
