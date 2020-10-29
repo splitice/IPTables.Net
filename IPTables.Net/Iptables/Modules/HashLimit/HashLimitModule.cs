@@ -205,9 +205,8 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             return 0;
         }
 
-        private ulong RoundByte(ulong bytes)
+        public static ulong RoundByte(ulong bytes, UInt32 mult)
         {
-            var mult = GetMultiplyScale();
             bytes *= mult;
             UInt32 r32 = (UInt32)(bytes >> ByteShift);
             UInt64 cost = UInt32.MaxValue / (r32 + 1);
@@ -216,8 +215,13 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             r /= mult;
             return r;
         }
+        private ulong RoundByte(ulong bytes)
+        {
+            var mult = GetMultiplyScale();
+            return RoundByte(mult);
+        }
 
-        private UInt32 GetMultiplyScale()
+        public UInt32 GetMultiplyScale()
         {
             switch (_scale)
             {
