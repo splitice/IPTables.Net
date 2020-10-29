@@ -53,6 +53,11 @@ namespace IPTables.Net.Iptables
 
         public class DebugComparison: ValueComparison
         {
+            internal IEnumerable<string> GetModuleProperties(IIpTablesModule module)
+            {
+                return Dynamic.GetMemberNames(module).OrderBy(m => m);
+            }
+
             public override bool Equals(IpTablesRule x, IpTablesRule y)
             {
                 var ret = base.Equals(x, y);
@@ -75,9 +80,8 @@ namespace IPTables.Net.Iptables
                         return false;
                     }
 
-                    List<string> list1 = Dynamic.GetMemberNames(xModule).OrderBy(m => m).ToList();
-                    IEnumerable<string> list2 = Dynamic.GetMemberNames(yModule);
-                    list2 = list2.OrderBy(m => m);
+                    List<string> list1 = GetModuleProperties(xModule).ToList();
+                    IEnumerable<string> list2 = GetModuleProperties(yModule);
 
                     if (!list1.SequenceEqual(list2))
                     {
