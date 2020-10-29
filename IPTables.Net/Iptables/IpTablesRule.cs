@@ -62,9 +62,22 @@ namespace IPTables.Net.Iptables
                     Console.WriteLine("1: {0}\r\n2: {1}\r\nDifference: {2}", x.GetActionCommand(), y.GetActionCommand(),
                         diff);
 
-                    IEnumerable<string> list1 = Dynamic.GetMemberNames(x);
+                    IIpTablesModule xModule;
+                    if (!x._moduleData.TryGetValue(diff, out xModule))
+                    {
+                        Console.WriteLine("Rule 1 does not have module");
+                        return false;
+                    }
+                    IIpTablesModule yModule;
+                    if (!y._moduleData.TryGetValue(diff, out yModule))
+                    {
+                        Console.WriteLine("Rule 2 does not have module");
+                        return false;
+                    }
+
+                    IEnumerable<string> list1 = Dynamic.GetMemberNames(xModule);
                     list1 = list1.OrderBy(m => m);
-                    IEnumerable<string> list2 = Dynamic.GetMemberNames(y);
+                    IEnumerable<string> list2 = Dynamic.GetMemberNames(yModule);
                     list2 = list2.OrderBy(m => m);
 
                     if (!list1.SequenceEqual(list2))
