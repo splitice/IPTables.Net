@@ -417,7 +417,13 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public String LastError()
         {
-            return Marshal.PtrToStringAnsi(last_error());
+            var fallbackError = GetErrorString();
+            var err = Marshal.PtrToStringAnsi(last_error());
+            if (String.IsNullOrEmpty(err))
+            {
+                err = fallbackError;
+            }
+            return err;
         }
 
         private static int _helperInit = 0;
@@ -710,7 +716,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
             if (ptr == 0)
             {
-                throw new IpTablesNetException("IPTCH Error: " + LastError() + " with command: " + command);
+                throw new IpTablesNetException("IPTCH Error: \"" + LastError() + "\" with command: " + command);
             }
 
             return ptr;

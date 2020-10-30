@@ -60,9 +60,10 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 command += " -t " + table;
             }
 
-            if (GetInterface(table).ExecuteCommand(_iptablesBinary + " " + command) != 1)
+            var ipInterface = GetInterface(table);
+            if (ipInterface.ExecuteCommand(_iptablesBinary + " " + command) != 1)
             {
-                throw new IpTablesNetException(String.Format("Failed to delete rule \"{0}\" due to error: \"{1}\"", command, GetInterface(table).GetErrorString()));
+                throw new IpTablesNetException(String.Format("Failed to delete rule \"{0}\" due to error: \"{1}\"", command, ipInterface.GetErrorString()));
             }
         }
 
