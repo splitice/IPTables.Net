@@ -8,10 +8,11 @@ namespace IPTables.Net.Iptables.Modules.Connmark
     public class ConnmarkLoadableModule : ModuleBase, IIpTablesModule, IEquatable<ConnmarkLoadableModule>
     {
         private const String OptionMarkLong = "--mark";
+        private int _mask = unchecked((int)0xFFFFFFFF);
+        private ValueOrNot<int> _mark = new ValueOrNot<int>();
 
-        public ValueOrNot<int> Mark { get; set; } = new ValueOrNot<int>();
-        public int Mask { get; set; } = unchecked((int)0xFFFFFFFF);
-
+        public ValueOrNot<int> Mark { get => _mark; set => _mark = value; }
+        public int Mask { get => _mask; set => _mask = value; }
         public ConnmarkLoadableModule(int version) : base(version)
         {
         }
@@ -34,10 +35,10 @@ namespace IPTables.Net.Iptables.Modules.Connmark
             {
                 case OptionMarkLong:
                     var s = parser.GetNextArg().Split(new char[] { '/' });
-                    Mark.Set(not, FlexibleInt32.Parse(s[0]));
+                    _mark.Set(not, FlexibleInt32.Parse(s[0]));
                     if (s.Length != 1)
                     {
-                        Mask = FlexibleInt32.Parse(s[1]);
+                        _mask = FlexibleInt32.Parse(s[1]);
                     }
                     return 1;
             }
