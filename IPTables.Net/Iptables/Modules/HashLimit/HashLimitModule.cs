@@ -42,6 +42,10 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         public int HtableExpire { get; set; } = 10000;
         public int HtableGcInterval { get; set; } = 1000;
         public char Scale { get => _scale; set => _scale = value; }
+
+        public const UInt32 Hz = 200;
+        public const UInt64 LimitScale = 1000000;
+
         public HashLimitModule(int version) : base(version)
         {
             if (version == 4)
@@ -56,6 +60,32 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             }
         }
 
+
+        private static UInt32 _POW2_BELOW2(UInt32 x)
+        {
+            return ((x) | ((x) >> 1));
+        }
+        private static UInt32 _POW2_BELOW4(UInt32 x)
+        {
+            return (HashLimitModule._POW2_BELOW2(x) | _POW2_BELOW2((x) >> 2));
+        }
+        private static UInt32 _POW2_BELOW8(UInt32 x)
+        {
+            return (HashLimitModule._POW2_BELOW4(x) | HashLimitModule._POW2_BELOW4((x) >> 4));
+        }
+        private static UInt32 _POW2_BELOW16(UInt32 x)
+        {
+            return (HashLimitModule._POW2_BELOW8(x) | HashLimitModule._POW2_BELOW8((x) >> 8));
+        }
+        private static UInt32 _POW2_BELOW32(UInt32 x)
+        {
+            return (HashLimitModule._POW2_BELOW16(x) | HashLimitModule._POW2_BELOW16((x) >> 16));
+        }
+        private static UInt32 POW2_BELOW32(UInt32 x)
+        {
+            return ((HashLimitModule._POW2_BELOW32(x) >> 1) + 1);
+        }
+
         public bool Equals(HashLimitModule other)
         {
             if (ReferenceEquals(null, other)) return false;
@@ -63,13 +93,11 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             return Burst == other.Burst && string.Equals(Name, other.Name) && CompareRate(LimitMode, LimitRate, other.LimitRate) && Unit == other.Unit && LimitMode == other.LimitMode && string.Equals(Mode, other.Mode) && SrcMask == other.SrcMask && DstMask == other.DstMask && HtableSize == other.HtableSize && HtableMax == other.HtableMax && HtableExpire == other.HtableExpire && HtableGcInterval == other.HtableGcInterval;
         }
 
-        public static UInt32 ComparablyReduce(UInt64 a)
+        public static UInt64 ComparablyReduce(UInt64 a)
         {
-            if (a >= 5000)
-            {
-                a = 10000;
-            }
-            return (UInt32)(a / 10000);
+            const UInt32 MaxCpj = 0xFFFFFFFF / HashLimitModule.Hz;
+            UInt64 credits = (a * HashLimitModule.Hz * HashLimitModule.POW2_BELOW32(MaxCpj)) / HashLimitModule.LimitScale;
+            return credits;
         }
 
         public static bool CompareRate(HashLimitMode mode, UInt64 a, UInt64 b)

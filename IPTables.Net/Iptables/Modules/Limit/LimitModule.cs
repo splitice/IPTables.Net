@@ -15,6 +15,34 @@ namespace IPTables.Net.Iptables.Modules.Limit
         public int LimitRate = 3;
         public LimitUnit Unit = LimitUnit.Hour;
 
+        public const UInt32 Hz = 200;
+        public const UInt32 LimitScale = 10000;
+
+        private static UInt32 _POW2_BELOW2(UInt32 x)
+        {
+            return ((x) | ((x) >> 1));
+        }
+        private static UInt32 _POW2_BELOW4(UInt32 x)
+        {
+            return (LimitModule._POW2_BELOW2(x) | _POW2_BELOW2((x) >> 2));
+        }
+        private static UInt32 _POW2_BELOW8(UInt32 x)
+        {
+            return (LimitModule._POW2_BELOW4(x) | LimitModule._POW2_BELOW4((x) >> 4));
+        }
+        private static UInt32 _POW2_BELOW16(UInt32 x)
+        {
+            return (LimitModule._POW2_BELOW8(x) | LimitModule._POW2_BELOW8((x) >> 8));
+        }
+        private static UInt32 _POW2_BELOW32(UInt32 x)
+        {
+            return (LimitModule._POW2_BELOW16(x) | LimitModule._POW2_BELOW16((x) >> 16));
+        }
+        private static UInt32 POW2_BELOW32(UInt32 x)
+        {
+            return ((LimitModule._POW2_BELOW32(x) >> 1) + 1);
+        }
+
         public LimitModule(int version) : base(version)
         {
         }
@@ -29,10 +57,17 @@ namespace IPTables.Net.Iptables.Modules.Limit
 
         public static bool CompareRate(UInt32 a, UInt32 b)
         {
-            a = (a / 10000);
-            b = (b / 10000);
+            a = ComparablyReduce(a);
+            b = ComparablyReduce(b);
 
             return a == b;
+        }
+
+        private static uint ComparablyReduce(uint a)
+        {
+            const UInt32 MaxCpj = (0xFFFFFFFF / (LimitModule.Hz * 60 * 60 * 24));
+            UInt32 credits = (a * LimitModule.Hz * LimitModule.POW2_BELOW32(MaxCpj)) / LimitModule.LimitScale;
+           return credits;
         }
 
         public bool NeedsLoading
@@ -45,7 +80,7 @@ namespace IPTables.Net.Iptables.Modules.Limit
             switch (parser.GetCurrentArg())
             {
                 case OptionLimit:
-                    string[] s = parser.GetNextArg().Split(new[] {'/'});
+                    string[] s = parser.GetNextArg().Split(new[] { '/' });
                     LimitRate = int.Parse(s[0]);
                     if (s.Length == 2)
                     {
@@ -139,7 +174,7 @@ namespace IPTables.Net.Iptables.Modules.Limit
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("limit", typeof (LimitModule), GetOptions);
+            return GetModuleEntryInternal("limit", typeof(LimitModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -147,7 +182,7 @@ namespace IPTables.Net.Iptables.Modules.Limit
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((LimitModule) obj);
+            return Equals((LimitModule)obj);
         }
 
         public override int GetHashCode()
@@ -155,8 +190,8 @@ namespace IPTables.Net.Iptables.Modules.Limit
             unchecked
             {
                 int hashCode = LimitRate;
-                hashCode = (hashCode*397) ^ (int) Unit;
-                hashCode = (hashCode*397) ^ Burst;
+                hashCode = (hashCode * 397) ^ (int)Unit;
+                hashCode = (hashCode * 397) ^ Burst;
                 return hashCode;
             }
         }
