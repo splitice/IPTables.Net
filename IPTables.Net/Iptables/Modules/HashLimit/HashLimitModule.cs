@@ -43,7 +43,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         public int HtableGcInterval { get; set; } = 1000;
         public char Scale { get => _scale; set => _scale = value; }
 
-        public const UInt32 Hz = 200;
+        public const UInt32 Hz = 250;
         public const UInt64 LimitScale = 1000000;
 
         public HashLimitModule(int version) : base(version)
@@ -90,22 +90,23 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Burst == other.Burst && string.Equals(Name, other.Name) && CompareRate(LimitMode, LimitRate, other.LimitRate) && Unit == other.Unit && LimitMode == other.LimitMode && string.Equals(Mode, other.Mode) && SrcMask == other.SrcMask && DstMask == other.DstMask && HtableSize == other.HtableSize && HtableMax == other.HtableMax && HtableExpire == other.HtableExpire && HtableGcInterval == other.HtableGcInterval;
+            return Burst == other.Burst && string.Equals(Name, other.Name) && CompareRate(LimitMode, LimitRate, other.LimitRate, Unit) && Unit == other.Unit && LimitMode == other.LimitMode && string.Equals(Mode, other.Mode) && SrcMask == other.SrcMask && DstMask == other.DstMask && HtableSize == other.HtableSize && HtableMax == other.HtableMax && HtableExpire == other.HtableExpire && HtableGcInterval == other.HtableGcInterval;
         }
 
-        public static UInt64 ComparablyReduce(UInt64 a)
+        private static ulong ComparablyReduce(ulong a, LimitUnit unit)
         {
+            a = HashLimitModule.LimitScale / (a * HashLimitModule.LimitScaleFactor(unit));
             const UInt32 MaxCpj = 0xFFFFFFFF / HashLimitModule.Hz;
             UInt64 credits = (a * HashLimitModule.Hz * HashLimitModule.POW2_BELOW32(MaxCpj)) / HashLimitModule.LimitScale;
             return credits;
         }
 
-        public static bool CompareRate(HashLimitMode mode, UInt64 a, UInt64 b)
+        public static bool CompareRate(HashLimitMode mode, UInt64 a, UInt64 b, LimitUnit unit)
         {
             if ((mode & HashLimitMode.Bytes) == 0)
             {
-                var a32 = ComparablyReduce(a);
-                var b32 = ComparablyReduce(b);
+                var a32 = ComparablyReduce(a, unit);
+                var b32 = ComparablyReduce(b, unit);
 
                 return a32 == b32;
             }
@@ -389,6 +390,19 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             }
 
             throw new IpTablesNetException("Invalid hashlimit unit");
+        }
+
+        public static uint LimitScaleFactor(LimitUnit unit)
+        {
+            switch (unit)
+            {
+                case LimitUnit.Second: return 1;
+                case LimitUnit.Minute: return 60;
+                case LimitUnit.Hour: return 60 * 60;
+                case LimitUnit.Day: return 60 * 60 * 24;
+            }
+
+            return 0;
         }
 
         public static HashSet<String> GetOptions()

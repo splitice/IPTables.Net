@@ -15,7 +15,7 @@ namespace IPTables.Net.Iptables.Modules.Limit
         public int LimitRate = 3;
         public LimitUnit Unit = LimitUnit.Hour;
 
-        public const UInt32 Hz = 200;
+        public const UInt32 Hz = 250;
         public const UInt32 LimitScale = 10000;
 
         private static UInt32 _POW2_BELOW2(UInt32 x)
@@ -51,23 +51,31 @@ namespace IPTables.Net.Iptables.Modules.Limit
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return CompareRate((UInt32)LimitRate, (UInt32)other.LimitRate) && Unit == other.Unit && Burst == other.Burst;
+            return CompareRate((UInt32)LimitRate, (UInt32)other.LimitRate, Unit) && Unit == other.Unit && Burst == other.Burst;
         }
 
 
-        public static bool CompareRate(UInt32 a, UInt32 b)
+        public static bool CompareRate(UInt32 a, UInt32 b, LimitUnit unit)
         {
-            a = ComparablyReduce(a);
-            b = ComparablyReduce(b);
+            a = ComparablyReduce(a, unit);
+            b = ComparablyReduce(b, unit);
 
             return a == b;
         }
 
-        private static uint ComparablyReduce(uint a)
+        private static uint ComparablyReduce(uint a, LimitUnit unit)
         {
+            a = LimitModule.LimitScale / (a * LimitModule.LimitScaleFactor(unit));
             const UInt32 MaxCpj = (0xFFFFFFFF / (LimitModule.Hz * 60 * 60 * 24));
-            UInt32 credits = (a * LimitModule.Hz * LimitModule.POW2_BELOW32(MaxCpj)) / LimitModule.LimitScale;
-           return credits;
+            UInt32 cpj = LimitModule.POW2_BELOW32(MaxCpj);
+
+            if (a > (0xFFFFFFFF / (LimitModule.Hz * cpj)))
+            {
+                return (a / LimitModule.LimitScale) * LimitModule.Hz * cpj;
+            }
+
+            UInt32 credits = (a * LimitModule.Hz * cpj) / LimitModule.LimitScale;
+            return credits;
         }
 
         public bool NeedsLoading
@@ -141,6 +149,19 @@ namespace IPTables.Net.Iptables.Modules.Limit
             }
 
             throw new IpTablesNetException("Invalid limit unit");
+        }
+
+        public static uint LimitScaleFactor(LimitUnit unit)
+        {
+            switch (unit)
+            {
+                case LimitUnit.Second: return 1;
+                case LimitUnit.Minute: return 60;
+                case LimitUnit.Hour: return 60*60;
+                case LimitUnit.Day: return 60 * 60 * 24;
+            }
+
+            return 0;
         }
 
         private String GetUnit(LimitUnit limitUnit)
