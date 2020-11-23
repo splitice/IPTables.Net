@@ -141,9 +141,16 @@ namespace IPTables.Net.Iptables.Modules
             }
         }
 
-        public void RegisterModule(ModuleEntry entry)
+        public void RegisterModule(ModuleEntry entry, bool replace = true)
         {
-            _modules.Add(entry.Name, entry);
+            if (replace && _modules.ContainsKey(entry.Name))
+            {
+                _modules[entry.Name] = entry;
+            }
+            else
+            {
+                _modules.Add(entry.Name, entry);
+            }
         }
 
         public static ModuleRegistry Instance
