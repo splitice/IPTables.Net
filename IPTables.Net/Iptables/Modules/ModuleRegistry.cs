@@ -37,6 +37,7 @@ using IPTables.Net.Iptables.Modules.Tcp;
 using IPTables.Net.Iptables.Modules.TcpMss;
 using IPTables.Net.Iptables.Modules.TProxy;
 using IPTables.Net.Iptables.Modules.Ts3Init;
+using IPTables.Net.Iptables.Modules.Ttl;
 using IPTables.Net.Iptables.Modules.U32;
 using IPTables.Net.Iptables.Modules.Udp;
 
@@ -92,7 +93,8 @@ namespace IPTables.Net.Iptables.Modules
             Ts3InitGetPuzzleModule.GetModuleEntry,
             Ts3InitReset.GetModuleEntry,
             Ts3InitSetCookieModule.GetModuleEntry,
-            RtsModule.GetModuleEntry
+            RtsModule.GetModuleEntry,
+            TtlModule.GetModuleEntry
         };
 
         public static List<ModuleEntry> PreloadDuplicateModules = new List<ModuleEntry>(); 
