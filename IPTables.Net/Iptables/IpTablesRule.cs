@@ -183,6 +183,11 @@ namespace IPTables.Net.Iptables
 
         #region Properties
 
+        public int ModuleCount
+        {
+            get { return _moduleData.Count; }
+        }
+
         /// <summary>
         /// The chain in which this IPTables Rule exists
         /// </summary>
@@ -393,13 +398,14 @@ namespace IPTables.Net.Iptables
         }
 
         internal IIpTablesModule GetModuleForParseInternal(string name, ModuleEntry.ObjectActivator moduleType,
-            int version)
+            int version, int index = -1)
         {
             IIpTablesModule module;
             if (!_moduleData.TryGetValue(name, out module))
             {
                 module = moduleType(version);
-                _moduleData.Add(name, module);
+                if (index < 0) _moduleData.Add(name, module);
+                else _moduleData.Insert(index, name, module);
             }
 
             return module;
@@ -544,14 +550,14 @@ namespace IPTables.Net.Iptables
         /// <typeparam name="T"></typeparam>
         /// <param name="moduleName"></param>
         /// <returns></returns>
-        public T GetModuleOrLoad<T>(string moduleName) where T : class, IIpTablesModule
+        public T GetModuleOrLoad<T>(string moduleName, int index = -1) where T : class, IIpTablesModule
         {
             Cow();
             IIpTablesModule module;
             if (!_moduleData.TryGetValue(moduleName, out module))
             {
                 var moduleEntry = ModuleRegistry.Instance.GetModule(moduleName, IpVersion);
-                module = GetModuleForParseInternal(moduleName, moduleEntry.Activator, Chain.IpVersion);
+                module = GetModuleForParseInternal(moduleName, moduleEntry.Activator, Chain.IpVersion, index);
             }
             return module as T;
         }
