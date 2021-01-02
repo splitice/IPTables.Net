@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
+using IPTables.Net.Iptables.IpSet;
 using IPTables.Net.Iptables.Modules.Core;
+using IPTables.Net.Iptables.Modules.IpSet;
 using IPTables.Net.Iptables.Modules.Multiport;
 using IPTables.Net.Iptables.Modules.Tcp;
 using IPTables.Net.Iptables.Modules.Udp;
@@ -128,6 +130,58 @@ namespace IPTables.Net.Iptables.Helpers
             }
         }
 
+        public static void DestinationPortIpSetter(IpTablesRule rule, List<PortOrRange> ranges, string setName, IpSetSets sets)
+        {
+            IpTablesSystem system = rule.Chain.System as IpTablesSystem;
+            IpSetSet set;
+            if (!sets.HasSet(setName))
+            {
+                set = new IpSetSet(IpSetType.Bitmap | IpSetType.Port, setName, 0, PosixFamilyHelpers.GetIpFamily(rule.IpVersion), system, IpSetSyncMode.SetAndEntries);
+                sets.AddSet(set);
+
+                foreach (var r in ranges)
+                {
+                    for (uint i = r.LowerPort; i <= r.UpperPort; i++)
+                    {
+                        set.Entries.Add(new IpSetEntry(set, null, null, (ushort)i));
+                    }
+                }
+
+                if (set.Entries.Count == 0)
+                {
+                    throw new Exception("Entries should not be zero");
+                }
+            }
+            else
+            {
+                set = sets.GetSetByName(setName);
+            }
+
+            var ipsetModule = rule.GetModuleOrLoad<SetMatchModule>("set");
+            ipsetModule.MatchSetFlags = "dst";
+
+            if (set.Entries.Count >= UInt16.MaxValue / 2)
+            {
+                HashSet<UInt16> ports = new HashSet<ushort>(set.Entries.Select(a => (UInt16)a.Port));
+                set.Entries.Clear();
+                for (UInt16 i = 1; i < UInt16.MaxValue; i++)
+                {
+                    if (!ports.Contains(i))
+                        set.Entries.Add(new IpSetEntry(set, null, null, i));
+                }
+
+                if (set.Entries.Count == 0)
+                {
+                    set.Entries.Add(new IpSetEntry(set, null, null, 0)); // a hack
+                }
+
+                ipsetModule.MatchSet = new ValueOrNot<string>(setName, true);
+            }
+            else
+            {
+                ipsetModule.MatchSet = new ValueOrNot<string>(setName);
+            }
+        }
         public static void SourcePortSetter(IpTablesRule rule, List<PortOrRange> ranges)
         {
             var protocol = rule.GetModule<CoreModule>("core").Protocol;
