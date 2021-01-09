@@ -7,8 +7,10 @@ namespace IPTables.Net.Iptables.Modules.Netflow
     public class NetflowMatchModule : ModuleBase, IEquatable<NetflowMatchModule>, IIpTablesModule
     {
         private const String OptionFwStatus = "--fw_status";
+        private const String OptionNoPorts = "--nf-noports";
 
         public int FwStatus;
+        public bool NoPorts;
 
         public NetflowMatchModule(int version) : base(version)
         {
@@ -18,7 +20,7 @@ namespace IPTables.Net.Iptables.Modules.Netflow
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return FwStatus.Equals(other.FwStatus);
+            return FwStatus.Equals(other.FwStatus) && NoPorts == other.NoPorts;
         }
 
         public int Feed(CommandParser parser, bool not)
@@ -28,6 +30,10 @@ namespace IPTables.Net.Iptables.Modules.Netflow
                 case OptionFwStatus:
                     FwStatus = int.Parse(parser.GetNextArg());
                     return 1;
+
+                case OptionNoPorts:
+                    NoPorts = true;
+                    return 0;
             }
 
             return 0;
@@ -40,18 +46,25 @@ namespace IPTables.Net.Iptables.Modules.Netflow
 
         public String GetRuleString()
         {
+            String ret = "";
             if (FwStatus != 0)
             {
-                return OptionFwStatus + " " + FwStatus;
+                ret = OptionFwStatus + " " + FwStatus;
             }
-            return "";
+            if (NoPorts)
+            {
+                if (ret.Length != 0) ret += " ";
+                ret += OptionNoPorts;
+            }
+            return ret;
         }
 
         public static HashSet<String> GetOptions()
         {
             var options = new HashSet<string>
             {
-                OptionFwStatus
+                OptionFwStatus,
+                OptionNoPorts
             };
             return options;
         }
