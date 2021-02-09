@@ -109,11 +109,19 @@ namespace IPTables.Net.Iptables
         /// Add an IPTables rule to the set
         /// </summary>
         /// <param name="rule"></param>
-        public void AddRule(IpTablesRule rule)
+        /// <param name="position"></param>
+        public void AddRule(IpTablesRule rule, int position = -1)
         {
             IpTablesChain ipchain = _chains.GetChainOrAdd(rule.Chain);
 
-            ipchain.Rules.Add(rule);
+            if (position < 0)
+            {
+                ipchain.Rules.Add(rule);
+            }
+            else
+            {
+                ipchain.Rules.Insert(position, rule);
+            }
         }
 
 
@@ -121,11 +129,12 @@ namespace IPTables.Net.Iptables
         /// Parse and add an IPTables rule to the set
         /// </summary>
         /// <param name="rawRule"></param>
+        /// <param name="position"></param>
         /// <returns></returns>
-        public IpTablesRule AddRule(String rawRule)
+        public IpTablesRule AddRule(String rawRule, int position = -1)
         {
             IpTablesRule rule = IpTablesRule.Parse(rawRule, _system, _chains, _ipVersion);
-            AddRule(rule);
+            AddRule(rule, position);
             return rule;
         }
 
