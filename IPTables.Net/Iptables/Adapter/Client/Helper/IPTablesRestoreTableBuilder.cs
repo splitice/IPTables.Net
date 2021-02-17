@@ -10,7 +10,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
 {
     class IPTablesRestoreTableBuilder
     {
-        protected static readonly ILogger Log = LogManager.GetLogger<IPTablesRestoreTableBuilder>();
+        protected static readonly ILogger Log = IPTablesLogManager.GetLogger<IPTablesRestoreTableBuilder>();
 
         private class Table
         {

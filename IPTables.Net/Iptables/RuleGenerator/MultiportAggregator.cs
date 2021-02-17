@@ -32,7 +32,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
     /// <typeparam name="TKey"></typeparam>
     public class MultiportAggregator<TKey> : IRuleGenerator
     {
-        protected static readonly ILogger Log = LogManager.GetLogger<MultiportAggregator<TKey>>();
+        protected static readonly ILogger Log = IPTablesLogManager.GetLogger<MultiportAggregator<TKey>>();
         private String _chain;
         private String _table;
         private Dictionary<TKey, List<IpTablesRule>> _rules = new Dictionary<TKey, List<IpTablesRule>>();

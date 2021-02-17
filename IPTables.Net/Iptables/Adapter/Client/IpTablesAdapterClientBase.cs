@@ -11,7 +11,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 {
     abstract class IpTablesAdapterClientBase : INetfilterAdapterClient
     {
-        protected static readonly ILogger Log = LogManager.GetLogger<INetfilterAdapterClient>();
+        protected static readonly ILogger Log = IPTablesLogManager.GetLogger<INetfilterAdapterClient>();
 
         public abstract void StartTransaction();
 

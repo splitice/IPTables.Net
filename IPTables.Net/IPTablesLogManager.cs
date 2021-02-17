@@ -6,7 +6,7 @@ using Serilog.Core;
 
 namespace IPTables.Net
 {
-    public class LogManager
+    public class IPTablesLogManager
     {
         public static ILogger Log { get; set; } = Logger.None;
 

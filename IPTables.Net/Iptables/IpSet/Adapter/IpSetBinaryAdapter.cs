@@ -14,7 +14,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
     public class IpSetBinaryAdapter
     {
         private const String BinaryName = "ipset";
-        protected static readonly ILogger _log = LogManager.GetLogger<IpSetBinaryAdapter>();
+        protected static readonly ILogger _log = IPTablesLogManager.GetLogger<IpSetBinaryAdapter>();
 
         private readonly ISystemFactory _system;
 
