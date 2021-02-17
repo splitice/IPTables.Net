@@ -10,7 +10,7 @@ using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.Multiport;
 using IPTables.Net.Iptables.Modules.Tcp;
 using IPTables.Net.Iptables.Modules.Udp;
-using log4net;
+using Serilog;
 
 namespace IPTables.Net.Iptables.RuleGenerator
 {
@@ -32,7 +32,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
     /// <typeparam name="TKey"></typeparam>
     public class MultiportAggregator<TKey> : IRuleGenerator
     {
-        protected static readonly ILog Log = LogManager.GetLogger(typeof(MultiportAggregator<TKey>));
+        protected static readonly ILogger Log = LogManager.GetLogger<MultiportAggregator<TKey>>();
         private String _chain;
         private String _table;
         private Dictionary<TKey, List<IpTablesRule>> _rules = new Dictionary<TKey, List<IpTablesRule>>();
@@ -224,7 +224,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                     }
                     else
                     {
-                        Log.Debug(String.Format("No rules in the chain \"{0}\", skipping jump from {1}.", chainName, _chain));
+                        Log.Debug(String.Format("No rules in the chain \"{chainName}\", skipping jump from {chain}.", chainName, _chain));
                     }
                 }
                 else

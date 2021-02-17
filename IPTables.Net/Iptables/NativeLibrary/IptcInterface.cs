@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using IPTables.Net.Exceptions;
-using log4net;
+using Serilog;
 
 namespace IPTables.Net.Iptables.NativeLibrary
 {
@@ -468,7 +468,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
             return DllExists(out msg);
         }
 
-        public IptcInterface(String table, int ipVersion, ILog log = null)
+        public IptcInterface(String table, int ipVersion, ILogger log = null)
         {
             _ipVersion = ipVersion;
             logger = log;
@@ -525,7 +525,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
         }
 
         private List<String> _debugEntries = new List<string>();
-        private ILog logger;
+        private ILogger logger;
         private int _ipVersion;
 
         private void DebugEntry(string message)
@@ -734,7 +734,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
             {
                 foreach (var c in _debugEntries)
                 {
-                    logger.InfoFormat("IPTables Update: {0}", c);
+                    logger.Information("IPTables Update: {commit}", c);
                 }
                 _debugEntries.Clear();
             }

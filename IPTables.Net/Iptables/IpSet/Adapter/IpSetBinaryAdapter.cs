@@ -7,14 +7,14 @@ using System.Text;
 using SystemInteract;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
-using log4net;
+using Serilog;
 
 namespace IPTables.Net.Iptables.IpSet.Adapter
 {
     public class IpSetBinaryAdapter
     {
         private const String BinaryName = "ipset";
-        protected static readonly ILog _log = LogManager.GetLogger(typeof(IpSetBinaryAdapter));
+        protected static readonly ILogger _log = LogManager.GetLogger<IpSetBinaryAdapter>();
 
         private readonly ISystemFactory _system;
 
@@ -95,7 +95,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
                 }
                 try
                 {
-                    _log.InfoFormat("IPSet: {0}", set);
+                    _log.Information("IPSet: {set}", set);
                     standardInput.WriteLine(set);
                 }
                 catch (IOException)

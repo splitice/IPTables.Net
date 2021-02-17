@@ -4,13 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using IPTables.Net.Exceptions;
-using log4net;
+using Serilog;
 
 namespace IPTables.Net.Iptables.Adapter.Client.Helper
 {
     class IPTablesRestoreTableBuilder
     {
-        protected static readonly ILog Log = LogManager.GetLogger(typeof(IPTablesRestoreTableBuilder));
+        protected static readonly ILogger Log = LogManager.GetLogger<IPTablesRestoreTableBuilder>();
 
         private class Table
         {
@@ -97,7 +97,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
 
                 foreach (var command in table.Value.Commands)
                 {
-                    Log.Info("-t " + table.Key + " " + command);
+                    Log.Information("-t " + table.Key + " " + command);
                     res = WriteOutputLine(output, command);
                     if (!res)
                     {

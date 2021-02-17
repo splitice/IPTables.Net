@@ -12,7 +12,7 @@ namespace IPTables.Net.Iptables.Adapter
         public abstract IIPTablesAdapterClient GetClient(IpTablesSystem system, int ipVersion = 4);
 
 
-        INetfilterAdapterClient INetfilterAdapter.GetClient(NetfilterSystem system, int ipVersion = 4)
+        INetfilterAdapterClient INetfilterAdapter.GetClient(NetfilterSystem system, int ipVersion)
         {
             return GetClient(system as IpTablesSystem, ipVersion);
         }

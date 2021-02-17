@@ -5,13 +5,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Netfilter;
-using log4net;
+using Serilog;
 
 namespace IPTables.Net.Iptables.Adapter.Client
 {
     abstract class IpTablesAdapterClientBase : INetfilterAdapterClient
     {
-        protected static readonly ILog Log = LogManager.GetLogger(typeof(INetfilterAdapterClient));
+        protected static readonly ILogger Log = LogManager.GetLogger<INetfilterAdapterClient>();
 
         public abstract void StartTransaction();
 

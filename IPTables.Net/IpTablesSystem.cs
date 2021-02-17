@@ -29,7 +29,7 @@ namespace IPTables.Net
             return base.GetChains(table, ipVersion).Cast<IpTablesChain>();
         }
 
-        public new IEnumerable<IpTablesChain> GetChains(INetfilterAdapterClient client, String table, int ipVersion)
+        public IEnumerable<IpTablesChain> GetChains(INetfilterAdapterClient client, String table, int ipVersion)
         {
             return base.GetChains(client, table).Cast<IpTablesChain>();
         }
