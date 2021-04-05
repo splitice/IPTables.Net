@@ -28,6 +28,13 @@ namespace IPTables.Net.Netfilter.TableSync
         private Func<T, T, bool> _ruleComparerForUpdate;
         private IEqualityComparer<INetfilterRule> _comparer = null;
 
+
+        public IEnumerable<String> TableOrder
+        {
+            get;
+            set;
+        } = new List<string> { "raw", "nat", "filter" };
+
         public Func<T, T, bool> RuleComparerForUpdate
         {
             get { return _ruleComparerForUpdate; }

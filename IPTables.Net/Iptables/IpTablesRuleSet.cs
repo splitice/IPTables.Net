@@ -268,7 +268,14 @@ namespace IPTables.Net.Iptables
                             }
 
                             //End Transaction: COMMIT
-                            client.EndTransactionCommit();
+                            if (client is IPTablesLibAdapterClient)
+                            {
+                                (client as IPTablesLibAdapterClient).EndTransactionCommit(sync.TableOrder);
+                            }
+                            else
+                            {
+                                client.EndTransactionCommit();
+                            }
                         }
 
                         needed = false;

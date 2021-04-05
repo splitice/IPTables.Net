@@ -472,7 +472,6 @@ namespace IPTables.Net.Iptables.NativeLibrary
         {
             _ipVersion = ipVersion;
             logger = log;
-            //Console.WriteLine("!" + new System.Diagnostics.StackTrace());
             if (_helperInit == ipVersion)
             {
                 _helperInitCount++;

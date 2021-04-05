@@ -260,25 +260,28 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _inTransaction = true;
         }
 
-        public override void EndTransactionCommit()
+        public void EndTransactionCommit(IEnumerable<string> tableCommitOrder)
         {
             if (!_inTransaction)
             {
                 return;
             }
 
+            if (tableCommitOrder == null) tableCommitOrder = _interfaces.Keys;
+
             IpTablesNetExceptionErrno ex = null;
-            foreach (var kv in _interfaces)
+            foreach (var table in tableCommitOrder)
             {
-                if (!kv.Value.Commit())
+                if (!_interfaces.TryGetValue(table, out var tableInterface)) continue;
+                if (!tableInterface.Commit())
                 {
-                    var errno = kv.Value.GetLastError();
+                    var errno = tableInterface.GetLastError();
                     //Attempt to complete all commits
                     ex = new IpTablesNetExceptionErrno(
-                        String.Format("Failed commit to table \"{0}\" due to error: \"{1}\"", kv.Key,
-                            kv.Value.GetErrorString()), errno);
+                        String.Format("Failed commit to table \"{0}\" due to error: \"{1}\"", table,
+                            tableInterface.GetErrorString()), errno);
                 }
-                kv.Value.Dispose();
+                tableInterface.Dispose();
             }
             _interfaces.Clear();
             _inTransaction = false;
@@ -287,6 +290,12 @@ namespace IPTables.Net.Iptables.Adapter.Client
             {
                 throw ex;
             }
+        }
+
+
+        public override void EndTransactionCommit()
+        {
+            EndTransactionCommit(null);
         }
 
         public override void EndTransactionRollback()
