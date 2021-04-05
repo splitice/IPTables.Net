@@ -366,10 +366,12 @@ bool cr_extract_field(cr_filter* filter,
 		
 		if (f->max != 0)
 		{
+			// nested
 			if (tb_cur[f->key] == NULL){
 				goto free_err;
 			}
 			tb_buf = (struct nlattr **)malloc(sizeof(struct nlattr *) * (f->max + 1));
+			if(tb_buf == NULL) goto err;
 			err = nla_parse_nested(tb_buf, f->max, tb_cur[f->key], NULL);
 			if (err < 0)
 			{
@@ -400,7 +402,7 @@ free_err:
 	if (tb_cur != tb){
 		free(tb_cur);
 	}
-
+err:
 	return false;
 }
 

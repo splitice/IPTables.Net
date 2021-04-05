@@ -38,11 +38,24 @@ namespace IPTables.Net.Conntrack
         {
             var size = Marshal.SizeOf(typeof(T));
             var handle = Marshal.AllocHGlobal(size);
+            if (handle == IntPtr.Zero)
+            {
+                throw new IpTablesNetException("Unable to allocate memory for Conntrack field");
+            }
 
             try
             {
                 var ret = ConntrackHelper.cr_extract_field(qf, qf.Length, conn, handle, size);
-                output = (T)Marshal.PtrToStructure(handle, typeof(T));
+                if (ret)
+                {
+                    var obj = Marshal.PtrToStructure(handle, typeof(T));
+                    if (obj == null) throw new IpTablesNetException("Unable to marshal type");
+                    output = (T) obj;
+                }
+                else
+                {
+                    output = default(T);
+                }
                 return ret;
             }
             finally
