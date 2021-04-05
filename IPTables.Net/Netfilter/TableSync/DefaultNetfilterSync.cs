@@ -33,7 +33,7 @@ namespace IPTables.Net.Netfilter.TableSync
         {
             get;
             set;
-        } = new List<string> { "raw", "nat", "filter" };
+        } = new List<string> { "raw", "nat", "mangle", "filter" };
 
         public Func<T, T, bool> RuleComparerForUpdate
         {
