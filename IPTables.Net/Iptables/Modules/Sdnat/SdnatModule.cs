@@ -14,9 +14,11 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
         private const String OptionPersisent = "--persistent";
         private const String OptionCtMask = "--ctmask";
         private const String OptionCtMark = "--ctmark";
+        private const String OptionSeqadj = "--also-seqadj";
 
         public bool Persistent = false;
         public bool Random = false;
+        public bool Seqadj = false;
         public IPPortOrRange ToSource = new IPPortOrRange(IPAddress.Any);
         public IPPortOrRange ToDestination = new IPPortOrRange(IPAddress.Any);
         public UInt32 CtMark;
@@ -30,7 +32,7 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) && ToSource.Equals(other.ToSource) && ToDestination.Equals(other.ToDestination) && CtMark == other.CtMark && CtMask == other.CtMask;
+            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) && ToSource.Equals(other.ToSource) && ToDestination.Equals(other.ToDestination) && CtMark == other.CtMark && CtMask == other.CtMask && Seqadj == other.Seqadj;
         }
 
         public bool NeedsLoading
@@ -56,6 +58,10 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
 
                 case OptionPersisent:
                     Persistent = true;
+                    return 0;
+
+                case OptionSeqadj:
+                    Seqadj = true;
                     return 0;
 
                 case OptionCtMark:
@@ -97,6 +103,13 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
                 sb.Append(OptionRandom);
             }
 
+            if (Seqadj)
+            {
+                if (sb.Length != 0)
+                    sb.Append(" ");
+                sb.Append(OptionSeqadj);
+            }
+
             if (Persistent)
             {
                 if (sb.Length != 0)
@@ -130,7 +143,8 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
                 OptionRandom,
                 OptionPersisent,
                 OptionCtMask,
-                OptionCtMark
+                OptionCtMark,
+                OptionSeqadj
             };
             return options;
         }
