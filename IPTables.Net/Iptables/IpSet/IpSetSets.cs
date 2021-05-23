@@ -73,9 +73,16 @@ namespace IPTables.Net.Iptables.IpSet
                     //Update if applicable
                     if (!systemSet.SetEquals(set))
                     {
-                        System.SetAdapter.DestroySet(set.Name);
-                        System.SetAdapter.CreateSet(set);
-                        systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, "inet", System, set.SyncMode, set.BitmapRange, set.CreateOptions, set.Entries);
+                        // Create a new set as _S of the target
+                        systemSet = new IpSetSet(set.Type, set.Name + "_S", set.Timeout, "inet", System, set.SyncMode, set.BitmapRange, set.CreateOptions, set.Entries);
+                        System.SetAdapter.CreateSet(systemSet);
+                        
+                        // Swap then destroy
+                        System.SetAdapter.SwapSet(systemSet.Name, set.Name);
+                        System.SetAdapter.DestroySet(systemSet.Name);
+                        systemSet.InternalName = set.Name;
+
+                        // We created something new
                         created = true;
                     }
                 }
