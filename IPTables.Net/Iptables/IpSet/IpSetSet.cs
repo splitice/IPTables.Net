@@ -217,7 +217,7 @@ namespace IPTables.Net.Iptables.IpSet
             return Parse(arguments, system, startOffset);
         }
 
-        public bool SetEquals(IpSetSet set, bool size = false)
+        public bool SetEquals(IpSetSet set, bool size = true)
         {
             if (!(set.MaxElem == MaxElem && set.Name == Name && set.Timeout == Timeout &&
                   set.Type == Type && set.BitmapRange.Equals(BitmapRange) && set.CreateOptions.OrderBy(a=>a).SequenceEqual(CreateOptions.OrderBy(a=>a))))
