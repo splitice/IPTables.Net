@@ -46,22 +46,27 @@ namespace IPTables.Net.Iptables.IpSet
         public void Sync(
             Func<IpSetSet, bool> canDeleteSet = null, bool transactional = true)
         {
+            // Start of transaction
             if (transactional)
             {
                 //Start transaction
                 System.SetAdapter.StartTransaction();
             }
 
+            // Dump sets in system
             var systemSets = System.SetAdapter.SaveSets(System);
 
+            // Check sets for need to change and install entries
             foreach (var set in _sets.Values)
             {
+                bool created = false;
                 var systemSet = systemSets.GetSetByName(set.Name);
                 if (systemSet == null)
                 {
                     //Add
                     System.SetAdapter.CreateSet(set);
                     systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, "inet", System, set.SyncMode, set.BitmapRange, set.CreateOptions);
+                    created = true;
                 }
                 else
                 {
@@ -71,35 +76,18 @@ namespace IPTables.Net.Iptables.IpSet
                         System.SetAdapter.DestroySet(set.Name);
                         System.SetAdapter.CreateSet(set);
                         systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, "inet", System, set.SyncMode, set.BitmapRange, set.CreateOptions, set.Entries);
+                        created = true;
                     }
                 }
 
-                if (set.SyncMode == IpSetSyncMode.SetAndEntries)
+                if (set.SyncMode == IpSetSyncMode.SetAndEntries || 
+                    (set.SyncMode == IpSetSyncMode.SetAndEntriesOnCreate && created))
                 {
-                    HashSet<IpSetEntry> indexedEntries = new HashSet<IpSetEntry>(set.Entries, new IpSetEntryKeyComparer());
-                    HashSet<IpSetEntry> systemEntries = new HashSet<IpSetEntry>(systemSet.Entries, new IpSetEntryKeyComparer());
-                    try
-                    {
-                        foreach (var entry in indexedEntries)
-                        {
-                            if (!systemEntries.Remove(entry))
-                            {
-                                System.SetAdapter.AddEntry(entry);
-                            }
-                        }
-
-                        foreach (var entry in systemEntries)
-                        {
-                            System.SetAdapter.DeleteEntry(entry);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new IpTablesNetException(String.Format("An exception occured while adding or removing on entries of set {0} message:{1}",set.Name,ex.Message),ex);
-                    }
+                    SyncEntries(set, systemSet);
                 }
             }
 
+            // Do set deletions
             if (canDeleteSet != null)
             {
                 foreach (var set in systemSets.Sets)
@@ -111,6 +99,7 @@ namespace IPTables.Net.Iptables.IpSet
                 }
             }
 
+            // End of transaction
             if (transactional)
             {
                 //End Transaction: COMMIT
@@ -118,6 +107,33 @@ namespace IPTables.Net.Iptables.IpSet
                 {
                     throw new IpTablesNetException("Failed to commit IPSets");
                 }
+            }
+        }
+
+        private void SyncEntries(IpSetSet set, IpSetSet systemSet)
+        {
+            HashSet<IpSetEntry> indexedEntries = new HashSet<IpSetEntry>(set.Entries, new IpSetEntryKeyComparer());
+            HashSet<IpSetEntry> systemEntries = new HashSet<IpSetEntry>(systemSet.Entries, new IpSetEntryKeyComparer());
+            try
+            {
+                foreach (var entry in indexedEntries)
+                {
+                    if (!systemEntries.Remove(entry))
+                    {
+                        System.SetAdapter.AddEntry(entry);
+                    }
+                }
+
+                foreach (var entry in systemEntries)
+                {
+                    System.SetAdapter.DeleteEntry(entry);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new IpTablesNetException(
+                    String.Format("An exception occured while adding or removing on entries of set {0} message:{1}", set.Name,
+                        ex.Message), ex);
             }
         }
 

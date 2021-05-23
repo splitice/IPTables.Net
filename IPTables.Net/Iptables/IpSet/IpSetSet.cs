@@ -70,7 +70,7 @@ namespace IPTables.Net.Iptables.IpSet
             set { _hashSize = value; }
         }
 
-        public List<IpSetEntry> Entries
+        public virtual List<IpSetEntry> Entries
         {
             get { return _entries; }
         }

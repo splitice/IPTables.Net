@@ -8,6 +8,7 @@ namespace IPTables.Net.Iptables.IpSet
     public enum IpSetSyncMode
     {
         SetOnly,
-        SetAndEntries
+        SetAndEntries,
+        SetAndEntriesOnCreate
     }
 }
