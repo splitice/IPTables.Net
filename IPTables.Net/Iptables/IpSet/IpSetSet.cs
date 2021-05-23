@@ -23,7 +23,7 @@ namespace IPTables.Net.Iptables.IpSet
         private int _hashSize = 1024;
         private PortOrRange _bitmapRange = new PortOrRange(1, 65535, '-');
         private UInt32 _maxElem = 65536;
-        private List<IpSetEntry> _entries;
+        private HashSet<IpSetEntry> _entries;
         private IpTablesSystem _system;
         private IpSetSyncMode _syncMode = IpSetSyncMode.SetAndEntries;
         private string[] _typeComponents;
@@ -70,7 +70,7 @@ namespace IPTables.Net.Iptables.IpSet
             set { _hashSize = value; }
         }
 
-        public virtual List<IpSetEntry> Entries
+        public virtual HashSet<IpSetEntry> Entries
         {
             get { return _entries; }
         }
@@ -117,7 +117,7 @@ namespace IPTables.Net.Iptables.IpSet
 
         #region Constructor
 
-        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, List<string> createOptions = null, List<IpSetEntry> entries = null)
+        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, List<string> createOptions = null, HashSet<IpSetEntry> entries = null)
         {
             _type = type;
             _name = name;
@@ -126,9 +126,9 @@ namespace IPTables.Net.Iptables.IpSet
             _system = system;
             _syncMode = syncMode;
             _createOptions = createOptions == null ? new List<string>() : createOptions.ToList();
-            _entries = entries == null ? new List<IpSetEntry>() : entries.ToList();
+            _entries = entries == null ? new HashSet<IpSetEntry>() : entries.ToHashSet();
         }
-        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, PortOrRange bitmapRange, List<string> createOptions = null, List<IpSetEntry> entries = null)
+        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, PortOrRange bitmapRange, List<string> createOptions = null, HashSet<IpSetEntry> entries = null)
         {
             _type = type;
             _name = name;
@@ -137,14 +137,14 @@ namespace IPTables.Net.Iptables.IpSet
             _system = system;
             _syncMode = syncMode;
             _createOptions = createOptions == null ? new List<string>() : createOptions.ToList();
-            _entries = entries == null ? new List<IpSetEntry>() : entries.ToList();
+            _entries = entries == null ? new HashSet<IpSetEntry>() : entries.ToHashSet();
             _bitmapRange = bitmapRange;
         }
 
         internal IpSetSet(IpTablesSystem system)
         {
             _system = system;
-            _entries = new List<IpSetEntry>();
+            _entries = new HashSet<IpSetEntry>();
             _createOptions = new List<string>();
         }
 
