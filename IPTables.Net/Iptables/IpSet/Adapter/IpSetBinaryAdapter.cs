@@ -261,15 +261,23 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
 
         public void SwapSet(string what, string with)
         {
-            var cmd = String.Format("swap {0} {1}", what, with);
-            using (ISystemProcess process = _system.StartProcess(BinaryName, cmd))
-            {
-                String output, error;
-                ProcessHelper.ReadToEnd(process, out output, out error);
+            var command = String.Format("swap {0} {1}", what, with);
 
-                if (process.ExitCode != 0)
+            if (InTransaction)
+            {
+                _transactionCommands.Add(command);
+            }
+            else
+            {
+                using (ISystemProcess process = _system.StartProcess(BinaryName, command))
                 {
-                    throw new IpTablesNetException(String.Format("Failed to swap sets: {0}", error));
+                    String output, error;
+                    ProcessHelper.ReadToEnd(process, out output, out error);
+
+                    if (process.ExitCode != 0)
+                    {
+                        throw new IpTablesNetException(String.Format("Failed to swap sets: {0}", error));
+                    }
                 }
             }
         }
