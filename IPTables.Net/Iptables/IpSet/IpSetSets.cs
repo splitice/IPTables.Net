@@ -65,7 +65,9 @@ namespace IPTables.Net.Iptables.IpSet
                 {
                     //Add
                     System.SetAdapter.CreateSet(set);
-                    systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, "inet", System, set.SyncMode, set.BitmapRange, set.CreateOptions);
+                    systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, set.Family, System, set.SyncMode, set.BitmapRange, set.CreateOptions);
+                    systemSet.HashSize = set.HashSize;
+                    systemSet.MaxElem = set.MaxElem;
                     created = true;
                 }
                 else
@@ -74,7 +76,9 @@ namespace IPTables.Net.Iptables.IpSet
                     if (!systemSet.SetEquals(set))
                     {
                         // Create a new set as _S of the target
-                        systemSet = new IpSetSet(set.Type, set.Name + "_S", set.Timeout, "inet", System, set.SyncMode, set.BitmapRange, set.CreateOptions, set.Entries);
+                        systemSet = new IpSetSet(set.Type, set.Name + "_S", set.Timeout, set.Family, System, set.SyncMode, set.BitmapRange, set.CreateOptions, set.Entries);
+                        systemSet.HashSize = set.HashSize;
+                        systemSet.MaxElem = set.MaxElem;
                         System.SetAdapter.CreateSet(systemSet);
                         
                         // Swap then destroy
