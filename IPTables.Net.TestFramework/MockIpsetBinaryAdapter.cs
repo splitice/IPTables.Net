@@ -18,7 +18,7 @@ namespace IPTables.Net.TestFramework
             _sets = sets;
         }
 
-        public override IpSetSets SaveSets(IpTablesSystem iptables)
+        public override IpSetSets SaveSets(IpTablesSystem iptables, string setName = null)
         {
             return _sets;
         }
