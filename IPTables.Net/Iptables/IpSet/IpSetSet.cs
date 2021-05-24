@@ -236,7 +236,7 @@ namespace IPTables.Net.Iptables.IpSet
 
 
 
-        void SyncEntriesHashIp(List<IpCidr> cidrs)
+        protected void SyncEntriesHashIp(List<IpCidr> cidrs)
         {
             var targetEntries = cidrs.ToDictionary((a) => a, a => a.Addresses);
 
@@ -290,7 +290,7 @@ namespace IPTables.Net.Iptables.IpSet
             }
         }
 
-        public void SyncEntriesHashNet(List<IpCidr> cidrs)
+        protected void SyncEntriesHashNet(List<IpCidr> cidrs)
         {
             var targetEntries = cidrs.ToHashSet();
 
@@ -307,6 +307,18 @@ namespace IPTables.Net.Iptables.IpSet
             foreach (var s in targetEntries)
             {
                 _system.SetAdapter.AddEntry(new IpSetEntry(this, s));
+            }
+        }
+
+        public void SyncEntries(List<IpCidr> cidrs)
+        {
+            if ((Type & IpSetType.Net) == IpSetType.Net)
+            {
+                SyncEntriesHashNet(cidrs);
+            }
+            else
+            {
+                SyncEntriesHashIp(cidrs);
             }
         }
 
