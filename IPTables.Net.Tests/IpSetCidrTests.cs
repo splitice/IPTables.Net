@@ -40,5 +40,63 @@ namespace IPTables.Net.Tests
                 "add test 8.8.8.0/30"
             });
         }
+
+        [Test]
+        public void TestSyncCreateSmaller()
+        {
+            var systemFactory = new MockIpsetSystemFactory();
+            var system = new MockIpsetBinaryAdapter(systemFactory);
+            var iptables = new IpTablesSystem(systemFactory, null, system);
+
+            IpSetSets rulesOriginal = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip",
+                "add test 8.8.8.0/24"
+            }, iptables);
+
+            system.SetSets(rulesOriginal);
+
+            IpSetSets rulesNew = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip",
+                "add test 8.8.8.0/30"
+            }, iptables);
+
+            systemFactory.TestSync(rulesNew, new List<string>
+            {
+                "del test 8.8.8.0/24",
+                "add test 8.8.8.0/30"
+            });
+        }
+
+        [Test]
+        public void TestSyncCreateMultipleLarger()
+        {
+            var systemFactory = new MockIpsetSystemFactory();
+            var system = new MockIpsetBinaryAdapter(systemFactory);
+            var iptables = new IpTablesSystem(systemFactory, null, system);
+
+            IpSetSets rulesOriginal = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip",
+                "add test 8.8.8.0/24",
+                "add test 8.8.7.0/24"
+            }, iptables);
+
+            system.SetSets(rulesOriginal);
+
+            IpSetSets rulesNew = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip",
+                "add test 8.8.0.0/16"
+            }, iptables);
+
+            systemFactory.TestSync(rulesNew, new List<string>
+            {
+                "del test 8.8.8.0/24",
+                "del test 8.8.7.0/24",
+                "add test 8.8.0.0/16"
+            });
+        }
     }
 }
