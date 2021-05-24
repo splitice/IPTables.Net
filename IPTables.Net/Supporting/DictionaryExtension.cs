@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.IpSet;
 
@@ -56,13 +57,14 @@ namespace IPTables.Net.Supporting
             return default(TKey);
         }
 
-        public static bool FindCidr<TValue>(this IDictionary<IpCidr, TValue> dict, IpCidr find, out IpCidr o, out TValue f)
+        public static bool FindCidr<TValue>(this IDictionary<IpCidr, TValue> dict, IpCidr findOriginal, out IpCidr o, out TValue f)
         {
-            for (uint i = find.Prefix; i != 0; i++)
+            for (uint i = findOriginal.Prefix; i != 0; i++)
             {
-                find = IpCidr.NewRebase(find.Address, i);
+                var find = IpCidr.NewRebase(findOriginal.Address, i);
                 if (dict.TryGetValue(find, out f))
                 {
+                    Debug.Assert(find.Equals(findOriginal) || find.Contains(findOriginal));
                     o = find;
                     return true;
                 }
@@ -73,14 +75,15 @@ namespace IPTables.Net.Supporting
 
             return false;
         }
-        public static bool FindCidr<TValue>(this IDictionary<IpSetEntry, TValue> dict, IpSetEntry find, out IpSetEntry o, out TValue f)
+        public static bool FindCidr<TValue>(this IDictionary<IpSetEntry, TValue> dict, IpSetEntry findOriginal, out IpSetEntry o, out TValue f)
         {
-            find = new IpSetEntry(find.Set, find.Cidr, find.Protocol, find.Port, find.Mac);
+            var find = new IpSetEntry(findOriginal.Set, findOriginal.Cidr, findOriginal.Protocol, findOriginal.Port, findOriginal.Mac);
             for (uint i = find.Cidr.Prefix; i != 0; i--)
             {
                 find.Cidr = IpCidr.NewRebase(find.Cidr.Address, i);
                 if (dict.TryGetValue(find, out f))
                 {
+                    Debug.Assert(find.Cidr.Equals(findOriginal.Cidr) || find.Cidr.Contains(findOriginal.Cidr));
                     o = find;
                     return true;
                 }

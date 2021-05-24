@@ -146,7 +146,7 @@ namespace IPTables.Net.Iptables.IpSet
 
         public void AddSet(IpSetSet set, bool force = false)
         {
-            if (force && _sets.ContainsKey(set.Name))
+            if (force)
             {
                 _sets[set.Name] = set;
             }

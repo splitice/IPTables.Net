@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace IPTables.Net.Iptables.IpSet
     {
         public bool Equals(IpSetEntry x, IpSetEntry y)
         {
+            Debug.Assert(x != null, nameof(x) + " != null");
             return x.KeyEquals(y);
         }
         
@@ -25,5 +27,7 @@ namespace IPTables.Net.Iptables.IpSet
                 return hashCode;
             }
         }
+
+        public static IEqualityComparer<IpSetEntry> Instance = new IpSetEntryKeyComparer();
     }
 }

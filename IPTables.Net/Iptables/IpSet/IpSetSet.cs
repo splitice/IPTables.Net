@@ -131,7 +131,7 @@ namespace IPTables.Net.Iptables.IpSet
             _system = system;
             _syncMode = syncMode;
             _createOptions = createOptions == null ? new List<string>() : createOptions.ToList();
-            _entries = entries == null ? new HashSet<IpSetEntry>() : entries.ToHashSet();
+            _entries = entries == null ? new HashSet<IpSetEntry>(IpSetEntryKeyComparer.Instance) : entries.ToHashSet(IpSetEntryKeyComparer.Instance);
         }
 
         public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system,
@@ -145,7 +145,7 @@ namespace IPTables.Net.Iptables.IpSet
             _system = system;
             _syncMode = syncMode;
             _createOptions = createOptions == null ? new List<string>() : createOptions.ToList();
-            _entries = entries == null ? new HashSet<IpSetEntry>() : entries.ToHashSet();
+            _entries = entries == null ? new HashSet<IpSetEntry>(IpSetEntryKeyComparer.Instance) : entries.ToHashSet(IpSetEntryKeyComparer.Instance);
             _bitmapRange = bitmapRange;
         }
 
@@ -250,8 +250,8 @@ namespace IPTables.Net.Iptables.IpSet
 
         protected void SyncEntriesIp(IEnumerable<IpSetEntry> cidrs)
         {
-            var targetEntries = cidrs.ToDictionary((a) => a, a => a.Cidr.Addresses, new IpSetEntryKeyComparer());
-            var entriesClone = Entries.ToHashSet(new IpSetEntryKeyComparer());
+            var targetEntries = cidrs.ToDictionary((a) => a, a => a.Cidr.Addresses, IpSetEntryKeyComparer.Instance);
+            var entriesClone = Entries.ToHashSet(IpSetEntryKeyComparer.Instance);
 
             // Go through the system set updating targetEntries if we find something, removing from system if we don't
             foreach (var s in Entries)
@@ -312,7 +312,7 @@ namespace IPTables.Net.Iptables.IpSet
 
         protected void SyncEntriesPlain(IEnumerable<IpSetEntry> entries)
         {
-            var targetEntries = entries.ToHashSet(new IpSetEntryKeyComparer());
+            var targetEntries = entries.ToHashSet(IpSetEntryKeyComparer.Instance);
 
             // Go through the system set updating targetEntries if we find something, removing from system if we don't
             foreach (var s in Entries)
