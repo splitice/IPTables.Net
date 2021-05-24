@@ -11,8 +11,8 @@ namespace IPTables.Net.Iptables.DataTypes
     {
         public static IpCidr Any = new IpCidr(IPAddress.Any, 0);
 
-        public IPAddress Address;
-        public uint Prefix;
+        public readonly IPAddress Address;
+        public readonly uint Prefix;
 
         public IpCidr(IPAddress address, uint prefix)
         {
@@ -42,7 +42,7 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public bool Equals(IpCidr other)
         {
-            return other.Address.Equals(Address) && other.Prefix == Prefix;
+            return Equals(Address, other.Address) && Prefix == other.Prefix;
         }
 
         public static IpCidr Parse(String cidr)
@@ -166,6 +166,23 @@ namespace IPTables.Net.Iptables.DataTypes
             }
 
             return false;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is IpCidr other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Address, Prefix);
+        }
+
+        public static IpCidr newRebase(IPAddress findAddress, uint u)
+        {
+            var iAddr = findAddress.ToInt() & (long)Math.Pow(2, u);
+            var ip = IPAddressExtension.ToAddr(iAddr);
+            return new IpCidr(ip, u);
         }
     }
 }

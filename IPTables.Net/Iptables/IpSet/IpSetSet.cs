@@ -250,7 +250,7 @@ namespace IPTables.Net.Iptables.IpSet
 
         protected void SyncEntriesIp(HashSet<IpSetEntry> cidrs)
         {
-            var targetEntries = cidrs.ToDictionary((a) => a, a => a.Cidr.Addresses, new CidrEqualityComparer());
+            var targetEntries = cidrs.ToDictionary((a) => a, a => a.Cidr.Addresses, new IpSetEntryKeyComparer());
             var entriesClone = Entries.ToHashSet(new IpSetEntryKeyComparer());
 
             // Go through the system set updating targetEntries if we find something, removing from system if we don't

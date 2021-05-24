@@ -60,7 +60,7 @@ namespace IPTables.Net.Supporting
         {
             for (uint i = find.Prefix; i != 0; i++)
             {
-                find.Prefix = i;
+                find = IpCidr.newRebase(find.Address, i);
                 if (dict.TryGetValue(find, out f))
                 {
                     o = find;
@@ -75,10 +75,10 @@ namespace IPTables.Net.Supporting
         }
         public static bool FindCidr<TValue>(this IDictionary<IpSetEntry, TValue> dict, IpSetEntry find, out IpSetEntry o, out TValue f)
         {
-            IpCidr c = find.Cidr;
-            for (uint i = c.Prefix; i != 0; i--)
+            find = new IpSetEntry(find.Set, find.Cidr, find.Protocol, find.Port, find.Mac);
+            for (uint i = find.Cidr.Prefix; i != 0; i--)
             {
-                c.Prefix = i;
+                find.Cidr = IpCidr.newRebase(find.Cidr.Address, i);
                 if (dict.TryGetValue(find, out f))
                 {
                     o = find;
