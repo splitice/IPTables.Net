@@ -125,18 +125,6 @@ namespace IPTables.Net.Iptables.IpSet
             return Equals((IpSetEntry) obj);
         }
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hashCode = Cidr.GetHashCode();
-                hashCode = (hashCode*397) ^ (_protocol != null ? _protocol.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ _port.GetHashCode();
-                hashCode = (hashCode*397) ^ (_mac != null ? _mac.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ _timeout.GetHashCode();
-                return hashCode;
-            }
-        }
 
         public static IpSetEntry ParseFromParts(IpSetSet set, String value)
         {

@@ -18,6 +18,7 @@ namespace IPTables.Net.Iptables.IpSet
     public class IpSetSet
     {
         #region Fields
+
         private String _name;
         private IpSetType _type;
         private int _timeout;
@@ -39,6 +40,7 @@ namespace IPTables.Net.Iptables.IpSet
         #endregion
 
         #region Properties
+
         public string Name
         {
             get { return _name; }
@@ -111,7 +113,7 @@ namespace IPTables.Net.Iptables.IpSet
 
         public PortOrRange BitmapRange
         {
-            get { return _bitmapRange;  }
+            get { return _bitmapRange; }
             set { _bitmapRange = value; }
         }
 
@@ -119,7 +121,8 @@ namespace IPTables.Net.Iptables.IpSet
 
         #region Constructor
 
-        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, List<string> createOptions = null, HashSet<IpSetEntry> entries = null)
+        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system,
+            IpSetSyncMode syncMode, List<string> createOptions = null, HashSet<IpSetEntry> entries = null)
         {
             _type = type;
             _name = name;
@@ -130,7 +133,10 @@ namespace IPTables.Net.Iptables.IpSet
             _createOptions = createOptions == null ? new List<string>() : createOptions.ToList();
             _entries = entries == null ? new HashSet<IpSetEntry>() : entries.ToHashSet();
         }
-        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system, IpSetSyncMode syncMode, PortOrRange bitmapRange, List<string> createOptions = null, HashSet<IpSetEntry> entries = null)
+
+        public IpSetSet(IpSetType type, string name, int timeout, String family, IpTablesSystem system,
+            IpSetSyncMode syncMode, PortOrRange bitmapRange, List<string> createOptions = null,
+            HashSet<IpSetEntry> entries = null)
         {
             _type = type;
             _name = name;
@@ -161,25 +167,28 @@ namespace IPTables.Net.Iptables.IpSet
 
             if ((_type & IpSetType.Hash) == IpSetType.Hash)
             {
-                command += " family "+_family;
+                command += " family " + _family;
             }
             else if ((_type & IpSetType.Bitmap) == IpSetType.Bitmap)
             {
-                command += " range "+_bitmapRange;
+                command += " range " + _bitmapRange;
             }
+
             if ((_type & (IpSetType.Hash | IpSetType.CtHash)) != 0)
             {
                 command += String.Format(" hashsize {0} maxelem {1}", _hashSize, _maxElem);
             }
+
             if (_timeout > 0)
             {
-                command += " timeout "+_timeout;
+                command += " timeout " + _timeout;
             }
 
             foreach (var co in _createOptions)
             {
                 command += " " + co;
             }
+
             return command;
         }
 
@@ -193,8 +202,9 @@ namespace IPTables.Net.Iptables.IpSet
             List<String> ret = new List<string>();
             foreach (var entry in Entries)
             {
-                ret.Add("add "+_name+" "+entry.GetKeyCommand());
+                ret.Add("add " + _name + " " + entry.GetKeyCommand());
             }
+
             return ret;
         }
 
@@ -222,7 +232,8 @@ namespace IPTables.Net.Iptables.IpSet
         public bool SetEquals(IpSetSet set, bool size = true)
         {
             if (!(set.MaxElem == MaxElem && set.Name == Name && set.Timeout == Timeout &&
-                  set.Type == Type && set.BitmapRange.Equals(BitmapRange) && set.CreateOptions.OrderBy(a=>a).SequenceEqual(CreateOptions.OrderBy(a=>a))))
+                  set.Type == Type && set.BitmapRange.Equals(BitmapRange) && set.CreateOptions.OrderBy(a => a)
+                      .SequenceEqual(CreateOptions.OrderBy(a => a))))
             {
                 return false;
             }
@@ -231,54 +242,63 @@ namespace IPTables.Net.Iptables.IpSet
             {
                 return set.HashSize == HashSize;
             }
+
             return true;
         }
 
 
 
-        protected void SyncEntriesHashIp(List<IpCidr> cidrs)
+        protected void SyncEntriesIp(HashSet<IpSetEntry> cidrs)
         {
-            var targetEntries = cidrs.ToDictionary((a) => a, a => a.Addresses);
+            var targetEntries = cidrs.ToDictionary((a) => a, a => a.Cidr.Addresses, new CidrEqualityComparer());
+            var entriesClone = Entries.ToHashSet(new IpSetEntryKeyComparer());
 
             // Go through the system set updating targetEntries if we find something, removing from system if we don't
             foreach (var s in Entries)
             {
                 BigInteger found;
-                IpCidr cidr;
-                if (targetEntries.FindCidr(s.Cidr, out cidr, out found))
+                IpSetEntry f;
+                if (targetEntries.FindCidr(s, out f, out found))
                 {
                     if (found == BigInteger.Zero)
                     {
-                        foreach (var s2 in Entries)
+                        foreach (var s2 in entriesClone)
                         {
-                            if (cidr.Contains(s2.Cidr))
+                            if (f.Cidr.Contains(s2.Cidr))
                             {
                                 // size of cidr has changed
-                                _system.SetAdapter.DeleteEntry(s2);
+                                if (entriesClone.Remove(s))
+                                {
+                                    _system.SetAdapter.DeleteEntry(s2);
+                                }
                             }
                         }
-                        targetEntries[s.Cidr] = -1;
-                    } 
+
+                        targetEntries[s] = -1;
+                    }
                     else if (found > 0)
                     {
                         found--;
-                        targetEntries[s.Cidr] = found;
+                        targetEntries[s] = found;
                     }
                 }
                 else
                 {
-                    _system.SetAdapter.DeleteEntry(s);
+                    if (entriesClone.Remove(s))
+                    {
+                        _system.SetAdapter.DeleteEntry(s);
+                    }
                 }
             }
 
             // Everything that remains needs to be added
-            foreach (var s in targetEntries.Where(a=>a.Value != 0))
+            foreach (var s in targetEntries.Where(a => a.Value != 0))
             {
                 if (s.Value > BigInteger.Zero)
                 {
-                    foreach (var s2 in Entries)
+                    foreach (var s2 in entriesClone)
                     {
-                        if (s.Key.Contains(s2.Cidr))
+                        if (s.Key.Cidr.Contains(s2.Cidr))
                         {
                             // size of cidr has changed
                             _system.SetAdapter.DeleteEntry(s2);
@@ -286,18 +306,18 @@ namespace IPTables.Net.Iptables.IpSet
                     }
                 }
 
-                _system.SetAdapter.AddEntry(new IpSetEntry(this, s.Key));
+                _system.SetAdapter.AddEntry(s.Key);
             }
         }
 
-        protected void SyncEntriesHashNet(List<IpCidr> cidrs)
+        protected void SyncEntriesPlain(HashSet<IpSetEntry> entries)
         {
-            var targetEntries = cidrs.ToHashSet();
+            var targetEntries = entries.ToHashSet(new IpSetEntryKeyComparer());
 
             // Go through the system set updating targetEntries if we find something, removing from system if we don't
             foreach (var s in Entries)
             {
-                if (!targetEntries.Remove(s.Cidr))
+                if (!targetEntries.Remove(s))
                 {
                     _system.SetAdapter.DeleteEntry(s);
                 }
@@ -306,47 +326,41 @@ namespace IPTables.Net.Iptables.IpSet
             // Everything that remains needs to be added
             foreach (var s in targetEntries)
             {
-                _system.SetAdapter.AddEntry(new IpSetEntry(this, s));
+                _system.SetAdapter.AddEntry(s);
             }
         }
+        
 
-        public void SyncEntries(List<IpCidr> cidrs)
+        public void SyncEntries(HashSet<IpSetEntry> entries)
         {
-            if ((Type & IpSetType.Net) == IpSetType.Net)
-            {
-                SyncEntriesHashNet(cidrs);
-            }
-            else
-            {
-                SyncEntriesHashIp(cidrs);
-            }
-        }
-
-        public void SyncEntries(IpSetSet systemSet)
-        {
-            HashSet<IpSetEntry> indexedEntries = new HashSet<IpSetEntry>(Entries, new IpSetEntryKeyComparer());
-            HashSet<IpSetEntry> systemEntries = new HashSet<IpSetEntry>(systemSet.Entries, new IpSetEntryKeyComparer());
             try
             {
-                foreach (var entry in indexedEntries)
+                if ((Type & (IpSetType.Ip | IpSetType.Ip2 | IpSetType.Net)) == 0)
                 {
-                    if (!systemEntries.Remove(entry))
-                    {
-                        System.SetAdapter.AddEntry(entry);
-                    }
+                    // no opportunity for cidr magic
+                    SyncEntriesPlain(entries);
                 }
-
-                foreach (var entry in systemEntries)
+                else if ((Type & IpSetType.Net) == IpSetType.Net)
                 {
-                    System.SetAdapter.DeleteEntry(entry);
+                    SyncEntriesPlain(entries);
+                }
+                else
+                {
+                    SyncEntriesIp(entries);
                 }
             }
             catch (Exception ex)
             {
                 throw new IpTablesNetException(
-                    String.Format("An exception occured while adding or removing on entries of set {0} message:{1}", Name,
+                    String.Format("An exception occured while adding or removing on entries of set {0} message:{1}",
+                        Name,
                         ex.Message), ex);
             }
+        }
+
+        public void SyncEntries(IpSetSet set)
+        {
+            SyncEntries(set.Entries);
         }
     }
 }

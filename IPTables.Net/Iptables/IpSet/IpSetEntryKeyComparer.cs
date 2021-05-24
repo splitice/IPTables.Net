@@ -12,10 +12,18 @@ namespace IPTables.Net.Iptables.IpSet
         {
             return x.KeyEquals(y);
         }
-
+        
         public int GetHashCode(IpSetEntry obj)
         {
-            return obj.GetHashCode();
+            unchecked
+            {
+                int hashCode = obj.Cidr.GetHashCode();
+                hashCode = (hashCode * 397) ^ (obj.Protocol != null ? obj.Protocol.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ obj.Port.GetHashCode();
+                hashCode = (hashCode * 397) ^ (obj.Mac != null ? obj.Mac.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ obj.Timeout.GetHashCode();
+                return hashCode;
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using IPTables.Net.Iptables.DataTypes;
+using IPTables.Net.Iptables.IpSet;
 
 namespace IPTables.Net.Supporting
 {
@@ -68,6 +69,24 @@ namespace IPTables.Net.Supporting
             }
 
             o = default(IpCidr);
+            f = default(TValue);
+
+            return false;
+        }
+        public static bool FindCidr<TValue>(this IDictionary<IpSetEntry, TValue> dict, IpSetEntry find, out IpSetEntry o, out TValue f)
+        {
+            IpCidr c = find.Cidr;
+            for (uint i = c.Prefix; i != 0; i--)
+            {
+                c.Prefix = i;
+                if (dict.TryGetValue(find, out f))
+                {
+                    o = find;
+                    return true;
+                }
+            }
+
+            o = default(IpSetEntry);
             f = default(TValue);
 
             return false;

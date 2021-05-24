@@ -94,7 +94,7 @@ namespace IPTables.Net.Iptables.IpSet
                 if (set.SyncMode == IpSetSyncMode.SetAndEntries || 
                     (set.SyncMode == IpSetSyncMode.SetAndEntriesOnCreate && created))
                 {
-                    set.SyncEntries(systemSet);
+                    systemSet.SyncEntries(set);
                 }
             }
 
