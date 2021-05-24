@@ -50,8 +50,8 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                 switch (typeComponents[i])
                 {
                     case "ip":
-                        if(entry.Cidr.Prefix == 0) entry.Cidr = new IpCidr(IPAddress.Parse(optionComponents[i]));
-                        else entry.Cidr2 = new IpCidr(IPAddress.Parse(optionComponents[i]));
+                        if(entry.Cidr.Prefix == 0) entry.Cidr = IpCidr.Parse(optionComponents[i]);
+                        else entry.Cidr2 = IpCidr.Parse(optionComponents[i]);
                         break;
                     case "net":
                         entry.Cidr = IpCidr.Parse(optionComponents[i]);
