@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Supporting
 {
@@ -52,6 +53,24 @@ namespace IPTables.Net.Supporting
             }
 
             return default(TKey);
+        }
+
+        public static bool FindCidr<TValue>(this IDictionary<IpCidr, TValue> dict, IpCidr find, out IpCidr o, out TValue f)
+        {
+            for (uint i = find.Prefix; i != 0; i++)
+            {
+                find.Prefix = i;
+                if (dict.TryGetValue(find, out f))
+                {
+                    o = find;
+                    return true;
+                }
+            }
+
+            o = default(IpCidr);
+            f = default(TValue);
+
+            return false;
         }
     }
 }

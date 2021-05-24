@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Numerics;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Supporting;
 
@@ -23,6 +24,15 @@ namespace IPTables.Net.Iptables.DataTypes
         {
             Address = address;
             Prefix = (address.AddressFamily == AddressFamily.InterNetworkV6) ? (uint)128 : 32;
+        }
+
+        public BigInteger Addresses
+        {
+            get
+            {
+                int max = (Address.AddressFamily == AddressFamily.InterNetworkV6) ? 128 : 32;
+                return BigInteger.Pow(2, max - (int)Prefix);
+            }
         }
 
         public IPNetwork GetIPNetwork()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Security.Policy;
 using System.Text;
 using IPTables.Net.Exceptions;
@@ -233,6 +234,81 @@ namespace IPTables.Net.Iptables.IpSet
             return true;
         }
 
+
+
+        void SyncEntriesHashIp(List<IpCidr> cidrs)
+        {
+            var targetEntries = cidrs.ToDictionary((a) => a, a => a.Addresses);
+
+            // Go through the system set updating targetEntries if we find something, removing from system if we don't
+            foreach (var s in Entries)
+            {
+                BigInteger found;
+                IpCidr cidr;
+                if (targetEntries.FindCidr(s.Cidr, out cidr, out found))
+                {
+                    if (found == BigInteger.Zero)
+                    {
+                        foreach (var s2 in Entries)
+                        {
+                            if (cidr.Contains(s2.Cidr))
+                            {
+                                // size of cidr has changed
+                                _system.SetAdapter.DeleteEntry(s2);
+                            }
+                        }
+                        targetEntries[s.Cidr] = -1;
+                    } 
+                    else if (found > 0)
+                    {
+                        found--;
+                        targetEntries[s.Cidr] = found;
+                    }
+                }
+                else
+                {
+                    _system.SetAdapter.DeleteEntry(s);
+                }
+            }
+
+            // Everything that remains needs to be added
+            foreach (var s in targetEntries.Where(a=>a.Value != 0))
+            {
+                if (s.Value > BigInteger.Zero)
+                {
+                    foreach (var s2 in Entries)
+                    {
+                        if (s.Key.Contains(s2.Cidr))
+                        {
+                            // size of cidr has changed
+                            _system.SetAdapter.DeleteEntry(s2);
+                        }
+                    }
+                }
+
+                _system.SetAdapter.AddEntry(new IpSetEntry(this, s.Key));
+            }
+        }
+
+        public void SyncEntriesHashNet(List<IpCidr> cidrs)
+        {
+            var targetEntries = cidrs.ToHashSet();
+
+            // Go through the system set updating targetEntries if we find something, removing from system if we don't
+            foreach (var s in Entries)
+            {
+                if (!targetEntries.Remove(s.Cidr))
+                {
+                    _system.SetAdapter.DeleteEntry(s);
+                }
+            }
+
+            // Everything that remains needs to be added
+            foreach (var s in targetEntries)
+            {
+                _system.SetAdapter.AddEntry(new IpSetEntry(this, s));
+            }
+        }
 
         public void SyncEntries(IpSetSet systemSet)
         {
