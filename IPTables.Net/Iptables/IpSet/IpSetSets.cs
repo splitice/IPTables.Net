@@ -94,7 +94,7 @@ namespace IPTables.Net.Iptables.IpSet
                 if (set.SyncMode == IpSetSyncMode.SetAndEntries || 
                     (set.SyncMode == IpSetSyncMode.SetAndEntriesOnCreate && created))
                 {
-                    SyncEntries(set, systemSet);
+                    set.SyncEntries(systemSet);
                 }
             }
 
@@ -121,38 +121,22 @@ namespace IPTables.Net.Iptables.IpSet
             }
         }
 
-        private void SyncEntries(IpSetSet set, IpSetSet systemSet)
-        {
-            HashSet<IpSetEntry> indexedEntries = new HashSet<IpSetEntry>(set.Entries, new IpSetEntryKeyComparer());
-            HashSet<IpSetEntry> systemEntries = new HashSet<IpSetEntry>(systemSet.Entries, new IpSetEntryKeyComparer());
-            try
-            {
-                foreach (var entry in indexedEntries)
-                {
-                    if (!systemEntries.Remove(entry))
-                    {
-                        System.SetAdapter.AddEntry(entry);
-                    }
-                }
 
-                foreach (var entry in systemEntries)
-                {
-                    System.SetAdapter.DeleteEntry(entry);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new IpTablesNetException(
-                    String.Format("An exception occured while adding or removing on entries of set {0} message:{1}", set.Name,
-                        ex.Message), ex);
-            }
-        }
-
-        public IpSetSet GetSetByName(string name)
+        public IpSetSet GetSetByName(string name, bool fromSystem = false)
         {
+            if (fromSystem)
+            {
+                LoadFromSystem(name);
+            }
+
             IpSetSet ret = null;
             _sets.TryGetValue(name, out ret);
             return ret;
+        }
+
+        private void LoadFromSystem(string name = null)
+        {
+            System.SetAdapter.SaveSets(this, name);
         }
 
         public bool HasSet(string name)
@@ -160,9 +144,16 @@ namespace IPTables.Net.Iptables.IpSet
             return _sets.ContainsKey(name);
         }
 
-        public void AddSet(IpSetSet set)
+        public void AddSet(IpSetSet set, bool force = false)
         {
-            _sets.Add(set.Name, set);
+            if (force && _sets.ContainsKey(set.Name))
+            {
+                _sets[set.Name] = set;
+            }
+            else
+            {
+                _sets.Add(set.Name, set);
+            }
         }
 
         public void Accept(String line, IpTablesSystem iptables)
@@ -176,7 +167,7 @@ namespace IPTables.Net.Iptables.IpSet
             {
                 case "create":
                     var set = IpSetSet.Parse(split, iptables, 1);
-                    AddSet(set);
+                    AddSet(set, true);
                     break;
                 case "add":
                     IpSetEntry.Parse(split, this, 1);

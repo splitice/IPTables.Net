@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.IpSet.Parser;
 using IPTables.Net.Netfilter;
@@ -230,6 +231,34 @@ namespace IPTables.Net.Iptables.IpSet
                 return set.HashSize == HashSize;
             }
             return true;
+        }
+
+
+        public void SyncEntries(IpSetSet systemSet)
+        {
+            HashSet<IpSetEntry> indexedEntries = new HashSet<IpSetEntry>(Entries, new IpSetEntryKeyComparer());
+            HashSet<IpSetEntry> systemEntries = new HashSet<IpSetEntry>(systemSet.Entries, new IpSetEntryKeyComparer());
+            try
+            {
+                foreach (var entry in indexedEntries)
+                {
+                    if (!systemEntries.Remove(entry))
+                    {
+                        System.SetAdapter.AddEntry(entry);
+                    }
+                }
+
+                foreach (var entry in systemEntries)
+                {
+                    System.SetAdapter.DeleteEntry(entry);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new IpTablesNetException(
+                    String.Format("An exception occured while adding or removing on entries of set {0} message:{1}", Name,
+                        ex.Message), ex);
+            }
         }
     }
 }

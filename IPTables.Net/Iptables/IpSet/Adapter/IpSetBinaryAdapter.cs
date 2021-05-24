@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using SystemInteract;
 using IPTables.Net.Exceptions;
+using IPTables.Net.Iptables.Helpers;
 using IPTables.Net.Netfilter;
 using Serilog;
 
@@ -129,12 +130,16 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             return true;
         }
 
-        public virtual IpSetSets SaveSets(IpTablesSystem iptables)
+        public virtual void SaveSets(IpSetSets sets, string setName = null)
         {
-            IpSetSets sets = new IpSetSets(iptables);
-
+            var iptables = sets.System;
             //ipset save
-            using (ISystemProcess process = _system.StartProcess(BinaryName, "save"))
+            var args = "save";
+            if (!String.IsNullOrEmpty(setName))
+            {
+                args += " " + ShellHelper.EscapeArguments(setName);
+            }
+            using (ISystemProcess process = _system.StartProcess(BinaryName, args))
             {
                 ProcessHelper.ReadToEnd(process, line =>
                 {
@@ -144,8 +149,15 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
                     {
                         sets.Accept(trimmed, iptables);
                     }
-                }, err=>{ });
+                }, err => { });
             }
+        }
+
+        public virtual IpSetSets SaveSets(IpTablesSystem iptables, string setName = null)
+        {
+            IpSetSets sets = new IpSetSets(iptables);
+
+            SaveSets(sets, setName);
             
             return sets;
         }
