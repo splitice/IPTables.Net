@@ -182,8 +182,7 @@ namespace IPTables.Net.Iptables.DataTypes
         {
             if (findAddress.AddressFamily == AddressFamily.InterNetwork)
             {
-                var iAddr = findAddress.ToInt() &
-                            System.Buffers.Binary.BinaryPrimitives.ReverseEndianness((UInt32) Math.Pow(2, u) - 1);
+                var iAddr = findAddress.ToInt() & ~(long)Math.Pow(2, 32 - u);
                 var ip = IPAddressExtension.ToAddr(iAddr);
                 return new IpCidr(ip, u);
             }

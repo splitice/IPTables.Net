@@ -248,7 +248,7 @@ namespace IPTables.Net.Iptables.IpSet
 
 
 
-        protected void SyncEntriesIp(HashSet<IpSetEntry> cidrs)
+        protected void SyncEntriesIp(IEnumerable<IpSetEntry> cidrs)
         {
             var targetEntries = cidrs.ToDictionary((a) => a, a => a.Cidr.Addresses, new IpSetEntryKeyComparer());
             var entriesClone = Entries.ToHashSet(new IpSetEntryKeyComparer());
@@ -310,7 +310,7 @@ namespace IPTables.Net.Iptables.IpSet
             }
         }
 
-        protected void SyncEntriesPlain(HashSet<IpSetEntry> entries)
+        protected void SyncEntriesPlain(IEnumerable<IpSetEntry> entries)
         {
             var targetEntries = entries.ToHashSet(new IpSetEntryKeyComparer());
 
@@ -331,7 +331,7 @@ namespace IPTables.Net.Iptables.IpSet
         }
         
 
-        public void SyncEntries(HashSet<IpSetEntry> entries)
+        public void SyncEntries(IEnumerable<IpSetEntry> entries)
         {
             try
             {

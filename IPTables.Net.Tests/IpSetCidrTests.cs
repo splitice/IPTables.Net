@@ -42,6 +42,32 @@ namespace IPTables.Net.Tests
         }
 
         [Test]
+        public void TestSyncLargerIsTheSame()
+        {
+            var systemFactory = new MockIpsetSystemFactory();
+            var system = new MockIpsetBinaryAdapter(systemFactory);
+            var iptables = new IpTablesSystem(systemFactory, null, system);
+
+            IpSetSets rulesOriginal = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip",
+                "add test 8.8.8.0",
+                "add test 8.8.8.1"
+            }, iptables);
+
+            system.SetSets(rulesOriginal);
+
+            IpSetSets rulesNew = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip",
+                "add test 8.8.8.0/31"
+            }, iptables);
+
+            systemFactory.TestSync(rulesNew, new List<string>
+            {
+            });
+        }
+        [Test]
         public void TestSyncCreateSmaller()
         {
             var systemFactory = new MockIpsetSystemFactory();

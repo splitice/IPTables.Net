@@ -89,6 +89,31 @@ namespace IPTables.Net.Tests
                 "add test 8.8.8.8"
             });
         }
+        [Test]
+        public void TestSyncEntrySameIp()
+        {
+            var systemFactory = new MockIpsetSystemFactory();
+            var system = new MockIpsetBinaryAdapter(systemFactory);
+            var iptables = new IpTablesSystem(systemFactory, null, system);
+
+            IpSetSets rulesOriginal = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip",
+                "add test 8.8.8.8"
+            }, iptables);
+
+            system.SetSets(rulesOriginal);
+
+            IpSetSets rulesNew = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip",
+                "add test 8.8.8.8/32"
+            }, iptables);
+
+            systemFactory.TestSync(rulesNew, new List<string>
+            {
+            });
+        }
 
         [Test]
         public void TestSyncEntryDelete()
