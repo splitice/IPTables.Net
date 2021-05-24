@@ -178,11 +178,20 @@ namespace IPTables.Net.Iptables.DataTypes
             return HashCode.Combine(Address, Prefix);
         }
 
-        public static IpCidr newRebase(IPAddress findAddress, uint u)
+        public static IpCidr NewRebase(IPAddress findAddress, uint u)
         {
-            var iAddr = findAddress.ToInt() & (long)Math.Pow(2, u);
-            var ip = IPAddressExtension.ToAddr(iAddr);
-            return new IpCidr(ip, u);
+            if (findAddress.AddressFamily == AddressFamily.InterNetwork)
+            {
+                var iAddr = findAddress.ToInt() &
+                            System.Buffers.Binary.BinaryPrimitives.ReverseEndianness((UInt32) Math.Pow(2, u) - 1);
+                var ip = IPAddressExtension.ToAddr(iAddr);
+                return new IpCidr(ip, u);
+            }
+            else
+            {
+                var ipNet = IPNetwork.Parse(findAddress.ToString(), (byte) u);
+                return new IpCidr(ipNet.Network, u);
+            }
         }
     }
 }

@@ -262,7 +262,7 @@ namespace IPTables.Net.Iptables.IpSet
                 {
                     if (found == BigInteger.Zero)
                     {
-                        foreach (var s2 in entriesClone)
+                        foreach (var s2 in Entries)
                         {
                             if (f.Cidr.Contains(s2.Cidr))
                             {
@@ -274,12 +274,12 @@ namespace IPTables.Net.Iptables.IpSet
                             }
                         }
 
-                        targetEntries[s] = -1;
+                        targetEntries[f] = -1;
                     }
                     else if (found > 0)
                     {
-                        found--;
-                        targetEntries[s] = found;
+                        found -= s.Cidr.Addresses;
+                        targetEntries[f] = found;
                     }
                 }
                 else
