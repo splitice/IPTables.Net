@@ -180,6 +180,7 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public static IpCidr NewRebase(IPAddress findAddress, uint u)
         {
+            // IPv4
             if (findAddress.AddressFamily == AddressFamily.InterNetwork)
             {
                 if (u == 32)
@@ -190,15 +191,14 @@ namespace IPTables.Net.Iptables.DataTypes
                 var ip = IPAddressExtension.ToAddr(iAddr);
                 return new IpCidr(ip, u);
             }
-            else
+
+            // IPv6
+            if (u == 128)
             {
-                if (u == 128)
-                {
-                    return new IpCidr(findAddress, u);
-                }
-                var ipNet = IPNetwork.Parse(findAddress.ToString(), (byte) u);
-                return new IpCidr(ipNet.Network, u);
+                return new IpCidr(findAddress, u);
             }
+            var ipNet = IPNetwork.Parse(findAddress.ToString(), (byte) u);
+            return new IpCidr(ipNet.Network, u);
         }
     }
 }

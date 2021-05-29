@@ -13,6 +13,38 @@ namespace IPTables.Net.Tests
     [TestFixture]
     class IpSetSyncTests
     {
+
+        [Test]
+        public void TestSyncIPPort1()
+        {
+            var systemFactory = new MockIpsetSystemFactory();
+            var system = new MockIpsetBinaryAdapter(systemFactory);
+            var iptables = new IpTablesSystem(systemFactory, null, system);
+
+            IpSetSets rulesOriginal = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip,port",
+                "add test 8.8.8.8,tcp:80",
+                "add test 8.8.8.8,tcp:443"
+            }, iptables);
+
+            system.SetSets(rulesOriginal);
+
+            IpSetSets rulesNew = new IpSetSets(new List<String>()
+            {
+                "create test hash:ip,port",
+                "add test 8.8.8.8,tcp:80",
+                "add test 8.8.8.8,tcp:123",
+                "add test 8.8.8.8,tcp:443"
+            }, iptables);
+
+            systemFactory.TestSync(rulesNew, new List<string>
+            {
+                "add test 8.8.8.8,tcp:123"
+            });
+        }
+
+
         [Test]
         public void TestSyncCreate()
         {

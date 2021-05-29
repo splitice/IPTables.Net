@@ -12,7 +12,8 @@ namespace IPTables.Net.Iptables.IpSet
         public bool Equals(IpSetEntry x, IpSetEntry y)
         {
             Debug.Assert(x != null, nameof(x) + " != null");
-            return x.KeyEquals(y);
+            bool ret = x.KeyEquals(y);
+            return ret;
         }
         
         public int GetHashCode(IpSetEntry obj)
