@@ -161,13 +161,13 @@ namespace IPTables.Net.Iptables.IpSet
             }
         }
 
-        public bool KeyEquals(IpSetEntry other)
+        public bool KeyEquals(IpSetEntry other, bool cidr = true)
         {
-            bool r = _port == other._port && Cidr.Equals(other.Cidr) && string.Equals(_mac, other._mac);
-            if (!r) return false;
+            bool r = _port == other._port && (!cidr || Cidr.Equals(other.Cidr)) && Cidr2.Equals(other.Cidr2) && _mac == other._mac;
+            if (!r) 
+                return false;
 
-            return string.Equals(_protocol, other._protocol) ||
-                   (String.IsNullOrEmpty(_protocol) && String.IsNullOrEmpty(other._protocol));
+            return _protocol == other._protocol;
         }
 
         public string GetFullCommand(String command = "add")

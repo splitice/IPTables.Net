@@ -298,7 +298,7 @@ namespace IPTables.Net.Iptables.IpSet
                 {
                     foreach (var s2 in entriesClone)
                     {
-                        if (s.Key.Cidr.Contains(s2.Cidr) && s.Key.KeyEquals(s2))
+                        if (s.Key.Cidr.Contains(s2.Cidr) && s.Key.KeyEquals(s2, false))
                         {
                             // size of cidr has changed
                             _system.SetAdapter.DeleteEntry(s2);
