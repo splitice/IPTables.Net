@@ -10,7 +10,7 @@ namespace IPTables.Net.Iptables
         {
             if (x == y) return true;
             if (x == null || y == null) return false;
-            return x.Name == y.Name && x.Table == y.Table;
+            return x.Name == y.Name && x.Table == y.Table && x.IpVersion == y.IpVersion;
         }
 
         public int GetHashCode(IpTablesChain obj)
