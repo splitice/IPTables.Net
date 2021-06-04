@@ -49,6 +49,10 @@ namespace IPTables.Net.Iptables.IpSet
             {
                 types.Add("ip");
             }
+            if ((type & IpSetType.Flag) == IpSetType.Flag)
+            {
+                types.Add("flag");
+            }
 
             if (types.Count == 0) return null;
             return mode + string.Join(",", types);
@@ -89,6 +93,7 @@ namespace IPTables.Net.Iptables.IpSet
                     else ret |= IpSetType.Ip;
                 } else if (t == "port") ret |= IpSetType.Port;
                 else if (t == "net") ret |= IpSetType.Net;
+                else if (t == "flag") ret |= IpSetType.Flag;
                 else throw new IpTablesNetException(String.Format("Unknown set type: {0}", str));
             }
 

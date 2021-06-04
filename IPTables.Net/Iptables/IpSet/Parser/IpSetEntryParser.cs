@@ -61,6 +61,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                             entry.Cidr = new IpCidr(network.Network, entry.Cidr.Prefix);
                         }
                         break;
+                    case "flag":
                     case "port":
                         var s = optionComponents[i].Split(':');
                         if (s.Length == 1)
