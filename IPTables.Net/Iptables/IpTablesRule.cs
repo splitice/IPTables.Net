@@ -431,7 +431,7 @@ namespace IPTables.Net.Iptables
                 var command = new IpTablesCommand(Chain.Name, Chain.Table, IpTablesCommandType.Add);
                 command.Rule = this;
                 command.Table = Chain.Table;
-                var parser = new CommandParser(arguments, command, chains);
+                var parser = new CommandParser(arguments, command, chains, version);
 
                 //Parse the extra options
                 bool not = false;
@@ -443,7 +443,7 @@ namespace IPTables.Net.Iptables
                         continue;
                     }
 
-                    i += parser.FeedToSkip(i, not, version);
+                    i += parser.FeedToSkip(i, not);
                     not = false;
                 }
 

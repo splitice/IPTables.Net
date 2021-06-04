@@ -12,21 +12,23 @@ namespace IPTables.Net.Iptables.Modules
         private readonly string[] _arguments;
         private readonly IpTablesChainSet _chains;
         private readonly ModuleRegistry _moduleRegistry = ModuleRegistry.Instance;
-        private readonly List<ModuleEntry> _parsers;
+        private readonly Dictionary<String, ModuleEntry> _parsers;
         public int Position = 0;
 
         public IpTablesCommand Command;
         private ModuleEntry? _polyfill = null;
         private IpTablesCommand _ipCommand;
         private bool _onlyCommand;
+        private int _version;
 
-        public CommandParser(string[] arguments, IpTablesCommand ipCommand, IpTablesChainSet chains, bool onlyCommand = false)
+        public CommandParser(string[] arguments, IpTablesCommand ipCommand, IpTablesChainSet chains, int version, bool onlyCommand = false)
         {
             _arguments = arguments;
             _ipCommand = ipCommand;
-            _parsers = ModuleRegistry.PreloadDuplicateModules.ToList();
+            _parsers = ModuleRegistry.PreloadOptions.ToDictionary(a=>a.Key, b=>b.Value);
             _chains = chains;
             _onlyCommand = onlyCommand;
+            _version = version;
         }
 
         public String ChainName
@@ -71,9 +73,8 @@ namespace IPTables.Net.Iptables.Modules
         /// </summary>
         /// <param name="position">Rhe position to parse</param>
         /// <param name="not"></param>
-        /// <param name="version"></param>
         /// <returns>number of arguments consumed</returns>
-        public int FeedToSkip(int position, bool not, int version)
+        public int FeedToSkip(int position, bool not)
         {
             Position = position;
             String option = GetCurrentArg();
@@ -95,10 +96,8 @@ namespace IPTables.Net.Iptables.Modules
                         _ipCommand.Offset = ((int)offset - 1);
                         return 2;
                     }
-                    else
-                    {
-                        _ipCommand.Offset = -1;
-                    }
+
+                    _ipCommand.Offset = -1;
                 }
                 return 1;
             }
@@ -112,43 +111,33 @@ namespace IPTables.Net.Iptables.Modules
 
             if (option == "-m")
             {
-                LoadParserModule(GetNextArg(), version);
+                LoadParserModule(GetNextArg());
                 return 1;
             }
             if (option == "-j")
             {
-                LoadParserModule(GetNextArg(), version, true);
-            }
-
-            //All the preloaded modules are indexed here
-            ModuleEntry mQuick;
-            if (ModuleRegistry.PreloadOptions.TryGetValue(option, out mQuick))
-            {
-                IIpTablesModule module = _ipCommand.Rule.GetModuleForParseInternal(mQuick.Name, mQuick.Activator, version);
-                return module.Feed(this, not);
+                LoadParserModule(GetNextArg(), true);
             }
 
             //Search each module, do it verbosely from the most recently added
-            for (int index = _parsers.Count - 1; index >= 0; index--)
+            ModuleEntry m;
+            if (!_parsers.TryGetValue(option, out m))
             {
-                ModuleEntry m = _parsers[index];
-                if (m.Options.Contains(option))
+                if (_polyfill.HasValue)
                 {
-                    IIpTablesModule module = _ipCommand.Rule.GetModuleForParseInternal(m.Name, m.Activator, version);
-                    return module.Feed(this, not);
+                    m = _polyfill.Value;
+                }
+                else
+                {
+                    throw new IpTablesNetException("Unknown option: \"" + option + "\"");
                 }
             }
-
-            if (_polyfill != null)
-            {
-                IIpTablesModule module = _ipCommand.Rule.GetModuleForParseInternal(_polyfill.Value.Name, _polyfill.Value.Activator, version);
-                return module.Feed(this, not);
-            }
-
-            throw new IpTablesNetException("Unknown option: \"" + option + "\"");
+            
+            IIpTablesModule module = _ipCommand.Rule.GetModuleForParseInternal(m.Name, m.Activator, _version);
+            return module.Feed(this, not);
         }
 
-        private void LoadParserModule(string name, int version, bool isTarget = false)
+        private void LoadParserModule(string name, bool isTarget = false)
         {
             ModuleEntry entry;
             if (isTarget)
@@ -163,16 +152,20 @@ namespace IPTables.Net.Iptables.Modules
             }
             else
             {
-                entry = _moduleRegistry.GetModule(name, version);
+                entry = _moduleRegistry.GetModule(name, _version);
                 if (entry.Polyfill)
                 {
                     _polyfill = entry;
                 }
                 _ipCommand.Rule.LoadModule(entry);
             }
+
             if (!entry.Polyfill)
             {
-                _parsers.Add(entry);
+                foreach (var o in entry.Options)
+                {
+                    _parsers.Add(o, entry);
+                }
             }
         }
     }

@@ -9,7 +9,6 @@ namespace IPTables.Net.Iptables.IpSet.Parser
     class IpSetEntryParser
     {
         private readonly string[] _arguments;
-        public int Position = 0;
         private IpSetEntry _entry;
         private IpSetSets _sets;
 
@@ -20,19 +19,14 @@ namespace IPTables.Net.Iptables.IpSet.Parser
             _sets = sets;
         }
 
-        public string GetCurrentArg()
+        public string GetCurrentArg(int position)
         {
-            return _arguments[Position];
+            return _arguments[position];
         }
 
-        public string GetNextArg(int offset = 1)
+        public string GetNextArg(int position, int offset = 1)
         {
-            return _arguments[Position + offset];
-        }
-
-        public int GetRemainingArgs()
-        {
-            return _arguments.Length - Position - 1;
+            return _arguments[position + offset];
         }
 
         /// <summary>
@@ -88,8 +82,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
         /// <returns>number of arguments consumed</returns>
         public int FeedToSkip(int position, bool first)
         {
-            Position = position;
-            String option = GetCurrentArg();
+            String option = GetCurrentArg(position);
 
             if (first)
             {
@@ -103,7 +96,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
             }
             else if (option == "timeout")
             {
-                _entry.Timeout = int.Parse(GetNextArg());
+                _entry.Timeout = int.Parse(GetNextArg(position));
                 return 1;
             }
             else if (option == "packets" || option == "bytes")

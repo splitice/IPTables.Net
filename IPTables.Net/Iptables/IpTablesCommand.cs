@@ -73,7 +73,7 @@ namespace IPTables.Net.Iptables
             var ipRule = new IpTablesRule(system, new IpTablesChain(defaultTable, null, version, system));
             var ipCmd = new IpTablesCommand(null, defaultTable, IpTablesCommandType.Unknown, -1, ipRule);
 
-            var parser = new CommandParser(arguments, ipCmd, chains);
+            var parser = new CommandParser(arguments, ipCmd, chains, version);
             parserOut = parser;
             try
             {
@@ -85,7 +85,7 @@ namespace IPTables.Net.Iptables
                         not = true;
                         continue;
                     }
-                    i += parser.FeedToSkip(i, not, version);
+                    i += parser.FeedToSkip(i, not);
                     not = false;
                 }
             }

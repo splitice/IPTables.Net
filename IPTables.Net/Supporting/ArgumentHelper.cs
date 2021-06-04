@@ -31,19 +31,16 @@ namespace IPTables.Net.Supporting
                 }
 
                 // replace space with 0x01 if not in any quotes
-                if (parmChars[index] == ' ')
+                if (parmChars[index] == ' ' && !inSingleQuote && !inDoubleQuote)
                 {
-                    if (!inSingleQuote && !inDoubleQuote)
+                    if (inSpace)
                     {
-                        if (inSpace)
-                        {
-                            parmChars[index] = '\x00';
-                        }
-                        else
-                        {
-                            parmChars[index] = '\x01';
-                            inSpace = true;
-                        }
+                        parmChars[index] = '\x00';
+                    }
+                    else
+                    {
+                        parmChars[index] = '\x01';
+                        inSpace = true;
                     }
                 }
                 else
@@ -52,7 +49,7 @@ namespace IPTables.Net.Supporting
                     inSpace = false;
                 }
             }
-
+            
             // remove all ignore chars (0x00), then split by space seperator (0x01)
             return (new string(parmChars, 0, lastChar + 1)).Replace("\x00", "").Split(new[] { '\x01' });
         }
