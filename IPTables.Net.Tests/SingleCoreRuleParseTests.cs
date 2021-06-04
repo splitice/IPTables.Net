@@ -41,6 +41,41 @@ namespace IPTables.Net.Tests
         }
 
         [Test]
+        public void TestParsingWithMultipleSpaces()
+        {
+            String rule = "-A INPUT -s   1.2.3.4   -j DROP";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            IpTablesRule.Parse(rule, null, chains, 4);
+        }
+
+        [Test]
+        public void TestParsingWithSpaceAtEnd()
+        {
+            String rule = "-A INPUT -s 1.2.3.4 -j DROP ";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            IpTablesRule.Parse(rule, null, chains, 4);
+        }
+
+        [Test]
+        public void TestParsingWithSpaceAtStart()
+        {
+            String rule = " -A INPUT -s 1.2.3.4 -j DROP";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            IpTablesRule.Parse(rule, null, chains, 4);
+        }
+        [Test]
+        public void TestParsingWithSpacesAtStart()
+        {
+            String rule = "  -A INPUT -s 1.2.3.4 -j DROP";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            IpTablesRule.Parse(rule, null, chains, 4);
+        }
+
+        [Test]
         public void TestCoreDropingUdp()
         {
             String rule = "-A INPUT -p udp -j DROP";

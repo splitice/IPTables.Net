@@ -12,7 +12,8 @@ namespace IPTables.Net.Supporting
             char[] parmChars = commandLine.ToCharArray();
             bool inSingleQuote = false;
             bool inDoubleQuote = false;
-            bool inSpace = false;
+            bool inSpace = true;
+            int lastChar = 0;
             for (int index = 0; index < parmChars.Length; index++)
             {
                 // replace double quote with 0x00 if not in single quote
@@ -47,12 +48,13 @@ namespace IPTables.Net.Supporting
                 }
                 else
                 {
+                    lastChar = index;
                     inSpace = false;
                 }
             }
 
             // remove all ignore chars (0x00), then split by space seperator (0x01)
-            return (new string(parmChars)).Replace("\x00", "").Split(new[] { '\x01' });
+            return (new string(parmChars, 0, lastChar + 1)).Replace("\x00", "").Split(new[] { '\x01' });
         }
     }
 }
