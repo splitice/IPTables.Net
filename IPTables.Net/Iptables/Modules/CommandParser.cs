@@ -18,13 +18,15 @@ namespace IPTables.Net.Iptables.Modules
         public IpTablesCommand Command;
         private ModuleEntry? _polyfill = null;
         private IpTablesCommand _ipCommand;
+        private bool _onlyCommand;
 
-        public CommandParser(string[] arguments, IpTablesCommand ipCommand, IpTablesChainSet chains)
+        public CommandParser(string[] arguments, IpTablesCommand ipCommand, IpTablesChainSet chains, bool onlyCommand = false)
         {
             _arguments = arguments;
             _ipCommand = ipCommand;
             _parsers = ModuleRegistry.PreloadDuplicateModules.ToList();
             _chains = chains;
+            _onlyCommand = onlyCommand;
         }
 
         public String ChainName
@@ -76,11 +78,6 @@ namespace IPTables.Net.Iptables.Modules
             Position = position;
             String option = GetCurrentArg();
 
-            if (option == "-m")
-            {
-                LoadParserModule(GetNextArg(), version);
-                return 1;
-            }
             if (option == "-A" || option == "-D" || option == "-R" || option == "-I")
             {
                 _ipCommand.ChainName = GetNextArg();
@@ -108,6 +105,14 @@ namespace IPTables.Net.Iptables.Modules
             if (option == "-t")
             {
                 _ipCommand.Table = GetNextArg();
+                return 1;
+            }
+
+            if (_onlyCommand) return 0;
+
+            if (option == "-m")
+            {
+                LoadParserModule(GetNextArg(), version);
                 return 1;
             }
             if (option == "-j")
