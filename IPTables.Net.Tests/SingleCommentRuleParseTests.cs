@@ -31,6 +31,19 @@ namespace IPTables.Net.Tests
             Assert.IsTrue(irule2.Compare(irule1));
         }
 
+
+        [Test]
+        public void TestBlankComment ()
+        {
+            String rule = "-A INPUT -p tcp ! -f -j DROP -m comment --comment '' -m tcp --dport 53";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
+            IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
+
+            Assert.IsTrue(irule2.Compare(irule1));
+        }
+
         [Test]
         public void TestAddCommentAfter()
         {
