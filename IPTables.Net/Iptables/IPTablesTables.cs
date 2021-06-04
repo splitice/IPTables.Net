@@ -11,7 +11,7 @@ namespace IPTables.Net.Iptables
     /// </summary>
     internal class IPTablesTables
     {
-        static internal Dictionary<String, List<String>> Tables = new Dictionary<string, List<string>>
+        static internal Dictionary<String, List<String>> DefaultTables = new Dictionary<string, List<string>>
         {
              { "filter", new List<string>{"INPUT", "FORWARD", "OUTPUT"} },
              { "nat", new List<string>{"PREROUTING", "POSTROUTING", "OUTPUT"} },
@@ -21,12 +21,13 @@ namespace IPTables.Net.Iptables
 
         internal static List<String> GetInternalChains(String table)
         {
-            if (!Tables.ContainsKey(table))
+            List<String> ret;
+            if (!DefaultTables.TryGetValue(table, out ret))
             {
                 throw new IpTablesNetException(String.Format("Unknown Table: {0}", table));
             }
 
-            return Tables[table];
+            return ret;
         }
 
         internal static bool IsInternalChain(String table, String chain)

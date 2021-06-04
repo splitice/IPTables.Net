@@ -25,7 +25,7 @@ namespace IPTables.Net.Iptables.Modules
         {
             _arguments = arguments;
             _ipCommand = ipCommand;
-            _parsers = ModuleRegistry.PreloadOptions.ToDictionary(a=>a.Key, b=>b.Value);
+            _parsers = new Dictionary<string, ModuleEntry>(ModuleRegistry.PreloadOptions);
             _chains = chains;
             _onlyCommand = onlyCommand;
             _version = version;

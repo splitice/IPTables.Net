@@ -28,7 +28,7 @@ namespace IPTables.Net.Iptables
 
         public void AddDefaultChains(NetfilterSystem system)
         {
-            foreach (var tablePair in IPTablesTables.Tables)
+            foreach (var tablePair in IPTablesTables.DefaultTables)
             {
                 foreach (var chain in tablePair.Value)
                 {
@@ -60,16 +60,16 @@ namespace IPTables.Net.Iptables
 
         protected bool Equals(IpTablesChainSet other)
         {
-            if (_ipVersion != other._ipVersion) return false;
-            if (_chains.Count != other._chains.Count) return false;
+            if (_ipVersion != other._ipVersion || _chains.Count != other._chains.Count) return false;
+
             foreach (var c in _chains)
             {
-                if (!other.Chains.Contains(c))
+                IpTablesChain c2;
+                if (!other._chains.TryGetValue(c, out c2))
                 {
                     return false;
                 }
-
-                var c2 = other.Chains.First(a => a.Equals(c));
+                
                 if (!c2.CompareRules(c))
                 {
                     return false;
