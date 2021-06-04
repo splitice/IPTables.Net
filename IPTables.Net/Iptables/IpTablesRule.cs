@@ -459,7 +459,7 @@ namespace IPTables.Net.Iptables
                                 parser.ChainName));
                         }
 
-                        chain = parser.GetNewChain(_system, chain.IpVersion);
+                        chain = parser.GetNewChain(_system, version);
                     }
 
                     Chain = chain;
