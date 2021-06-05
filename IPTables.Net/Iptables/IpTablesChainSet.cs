@@ -14,7 +14,7 @@ namespace IPTables.Net.Iptables
 
         public IpTablesChainSet(int ipVersion)
         {
-            _chains = new HashSet<IpTablesChain>();
+            _chains = new HashSet<IpTablesChain>(new IpTablesChainDetailEquality());
             _ipVersion = ipVersion;
         }
 
@@ -75,14 +75,14 @@ namespace IPTables.Net.Iptables
             return GetChainOrDefault(chain, table) != null;
         }
 
+        public bool HasChain(IpTablesChain chain)
+        {
+            return _chains.Contains(chain);
+        }
+
         public void AddChain(IpTablesChain chain)
         {
-            if (_chains.Contains(chain)) throw new IpTablesNetException("Chain Set already contains this chain");
-
-            if (_chains.FirstOrDefault(a =>
-                ((IpTablesChain) a).Name == ((IpTablesChain) chain).Name &&
-                ((IpTablesChain) a).Table == ((IpTablesChain) chain).Table) != null)
-                throw new IpTablesNetException("Chain Set already contains a chain with the same name in this table");
+            if (HasChain(chain)) throw new IpTablesNetException("Chain already contains this set");
 
             _chains.Add(chain);
         }
@@ -126,17 +126,26 @@ namespace IPTables.Net.Iptables
 
         public IpTablesChain GetChainOrDefault(string chain, string table)
         {
-            return _chains.FirstOrDefault(a => ((IpTablesChain) a).Name == chain && ((IpTablesChain) a).Table == table);
+            IpTablesChain c = new IpTablesChain(table, chain, _ipVersion, null);
+            IpTablesChain ret;
+            _chains.TryGetValue(c, out ret);
+            return ret;
         }
 
         public IpTablesChain GetChain(string chain, string table)
         {
-            return _chains.First(a => ((IpTablesChain) a).Name == chain && ((IpTablesChain) a).Table == table);
+            var ret = GetChainOrDefault(chain, table);
+            if (ret == null)
+            {
+                throw new InvalidOperationException(String.Format("Chain {0} not found", chain));
+            }
+
+            return ret;
         }
 
         IEnumerator<IpTablesChain> IEnumerable<IpTablesChain>.GetEnumerator()
         {
-            return _chains.Cast<IpTablesChain>().GetEnumerator();
+            return _chains.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

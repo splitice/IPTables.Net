@@ -11,7 +11,7 @@ namespace IPTables.Net.Benchmark
             Stopwatch sw = new Stopwatch();
             sw.Start();
             IpTablesChainSet cs = new IpTablesChainSet(4);
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 100000; i++)
             {
                 IpTablesRule.Parse(String.Format("-A {0} -t raw -d 1.1.1.1 -m comment --comment 'test' -j ACCEPT", i), null, cs);
             }
