@@ -7,7 +7,6 @@ using System.Text;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.IpSet.Parser;
-using IPTables.Net.Netfilter;
 using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables.IpSet

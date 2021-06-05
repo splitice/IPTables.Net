@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Threading;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Adapter.Client;
-using IPTables.Net.Netfilter.TableSync;
+using IPTables.Net.Iptables.TableSync;
 
 namespace IPTables.Net.Iptables
 {
@@ -145,7 +145,7 @@ namespace IPTables.Net.Iptables
         /// <param name="sync"></param>
         /// <param name="canDeleteChain"></param>
         /// <param name="maxRetries"></param>
-        public void Sync(INetfilterSync sync,
+        public void Sync(IRuleSync sync,
             Func<IpTablesChain, bool> canDeleteChain = null, int maxRetries = 10)
         {
             using (var client = _system.GetTableAdapter(_ipVersion))

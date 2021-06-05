@@ -1,6 +1,5 @@
 ﻿using System;
 using IPTables.Net.Iptables.Modules.Core;
-using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Helpers
 {

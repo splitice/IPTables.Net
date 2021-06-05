@@ -6,8 +6,7 @@ using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Iptables.Modules.Comment;
-using IPTables.Net.Netfilter;
-using IPTables.Net.Netfilter.TableSync;
+using IPTables.Net.Iptables.TableSync;
 using IPTables.Net.TestFramework;
 using NUnit.Framework;
 
@@ -35,7 +34,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { rulesNew.Chains.First().Rules[2].GetActionCommand() };
 
-            var sync = new DefaultNetfilterSync();
+            var sync = new DefaultRuleSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -57,7 +56,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { };
 
-            var sync = new DefaultNetfilterSync();
+            var sync = new DefaultRuleSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -79,7 +78,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { };
 
-            var sync = new DefaultNetfilterSync();
+            var sync = new DefaultRuleSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -102,7 +101,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { rulesNew.Chains.First().Rules[2].GetActionCommand() };
 
-            var sync = new DefaultNetfilterSync();
+            var sync = new DefaultRuleSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -124,7 +123,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { "-D INPUT 2" };
 
-            var sync = new DefaultNetfilterSync();
+            var sync = new DefaultRuleSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -147,7 +146,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { "-D INPUT 1", "-D INPUT 2" };
 
-            var sync = new DefaultNetfilterSync();
+            var sync = new DefaultRuleSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -176,7 +175,7 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[2].GetActionCommand()
                                             };
 
-            var sync = new DefaultNetfilterSync();
+            var sync = new DefaultRuleSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -219,7 +218,7 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[1].GetActionCommand("-R")
                                             };
 
-            var sync = new DefaultNetfilterSync(CommentComparer);
+            var sync = new DefaultRuleSync(CommentComparer);
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -245,7 +244,7 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[0].GetActionCommand("-R")
                                             };
 
-            var sync = new DefaultNetfilterSync(CommentComparer);
+            var sync = new DefaultRuleSync(CommentComparer);
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -273,7 +272,7 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[1].GetActionCommand("-R")
                                             };
 
-            var sync = new DefaultNetfilterSync(CommentComparer);
+            var sync = new DefaultRuleSync(CommentComparer);
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
     }

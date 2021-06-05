@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using IPTables.Net.Exceptions;
-using IPTables.Net.Netfilter;
 using Serilog;
 
 namespace IPTables.Net.Iptables.Adapter.Client

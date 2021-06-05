@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using SystemInteract;
 
-namespace IPTables.Net.Netfilter.Utils
+namespace IPTables.Net.Iptables.Utils
 {
     public class NfAcct
     {

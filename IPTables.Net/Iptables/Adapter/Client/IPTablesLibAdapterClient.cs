@@ -8,7 +8,6 @@ using SystemInteract;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Adapter.Client.Helper;
 using IPTables.Net.Iptables.NativeLibrary;
-using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Adapter.Client
 {

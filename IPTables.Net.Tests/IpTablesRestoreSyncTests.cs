@@ -6,8 +6,7 @@ using System.Text;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Modules.Comment;
-using IPTables.Net.Netfilter;
-using IPTables.Net.Netfilter.TableSync;
+using IPTables.Net.Iptables.TableSync;
 using IPTables.Net.TestFramework;
 using IPTables.Net.TestFramework.IpTablesRestore;
 using NUnit.Framework;
@@ -95,7 +94,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -124,7 +123,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -156,7 +155,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -186,7 +185,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -216,7 +215,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -247,7 +246,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -276,7 +275,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -306,7 +305,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
             }
@@ -334,7 +333,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -368,7 +367,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -404,7 +403,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -443,7 +442,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -493,7 +492,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -526,7 +525,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -561,7 +560,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -599,7 +598,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 var output = (client as IMockIpTablesRestoreGetOutput).GetOutput();
@@ -642,7 +641,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync();
+                var sync = new DefaultRuleSync();
                 var rulesSynced = rulesOriginal.DeepClone();
                 mock.TestSync(client, rulesSynced, rulesNew, sync);
                 CollectionAssert.AreEqual(expectedCommands, (client as IMockIpTablesRestoreGetOutput).GetOutput());
@@ -675,7 +674,7 @@ namespace IPTables.Net.Tests
 
             using (var client = system.GetTableAdapter(4))
             {
-                var sync = new DefaultNetfilterSync(CommentComparer);
+                var sync = new DefaultRuleSync(CommentComparer);
                 mock.TestSync(client, rulesOriginal, rulesNew, sync);
                 var commands = (client as IMockIpTablesRestoreGetOutput).GetOutput().ToList();
                 Assert.AreEqual(5, commands.Count);

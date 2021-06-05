@@ -1,7 +1,6 @@
 ﻿using System;
 using SystemInteract;
 using IPTables.Net.Exceptions;
-using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Helpers
 {

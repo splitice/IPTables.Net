@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter.Client;
 
-namespace IPTables.Net.Netfilter.TableSync
+namespace IPTables.Net.Iptables.TableSync
 {
-    public class DefaultNetfilterSync : INetfilterSync
+    public class DefaultRuleSync : IRuleSync
     {
         private Func<IpTablesRule, bool> _shouldDelete = null;
 
@@ -40,7 +39,7 @@ namespace IPTables.Net.Netfilter.TableSync
             }
         }
 
-        public DefaultNetfilterSync(Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate = null,
+        public DefaultRuleSync(Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate = null,
             Func<IpTablesRule, bool> shouldDelete = null, IEqualityComparer<IpTablesRule> comparer = null)
         {
             ShouldDelete = shouldDelete;

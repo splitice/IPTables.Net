@@ -5,8 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Adapter.Client;
-using IPTables.Net.Netfilter;
-using IPTables.Net.Netfilter.TableSync;
+using IPTables.Net.Iptables.TableSync;
 
 [assembly: InternalsVisibleTo("IPTables.Net.Tests")]
 [assembly: InternalsVisibleTo("IPTables.Net.TestFramework")]
@@ -78,7 +77,7 @@ namespace IPTables.Net.Iptables
         public IpTablesSystem System => _system;
 
         public void Sync(IIPTablesAdapterClient client, IEnumerable<IpTablesRule> with,
-            INetfilterSync sync)
+            IRuleSync sync)
         {
             client.StartTransaction();
 
@@ -110,7 +109,7 @@ namespace IPTables.Net.Iptables
             return chainName.Length <= 30;
         }
 
-        internal void SyncInternal(IIPTablesAdapterClient client, IEnumerable<IpTablesRule> with, INetfilterSync sync)
+        internal void SyncInternal(IIPTablesAdapterClient client, IEnumerable<IpTablesRule> with, IRuleSync sync)
         {
             sync.SyncChainRules(client, with, this);
         }

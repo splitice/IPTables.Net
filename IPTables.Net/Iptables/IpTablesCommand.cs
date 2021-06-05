@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Modules;
-using IPTables.Net.Netfilter;
 using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables

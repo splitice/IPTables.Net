@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using IPTables.Net.Exceptions;
-using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Modules
 {

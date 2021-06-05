@@ -7,7 +7,6 @@ using System.Text;
 using SystemInteract;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Helpers;
-using IPTables.Net.Netfilter;
 using Serilog;
 
 namespace IPTables.Net.Iptables.IpSet.Adapter

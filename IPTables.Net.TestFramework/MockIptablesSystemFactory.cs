@@ -5,8 +5,7 @@ using System.Linq;
 using SystemInteract;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter.Client;
-using IPTables.Net.Netfilter;
-using IPTables.Net.Netfilter.TableSync;
+using IPTables.Net.Iptables.TableSync;
 using NUnit.Framework;
 
 namespace IPTables.Net.TestFramework
@@ -40,7 +39,7 @@ namespace IPTables.Net.TestFramework
             throw new NotImplementedException();
         }
 
-        public void TestSync<TSync>(IIPTablesAdapterClient client, IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, TSync sync, List<string> expectedCommands = null) where TSync: INetfilterSync
+        public void TestSync<TSync>(IIPTablesAdapterClient client, IpTablesRuleSet rulesOriginal, IpTablesRuleSet rulesNew, TSync sync, List<string> expectedCommands = null) where TSync: IRuleSync
         {
             IpTablesChain chain = rulesOriginal.Chains.First();
 

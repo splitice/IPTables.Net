@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Adapter.Client
 {

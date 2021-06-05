@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using IPTables.Net.Iptables.Adapter.Client;
-using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.TestFramework.IpTablesRestore
 {
