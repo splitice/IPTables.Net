@@ -11,26 +11,24 @@ namespace IPTables.Net.Iptables
     /// </summary>
     internal class IPTablesTables
     {
-        static internal Dictionary<String, List<String>> DefaultTables = new Dictionary<string, List<string>>
+        internal static Dictionary<string, List<string>> DefaultTables = new Dictionary<string, List<string>>
         {
-             { "filter", new List<string>{"INPUT", "FORWARD", "OUTPUT"} },
-             { "nat", new List<string>{"PREROUTING", "POSTROUTING", "OUTPUT"} },
-             { "raw", new List<string>{"PREROUTING", "OUTPUT"} },
-             { "mangle", new List<string>{"INPUT", "FORWARD", "OUTPUT", "PREROUTING", "POSTROUTING"} },
+            {"filter", new List<string> {"INPUT", "FORWARD", "OUTPUT"}},
+            {"nat", new List<string> {"PREROUTING", "POSTROUTING", "OUTPUT"}},
+            {"raw", new List<string> {"PREROUTING", "OUTPUT"}},
+            {"mangle", new List<string> {"INPUT", "FORWARD", "OUTPUT", "PREROUTING", "POSTROUTING"}}
         };
 
-        internal static List<String> GetInternalChains(String table)
+        internal static List<string> GetInternalChains(string table)
         {
-            List<String> ret;
+            List<string> ret;
             if (!DefaultTables.TryGetValue(table, out ret))
-            {
-                throw new IpTablesNetException(String.Format("Unknown Table: {0}", table));
-            }
+                throw new IpTablesNetException(string.Format("Unknown Table: {0}", table));
 
             return ret;
         }
 
-        internal static bool IsInternalChain(String table, String chain)
+        internal static bool IsInternalChain(string table, string chain)
         {
             return GetInternalChains(table).Contains(chain);
         }

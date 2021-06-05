@@ -2,7 +2,7 @@
 
 namespace IPTables.Net.Iptables.DataTypes
 {
-    public struct PortOrRange: IEquatable<PortOrRange>
+    public struct PortOrRange : IEquatable<PortOrRange>
     {
         public static PortOrRange Any = new PortOrRange(0, 0, ':');
         private readonly uint _lowerPort;
@@ -22,38 +22,26 @@ namespace IPTables.Net.Iptables.DataTypes
             _splitChar = splitChar;
         }
 
-        public uint UpperPort
-        {
-            get { return _upperPort; }
-        }
+        public uint UpperPort => _upperPort;
 
-        public uint LowerPort
-        {
-            get { return _lowerPort; }
-        }
+        public uint LowerPort => _lowerPort;
 
         public bool IsRange()
         {
             return _upperPort != _lowerPort;
         }
 
-        public override String ToString()
+        public override string ToString()
         {
-            if (LowerPort == UpperPort)
-            {
-                return LowerPort.ToString();
-            }
+            if (LowerPort == UpperPort) return LowerPort.ToString();
 
-            return String.Format("{0}{2}{1}", LowerPort, UpperPort, _splitChar);
+            return string.Format("{0}{2}{1}", LowerPort, UpperPort, _splitChar);
         }
 
         public static PortOrRange Parse(string getNextArg, char splitChar)
         {
-            string[] split = getNextArg.Split(new[] {splitChar});
-            if (split.Length == 1)
-            {
-                return new PortOrRange(uint.Parse(split[0]), splitChar);
-            }
+            var split = getNextArg.Split(new[] {splitChar});
+            if (split.Length == 1) return new PortOrRange(uint.Parse(split[0]), splitChar);
 
             return new PortOrRange(uint.Parse(split[0]), uint.Parse(split[1]), splitChar);
         }
@@ -73,7 +61,7 @@ namespace IPTables.Net.Iptables.DataTypes
         {
             unchecked
             {
-                return ((int) _lowerPort*397) ^ (int) _upperPort;
+                return ((int) _lowerPort * 397) ^ (int) _upperPort;
             }
         }
     }

@@ -16,10 +16,7 @@ namespace IPTables.Net.Iptables.Modules.Netflow
             return true;
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -30,12 +27,12 @@ namespace IPTables.Net.Iptables.Modules.Netflow
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             return "";
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -45,7 +42,7 @@ namespace IPTables.Net.Iptables.Modules.Netflow
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("NETFLOW", typeof (NetflowModule), GetOptions, true);
+            return GetTargetModuleEntryInternal("NETFLOW", typeof(NetflowModule), GetOptions, true);
         }
 
         public override bool Equals(object obj)
@@ -53,7 +50,7 @@ namespace IPTables.Net.Iptables.Modules.Netflow
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((NetflowModule)obj);
+            return Equals((NetflowModule) obj);
         }
     }
 }

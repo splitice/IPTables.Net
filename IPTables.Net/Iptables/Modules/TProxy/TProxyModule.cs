@@ -6,51 +6,44 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.TProxy
 {
-    public class TProxyModule : ModuleBase, IIpTablesModule//, IEquatable<TProxyModule>
+    public class TProxyModule : ModuleBase, IIpTablesModule //, IEquatable<TProxyModule>
     {
-        private const String OptionPort = "--on-port";
-        private const String OptionIP = "--on-ip";
-        private const String OptionMark = "--tproxy-mark";
+        private const string OptionPort = "--on-port";
+        private const string OptionIP = "--on-ip";
+        private const string OptionMark = "--tproxy-mark";
 
-        public UInt16 Port;
+        public ushort Port;
         public IPAddress Ip;
-        
-        private const int DefaultMask = unchecked((int)0xFFFFFFFF);
+
+        private const int DefaultMask = unchecked((int) 0xFFFFFFFF);
 
         private bool _markProvided = false;
         private int _mark = 0;
-        private int _mask = unchecked((int)0xFFFFFFFF);
+        private int _mask = unchecked((int) 0xFFFFFFFF);
 
         public TProxyModule(int version) : base(version)
         {
-            if(version == 4)
-            {
+            if (version == 4)
                 Ip = IPAddress.Any;
-            }
             else
-            {
                 Ip = IPAddress.IPv6Any;
-            }
         }
-        
-        public void SetMark(int value, int mask = unchecked((int)0xFFFFFFFF))
+
+        public void SetMark(int value, int mask = unchecked((int) 0xFFFFFFFF))
         {
             _mark = value;
             _mask = mask;
             _markProvided = true;
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
         public int Feed(CommandParser parser, bool not)
         {
             switch (parser.GetCurrentArg())
             {
                 case OptionPort:
-                    Port = UInt16.Parse(parser.GetNextArg());
+                    Port = ushort.Parse(parser.GetNextArg());
                     return 1;
 
                 case OptionIP:
@@ -68,7 +61,7 @@ namespace IPTables.Net.Iptables.Modules.TProxy
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -85,18 +78,18 @@ namespace IPTables.Net.Iptables.Modules.TProxy
                 sb.Append(OptionMark);
                 sb.Append(" 0x");
                 sb.Append(_mark.ToString("X"));
-                if (_mask != unchecked((int)0xFFFFFFFF))
+                if (_mask != unchecked((int) 0xFFFFFFFF))
                 {
                     sb.Append("/0x");
                     sb.Append(_mask.ToString("X"));
                 }
             }
-            
+
 
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -109,18 +102,14 @@ namespace IPTables.Net.Iptables.Modules.TProxy
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("TPROXY", typeof (TProxyModule), GetOptions, false);
+            return GetTargetModuleEntryInternal("TPROXY", typeof(TProxyModule), GetOptions, false);
         }
 
         protected bool Equals(TProxyModule other)
         {
             if (_markProvided)
-            {
                 if (_mark != other._mark || _mask != other._mask)
-                {
                     return false;
-                }
-            }
             return Port == other.Port && Equals(Ip, other.Ip);
         }
 
@@ -128,7 +117,7 @@ namespace IPTables.Net.Iptables.Modules.TProxy
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((TProxyModule) obj);
         }
 
@@ -143,6 +132,7 @@ namespace IPTables.Net.Iptables.Modules.TProxy
                     hashCode = (hashCode * 397) ^ _mark;
                     hashCode = (hashCode * 397) ^ _mask;
                 }
+
                 return hashCode;
             }
         }

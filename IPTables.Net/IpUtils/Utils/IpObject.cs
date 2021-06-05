@@ -6,15 +6,15 @@ namespace IPTables.Net.IpUtils.Utils
 {
     public class IpObject : IEquatable<IpObject>
     {
-        public Dictionary<String, String> Pairs = new Dictionary<string, string>();
-        public HashSet<String> Singles = new HashSet<string>();
+        public Dictionary<string, string> Pairs = new Dictionary<string, string>();
+        public HashSet<string> Singles = new HashSet<string>();
 
         public IpObject Clone()
         {
-            return new IpObject{Pairs = new Dictionary<string, string>(Pairs), Singles = new HashSet<string>(Singles)};
+            return new IpObject {Pairs = new Dictionary<string, string>(Pairs), Singles = new HashSet<string>(Singles)};
         }
 
-        public T GetNamed<T>(String key, Func<String,T> converter)
+        public T GetNamed<T>(string key, Func<string, T> converter)
         {
             return converter(Pairs[key]);
         }
@@ -23,14 +23,15 @@ namespace IPTables.Net.IpUtils.Utils
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Pairs.OrderBy((a) => a.GetHashCode()).SequenceEqual(other.Pairs.OrderBy((a) => a.GetHashCode())) && Singles.SetEquals(other.Singles);
+            return Pairs.OrderBy((a) => a.GetHashCode()).SequenceEqual(other.Pairs.OrderBy((a) => a.GetHashCode())) &&
+                   Singles.SetEquals(other.Singles);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((IpObject) obj);
         }
 
@@ -38,7 +39,8 @@ namespace IPTables.Net.IpUtils.Utils
         {
             unchecked
             {
-                return Singles.OfType<object>().Union(Pairs.OfType<object>()).OrderBy((a) => a.GetHashCode()).Aggregate(13, (current, m) => current * 397 + m.GetHashCode());
+                return Singles.OfType<object>().Union(Pairs.OfType<object>()).OrderBy((a) => a.GetHashCode())
+                    .Aggregate(13, (current, m) => current * 397 + m.GetHashCode());
             }
         }
     }

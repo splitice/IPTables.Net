@@ -12,15 +12,17 @@ namespace IPTables.Net.Iptables.Modules
 
         public Type Module
         {
-            get { return _module; }
-            set { _module = value;
+            get => _module;
+            set
+            {
+                _module = value;
                 Activator = GetActivator(value);
             }
         }
 
         public ObjectActivator Activator;
-        public String Name;
-        public IEnumerable<String> Options;
+        public string Name;
+        public IEnumerable<string> Options;
         public bool Polyfill;
         public bool Preloaded;
         public bool Duplicated;
@@ -35,22 +37,22 @@ namespace IPTables.Net.Iptables.Modules
 
         private static ObjectActivator GetActivator(ConstructorInfo ctor)
         {
-            Type type = ctor.DeclaringType;
-            ParameterInfo[] paramsInfo = ctor.GetParameters();
+            var type = ctor.DeclaringType;
+            var paramsInfo = ctor.GetParameters();
 
             //create a single param of type object[]
-            ParameterExpression param =
+            var param =
                 Expression.Parameter(typeof(object[]), "args");
 
-            Expression[] argsExp =
+            var argsExp =
                 new Expression[paramsInfo.Length];
 
             //pick each arg from the params array 
             //and create a typed expression of them
-            for (int i = 0; i < paramsInfo.Length; i++)
+            for (var i = 0; i < paramsInfo.Length; i++)
             {
                 Expression index = Expression.Constant(i);
-                Type paramType = paramsInfo[i].ParameterType;
+                var paramType = paramsInfo[i].ParameterType;
 
                 Expression paramAccessorExp =
                     Expression.ArrayIndex(param, index);
@@ -63,17 +65,16 @@ namespace IPTables.Net.Iptables.Modules
 
             //make a NewExpression that calls the
             //ctor with the args we just created
-            NewExpression newExp = Expression.New(ctor, argsExp);
+            var newExp = Expression.New(ctor, argsExp);
 
             //create a lambda with the New
             //Expression as body and our param object[] as arg
-            LambdaExpression lambda =
+            var lambda =
                 Expression.Lambda(typeof(ObjectActivator), newExp, param);
 
             //compile it
-            ObjectActivator compiled = (ObjectActivator)lambda.Compile();
+            var compiled = (ObjectActivator) lambda.Compile();
             return compiled;
         }
-
     }
 }

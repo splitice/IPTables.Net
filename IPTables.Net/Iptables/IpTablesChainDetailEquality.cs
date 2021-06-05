@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IPTables.Net.Iptables
 {
-    public class IpTablesChainDetailEquality: IEqualityComparer<IpTablesChain>
+    public class IpTablesChainDetailEquality : IEqualityComparer<IpTablesChain>
     {
         public bool Equals(IpTablesChain x, IpTablesChain y)
         {

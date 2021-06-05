@@ -5,7 +5,7 @@ using System.Text;
 
 namespace IPTables.Net.Iptables
 {
-    class IpTablesRuleDefinition
+    internal class IpTablesRuleDefinition
     {
     }
 }

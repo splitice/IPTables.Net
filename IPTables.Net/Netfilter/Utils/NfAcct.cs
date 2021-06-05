@@ -17,7 +17,7 @@ namespace IPTables.Net.Netfilter.Utils
             _system = system;
         }
 
-        private NfAcctUsage FromXml(String output, String name)
+        private NfAcctUsage FromXml(string output, string name)
         {
             XDocument doc;
             try
@@ -28,83 +28,76 @@ namespace IPTables.Net.Netfilter.Utils
             {
                 return null;
             }
+
             var usages = from node in doc.Descendants("obj")
-                         where node.Descendants("name").First().Value == name
-                         select new NfAcctUsage(node.Descendants("name").First().Value, ulong.Parse(node.Descendants("pkts").First().Value), ulong.Parse(node.Descendants("bytes").First().Value));
+                where node.Descendants("name").First().Value == name
+                select new NfAcctUsage(node.Descendants("name").First().Value,
+                    ulong.Parse(node.Descendants("pkts").First().Value),
+                    ulong.Parse(node.Descendants("bytes").First().Value));
 
             return usages.FirstOrDefault();
         }
 
-        public NfAcctUsage Get(String name, bool reset = false)
+        public NfAcctUsage Get(string name, bool reset = false)
         {
-            String cmd = "get {0} xml";
-            if (reset)
-            {
-                cmd += " reset";
-            }
+            var cmd = "get {0} xml";
+            if (reset) cmd += " reset";
 
-            String output, error;
-            using (var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name)))
+            string output, error;
+            using (var process = _system.StartProcess("/usr/sbin/nfacct", string.Format(cmd, name)))
             {
                 ProcessHelper.ReadToEnd(process, out output, out error);
             }
 
-            if (output.Trim().Length == 0)
-            {
-                return null;
-            }
+            if (output.Trim().Length == 0) return null;
 
             return FromXml(output, name);
         }
 
-        public bool Exist(String name)
+        public bool Exist(string name)
         {
             return Get(name) != null;
         }
 
-        public void Add(String name)
+        public void Add(string name)
         {
-            String cmd = "add {0}";
-            using (var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name)))
+            var cmd = "add {0}";
+            using (var process = _system.StartProcess("/usr/sbin/nfacct", string.Format(cmd, name)))
             {
-                String output, error;
+                string output, error;
                 ProcessHelper.ReadToEnd(process, out output, out error);
             }
         }
 
-        public void Delete(String name)
+        public void Delete(string name)
         {
-            String cmd = "del {0}";
-            using (var process = _system.StartProcess("/usr/sbin/nfacct", String.Format(cmd, name)))
+            var cmd = "del {0}";
+            using (var process = _system.StartProcess("/usr/sbin/nfacct", string.Format(cmd, name)))
             {
-                String output, error;
+                string output, error;
                 ProcessHelper.ReadToEnd(process, out output, out error);
             }
         }
 
         public List<NfAcctUsage> List(bool reset = false)
         {
-            String cmd = "list xml";
-            if (reset)
-            {
-                cmd += " reset";
-            }
+            var cmd = "list xml";
+            if (reset) cmd += " reset";
 
-            String output, error;
+            string output, error;
             using (var process = _system.StartProcess("/usr/sbin/nfacct", cmd))
             {
                 ProcessHelper.ReadToEnd(process, out output, out error);
             }
 
             //No XML returned for empty
-            if (output.Trim().Length == 0)
-            {
-                return new List<NfAcctUsage>();
-            }
+            if (output.Trim().Length == 0) return new List<NfAcctUsage>();
 
             var doc = XDocument.Parse(output);
             var usages = from node in doc.Descendants("obj")
-                         select new NfAcctUsage(node.Descendants("name").First().Value, ulong.Parse(node.Descendants("bytes").First().Value), ulong.Parse(node.Descendants("pkts").First().Value));
+                select new NfAcctUsage(node.Descendants("name").First().Value,
+                    ulong.Parse(node.Descendants("bytes").First().Value),
+                    ulong.Parse(node.Descendants("pkts").First().Value));
 
             return usages.ToList();
         }

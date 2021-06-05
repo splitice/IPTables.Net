@@ -36,7 +36,7 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public class DebugComparison: ValueComparison
+        public class DebugComparison : ValueComparison
         {
             internal IEnumerable<string> GetModuleProperties(IIpTablesModule module)
             {
@@ -58,6 +58,7 @@ namespace IPTables.Net.Iptables
                         Console.WriteLine("Rule 1 does not have module");
                         return false;
                     }
+
                     IIpTablesModule yModule;
                     if (!y._moduleData.TryGetValue(diff, out yModule))
                     {
@@ -65,8 +66,8 @@ namespace IPTables.Net.Iptables
                         return false;
                     }
 
-                    List<string> list1 = GetModuleProperties(xModule).ToList();
-                    IEnumerable<string> list2 = GetModuleProperties(yModule);
+                    var list1 = GetModuleProperties(xModule).ToList();
+                    var list2 = GetModuleProperties(yModule);
 
                     if (!list1.SequenceEqual(list2))
                     {
@@ -74,19 +75,15 @@ namespace IPTables.Net.Iptables
                     }
                     else
                     {
-                        bool found = false;
+                        var found = false;
                         foreach (var memberName in list1)
-                        {
                             if (!Dynamic.InvokeGet(xModule, memberName).Equals(Dynamic.InvokeGet(yModule, memberName)))
                             {
                                 found = true;
                                 Console.WriteLine("{0} did not match", memberName);
                             }
-                        }
-                        if (!found)
-                        {
-                            Console.WriteLine("Out of {0} members all matched unexpectedly", list1.Count);
-                        }
+
+                        if (!found) Console.WriteLine("Out of {0} members all matched unexpectedly", list1.Count);
                     }
                 }
 
@@ -101,8 +98,8 @@ namespace IPTables.Net.Iptables
         /// <summary>
         /// Data stored for each IPTables module / extension (including "core")
         /// </summary>
-        private OrderedDictionary<String, IIpTablesModule> _moduleData =
-            new OrderedDictionary<String, IIpTablesModule>();
+        private OrderedDictionary<string, IIpTablesModule> _moduleData =
+            new OrderedDictionary<string, IIpTablesModule>();
 
         /// <summary>
         /// The System hosting this IPTables rule
@@ -153,28 +150,22 @@ namespace IPTables.Net.Iptables
             var moduleData = _moduleData;
             _moduleData = new OrderedDictionary<string, IIpTablesModule>(moduleData.Count);
 
-            foreach (var module in moduleData)
-            {
-                _moduleData.Add(module.Key, module.Value.Clone() as IIpTablesModule);
-            }
+            foreach (var module in moduleData) _moduleData.Add(module.Key, module.Value.Clone() as IIpTablesModule);
 
             _cow = false;
         }
 
         #region Properties
 
-        public int ModuleCount
-        {
-            get { return _moduleData.Count; }
-        }
+        public int ModuleCount => _moduleData.Count;
 
         /// <summary>
         /// The chain in which this IPTables Rule exists
         /// </summary>
         public IpTablesChain Chain
         {
-            get { return _chain; }
-            set { _chain = value; }
+            get => _chain;
+            set => _chain = value;
         }
 
         /// <summary>
@@ -182,25 +173,19 @@ namespace IPTables.Net.Iptables
         /// </summary>
         public PacketCounters Counters
         {
-            get { return _counters; }
-            set { _counters = value; }
+            get => _counters;
+            set => _counters = value;
         }
 
         /// <summary>
         /// The Netfiler system to which this rule is tied
         /// </summary>
-        internal IpTablesSystem System
-        {
-            get { return _system; }
-        }
+        internal IpTablesSystem System => _system;
 
         /// <summary>
         /// The parameters for all modules used in the rule (internal)
         /// </summary>
-        internal OrderedDictionary<String, IIpTablesModule> ModuleDataInternal
-        {
-            get { return _moduleData; }
-        }
+        internal OrderedDictionary<string, IIpTablesModule> ModuleDataInternal => _moduleData;
 
         /// <summary>
         /// The parameters for all modules used in the rule
@@ -213,7 +198,6 @@ namespace IPTables.Net.Iptables
         #endregion
 
         #region Methods
-        
 
         public IpTablesRule ShallowClone()
         {
@@ -225,22 +209,16 @@ namespace IPTables.Net.Iptables
         /// </summary>
         /// <param name="incTable"></param>
         /// <returns></returns>
-        public String GetCommand(bool incTable = true)
+        public string GetCommand(bool incTable = true)
         {
-            String command = "";
-            if (incTable && Chain.Table != "filter")
-            {
-                command += "-t " + Chain.Table;
-            }
+            var command = "";
+            if (incTable && Chain.Table != "filter") command += "-t " + Chain.Table;
 
             foreach (var e in _moduleData)
             {
                 if (e.Value.NeedsLoading)
                 {
-                    if (command.Length != 0)
-                    {
-                        command += " ";
-                    }
+                    if (command.Length != 0) command += " ";
 
                     command += "-m " + e.Key;
                 }
@@ -248,10 +226,7 @@ namespace IPTables.Net.Iptables
                 var arguments = e.Value.GetRuleString();
                 if (arguments.Length != 0)
                 {
-                    if (command.Length != 0)
-                    {
-                        command += " ";
-                    }
+                    if (command.Length != 0) command += " ";
 
                     command += arguments;
                 }
@@ -266,19 +241,17 @@ namespace IPTables.Net.Iptables
         /// <param name="opt"></param>
         /// <param name="incTable"></param>
         /// <returns></returns>
-        public String GetActionCommand(String opt = "-A", bool incTable = true)
+        public string GetActionCommand(string opt = "-A", bool incTable = true)
         {
-            String command = opt + " " + Chain.Name + " ";
+            var command = opt + " " + Chain.Name + " ";
 
             if (opt == "-R")
             {
                 var position = Chain.GetRulePosition(this);
                 if (position == -1)
-                {
                     throw new IpTablesNetException(
                         "This rule does not have a specific position and hence can not be located for replace. Rule: " +
                         GetCommand(true));
-                }
 
                 command += position + " ";
             }
@@ -286,10 +259,7 @@ namespace IPTables.Net.Iptables
             {
                 var position = Chain.GetRulePosition(this);
                 //Posotion not specified, insert at top
-                if (position != -1)
-                {
-                    command += position + " ";
-                }
+                if (position != -1) command += position + " ";
             }
 
             command += GetCommand(incTable);
@@ -298,10 +268,7 @@ namespace IPTables.Net.Iptables
 
         public void AddRule(IIPTablesAdapterClient client)
         {
-            if (Chain == null)
-            {
-                throw new IpTablesNetException("Unknown Chain");
-            }
+            if (Chain == null) throw new IpTablesNetException("Unknown Chain");
 
             client.AddRule(this);
             Chain.AddRule(this);
@@ -315,10 +282,7 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public int IpVersion
-        {
-            get { return _chain.IpVersion; }
-        }
+        public int IpVersion => _chain.IpVersion;
 
         public void ReplaceRule(IpTablesRule with)
         {
@@ -330,10 +294,7 @@ namespace IPTables.Net.Iptables
 
         public void DeleteRule(IIPTablesAdapterClient client, bool usingPosition = true)
         {
-            if (Chain == null)
-            {
-                throw new IpTablesNetException("Unknown Chain");
-            }
+            if (Chain == null) throw new IpTablesNetException("Unknown Chain");
 
             if (usingPosition)
             {
@@ -378,13 +339,14 @@ namespace IPTables.Net.Iptables
         /// <param name="version"></param>
         /// <param name="chains"></param>
         /// <param name="createChain"></param>
-        public void AppendToRule(String rule, int version = -1, IpTablesChainSet chains = null, bool createChain = false)
+        public void AppendToRule(string rule, int version = -1, IpTablesChainSet chains = null,
+            bool createChain = false)
         {
             if (version == -1) version = IpVersion;
 
             Cow();
-            string[] arguments = ArgumentHelper.SplitArguments(rule);
-            int count = arguments.Length;
+            var arguments = ArgumentHelper.SplitArguments(rule);
+            var count = arguments.Length;
 
             try
             {
@@ -394,8 +356,8 @@ namespace IPTables.Net.Iptables
                 var parser = new CommandParser(arguments, command, chains, version);
 
                 //Parse the extra options
-                bool not = false;
-                for (int i = 0; i < count; i++)
+                var not = false;
+                for (var i = 0; i < count; i++)
                 {
                     if (arguments[i] == "!")
                     {
@@ -414,10 +376,8 @@ namespace IPTables.Net.Iptables
                     if (chain == null)
                     {
                         if (!createChain)
-                        {
-                            throw new IpTablesNetException(String.Format("Unable to find chain: {0}",
+                            throw new IpTablesNetException(string.Format("Unable to find chain: {0}",
                                 parser.ChainName));
-                        }
 
                         chain = parser.GetNewChain(_system, version);
                     }
@@ -430,7 +390,7 @@ namespace IPTables.Net.Iptables
                 throw new IpTablesParserException(rule, ex);
             }
         }
-        
+
         /// <summary>
         /// Parse a IPTables rule
         /// </summary>
@@ -441,36 +401,32 @@ namespace IPTables.Net.Iptables
         /// <param name="defaultTable"></param>
         /// <param name="createChain"></param>
         /// <returns></returns>
-        public static IpTablesRule Parse(String rule, IpTablesSystem system, IpTablesChainSet chains,
-            int version = -1, String defaultTable = "filter", ChainCreateMode createChain = ChainCreateMode.CreateNewChainIfNeeded)
+        public static IpTablesRule Parse(string rule, IpTablesSystem system, IpTablesChainSet chains,
+            int version = -1, string defaultTable = "filter",
+            ChainCreateMode createChain = ChainCreateMode.CreateNewChainIfNeeded)
         {
-            if(version == -1) version = chains.IpVersion;
+            if (version == -1) version = chains.IpVersion;
             CommandParser parser;
             var ipCmd = IpTablesCommand.Parse(rule, system, chains, out parser, version, defaultTable);
             if (ipCmd.Type != IpTablesCommandType.Add)
-            {
                 throw new IpTablesParserException(rule, "must be add rule to parse");
-            }
 
             var chain = parser.GetChainFromSet();
             if (chain == null)
             {
                 if (createChain == ChainCreateMode.DontCreateErrorInstead)
-                {
-                    throw new IpTablesParserException(rule, String.Format("Unable to find chain: {0}", parser.ChainName));
-                }
+                    throw new IpTablesParserException(rule,
+                        string.Format("Unable to find chain: {0}", parser.ChainName));
 
                 var ipVersion = chains == null ? 4 : chains.IpVersion;
                 if (createChain == ChainCreateMode.ReturnNewChain)
-                {
                     chain = parser.GetNewChain(system, ipVersion);
-                }
                 else
-                {
                     chain = parser.CreateChain(system, ipVersion);
-                }
             }
-            Debug.Assert(chain.IpVersion == version, String.Format("Chain version {0} should match {1}", chain.IpVersion, version));
+
+            Debug.Assert(chain.IpVersion == version,
+                string.Format("Chain version {0} should match {1}", chain.IpVersion, version));
             ipCmd.Rule.Chain = chain;
 
             return ipCmd.Rule;
@@ -519,17 +475,15 @@ namespace IPTables.Net.Iptables
                 var moduleEntry = ModuleRegistry.Instance.GetModule(moduleName, IpVersion);
                 module = GetModuleForParseInternal(moduleName, moduleEntry.Activator, Chain.IpVersion, index);
             }
+
             return module as T;
         }
 
         public void ReplaceRule(IIPTablesAdapterClient client, IpTablesRule withRule)
         {
-            if (Chain == null)
-            {
-                throw new IpTablesNetException("Unknown Chain");
-            }
-            int idx = Chain.Rules.IndexOf(this);
-            if( idx == -1 ) throw new IpTablesNetException("Could not find rule to replace");
+            if (Chain == null) throw new IpTablesNetException("Unknown Chain");
+            var idx = Chain.Rules.IndexOf(this);
+            if (idx == -1) throw new IpTablesNetException("Could not find rule to replace");
             client.ReplaceRule(withRule);
             Chain.Rules[idx] = withRule;
         }
@@ -543,13 +497,10 @@ namespace IPTables.Net.Iptables
 
         public bool Compare(IpTablesRule y)
         {
-            if (!Chain.Equals(y.Chain))
-            {
-                return false;
-            }
+            if (!Chain.Equals(y.Chain)) return false;
 
             var diff = _moduleData.DictionaryDiffering(y.ModuleDataInternal);
-            return diff == default(string);
+            return diff == default;
         }
     }
 }

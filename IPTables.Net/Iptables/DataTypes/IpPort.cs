@@ -15,9 +15,9 @@ namespace IPTables.Net.Iptables.DataTypes
             Port = port;
         }
 
-        public static IpPort Parse(String ipPort)
+        public static IpPort Parse(string ipPort)
         {
-            string[] p = ipPort.Split(new[] {':'});
+            var p = ipPort.Split(new[] {':'});
             IPAddress ip;
             try
             {
@@ -28,10 +28,7 @@ namespace IPTables.Net.Iptables.DataTypes
                 return Any;
             }
 
-            if (p.Length != 2)
-            {
-                return new IpPort(ip, 0);
-            }
+            if (p.Length != 2) return new IpPort(ip, 0);
 
             try
             {

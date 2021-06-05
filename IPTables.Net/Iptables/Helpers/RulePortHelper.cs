@@ -25,34 +25,27 @@ namespace IPTables.Net.Iptables.Helpers
         public static PortOrRange ExtractPort(IpTablesRule rule, bool source)
         {
             var core = rule.GetModule<CoreModule>("core");
-            if (core == null || core.Protocol.Null || core.Protocol.Not)
-            {
-                return new PortOrRange(0);
-            }
+            if (core == null || core.Protocol.Null || core.Protocol.Not) return new PortOrRange(0);
 
             var protocol = core.Protocol.Value.ToLower();
             if (protocol == "tcp")
             {
                 var pmod = rule.GetModule<TcpModule>("tcp");
-                if (pmod == null)
-                {
-                    return new PortOrRange(0);
-                }
+                if (pmod == null) return new PortOrRange(0);
                 if (source)
                     return pmod.SourcePort.Value;
                 return pmod.DestinationPort.Value;
             }
+
             if (protocol == "udp")
             {
                 var pmod = rule.GetModule<UdpModule>("udp");
-                if (pmod == null)
-                {
-                    return new PortOrRange(0);
-                }
+                if (pmod == null) return new PortOrRange(0);
                 if (source)
                     return pmod.SourcePort.Value;
                 return pmod.DestinationPort.Value;
             }
+
             return new PortOrRange(0);
         }
     }

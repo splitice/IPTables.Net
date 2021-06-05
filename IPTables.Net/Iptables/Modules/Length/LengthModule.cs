@@ -9,7 +9,7 @@ namespace IPTables.Net.Iptables.Modules.Length
 {
     public class LengthModule : ModuleBase, IEquatable<LengthModule>, IIpTablesModule
     {
-        private const String OptionLengthLong = "--length";
+        private const string OptionLengthLong = "--length";
 
         public ValueOrNot<PortOrRange> Length;
 
@@ -29,24 +29,21 @@ namespace IPTables.Net.Iptables.Modules.Length
             switch (parser.GetCurrentArg())
             {
                 case OptionLengthLong:
-                    Length = new ValueOrNot<PortOrRange>(PortOrRange.Parse(parser.GetNextArg(),':'), not);
+                    Length = new ValueOrNot<PortOrRange>(PortOrRange.Parse(parser.GetNextArg(), ':'), not);
                     return 1;
             }
 
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             return Length.ToOption(OptionLengthLong);
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -57,7 +54,7 @@ namespace IPTables.Net.Iptables.Modules.Length
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("length", typeof (LengthModule), GetOptions);
+            return GetModuleEntryInternal("length", typeof(LengthModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -65,7 +62,7 @@ namespace IPTables.Net.Iptables.Modules.Length
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((LengthModule)obj);
+            return Equals((LengthModule) obj);
         }
 
         public override int GetHashCode()

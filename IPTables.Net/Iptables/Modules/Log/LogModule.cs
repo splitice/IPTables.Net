@@ -7,12 +7,12 @@ namespace IPTables.Net.Iptables.Modules.Log
 {
     public class LogModule : ModuleBase, IEquatable<LogModule>, IIpTablesModule
     {
-        private const String OptionPrefixLong = "--log-prefix";
-        private const String OptionLevelLong = "--log-level";
+        private const string OptionPrefixLong = "--log-prefix";
+        private const string OptionLevelLong = "--log-level";
 
 
         public int LogLevel = 7;
-        public String LogPrefix;
+        public string LogPrefix;
 
         public LogModule(int version) : base(version)
         {
@@ -41,12 +41,9 @@ namespace IPTables.Net.Iptables.Modules.Log
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -63,7 +60,7 @@ namespace IPTables.Net.Iptables.Modules.Log
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -75,7 +72,7 @@ namespace IPTables.Net.Iptables.Modules.Log
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("LOG", typeof (LogModule), GetOptions);
+            return GetTargetModuleEntryInternal("LOG", typeof(LogModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -90,7 +87,7 @@ namespace IPTables.Net.Iptables.Modules.Log
         {
             unchecked
             {
-                return ((LogPrefix != null ? LogPrefix.GetHashCode() : 0)*397) ^ LogLevel;
+                return ((LogPrefix != null ? LogPrefix.GetHashCode() : 0) * 397) ^ LogLevel;
             }
         }
     }

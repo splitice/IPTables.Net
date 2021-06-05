@@ -10,22 +10,23 @@ namespace IPTables.Net.Iptables.Helpers
     {
         private static string ConvertHexStringToBase64(string hexString)
         {
-            byte[] buffer = new byte[hexString.Length / 2];
-            for (int i = 0; i < hexString.Length; i++)
+            var buffer = new byte[hexString.Length / 2];
+            for (var i = 0; i < hexString.Length; i++)
             {
                 buffer[i / 2] = Convert.ToByte(Convert.ToInt32(hexString.Substring(i, 2), 16));
                 i += 1;
             }
-            string res = Convert.ToBase64String(buffer);
+
+            var res = Convert.ToBase64String(buffer);
             return res;
         }
 
         public static string HexHash(string inputString)
         {
-            HashAlgorithm algorithm = MD5.Create();  //or use SHA1.Create();
-            StringBuilder sb = new StringBuilder();
-            byte[] bytes = algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
-            foreach (byte b in bytes)
+            HashAlgorithm algorithm = MD5.Create(); //or use SHA1.Create();
+            var sb = new StringBuilder();
+            var bytes = algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
+            foreach (var b in bytes)
                 sb.Append(b.ToString("X2"));
             var b64 = ConvertHexStringToBase64(sb.ToString()).Substring(2);
 

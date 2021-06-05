@@ -11,22 +11,22 @@ namespace IPTables.Net.Iptables.Modules.Recent
     {
         private static IPAddress IPv6Max = IPAddress.Parse("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff");
 
-        private const String OptionNameLong = "--name";
-        private const String OptionSetLong = "--set";
-        private const String OptionRsourceLong = "--rsource";
-        private const String OptionRdestLong = "--rdest";
-        private const String OptionRcheckLong = "--rcheck";
-        private const String OptionUpdateLong = "--update";
-        private const String OptionRemoveLong = "--remove";
-        private const String OptionSecondsLong = "--seconds";
-        private const String OptionReapLong = "--reap";
-        private const String OptionHitcountLong = "--hitcount";
-        private const String OptionRttlLong = "--rttl";
-        private const String OptionMaskLong = "--mask";
+        private const string OptionNameLong = "--name";
+        private const string OptionSetLong = "--set";
+        private const string OptionRsourceLong = "--rsource";
+        private const string OptionRdestLong = "--rdest";
+        private const string OptionRcheckLong = "--rcheck";
+        private const string OptionUpdateLong = "--update";
+        private const string OptionRemoveLong = "--remove";
+        private const string OptionSecondsLong = "--seconds";
+        private const string OptionReapLong = "--reap";
+        private const string OptionHitcountLong = "--hitcount";
+        private const string OptionRttlLong = "--rttl";
+        private const string OptionMaskLong = "--mask";
         public int? HitCount;
 
         public ValueOrNot<RecentMode> Mode = new ValueOrNot<RecentMode>();
-        public String Name = "DEFAULT";
+        public string Name = "DEFAULT";
 
         public bool Reap;
         public bool Rsource = true;
@@ -38,17 +38,14 @@ namespace IPTables.Net.Iptables.Modules.Recent
 
         public bool Rdest
         {
-            get { return !Rsource; }
-            set { Rsource = !value; }
+            get => !Rsource;
+            set => Rsource = !value;
         }
 
         public RecentModule(int version) : base(version)
         {
             _version = version;
-            if (version == 6)
-            {
-                Mask = IPv6Max;
-            }
+            if (version == 6) Mask = IPv6Max;
         }
 
         public bool Equals(RecentModule other)
@@ -61,14 +58,12 @@ namespace IPTables.Net.Iptables.Modules.Recent
                 if (other.Mask == null || Mask == null) return false;
 
                 if (!(Equals(other.Mask, IPAddress.Parse("255.255.255.255")) ||
-                    Equals(other.Mask, IPAddress.Parse("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"))
-                    ) && !(Equals(Mask, IPAddress.Parse("255.255.255.255")) ||
-                    Equals(Mask, IPAddress.Parse("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"))
-                    )
-                    )
-                {
+                      Equals(other.Mask, IPAddress.Parse("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"))
+                        ) && !(Equals(Mask, IPAddress.Parse("255.255.255.255")) ||
+                               Equals(Mask, IPAddress.Parse("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"))
+                        )
+                )
                     return false;
-                }
             }
 
             return Mode.Equals(other.Mode) && string.Equals(Name, other.Name) && Rsource.Equals(other.Rsource) &&
@@ -76,10 +71,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
                    Rttl.Equals(other.Rttl);
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -122,16 +114,15 @@ namespace IPTables.Net.Iptables.Modules.Recent
                     var oldAf = Mask.AddressFamily;
                     Mask = IPAddress.Parse(parser.GetNextArg());
                     if (Mask.AddressFamily != oldAf)
-                    {
-                        throw new IpTablesNetException("Invalid address family for mask "+parser.GetNextArg()+" should be "+oldAf);
-                    }
+                        throw new IpTablesNetException("Invalid address family for mask " + parser.GetNextArg() +
+                                                       " should be " + oldAf);
                     return 1;
             }
 
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -157,7 +148,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
                 }
             }
 
-            if (!String.IsNullOrEmpty(Name) && Name != "DEFAULT")
+            if (!string.IsNullOrEmpty(Name) && Name != "DEFAULT")
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
@@ -166,7 +157,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
                 sb.Append(Name);
             }
 
-            if (!(Equals(Mask, _version == 4 ? IPAddress.Broadcast : IPv6Max)))
+            if (!Equals(Mask, _version == 4 ? IPAddress.Broadcast : IPv6Max))
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
@@ -217,7 +208,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -239,7 +230,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("recent", typeof (RecentModule), GetOptions);
+            return GetModuleEntryInternal("recent", typeof(RecentModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -254,12 +245,12 @@ namespace IPTables.Net.Iptables.Modules.Recent
         {
             unchecked
             {
-                int hashCode = (Mode.GetHashCode());
-                hashCode = (hashCode*397) ^ (Name != null ? Name.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ Rsource.GetHashCode();
-                hashCode = (hashCode*397) ^ Seconds.GetHashCode();
-                hashCode = (hashCode*397) ^ Reap.GetHashCode();
-                hashCode = (hashCode*397) ^ HitCount.GetHashCode();
+                var hashCode = Mode.GetHashCode();
+                hashCode = (hashCode * 397) ^ (Name != null ? Name.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ Rsource.GetHashCode();
+                hashCode = (hashCode * 397) ^ Seconds.GetHashCode();
+                hashCode = (hashCode * 397) ^ Reap.GetHashCode();
+                hashCode = (hashCode * 397) ^ HitCount.GetHashCode();
                 hashCode = (hashCode * 397) ^ Rttl.GetHashCode();
                 hashCode = (hashCode * 397) ^ Mask.GetHashCode();
                 return hashCode;

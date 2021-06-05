@@ -12,11 +12,11 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
             Target
         }
 
-        private const String OptionUpto = "--connlimit-upto";
-        private const String OptionAbove = "--connlimit-above";
-        private const String OptionMask = "--connlimit-mask";
-        private const String OptionSourceAddr = "--connlimit-saddr";
-        private const String OptionDestinationAddr = "--connlimit-daddr";
+        private const string OptionUpto = "--connlimit-upto";
+        private const string OptionAbove = "--connlimit-above";
+        private const string OptionMask = "--connlimit-mask";
+        private const string OptionSourceAddr = "--connlimit-saddr";
+        private const string OptionDestinationAddr = "--connlimit-daddr";
 
         public int Above { get; set; } = -1;
 
@@ -35,10 +35,7 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
             return Above == other.Above && LimitMatch == other.LimitMatch && Mask == other.Mask && Upto == other.Upto;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -67,7 +64,7 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -105,7 +102,7 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -120,7 +117,7 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("connlimit", typeof (ConnlimitModule), GetOptions);
+            return GetModuleEntryInternal("connlimit", typeof(ConnlimitModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -135,10 +132,10 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
         {
             unchecked
             {
-                int hashCode = Above;
-                hashCode = (hashCode*397) ^ (int) LimitMatch;
-                hashCode = (hashCode*397) ^ Mask;
-                hashCode = (hashCode*397) ^ Upto;
+                var hashCode = Above;
+                hashCode = (hashCode * 397) ^ (int) LimitMatch;
+                hashCode = (hashCode * 397) ^ Mask;
+                hashCode = (hashCode * 397) ^ Upto;
                 return hashCode;
             }
         }

@@ -6,11 +6,11 @@ namespace IPTables.Net.Iptables.Modules.Devgroup
 {
     public class DevgroupModule : ModuleBase, IEquatable<DevgroupModule>, IIpTablesModule
     {
-        private const String OptionSrcGroup = "--src-group";
-        private const String OptionDstGroup = "--dst-group";
+        private const string OptionSrcGroup = "--src-group";
+        private const string OptionDstGroup = "--dst-group";
 
-        public ValueOrNot<UInt32> SrcGroup { get; set; }
-        public ValueOrNot<UInt32> DstGroup { get; set; }
+        public ValueOrNot<uint> SrcGroup { get; set; }
+        public ValueOrNot<uint> DstGroup { get; set; }
 
         public DevgroupModule(int version) : base(version)
         {
@@ -28,37 +28,32 @@ namespace IPTables.Net.Iptables.Modules.Devgroup
             switch (parser.GetCurrentArg())
             {
                 case OptionSrcGroup:
-                    SrcGroup = new ValueOrNot<UInt32>(FlexibleUInt32.Parse(parser.GetNextArg()), not);
+                    SrcGroup = new ValueOrNot<uint>(FlexibleUInt32.Parse(parser.GetNextArg()), not);
                     return 1;
                 case OptionDstGroup:
-                    DstGroup = new ValueOrNot<UInt32>(FlexibleUInt32.Parse(parser.GetNextArg()), not);
+                    DstGroup = new ValueOrNot<uint>(FlexibleUInt32.Parse(parser.GetNextArg()), not);
                     return 1;
             }
 
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
-            String ret = "";
-            if (!SrcGroup.Null)
-            {
-                ret = SrcGroup.ToOption(OptionSrcGroup);
-            }
+            var ret = "";
+            if (!SrcGroup.Null) ret = SrcGroup.ToOption(OptionSrcGroup);
             if (!DstGroup.Null)
             {
                 if (ret != "") ret += " ";
                 ret += DstGroup.ToOption(OptionDstGroup);
             }
+
             return ret;
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -70,7 +65,7 @@ namespace IPTables.Net.Iptables.Modules.Devgroup
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("devgroup", typeof (DevgroupModule), GetOptions);
+            return GetModuleEntryInternal("devgroup", typeof(DevgroupModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -78,7 +73,7 @@ namespace IPTables.Net.Iptables.Modules.Devgroup
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((DevgroupModule)obj);
+            return Equals((DevgroupModule) obj);
         }
 
         public override int GetHashCode()

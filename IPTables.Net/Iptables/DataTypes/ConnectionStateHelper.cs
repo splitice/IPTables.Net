@@ -5,7 +5,7 @@ namespace IPTables.Net.Iptables.DataTypes
 {
     public class ConnectionStateHelper
     {
-        public static String GetString(ConnectionState state)
+        public static string GetString(ConnectionState state)
         {
             switch (state)
             {
@@ -28,7 +28,7 @@ namespace IPTables.Net.Iptables.DataTypes
             throw new IpTablesNetException("Unknown connection state");
         }
 
-        public static ConnectionState FromString(String state)
+        public static ConnectionState FromString(string state)
         {
             switch (state)
             {

@@ -8,7 +8,7 @@ using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.IpUtils.Utils
 {
-    class IpControllerException: IpTablesNetException
+    internal class IpControllerException : IpTablesNetException
     {
         public IpControllerException()
         {

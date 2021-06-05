@@ -8,22 +8,19 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
 {
     public class Ts3InitGetPuzzleModule : ModuleBase, IIpTablesModule, IEquatable<Ts3InitGetPuzzleModule>
     {
-        private const String OptionRandomSeed = "--random-seed";
-        private const String OptionMinClient = "--min-client";
-        private const String OptionCheckCookie = "--check-cookie";
+        private const string OptionRandomSeed = "--random-seed";
+        private const string OptionMinClient = "--min-client";
+        private const string OptionCheckCookie = "--check-cookie";
 
-        public String RandomSeed;
-        public UInt64 MinClient;
+        public string RandomSeed;
+        public ulong MinClient;
         public bool CheckCookie;
 
         public Ts3InitGetPuzzleModule(int version) : base(version)
         {
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -33,7 +30,7 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
                     RandomSeed = parser.GetNextArg();
                     return 1;
                 case OptionMinClient:
-                    MinClient = UInt64.Parse(parser.GetNextArg());
+                    MinClient = ulong.Parse(parser.GetNextArg());
                     return 1;
                 case OptionCheckCookie:
                     CheckCookie = true;
@@ -43,22 +40,16 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder(OptionRandomSeed + " " + RandomSeed);
-            if (MinClient > 0)
-            {
-                sb.Append(" " + OptionMinClient + " " + MinClient);
-            }
-            if (CheckCookie)
-            {
-                sb.Append(" " + OptionCheckCookie);
-            }
+            if (MinClient > 0) sb.Append(" " + OptionMinClient + " " + MinClient);
+            if (CheckCookie) sb.Append(" " + OptionCheckCookie);
 
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             return new HashSet<string>()
             {
@@ -70,21 +61,22 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("ts3init_get_puzzle", typeof (Ts3InitGetPuzzleModule), GetOptions);
+            return GetModuleEntryInternal("ts3init_get_puzzle", typeof(Ts3InitGetPuzzleModule), GetOptions);
         }
 
         public bool Equals(Ts3InitGetPuzzleModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(RandomSeed, other.RandomSeed) && MinClient == other.MinClient && CheckCookie == other.CheckCookie;
+            return string.Equals(RandomSeed, other.RandomSeed) && MinClient == other.MinClient &&
+                   CheckCookie == other.CheckCookie;
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((Ts3InitGetPuzzleModule) obj);
         }
 
@@ -92,7 +84,7 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
         {
             unchecked
             {
-                var hashCode = (RandomSeed != null ? RandomSeed.GetHashCode() : 0);
+                var hashCode = RandomSeed != null ? RandomSeed.GetHashCode() : 0;
                 hashCode = (hashCode * 397) ^ MinClient.GetHashCode();
                 hashCode = (hashCode * 397) ^ CheckCookie.GetHashCode();
                 return hashCode;

@@ -10,7 +10,8 @@ namespace IPTables.Net.Exceptions
     public class IpTablesNetExceptionErrno : IpTablesNetException
     {
         private int _errno;
-        public IpTablesNetExceptionErrno(String message, int errno): base(message)
+
+        public IpTablesNetExceptionErrno(string message, int errno) : base(message)
         {
             _errno = errno;
         }
@@ -22,12 +23,8 @@ namespace IPTables.Net.Exceptions
 
         public IpTablesNetExceptionErrno()
         {
-            
         }
 
-        public int Errno
-        {
-            get { return _errno; }
-        }
+        public int Errno => _errno;
     }
 }

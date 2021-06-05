@@ -6,18 +6,18 @@ using IPTables.Net.Exceptions;
 
 namespace IPTables.Net.Iptables.RuleGenerator
 {
-    class RuleOutputter: IRuleGenerator
+    internal class RuleOutputter : IRuleGenerator
     {
         private List<IpTablesRule> _rules = new List<IpTablesRule>();
         private string _chain;
         private string _table;
 
-        public RuleOutputter(String chain = null, String table = null)
+        public RuleOutputter(string chain = null, string table = null)
         {
             _chain = chain;
             _table = table;
         }
- 
+
         public void AddRule(IpTablesRule rule)
         {
             _rules.Add(rule);
@@ -30,12 +30,10 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 if (_chain != null)
                 {
                     var chain = ruleSet.Chains.GetChainOrDefault(_chain, _table);
-                    if (chain == null)
-                    {
-                        throw new IpTablesNetException("Unable to find chain");
-                    }
+                    if (chain == null) throw new IpTablesNetException("Unable to find chain");
                     rule.Chain = chain;
                 }
+
                 ruleSet.AddRule(rule);
             }
         }

@@ -9,12 +9,12 @@ namespace IPTables.Net.Supporting
     {
         public static string[] SplitArguments(string commandLine)
         {
-            char[] parmChars = commandLine.ToCharArray();
-            bool inSingleQuote = false;
-            bool inDoubleQuote = false;
-            bool inSpace = true;
-            int lastChar = 0;
-            for (int index = 0; index < parmChars.Length; index++)
+            var parmChars = commandLine.ToCharArray();
+            var inSingleQuote = false;
+            var inDoubleQuote = false;
+            var inSpace = true;
+            var lastChar = 0;
+            for (var index = 0; index < parmChars.Length; index++)
             {
                 // replace double quote with 0x00 if not in single quote
                 if (parmChars[index] == '"' && !inSingleQuote)
@@ -49,9 +49,9 @@ namespace IPTables.Net.Supporting
                     inSpace = false;
                 }
             }
-            
+
             // remove all ignore chars (0x00), then split by space seperator (0x01)
-            return (new string(parmChars, 0, lastChar + 1)).Replace("\x00", "").Split(new[] { '\x01' });
+            return new string(parmChars, 0, lastChar + 1).Replace("\x00", "").Split(new[] {'\x01'});
         }
     }
 }

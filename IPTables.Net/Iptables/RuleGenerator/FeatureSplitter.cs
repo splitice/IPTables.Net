@@ -29,17 +29,18 @@ namespace IPTables.Net.Iptables.RuleGenerator
     /// </summary>
     /// <typeparam name="TGenerator"></typeparam>
     /// <typeparam name="TKey"></typeparam>
-    public class FeatureSplitter<TGenerator, TKey>: IRuleGenerator where TGenerator : IRuleGenerator
+    public class FeatureSplitter<TGenerator, TKey> : IRuleGenerator where TGenerator : IRuleGenerator
     {
         private Dictionary<TKey, IRuleGenerator> _protocols = new Dictionary<TKey, IRuleGenerator>();
         private string _chain;
         private string _table;
         private Func<IpTablesRule, TKey> _extractor;
-        private Func<String, String, TGenerator> _nestedGenerator;
+        private Func<string, string, TGenerator> _nestedGenerator;
         private Action<IpTablesRule, TKey> _setter;
         private string _commentPrefix;
 
-        public FeatureSplitter(String chain, String table, Func<IpTablesRule, TKey> extractor, Action<IpTablesRule, TKey> setter, Func<String, String, TGenerator> nestedGenerator, String commentPrefix)
+        public FeatureSplitter(string chain, string table, Func<IpTablesRule, TKey> extractor,
+            Action<IpTablesRule, TKey> setter, Func<string, string, TGenerator> nestedGenerator, string commentPrefix)
         {
             _chain = chain;
             _table = table;
@@ -51,14 +52,12 @@ namespace IPTables.Net.Iptables.RuleGenerator
 
         public void AddRule(IpTablesRule rule)
         {
-            TKey key = _extractor(rule);
+            var key = _extractor(rule);
             if (!_protocols.ContainsKey(key))
-            {
                 _protocols.Add(key, _nestedGenerator(ShortHash.HexHash(_chain + "_" + key), _table));
-            }
 
             var gen = _protocols[key];
-            
+
             gen.AddRule(rule);
         }
 
@@ -67,15 +66,13 @@ namespace IPTables.Net.Iptables.RuleGenerator
             foreach (var p in _protocols)
             {
                 var description = _chain + "_" + p.Key;
-                String chainName = ShortHash.HexHash(description);
-                if(ruleSet.Chains.HasChain(chainName, _table))
-                {
-                    throw new IpTablesNetException(String.Format("Duplicate feature split: {0}", chainName));
-                }
+                var chainName = ShortHash.HexHash(description);
+                if (ruleSet.Chains.HasChain(chainName, _table))
+                    throw new IpTablesNetException(string.Format("Duplicate feature split: {0}", chainName));
 
                 //Jump to chain
                 var chain = ruleSet.Chains.GetChainOrAdd(_chain, _table, system);
-                IpTablesRule jumpRule = new IpTablesRule(system, chain);
+                var jumpRule = new IpTablesRule(system, chain);
                 jumpRule.GetModuleOrLoad<CoreModule>("core").Jump = chainName;
                 jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix + "|FS|" + description;
                 _setter(jumpRule, p.Key);
@@ -89,9 +86,11 @@ namespace IPTables.Net.Iptables.RuleGenerator
         }
     }
 
-    public class FeatureSplitter<TGenerator> : FeatureSplitter<TGenerator, String> where TGenerator : IRuleGenerator
+    public class FeatureSplitter<TGenerator> : FeatureSplitter<TGenerator, string> where TGenerator : IRuleGenerator
     {
-        public FeatureSplitter(string chain, string table, Func<IpTablesRule, string> extractor, Action<IpTablesRule, string> setter, Func<string, string, TGenerator> nestedGenerator, string commentPrefix) : base(chain, table, extractor, setter, nestedGenerator, commentPrefix)
+        public FeatureSplitter(string chain, string table, Func<IpTablesRule, string> extractor,
+            Action<IpTablesRule, string> setter, Func<string, string, TGenerator> nestedGenerator, string commentPrefix)
+            : base(chain, table, extractor, setter, nestedGenerator, commentPrefix)
         {
         }
     }

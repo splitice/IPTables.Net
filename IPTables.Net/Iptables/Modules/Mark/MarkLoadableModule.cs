@@ -7,10 +7,10 @@ namespace IPTables.Net.Iptables.Modules.Mark
 {
     public class MarkLoadableModule : ModuleBase, IIpTablesModule, IEquatable<MarkLoadableModule>
     {
-        private const String OptionMarkLong = "--mark";
+        private const string OptionMarkLong = "--mark";
 
         public ValueOrNot<int> Mark = new ValueOrNot<int>();
-        public int Mask = unchecked ((int)0xFFFFFFFF);
+        public int Mask = unchecked((int) 0xFFFFFFFF);
 
         public MarkLoadableModule(int version) : base(version)
         {
@@ -23,10 +23,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
             return Equals(Mark, other.Mark) && Mask == other.Mask;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -35,17 +32,14 @@ namespace IPTables.Net.Iptables.Modules.Mark
                 case OptionMarkLong:
                     var s = parser.GetNextArg().Split(new char[] {'/'});
                     Mark.Set(not, FlexibleInt32.Parse(s[0]));
-                    if (s.Length != 1)
-                    {
-                        Mask = FlexibleInt32.Parse(s[1]);
-                    }
+                    if (s.Length != 1) Mask = FlexibleInt32.Parse(s[1]);
                     return 1;
             }
 
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -64,7 +58,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -82,7 +76,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((MarkLoadableModule) obj);
         }
 
@@ -90,7 +84,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
         {
             unchecked
             {
-                return (Mark.GetHashCode()*397) ^ Mask;
+                return (Mark.GetHashCode() * 397) ^ Mask;
             }
         }
     }

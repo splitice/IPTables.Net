@@ -7,14 +7,14 @@ namespace IPTables.Net.Iptables.Modules.Nflog
 {
     public class NflogModule : ModuleBase, IEquatable<NflogModule>, IIpTablesModule
     {
-        private const String OptionPrefixLong = "--nflog-prefix";
-        private const String OptionGroupLong = "--nflog-group";
-        private const String OptionRangeLong = "--nflog-range";
-        private const String OptionThresholdLong = "--nflog-threshold";
+        private const string OptionPrefixLong = "--nflog-prefix";
+        private const string OptionGroupLong = "--nflog-group";
+        private const string OptionRangeLong = "--nflog-range";
+        private const string OptionThresholdLong = "--nflog-threshold";
 
-        
+
         public int LogGroup = 0;
-        public String LogPrefix;
+        public string LogPrefix;
         public int? LogRange = null;
         public int LogThreshold = 1;
 
@@ -44,12 +44,9 @@ namespace IPTables.Net.Iptables.Modules.Nflog
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -83,7 +80,7 @@ namespace IPTables.Net.Iptables.Modules.Nflog
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -104,14 +101,15 @@ namespace IPTables.Net.Iptables.Modules.Nflog
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(LogPrefix, other.LogPrefix) && LogGroup == other.LogGroup && LogRange == other.LogRange && LogThreshold == other.LogThreshold;
+            return string.Equals(LogPrefix, other.LogPrefix) && LogGroup == other.LogGroup &&
+                   LogRange == other.LogRange && LogThreshold == other.LogThreshold;
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((NflogModule) obj);
         }
 
@@ -119,10 +117,10 @@ namespace IPTables.Net.Iptables.Modules.Nflog
         {
             unchecked
             {
-                int hashCode = (LogPrefix != null ? LogPrefix.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ LogGroup;
-                hashCode = (hashCode*397) ^ LogRange.GetHashCode();
-                hashCode = (hashCode*397) ^ LogThreshold;
+                var hashCode = LogPrefix != null ? LogPrefix.GetHashCode() : 0;
+                hashCode = (hashCode * 397) ^ LogGroup;
+                hashCode = (hashCode * 397) ^ LogRange.GetHashCode();
+                hashCode = (hashCode * 397) ^ LogThreshold;
                 return hashCode;
             }
         }

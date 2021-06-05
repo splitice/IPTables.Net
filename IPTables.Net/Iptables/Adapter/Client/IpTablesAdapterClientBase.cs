@@ -9,7 +9,7 @@ using Serilog;
 
 namespace IPTables.Net.Iptables.Adapter.Client
 {
-    abstract class IpTablesAdapterClientBase : IIPTablesAdapterClient
+    internal abstract class IpTablesAdapterClientBase : IIPTablesAdapterClient
     {
         protected static readonly ILogger Log = IPTablesLogManager.GetLogger<IIPTablesAdapterClient>();
 
@@ -25,7 +25,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public abstract void DeleteChain(string table, string chainName, bool flush = false);
 
-        public abstract void DeleteRule(String table, String chainName, int position);
+        public abstract void DeleteRule(string table, string chainName, int position);
 
         public abstract void DeleteRule(IpTablesRule rule);
 
@@ -34,22 +34,22 @@ namespace IPTables.Net.Iptables.Adapter.Client
         public abstract void ReplaceRule(IpTablesRule rule);
 
         public abstract void AddRule(IpTablesRule rule);
-        public abstract void AddRule(String rule);
+        public abstract void AddRule(string rule);
         public abstract Version GetIptablesVersion();
 
-        public abstract IpTablesChainSet ListRules(String table);
-        
+        public abstract IpTablesChainSet ListRules(string table);
 
-        public virtual List<string> GetChains(String table)
+
+        public virtual List<string> GetChains(string table)
         {
-            return ListRules(table).Chains.Select((a)=>a.Name).ToList();
+            return ListRules(table).Chains.Select((a) => a.Name).ToList();
         }
 
         public abstract void Dispose();
 
         private static Regex MatchTable = new Regex("-t ([^\\s]+)");
 
-        protected String ExtractTable(String rule)
+        protected string ExtractTable(string rule)
         {
             var m = MatchTable.Match(rule);
             if (m.Success) return m.Groups[1].Value;

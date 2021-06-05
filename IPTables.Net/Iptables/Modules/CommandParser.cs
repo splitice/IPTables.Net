@@ -12,7 +12,7 @@ namespace IPTables.Net.Iptables.Modules
         private readonly string[] _arguments;
         private readonly IpTablesChainSet _chains;
         private readonly ModuleRegistry _moduleRegistry = ModuleRegistry.Instance;
-        private readonly Dictionary<String, ModuleEntry> _parsers;
+        private readonly Dictionary<string, ModuleEntry> _parsers;
         public int Position = 0;
 
         public IpTablesCommand Command;
@@ -21,7 +21,8 @@ namespace IPTables.Net.Iptables.Modules
         private bool _onlyCommand;
         private int _version;
 
-        public CommandParser(string[] arguments, IpTablesCommand ipCommand, IpTablesChainSet chains, int version, bool onlyCommand = false)
+        public CommandParser(string[] arguments, IpTablesCommand ipCommand, IpTablesChainSet chains, int version,
+            bool onlyCommand = false)
         {
             _arguments = arguments;
             _ipCommand = ipCommand;
@@ -31,10 +32,7 @@ namespace IPTables.Net.Iptables.Modules
             _version = version;
         }
 
-        public String ChainName
-        {
-            get { return _ipCommand.ChainName; }
-        }
+        public string ChainName => _ipCommand.ChainName;
 
         public IpTablesChain GetChainFromSet()
         {
@@ -77,7 +75,7 @@ namespace IPTables.Net.Iptables.Modules
         public int FeedToSkip(int position, bool not)
         {
             Position = position;
-            String option = GetCurrentArg();
+            var option = GetCurrentArg();
 
             if (option == "-A" || option == "-D" || option == "-R" || option == "-I")
             {
@@ -89,18 +87,17 @@ namespace IPTables.Net.Iptables.Modules
                     uint offset;
                     if (uint.TryParse(nextArg, out offset))
                     {
-                        if (offset == 0)
-                        {
-                            throw new Exception("Invalid offset");
-                        }
-                        _ipCommand.Offset = ((int)offset - 1);
+                        if (offset == 0) throw new Exception("Invalid offset");
+                        _ipCommand.Offset = (int) offset - 1;
                         return 2;
                     }
 
                     _ipCommand.Offset = -1;
                 }
+
                 return 1;
             }
+
             if (option == "-t")
             {
                 _ipCommand.Table = GetNextArg();
@@ -114,26 +111,20 @@ namespace IPTables.Net.Iptables.Modules
                 LoadParserModule(GetNextArg());
                 return 1;
             }
-            if (option == "-j")
-            {
-                LoadParserModule(GetNextArg(), true);
-            }
+
+            if (option == "-j") LoadParserModule(GetNextArg(), true);
 
             //Search each module, do it verbosely from the most recently added
             ModuleEntry m;
             if (!_parsers.TryGetValue(option, out m))
             {
                 if (_polyfill.HasValue)
-                {
                     m = _polyfill.Value;
-                }
                 else
-                {
                     throw new IpTablesNetException("Unknown option: \"" + option + "\"");
-                }
             }
-            
-            IIpTablesModule module = _ipCommand.Rule.GetModuleForParseInternal(m.Name, m.Activator, _version);
+
+            var module = _ipCommand.Rule.GetModuleForParseInternal(m.Name, m.Activator, _version);
             return module.Feed(this, not);
         }
 
@@ -142,7 +133,7 @@ namespace IPTables.Net.Iptables.Modules
             ModuleEntry entry;
             if (isTarget)
             {
-                ModuleEntry? entryOrNull = _moduleRegistry.GetModuleOrDefault(name, true);
+                var entryOrNull = _moduleRegistry.GetModuleOrDefault(name, true);
 
                 //Check if this target is loadable target
                 if (!entryOrNull.HasValue)
@@ -153,20 +144,13 @@ namespace IPTables.Net.Iptables.Modules
             else
             {
                 entry = _moduleRegistry.GetModule(name, _version);
-                if (entry.Polyfill)
-                {
-                    _polyfill = entry;
-                }
+                if (entry.Polyfill) _polyfill = entry;
                 _ipCommand.Rule.LoadModule(entry);
             }
 
             if (!entry.Polyfill)
-            {
                 foreach (var o in entry.Options)
-                {
                     _parsers.Add(o, entry);
-                }
-            }
         }
     }
 }

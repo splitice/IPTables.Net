@@ -7,8 +7,8 @@ namespace IPTables.Net.Iptables.Modules.Nfqueue
 {
     public class NfqueueModule : ModuleBase, IEquatable<NfqueueModule>, IIpTablesModule
     {
-        private const String OptionQueueNumber = "--queue-num";
-        private const String OptionQueueBypass = "--queue-bypass";
+        private const string OptionQueueNumber = "--queue-num";
+        private const string OptionQueueBypass = "--queue-bypass";
 
 
         public int Num = 0;
@@ -34,12 +34,9 @@ namespace IPTables.Net.Iptables.Modules.Nfqueue
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -58,7 +55,7 @@ namespace IPTables.Net.Iptables.Modules.Nfqueue
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -84,7 +81,7 @@ namespace IPTables.Net.Iptables.Modules.Nfqueue
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((NfqueueModule) obj);
         }
 
@@ -92,7 +89,7 @@ namespace IPTables.Net.Iptables.Modules.Nfqueue
         {
             unchecked
             {
-                return (Num*397) ^ Bypass.GetHashCode();
+                return (Num * 397) ^ Bypass.GetHashCode();
             }
         }
     }

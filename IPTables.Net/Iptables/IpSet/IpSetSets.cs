@@ -11,16 +11,13 @@ namespace IPTables.Net.Iptables.IpSet
 {
     public class IpSetSets
     {
-        private Dictionary<String, IpSetSet> _sets = new Dictionary<String, IpSetSet>();
+        private Dictionary<string, IpSetSet> _sets = new Dictionary<string, IpSetSet>();
         private IpTablesSystem _system;
 
-        public IpSetSets(IEnumerable<String> commands, IpTablesSystem system)
+        public IpSetSets(IEnumerable<string> commands, IpTablesSystem system)
         {
             _system = system;
-            foreach (var command in commands)
-            {
-                Accept(command, system);
-            }
+            foreach (var command in commands) Accept(command, system);
         }
 
         public IpSetSets(IpTablesSystem system)
@@ -28,15 +25,9 @@ namespace IPTables.Net.Iptables.IpSet
             _system = system;
         }
 
-        public IEnumerable<IpSetSet> Sets
-        {
-            get { return _sets.Values; }
-        }
+        public IEnumerable<IpSetSet> Sets => _sets.Values;
 
-        public IpTablesSystem System
-        {
-            get { return _system; }
-        }
+        public IpTablesSystem System => _system;
 
         /// <summary>
         /// Sync with an IPTables system
@@ -48,10 +39,8 @@ namespace IPTables.Net.Iptables.IpSet
         {
             // Start of transaction
             if (transactional)
-            {
                 //Start transaction
                 System.SetAdapter.StartTransaction();
-            }
 
             // Dump sets in system
             var systemSets = System.SetAdapter.SaveSets(System);
@@ -59,13 +48,14 @@ namespace IPTables.Net.Iptables.IpSet
             // Check sets for need to change and install entries
             foreach (var set in _sets.Values)
             {
-                bool created = false;
+                var created = false;
                 var systemSet = systemSets.GetSetByName(set.Name);
                 if (systemSet == null)
                 {
                     //Add
                     System.SetAdapter.CreateSet(set);
-                    systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, set.Family, System, set.SyncMode, set.BitmapRange, set.CreateOptions);
+                    systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, set.Family, System, set.SyncMode,
+                        set.BitmapRange, set.CreateOptions);
                     systemSet.HashSize = set.HashSize;
                     systemSet.MaxElem = set.MaxElem;
                     created = true;
@@ -76,11 +66,12 @@ namespace IPTables.Net.Iptables.IpSet
                     if (!systemSet.SetEquals(set))
                     {
                         // Create a new set as _S of the target
-                        systemSet = new IpSetSet(set.Type, set.Name + "_S", set.Timeout, set.Family, System, set.SyncMode, set.BitmapRange, set.CreateOptions, set.Entries);
+                        systemSet = new IpSetSet(set.Type, set.Name + "_S", set.Timeout, set.Family, System,
+                            set.SyncMode, set.BitmapRange, set.CreateOptions, set.Entries);
                         systemSet.HashSize = set.HashSize;
                         systemSet.MaxElem = set.MaxElem;
                         System.SetAdapter.CreateSet(systemSet);
-                        
+
                         // Swap then destroy
                         System.SetAdapter.SwapSet(systemSet.Name, set.Name);
                         System.SetAdapter.DestroySet(systemSet.Name);
@@ -91,43 +82,28 @@ namespace IPTables.Net.Iptables.IpSet
                     }
                 }
 
-                if (set.SyncMode == IpSetSyncMode.SetAndEntries || 
-                    (set.SyncMode == IpSetSyncMode.SetAndEntriesOnCreate && created))
-                {
+                if (set.SyncMode == IpSetSyncMode.SetAndEntries ||
+                    set.SyncMode == IpSetSyncMode.SetAndEntriesOnCreate && created)
                     systemSet.SyncEntries(set);
-                }
             }
 
             // Do set deletions
             if (canDeleteSet != null)
-            {
                 foreach (var set in systemSets.Sets)
-                {
                     if (!_sets.ContainsKey(set.Name) && canDeleteSet(set))
-                    {
                         System.SetAdapter.DestroySet(set.Name);
-                    }
-                }
-            }
 
             // End of transaction
             if (transactional)
-            {
                 //End Transaction: COMMIT
                 if (!System.SetAdapter.EndTransactionCommit())
-                {
                     throw new IpTablesNetException("Failed to commit IPSets");
-                }
-            }
         }
 
 
         public IpSetSet GetSetByName(string name, bool fromSystem = false)
         {
-            if (fromSystem)
-            {
-                LoadFromSystem(name);
-            }
+            if (fromSystem) LoadFromSystem(name);
 
             IpSetSet ret = null;
             _sets.TryGetValue(name, out ret);
@@ -147,18 +123,14 @@ namespace IPTables.Net.Iptables.IpSet
         public void AddSet(IpSetSet set, bool force = false)
         {
             if (force)
-            {
                 _sets[set.Name] = set;
-            }
             else
-            {
                 _sets.Add(set.Name, set);
-            }
         }
 
-        public void Accept(String line, IpTablesSystem iptables)
+        public void Accept(string line, IpTablesSystem iptables)
         {
-            String[] split = ArgumentHelper.SplitArguments(line);
+            var split = ArgumentHelper.SplitArguments(line);
 
             if (split.Length == 0) return;
 

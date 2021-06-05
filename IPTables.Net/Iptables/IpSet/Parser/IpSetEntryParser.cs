@@ -6,7 +6,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.IpSet.Parser
 {
-    class IpSetEntryParser
+    internal class IpSetEntryParser
     {
         private readonly string[] _arguments;
         private IpSetEntry _entry;
@@ -34,26 +34,23 @@ namespace IPTables.Net.Iptables.IpSet.Parser
         /// </summary>
         /// <param name="entry"></param>
         /// <param name="value"></param>
-        public static void ParseEntry(IpSetEntry entry, String value)
+        public static void ParseEntry(IpSetEntry entry, string value)
         {
             var typeComponents = entry.Set.TypeComponents;
-            var optionComponents = value.Split(new char[] { ',' });
-            
-            for (int i = 0; i < optionComponents.Length; i++)
-            {
+            var optionComponents = value.Split(new char[] {','});
+
+            for (var i = 0; i < optionComponents.Length; i++)
                 switch (typeComponents[i])
                 {
                     case "ip":
-                        if(entry.Cidr.Prefix == 0) entry.Cidr = IpCidr.Parse(optionComponents[i]);
+                        if (entry.Cidr.Prefix == 0) entry.Cidr = IpCidr.Parse(optionComponents[i]);
                         else entry.Cidr2 = IpCidr.Parse(optionComponents[i]);
                         break;
                     case "net":
                         entry.Cidr = IpCidr.Parse(optionComponents[i]);
                         var network = entry.Cidr.GetIPNetwork();
                         if (!Equals(network.Network, entry.Cidr.Address))
-                        {
                             entry.Cidr = new IpCidr(network.Network, entry.Cidr.Prefix);
-                        }
                         break;
                     case "flag":
                     case "port":
@@ -67,12 +64,12 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                             entry.Protocol = s[0].ToLowerInvariant();
                             entry.Port = ushort.Parse(s[1]);
                         }
+
                         break;
                     case "mac":
                         entry.Mac = optionComponents[i];
                         break;
                 }
-            }
         }
 
         /// <summary>
@@ -82,15 +79,12 @@ namespace IPTables.Net.Iptables.IpSet.Parser
         /// <returns>number of arguments consumed</returns>
         public int FeedToSkip(int position, bool first)
         {
-            String option = GetCurrentArg(position);
+            var option = GetCurrentArg(position);
 
             if (first)
             {
                 var set = _sets.GetSetByName(option);
-                if (set == null)
-                {
-                    throw new IpTablesNetException($"The set {option} does not exist");
-                }
+                if (set == null) throw new IpTablesNetException($"The set {option} does not exist");
                 _entry.Set = set;
                 set.Entries.Add(_entry);
             }
@@ -108,6 +102,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
             {
                 ParseEntry(_entry, option);
             }
+
             return 0;
         }
     }

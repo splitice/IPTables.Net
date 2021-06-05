@@ -12,18 +12,20 @@ namespace IPTables.Net.Iptables.Adapter.Client
 {
     internal class IPTablesRestoreAdapterClient : IpTablesAdapterClientBase, IIPTablesAdapterClient
     {
-        private const String NoFlushOption = "--noflush";
-        private const String NoClearOption = "--noclear";
+        private const string NoFlushOption = "--noflush";
+        private const string NoClearOption = "--noclear";
 
         private readonly IpTablesSystem _system;
-        private readonly String _iptablesRestoreBinary;
-        private readonly String _iptablesSaveBinary;
+        private readonly string _iptablesRestoreBinary;
+        private readonly string _iptablesSaveBinary;
         protected bool _inTransaction = false;
         protected IPTablesRestoreTableBuilder _builder = new IPTablesRestoreTableBuilder();
         private string _iptablesBinary;
         private int _ipVersion;
 
-        public IPTablesRestoreAdapterClient(int ipVersion, IpTablesSystem system, String iptablesRestoreBinary = "iptables-restore", String iptableSaveBinary = "iptables-save", String iptablesBinary = "iptables")
+        public IPTablesRestoreAdapterClient(int ipVersion, IpTablesSystem system,
+            string iptablesRestoreBinary = "iptables-restore", string iptableSaveBinary = "iptables-save",
+            string iptablesBinary = "iptables")
         {
             _system = system;
             _iptablesRestoreBinary = iptablesRestoreBinary;
@@ -32,16 +34,17 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _ipVersion = ipVersion;
         }
 
-        private ISystemProcess StartProcess(String binary, String arguments)
+        private ISystemProcess StartProcess(string binary, string arguments)
         {
             binary = binary.TrimStart();
             //-1 or 0
             if (binary.IndexOf(" ") > 0)
             {
-                var splitBinary = binary.Split(new char[] { ' ' });
+                var splitBinary = binary.Split(new char[] {' '});
                 binary = splitBinary[0];
-                arguments = String.Join(" ",splitBinary.Skip(1).ToArray()) + " " + arguments;
+                arguments = string.Join(" ", splitBinary.Skip(1).ToArray()) + " " + arguments;
             }
+
             return _system.System.StartProcess(binary, arguments);
         }
 
@@ -49,27 +52,25 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             using (var process = StartProcess(_iptablesRestoreBinary, "--help"))
             {
-                String output, error;
+                string output, error;
                 ProcessHelper.ReadToEnd(process, out output, out error);
                 if (!error.Contains(NoClearOption))
-                {
                     throw new IpTablesNetException(
                         "iptables-restore client is not compiled from patched source (patch-iptables-restore.diff)");
-                }
             }
         }
 
-        public override void DeleteRule(String table, String chainName, int position)
+        public override void DeleteRule(string table, string chainName, int position)
         {
             if (!_inTransaction)
             {
                 //Revert to using IPTables Binary if non transactional
-                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
+                var binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.DeleteRule(table, chainName, position);
                 return;
             }
 
-            String command = "-D " + chainName + " " + position;
+            var command = "-D " + chainName + " " + position;
 
             _builder.AddCommand(table, command);
         }
@@ -79,12 +80,12 @@ namespace IPTables.Net.Iptables.Adapter.Client
             if (!_inTransaction)
             {
                 //Revert to using IPTables Binary if non transactional
-                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
+                var binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.DeleteRule(rule);
                 return;
             }
 
-            String command = rule.GetActionCommand("-D", false);
+            var command = rule.GetActionCommand("-D", false);
             _builder.AddCommand(rule.Chain.Table, command);
         }
 
@@ -93,12 +94,12 @@ namespace IPTables.Net.Iptables.Adapter.Client
             if (!_inTransaction)
             {
                 //Revert to using IPTables Binary if non transactional
-                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
+                var binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.InsertRule(rule);
                 return;
             }
 
-            String command = rule.GetActionCommand("-I", false);
+            var command = rule.GetActionCommand("-I", false);
             _builder.AddCommand(rule.Chain.Table, command);
         }
 
@@ -107,11 +108,11 @@ namespace IPTables.Net.Iptables.Adapter.Client
             if (!_inTransaction)
             {
                 //Revert to using IPTables Binary if non transactional
-                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
+                var binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.ReplaceRule(rule);
             }
 
-            String command = rule.GetActionCommand("-R", false);
+            var command = rule.GetActionCommand("-R", false);
             _builder.AddCommand(rule.Chain.Table, command);
         }
 
@@ -120,16 +121,16 @@ namespace IPTables.Net.Iptables.Adapter.Client
             if (!_inTransaction)
             {
                 //Revert to using IPTables Binary if non transactional
-                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
+                var binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.AddRule(rule);
                 return;
             }
 
-            String command = rule.GetActionCommand("-A", false);
+            var command = rule.GetActionCommand("-A", false);
             _builder.AddCommand(rule.Chain.Table, command);
         }
 
-        public override void AddRule(String command)
+        public override void AddRule(string command)
         {
             var table = ExtractTable(command);
             _builder.AddCommand(table, command);
@@ -137,7 +138,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override Version GetIptablesVersion()
         {
-            IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
+            var binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
             return binaryClient.GetIptablesVersion();
         }
 
@@ -145,14 +146,11 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             if (_inTransaction)
             {
-                if (_builder.HasChain(table, chainName))
-                {
-                    return true;
-                }
+                if (_builder.HasChain(table, chainName)) return true;
                 return false;
             }
 
-            IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
+            var binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
             return binaryClient.HasChain(table, chainName);
         }
 
@@ -161,7 +159,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             if (!_inTransaction)
             {
                 //Revert to using IPTables Binary if non transactional
-                IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
+                var binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.AddChain(table, chainName);
             }
 
@@ -176,43 +174,37 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 return;
             }
 
-            IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
+            var binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
             binaryClient.DeleteChain(table, chainName);
         }
 
-        public override IpTablesChainSet ListRules(String table)
+        public override IpTablesChainSet ListRules(string table)
         {
-            using (ISystemProcess process = StartProcess(_iptablesSaveBinary, String.Format("-c -t {0}", table)))
+            using (var process = StartProcess(_iptablesSaveBinary, string.Format("-c -t {0}", table)))
             {
-                String toEnd, error;
+                string toEnd, error;
                 ProcessHelper.ReadToEnd(process, out toEnd, out error);
-                return Helper.IPTablesSaveParser.GetRulesFromOutput(_system, toEnd, table, _ipVersion);
+                return IPTablesSaveParser.GetRulesFromOutput(_system, toEnd, table, _ipVersion);
             }
         }
 
         public override void StartTransaction()
         {
-            if (_inTransaction)
-            {
-                throw new IpTablesNetException("IPTables transaction already started");
-            }
+            if (_inTransaction) throw new IpTablesNetException("IPTables transaction already started");
             _inTransaction = true;
         }
 
         public override void EndTransactionCommit()
         {
-            if (!_inTransaction)
-            {
-                return;
-            }
+            if (!_inTransaction) return;
 
-            using (ISystemProcess process = StartProcess(_iptablesRestoreBinary, NoFlushOption + " " + NoClearOption))
+            using (var process = StartProcess(_iptablesRestoreBinary, NoFlushOption + " " + NoClearOption))
             {
                 if (_builder.WriteOutput(process.StandardInput))
                 {
                     process.StandardInput.Flush();
                     process.StandardInput.Close();
-                    String output, error;
+                    string output, error;
                     ProcessHelper.ReadToEnd(process, out output, out error);
 
                     //OK
@@ -221,7 +213,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                         //ERR: INVALID COMMAND LINE
                         if (process.ExitCode == 2)
                         {
-                            MemoryStream ms = new MemoryStream();
+                            var ms = new MemoryStream();
                             var sw = new StreamWriter(ms);
                             _builder.WriteOutput(sw);
                             sw.Flush();
@@ -238,7 +230,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                         {
                             Log.Error("An General Error Occured: {error}", error);
 
-                            MemoryStream ms = new MemoryStream();
+                            var ms = new MemoryStream();
                             var sw = new StreamWriter(ms);
                             _builder.WriteOutput(sw);
                             sw.Flush();
@@ -273,7 +265,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 }
                 catch
                 {
-
                 }
             }
 
@@ -286,6 +277,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _builder.Clear();
             _inTransaction = false;
         }
+
         ~IPTablesRestoreAdapterClient()
         {
             Dispose();
@@ -294,10 +286,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override void Dispose()
         {
-            if (_inTransaction)
-            {
-                throw new IpTablesNetException("Transaction active, must be commited or rolled back.");
-            }
+            if (_inTransaction) throw new IpTablesNetException("Transaction active, must be commited or rolled back.");
         }
     }
 }

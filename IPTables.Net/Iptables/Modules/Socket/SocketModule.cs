@@ -6,7 +6,7 @@ namespace IPTables.Net.Iptables.Modules.Socket
 {
     public class SocketModule : ModuleBase, IEquatable<SocketModule>, IIpTablesModule
     {
-        private const String OptionTransparent = "--transparent";
+        private const string OptionTransparent = "--transparent";
 
         public bool Transparent;
 
@@ -33,21 +33,15 @@ namespace IPTables.Net.Iptables.Modules.Socket
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
-            if (Transparent)
-            {
-                return OptionTransparent;
-            }
+            if (Transparent) return OptionTransparent;
             return "";
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -66,7 +60,7 @@ namespace IPTables.Net.Iptables.Modules.Socket
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((SocketModule)obj);
+            return Equals((SocketModule) obj);
         }
 
         public override int GetHashCode()

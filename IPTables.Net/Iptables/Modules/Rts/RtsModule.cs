@@ -6,29 +6,22 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Rts
 {
-    public class RtsModule : ModuleBase, IIpTablesModule//, IEquatable<RtsModule>
+    public class RtsModule : ModuleBase, IIpTablesModule //, IEquatable<RtsModule>
     {
-        private const String OptionDst = "--rts-dst";
-        
+        private const string OptionDst = "--rts-dst";
+
         public IPAddress Dst;
-        
+
 
         public RtsModule(int version) : base(version)
         {
-            if(version == 4)
-            {
+            if (version == 4)
                 Dst = IPAddress.Any;
-            }
             else
-            {
                 Dst = IPAddress.IPv6Any;
-            }
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -42,7 +35,7 @@ namespace IPTables.Net.Iptables.Modules.Rts
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -55,7 +48,7 @@ namespace IPTables.Net.Iptables.Modules.Rts
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -66,7 +59,7 @@ namespace IPTables.Net.Iptables.Modules.Rts
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("RTS", typeof (RtsModule), GetOptions, false);
+            return GetTargetModuleEntryInternal("RTS", typeof(RtsModule), GetOptions, false);
         }
 
         protected bool Equals(RtsModule other)
@@ -78,7 +71,7 @@ namespace IPTables.Net.Iptables.Modules.Rts
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((RtsModule) obj);
         }
 
@@ -86,7 +79,7 @@ namespace IPTables.Net.Iptables.Modules.Rts
         {
             unchecked
             {
-                return (Dst != null ? Dst.GetHashCode() : 0);
+                return Dst != null ? Dst.GetHashCode() : 0;
             }
         }
     }

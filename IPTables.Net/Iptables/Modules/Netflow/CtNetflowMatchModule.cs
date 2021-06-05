@@ -6,7 +6,7 @@ namespace IPTables.Net.Iptables.Modules.Netflow
 {
     public class CtNetflowMatchModule : ModuleBase, IEquatable<CtNetflowMatchModule>, IIpTablesModule
     {
-        private const String OptionFwStatus = "--fw_status";
+        private const string OptionFwStatus = "--fw_status";
 
         public int FwStatus;
 
@@ -33,21 +33,15 @@ namespace IPTables.Net.Iptables.Modules.Netflow
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
-            if (FwStatus != 0)
-            {
-                return OptionFwStatus + " " + FwStatus;
-            }
+            if (FwStatus != 0) return OptionFwStatus + " " + FwStatus;
             return "";
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -66,7 +60,7 @@ namespace IPTables.Net.Iptables.Modules.Netflow
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((CtNetflowMatchModule)obj);
+            return Equals((CtNetflowMatchModule) obj);
         }
 
         public override int GetHashCode()

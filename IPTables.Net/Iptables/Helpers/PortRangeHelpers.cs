@@ -16,44 +16,44 @@ namespace IPTables.Net.Iptables.Helpers
     {
         public static List<PortOrRange> CompressRanges(List<PortOrRange> ranges)
         {
-            List<PortOrRange> ret = new List<PortOrRange>();
-            PortOrRange start = new PortOrRange(0);
+            var ret = new List<PortOrRange>();
+            var start = new PortOrRange(0);
             int previous = -1, previousLower = -1;
-            foreach (PortOrRange current in ranges.OrderBy((a)=>a.LowerPort))
+            foreach (var current in ranges.OrderBy((a) => a.LowerPort))
             {
-                if (current.LowerPort == (previous + 1))
+                if (current.LowerPort == previous + 1)
                 {
-                    if (start.LowerPort == 0)
-                    {
-                        start = new PortOrRange((uint)previousLower, current.UpperPort);
-                    }
+                    if (start.LowerPort == 0) start = new PortOrRange((uint) previousLower, current.UpperPort);
                 }
                 else
                 {
                     if (start.UpperPort != 0)
                     {
-                        ret.Add(new PortOrRange(start.LowerPort, (uint)previous));
+                        ret.Add(new PortOrRange(start.LowerPort, (uint) previous));
                         start = new PortOrRange(0);
                     }
                     else if (previous != -1)
                     {
-                        ret.Add(new PortOrRange((uint)previousLower,(uint)previous));
+                        ret.Add(new PortOrRange((uint) previousLower, (uint) previous));
                     }
                 }
-                previous = (int)current.UpperPort;
+
+                previous = (int) current.UpperPort;
                 previousLower = (int) current.LowerPort;
             }
+
             if (start.UpperPort != 0)
             {
-                ret.Add(new PortOrRange(start.LowerPort, (uint)previous));
+                ret.Add(new PortOrRange(start.LowerPort, (uint) previous));
                 // ReSharper disable RedundantAssignment
                 start = new PortOrRange(0);
                 // ReSharper restore RedundantAssignment
             }
             else if (previous != -1)
             {
-                ret.Add(new PortOrRange((uint)previousLower,(uint)previous));
+                ret.Add(new PortOrRange((uint) previousLower, (uint) previous));
             }
+
             return ret;
         }
 
@@ -69,6 +69,7 @@ namespace IPTables.Net.Iptables.Helpers
                     ruleCount++;
                     count = 0;
                 }
+
                 if (count == 15)
                 {
                     ruleCount++;
@@ -77,14 +78,11 @@ namespace IPTables.Net.Iptables.Helpers
 
                 var e = ports[i];
                 if (e.IsRange())
-                {
                     count += 2;
-                }
                 else
-                {
                     count++;
-                }
             }
+
             return ruleCount;
         }
 
@@ -94,17 +92,14 @@ namespace IPTables.Net.Iptables.Helpers
             {
                 if (a.IsRange() && b.IsRange() || !a.IsRange() && !b.IsRange())
                 {
-                    if (a.LowerPort < b.LowerPort)
-                    {
-                        return -1;
-                    }
+                    if (a.LowerPort < b.LowerPort) return -1;
                     return 1;
                 }
+
                 if (a.IsRange()) return -1;
                 return 1;
             });
         }
-
 
 
         public static void DestinationPortSetter(IpTablesRule rule, List<PortOrRange> ranges)
@@ -130,27 +125,22 @@ namespace IPTables.Net.Iptables.Helpers
             }
         }
 
-        public static void DestinationPortIpSetter(IpTablesRule rule, List<PortOrRange> ranges, string setName, IpSetSets sets)
+        public static void DestinationPortIpSetter(IpTablesRule rule, List<PortOrRange> ranges, string setName,
+            IpSetSets sets)
         {
-            IpTablesSystem system = rule.Chain.System as IpTablesSystem;
+            var system = rule.Chain.System as IpTablesSystem;
             IpSetSet set;
             if (!sets.HasSet(setName))
             {
-                set = new IpSetSet(IpSetType.Bitmap | IpSetType.Port, setName, 0, PosixFamilyHelpers.GetIpFamily(rule.IpVersion), system, IpSetSyncMode.SetAndEntries);
+                set = new IpSetSet(IpSetType.Bitmap | IpSetType.Port, setName, 0,
+                    PosixFamilyHelpers.GetIpFamily(rule.IpVersion), system, IpSetSyncMode.SetAndEntries);
                 sets.AddSet(set);
 
                 foreach (var r in ranges)
-                {
-                    for (uint i = r.LowerPort; i <= r.UpperPort; i++)
-                    {
-                        set.Entries.Add(new IpSetEntry(set, null, null, (ushort)i));
-                    }
-                }
+                    for (var i = r.LowerPort; i <= r.UpperPort; i++)
+                        set.Entries.Add(new IpSetEntry(set, null, null, (ushort) i));
 
-                if (set.Entries.Count == 0)
-                {
-                    throw new Exception("Entries should not be zero");
-                }
+                if (set.Entries.Count == 0) throw new Exception("Entries should not be zero");
             }
             else
             {
@@ -160,20 +150,15 @@ namespace IPTables.Net.Iptables.Helpers
             var ipsetModule = rule.GetModuleOrLoad<SetMatchModule>("set");
             ipsetModule.MatchSetFlags = "dst";
 
-            if (set.Entries.Count >= UInt16.MaxValue / 2)
+            if (set.Entries.Count >= ushort.MaxValue / 2)
             {
-                HashSet<UInt16> ports = new HashSet<ushort>(set.Entries.Select(a => (UInt16)a.Port));
+                var ports = new HashSet<ushort>(set.Entries.Select(a => (ushort) a.Port));
                 set.Entries.Clear();
-                for (UInt16 i = 1; i < UInt16.MaxValue; i++)
-                {
+                for (ushort i = 1; i < ushort.MaxValue; i++)
                     if (!ports.Contains(i))
                         set.Entries.Add(new IpSetEntry(set, null, null, i));
-                }
 
-                if (set.Entries.Count == 0)
-                {
-                    set.Entries.Add(new IpSetEntry(set, null, null, 0)); // a hack
-                }
+                if (set.Entries.Count == 0) set.Entries.Add(new IpSetEntry(set, null, null, 0)); // a hack
 
                 ipsetModule.MatchSet = new ValueOrNot<string>(setName, true);
             }
@@ -182,6 +167,7 @@ namespace IPTables.Net.Iptables.Helpers
                 ipsetModule.MatchSet = new ValueOrNot<string>(setName);
             }
         }
+
         public static void SourcePortSetter(IpTablesRule rule, List<PortOrRange> ranges)
         {
             var protocol = rule.GetModule<CoreModule>("core").Protocol;

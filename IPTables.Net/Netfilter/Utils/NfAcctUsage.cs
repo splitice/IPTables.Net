@@ -20,20 +20,20 @@ namespace IPTables.Net.Netfilter.Utils
 
         public ulong Bytes
         {
-            get { return _bytes; }
-            set { _bytes = value; }
+            get => _bytes;
+            set => _bytes = value;
         }
 
         public ulong Packets
         {
-            get { return _packets; }
-            set { _packets = value; }
+            get => _packets;
+            set => _packets = value;
         }
 
         public string Name
         {
-            get { return _name; }
-            set { _name = value; }
+            get => _name;
+            set => _name = value;
         }
     }
 }

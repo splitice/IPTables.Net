@@ -8,18 +8,15 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
 {
     public class Ts3InitSetCookieModule : ModuleBase, IIpTablesModule, IEquatable<Ts3InitSetCookieModule>
     {
-        private const String OptionRandomSeed = "--random-seed";
+        private const string OptionRandomSeed = "--random-seed";
 
-        public String RandomSeed;
+        public string RandomSeed;
 
         public Ts3InitSetCookieModule(int version) : base(version)
         {
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -33,12 +30,12 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
-            return OptionRandomSeed + " "+ RandomSeed;
+            return OptionRandomSeed + " " + RandomSeed;
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             return new HashSet<string>()
             {
@@ -48,7 +45,8 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("TS3INIT_SET_COOKIE", typeof (Ts3InitSetCookieModule), GetOptions, false);
+            return GetTargetModuleEntryInternal("TS3INIT_SET_COOKIE", typeof(Ts3InitSetCookieModule), GetOptions,
+                false);
         }
 
         public bool Equals(Ts3InitSetCookieModule other)
@@ -62,13 +60,13 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((Ts3InitSetCookieModule) obj);
         }
 
         public override int GetHashCode()
         {
-            return (RandomSeed != null ? RandomSeed.GetHashCode() : 0);
+            return RandomSeed != null ? RandomSeed.GetHashCode() : 0;
         }
     }
 }

@@ -7,9 +7,9 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
 {
     public class NfacctModule : ModuleBase, IEquatable<NfacctModule>, IIpTablesModule
     {
-        private const String OptionNameLong = "--nfacct-name";
+        private const string OptionNameLong = "--nfacct-name";
 
-        public String Name;
+        public string Name;
 
         public NfacctModule(int version) : base(version)
         {
@@ -34,16 +34,13 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
-            if (!String.IsNullOrEmpty(Name))
+            if (!string.IsNullOrEmpty(Name))
             {
                 sb.Append("--nfacct-name ");
                 sb.Append(ShellHelper.EscapeArguments(Name));
@@ -52,7 +49,7 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -63,7 +60,7 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("nfacct", typeof (NfacctModule), GetOptions);
+            return GetModuleEntryInternal("nfacct", typeof(NfacctModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -76,7 +73,7 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
 
         public override int GetHashCode()
         {
-            return (Name != null ? Name.GetHashCode() : 0);
+            return Name != null ? Name.GetHashCode() : 0;
         }
     }
 }

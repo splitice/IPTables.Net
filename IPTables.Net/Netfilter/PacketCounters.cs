@@ -21,7 +21,7 @@ namespace IPTables.Net.Netfilter
             return Bytes != -1 || Packets != -1;
         }
 
-        static PacketCounters NotCounting()
+        private static PacketCounters NotCounting()
         {
             return new PacketCounters {Bytes = -1, Packets = -1};
         }

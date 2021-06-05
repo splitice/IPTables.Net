@@ -12,21 +12,21 @@ namespace IPTables.Net.Iptables.Adapter.Client
         void EndTransactionRollback();
 
         //Chains
-        bool HasChain(String table, String chainName);
-        void AddChain(String table, String chainName);
+        bool HasChain(string table, string chainName);
+        void AddChain(string table, string chainName);
         void DeleteChain(string table, string chainName, bool flush = false);
 
         //Rules
-        void DeleteRule(String table, String chainName, int position);
-        new IpTablesChainSet ListRules(String table);
+        void DeleteRule(string table, string chainName, int position);
+        new IpTablesChainSet ListRules(string table);
 
 
         void DeleteRule(IpTablesRule rule);
         void InsertRule(IpTablesRule rule);
         void ReplaceRule(IpTablesRule rule);
         void AddRule(IpTablesRule rule);
-        void AddRule(String rule);
+        void AddRule(string rule);
         Version GetIptablesVersion();
-        List<String> GetChains(String table);
+        List<string> GetChains(string table);
     }
 }

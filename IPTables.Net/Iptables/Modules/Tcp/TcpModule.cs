@@ -7,17 +7,19 @@ namespace IPTables.Net.Iptables.Modules.Tcp
 {
     public class TcpModule : ModuleBase, IIpTablesModule, IEquatable<TcpModule>
     {
-        private const String OptionSourcePortLong = "--source-port";
-        private const String OptionSourcePortShort = "--sport";
-        private const String OptionDestinationPortLong = "--destination-port";
-        private const String OptionDestinationPortShort = "--dport";
-        private const String OptionDestinationTcpFlags = "--tcp-flags";
-        private const String OptionSyn = "--syn";
-        private const String OptionTcpOption = "--tcp-option";
+        private const string OptionSourcePortLong = "--source-port";
+        private const string OptionSourcePortShort = "--sport";
+        private const string OptionDestinationPortLong = "--destination-port";
+        private const string OptionDestinationPortShort = "--dport";
+        private const string OptionDestinationTcpFlags = "--tcp-flags";
+        private const string OptionSyn = "--syn";
+        private const string OptionTcpOption = "--tcp-option";
 
         public ValueOrNot<PortOrRange> DestinationPort = new ValueOrNot<PortOrRange>();
         public ValueOrNot<PortOrRange> SourcePort = new ValueOrNot<PortOrRange>();
+
         public ValueOrNot<TcpFlagMatch> TcpFlags = new ValueOrNot<TcpFlagMatch>();
+
         //--syn
         public ValueOrNot<int> TcpOption = new ValueOrNot<int>();
 
@@ -33,10 +35,7 @@ namespace IPTables.Net.Iptables.Modules.Tcp
                    Equals(TcpFlags, other.TcpFlags) && Equals(TcpOption, other.TcpOption);
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -53,7 +52,8 @@ namespace IPTables.Net.Iptables.Modules.Tcp
                     return 1;
 
                 case OptionDestinationTcpFlags:
-                    TcpFlags = new ValueOrNot<TcpFlagMatch>(TcpFlagMatch.Parse(parser.GetNextArg(), parser.GetNextArg(2)), not);
+                    TcpFlags = new ValueOrNot<TcpFlagMatch>(
+                        TcpFlagMatch.Parse(parser.GetNextArg(), parser.GetNextArg(2)), not);
                     return 2;
 
                 case OptionSyn:
@@ -68,7 +68,7 @@ namespace IPTables.Net.Iptables.Modules.Tcp
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -103,7 +103,7 @@ namespace IPTables.Net.Iptables.Modules.Tcp
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -120,7 +120,7 @@ namespace IPTables.Net.Iptables.Modules.Tcp
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("tcp", typeof (TcpModule), GetOptions);
+            return GetModuleEntryInternal("tcp", typeof(TcpModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -135,10 +135,10 @@ namespace IPTables.Net.Iptables.Modules.Tcp
         {
             unchecked
             {
-                int hashCode = (DestinationPort.GetHashCode());
-                hashCode = (hashCode*397) ^ (SourcePort.GetHashCode());
-                hashCode = (hashCode*397) ^ (TcpFlags.GetHashCode());
-                hashCode = (hashCode*397) ^ (TcpOption.GetHashCode());
+                var hashCode = DestinationPort.GetHashCode();
+                hashCode = (hashCode * 397) ^ SourcePort.GetHashCode();
+                hashCode = (hashCode * 397) ^ TcpFlags.GetHashCode();
+                hashCode = (hashCode * 397) ^ TcpOption.GetHashCode();
                 return hashCode;
             }
         }

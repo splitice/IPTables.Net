@@ -23,21 +23,21 @@ namespace IPTables.Net.Iptables.DataTypes
         public IpCidr(IPAddress address)
         {
             Address = address;
-            Prefix = (address.AddressFamily == AddressFamily.InterNetworkV6) ? (uint)128 : 32;
+            Prefix = address.AddressFamily == AddressFamily.InterNetworkV6 ? (uint) 128 : 32;
         }
 
         public BigInteger Addresses
         {
             get
             {
-                int max = (Address.AddressFamily == AddressFamily.InterNetworkV6) ? 128 : 32;
-                return BigInteger.Pow(2, max - (int)Prefix);
+                var max = Address.AddressFamily == AddressFamily.InterNetworkV6 ? 128 : 32;
+                return BigInteger.Pow(2, max - (int) Prefix);
             }
         }
 
         public IPNetwork GetIPNetwork()
         {
-            return IPNetwork.Parse(Address, IPNetwork.ToNetmask((byte)Prefix, Address.AddressFamily));
+            return IPNetwork.Parse(Address, IPNetwork.ToNetmask((byte) Prefix, Address.AddressFamily));
         }
 
         public bool Equals(IpCidr other)
@@ -45,9 +45,9 @@ namespace IPTables.Net.Iptables.DataTypes
             return Equals(Address, other.Address) && Prefix == other.Prefix;
         }
 
-        public static IpCidr Parse(String cidr)
+        public static IpCidr Parse(string cidr)
         {
-            string[] p = cidr.Split(new[] {'/'});
+            var p = cidr.Split(new[] {'/'});
             IPAddress ip;
             try
             {
@@ -55,36 +55,25 @@ namespace IPTables.Net.Iptables.DataTypes
             }
             catch (Exception ex)
             {
-                throw new IpTablesNetException("Invalid IP Address: "+p[0], ex);
+                throw new IpTablesNetException("Invalid IP Address: " + p[0], ex);
             }
 
-            if (p.Length == 1)
-            {
-                return new IpCidr(ip);
-            }
+            if (p.Length == 1) return new IpCidr(ip);
 
-            if (Equals(ip, IPAddress.Any))
-            {
-                return new IpCidr(ip, 0);
-            }
+            if (Equals(ip, IPAddress.Any)) return new IpCidr(ip, 0);
 
             try
             {
-                uint cidrN = uint.Parse(p[1]);
+                var cidrN = uint.Parse(p[1]);
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    if (cidrN > 32)
-                    {
-                        throw new IpTablesNetException("Invalid CIDR number (>32) number: " + cidrN);
-                    }
+                    if (cidrN > 32) throw new IpTablesNetException("Invalid CIDR number (>32) number: " + cidrN);
                 }
                 else if (ip.AddressFamily == AddressFamily.InterNetworkV6)
                 {
-                    if (cidrN > 128)
-                    {
-                        throw new IpTablesNetException("Invalid CIDR number (>128) number: " + cidrN);
-                    }
+                    if (cidrN > 128) throw new IpTablesNetException("Invalid CIDR number (>128) number: " + cidrN);
                 }
+
                 return new IpCidr(ip, cidrN);
             }
             catch (Exception ex)
@@ -125,19 +114,14 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public override string ToString()
         {
-            if ((Prefix == 32 && Address.AddressFamily == AddressFamily.InterNetwork) || Prefix == 128)
-            {
+            if (Prefix == 32 && Address.AddressFamily == AddressFamily.InterNetwork || Prefix == 128)
                 return Address.ToString();
-            }
             return Address + "/" + Prefix;
         }
 
         public int CompareTo(object obj)
         {
-            if (obj is IpCidr)
-            {
-                return CompareTo((IpCidr) obj);
-            }
+            if (obj is IpCidr) return CompareTo((IpCidr) obj);
             return 0;
         }
 
@@ -148,9 +132,7 @@ namespace IPTables.Net.Iptables.DataTypes
 
             if (thisNetwork.Network.ToInt() <= innerNetwork.Network.ToInt() &&
                 thisNetwork.Broadcast.ToInt() >= innerNetwork.Broadcast.ToInt())
-            {
                 return true;
-            }
 
             return false;
         }
@@ -161,9 +143,7 @@ namespace IPTables.Net.Iptables.DataTypes
             var innerNetwork = addr.ToInt();
             if (thisNetwork.Network.ToInt() <= innerNetwork &&
                 thisNetwork.Broadcast.ToInt() >= innerNetwork)
-            {
                 return true;
-            }
 
             return false;
         }
@@ -183,20 +163,14 @@ namespace IPTables.Net.Iptables.DataTypes
             // IPv4
             if (findAddress.AddressFamily == AddressFamily.InterNetwork)
             {
-                if (u == 32)
-                {
-                    return new IpCidr(findAddress, u);
-                }
-                var iAddr = findAddress.ToInt() & ~(long)(Math.Pow(2, 32 - u) - 1);
+                if (u == 32) return new IpCidr(findAddress, u);
+                var iAddr = findAddress.ToInt() & ~(long) (Math.Pow(2, 32 - u) - 1);
                 var ip = IPAddressExtension.ToAddr(iAddr);
                 return new IpCidr(ip, u);
             }
 
             // IPv6
-            if (u == 128)
-            {
-                return new IpCidr(findAddress, u);
-            }
+            if (u == 128) return new IpCidr(findAddress, u);
             var ipNet = IPNetwork.Parse(findAddress.ToString(), (byte) u);
             return new IpCidr(ipNet.Network, u);
         }

@@ -14,29 +14,26 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
 {
     public class IpSetBinaryAdapter
     {
-        private const String BinaryName = "ipset";
+        private const string BinaryName = "ipset";
         protected static readonly ILogger _log = IPTablesLogManager.GetLogger<IpSetBinaryAdapter>();
 
         private readonly ISystemFactory _system;
 
-        private List<String> _transactionCommands = null;
+        private List<string> _transactionCommands = null;
 
-        public bool InTransaction
-        {
-            get { return _transactionCommands != null; }
-        }
+        public bool InTransaction => _transactionCommands != null;
 
         public IpSetBinaryAdapter(ISystemFactory system)
         {
             _system = system;
         }
+
         private bool ExecuteTransaction()
         {
-            String output, error;
+            string output, error;
 
-            using (ISystemProcess process = _system.StartProcess(BinaryName, "restore"))
+            using (var process = _system.StartProcess(BinaryName, "restore"))
             {
-
                 if (WriteStrings(_transactionCommands, process.StandardInput))
                 {
                     process.StandardInput.Flush();
@@ -44,10 +41,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
                     ProcessHelper.ReadToEnd(process, out output, out error);
 
                     //OK
-                    if (process.ExitCode == 0)
-                    {
-                        return true;
-                    }
+                    if (process.ExitCode == 0) return true;
                 }
                 else
                 {
@@ -57,9 +51,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
 
             error = error.Trim();
             if (error.Length != 0)
-            {
-                throw new IpTablesNetException(String.Format("Failed to execute transaction: {0}", error));
-            }
+                throw new IpTablesNetException(string.Format("Failed to execute transaction: {0}", error));
 
             return false;
         }
@@ -67,7 +59,7 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
         public bool RestoreSets(IEnumerable<IpSetSet> sets)
         {
             //ipset restore
-            using (ISystemProcess process = _system.StartProcess(BinaryName, "restore"))
+            using (var process = _system.StartProcess(BinaryName, "restore"))
             {
                 if (WriteSets(sets, process.StandardInput))
                 {
@@ -76,24 +68,18 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
                     ProcessHelper.WaitForExit(process);
 
                     //OK
-                    if (process.ExitCode != 0)
-                    {
-                        return true;
-                    }
+                    if (process.ExitCode != 0) return true;
                 }
 
                 return false;
             }
         }
 
-        private bool WriteStrings(IEnumerable<String> strings, StreamWriter standardInput)
+        private bool WriteStrings(IEnumerable<string> strings, StreamWriter standardInput)
         {
             foreach (var set in strings)
             {
-                if (!standardInput.BaseStream.CanWrite)
-                {
-                    return false;
-                }
+                if (!standardInput.BaseStream.CanWrite) return false;
                 try
                 {
                     _log.Information("IPSet: {set}", set);
@@ -112,19 +98,10 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
         {
             foreach (var set in sets)
             {
-                if (!standardInput.BaseStream.CanWrite)
-                {
-                    return false;
-                }
+                if (!standardInput.BaseStream.CanWrite) return false;
                 var command = set.GetCommand();
-                if (!WriteStrings(new List<string> {command}, standardInput))
-                {
-                    return false;
-                }
-                if (!WriteStrings(set.GetEntryCommands(), standardInput))
-                {
-                    return false;
-                }
+                if (!WriteStrings(new List<string> {command}, standardInput)) return false;
+                if (!WriteStrings(set.GetEntryCommands(), standardInput)) return false;
             }
 
             return true;
@@ -135,36 +112,30 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             var iptables = sets.System;
             //ipset save
             var args = "save";
-            if (!String.IsNullOrEmpty(setName))
-            {
-                args += " " + ShellHelper.EscapeArguments(setName);
-            }
-            using (ISystemProcess process = _system.StartProcess(BinaryName, args))
+            if (!string.IsNullOrEmpty(setName)) args += " " + ShellHelper.EscapeArguments(setName);
+            using (var process = _system.StartProcess(BinaryName, args))
             {
                 ProcessHelper.ReadToEnd(process, line =>
                 {
                     if (line == null) return;
                     var trimmed = line.Trim();
-                    if (trimmed.Length != 0)
-                    {
-                        sets.Accept(trimmed, iptables);
-                    }
+                    if (trimmed.Length != 0) sets.Accept(trimmed, iptables);
                 }, err => { });
             }
         }
 
         public virtual IpSetSets SaveSets(IpTablesSystem iptables, string setName = null)
         {
-            IpSetSets sets = new IpSetSets(iptables);
+            var sets = new IpSetSets(iptables);
 
             SaveSets(sets, setName);
-            
+
             return sets;
         }
 
-        public void DestroySet(String name)
+        public void DestroySet(string name)
         {
-            String command = String.Format("destroy {0}", name);
+            var command = string.Format("destroy {0}", name);
 
             if (InTransaction)
             {
@@ -172,26 +143,21 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
             }
             else
             {
-                String output, error;
+                string output, error;
                 using (var process = _system.StartProcess(BinaryName, command))
                 {
                     ProcessHelper.ReadToEnd(process, out output, out error);
 
                     if (process.ExitCode != 0)
-                    {
-                        throw new IpTablesNetException(String.Format("Failed to destroy set: {0}", error));
-                    }
+                        throw new IpTablesNetException(string.Format("Failed to destroy set: {0}", error));
                 }
             }
         }
 
         public bool EndTransactionCommit()
         {
-            bool ret = true;
-            if (_transactionCommands != null && _transactionCommands.Count != 0)
-            {
-                ret = ExecuteTransaction();
-            }
+            var ret = true;
+            if (_transactionCommands != null && _transactionCommands.Count != 0) ret = ExecuteTransaction();
             _transactionCommands = null;
             return ret;
         }
@@ -203,95 +169,70 @@ namespace IPTables.Net.Iptables.IpSet.Adapter
 
         public void CreateSet(IpSetSet set)
         {
-            String command = set.GetFullCommand();
+            var command = set.GetFullCommand();
 
             if (InTransaction)
-            {
                 _transactionCommands.Add(command);
-            }
             else
-            {
                 using (var process = _system.StartProcess(BinaryName, command))
                 {
-
-                    String output, error;
+                    string output, error;
                     ProcessHelper.ReadToEnd(process, out output, out error);
 
                     if (process.ExitCode != 0)
-                    {
-                        throw new IpTablesNetException(String.Format("Failed to create set: {0}", error));
-                    }
+                        throw new IpTablesNetException(string.Format("Failed to create set: {0}", error));
                 }
-            }
         }
 
         public void AddEntry(IpSetEntry entry)
         {
-            String command = entry.GetFullCommand();
+            var command = entry.GetFullCommand();
 
             if (InTransaction)
-            {
                 _transactionCommands.Add(command);
-            }
             else
-            {
                 using (var process = _system.StartProcess(BinaryName, command))
                 {
-                    String output, error;
+                    string output, error;
                     ProcessHelper.ReadToEnd(process, out output, out error);
 
                     if (process.ExitCode != 0)
-                    {
-                        throw new IpTablesNetException(String.Format("Failed to add entry: {0}", error));
-                    }
+                        throw new IpTablesNetException(string.Format("Failed to add entry: {0}", error));
                 }
-            }
         }
 
         public void DeleteEntry(IpSetEntry entry)
         {
-            String command = entry.GetFullCommand("del");
+            var command = entry.GetFullCommand("del");
 
             if (InTransaction)
-            {
                 _transactionCommands.Add(command);
-            }
             else
-            {
                 using (var process = _system.StartProcess(BinaryName, command))
                 {
-                    String output, error;
+                    string output, error;
                     ProcessHelper.ReadToEnd(process, out output, out error);
 
                     if (process.ExitCode != 0)
-                    {
-                        throw new IpTablesNetException(String.Format("Failed to delete entry: {0}", error));
-                    }
+                        throw new IpTablesNetException(string.Format("Failed to delete entry: {0}", error));
                 }
-            }
         }
 
         public void SwapSet(string what, string with)
         {
-            var command = String.Format("swap {0} {1}", what, with);
+            var command = string.Format("swap {0} {1}", what, with);
 
             if (InTransaction)
-            {
                 _transactionCommands.Add(command);
-            }
             else
-            {
-                using (ISystemProcess process = _system.StartProcess(BinaryName, command))
+                using (var process = _system.StartProcess(BinaryName, command))
                 {
-                    String output, error;
+                    string output, error;
                     ProcessHelper.ReadToEnd(process, out output, out error);
 
                     if (process.ExitCode != 0)
-                    {
-                        throw new IpTablesNetException(String.Format("Failed to swap sets: {0}", error));
-                    }
+                        throw new IpTablesNetException(string.Format("Failed to swap sets: {0}", error));
                 }
-            }
         }
     }
 }

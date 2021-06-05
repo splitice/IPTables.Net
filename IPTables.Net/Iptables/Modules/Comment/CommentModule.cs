@@ -7,9 +7,9 @@ namespace IPTables.Net.Iptables.Modules.Comment
 {
     public class CommentModule : ModuleBase, IEquatable<CommentModule>, IIpTablesModule
     {
-        private const String OptionCommentLong = "--comment";
+        private const string OptionCommentLong = "--comment";
 
-        public String CommentText { get; set; }
+        public string CommentText { get; set; }
 
         public CommentModule(int version) : base(version)
         {
@@ -34,12 +34,9 @@ namespace IPTables.Net.Iptables.Modules.Comment
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -52,7 +49,7 @@ namespace IPTables.Net.Iptables.Modules.Comment
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -63,7 +60,7 @@ namespace IPTables.Net.Iptables.Modules.Comment
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("comment", typeof (CommentModule), GetOptions);
+            return GetModuleEntryInternal("comment", typeof(CommentModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -76,7 +73,7 @@ namespace IPTables.Net.Iptables.Modules.Comment
 
         public override int GetHashCode()
         {
-            return (CommentText != null ? CommentText.GetHashCode() : 0);
+            return CommentText != null ? CommentText.GetHashCode() : 0;
         }
     }
 }

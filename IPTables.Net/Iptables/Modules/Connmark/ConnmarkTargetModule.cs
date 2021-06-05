@@ -8,18 +8,18 @@ namespace IPTables.Net.Iptables.Modules.Connmark
 {
     public class ConnmarkTargetModule : ModuleBase, IIpTablesModule, IEquatable<ConnmarkTargetModule>
     {
-        private const String OptionRestoreMarkLong = "--restore-mark";
-        private const String OptionSaveMarkLong = "--save-mark";
-        private const String OptionNfMaskLong = "--nfmask";
-        private const String OptionCtMaskLong = "--ctmask";
+        private const string OptionRestoreMarkLong = "--restore-mark";
+        private const string OptionSaveMarkLong = "--save-mark";
+        private const string OptionNfMaskLong = "--nfmask";
+        private const string OptionCtMaskLong = "--ctmask";
 
-        private const String OptionSetMarkLong = "--set-mark";
-        private const String OptionSetXMarkLong = "--set-xmark";
+        private const string OptionSetMarkLong = "--set-mark";
+        private const string OptionSetXMarkLong = "--set-xmark";
 
         // mnemonics
-        private const String OptionSetAndMarkLong = "--and-mark";
-        private const String OptionSetOrMarkLong = "--or-mark";
-        private const String OptionSetXorMarkLong = "--xor-mark";
+        private const string OptionSetAndMarkLong = "--and-mark";
+        private const string OptionSetOrMarkLong = "--or-mark";
+        private const string OptionSetXorMarkLong = "--xor-mark";
 
         private enum Mode
         {
@@ -28,11 +28,11 @@ namespace IPTables.Net.Iptables.Modules.Connmark
             SaveMark
         }
 
-        private const int DefaultMask = unchecked((int)0xFFFFFFFF);
+        private const int DefaultMask = unchecked((int) 0xFFFFFFFF);
 
         private bool _markProvided = false;
         private int _value = 0;
-        private int _mask = unchecked((int)0xFFFFFFFF);
+        private int _mask = unchecked((int) 0xFFFFFFFF);
         private int _ctMask;
         private int _nfMask;
         private Mode _mode = Mode.SetMark;
@@ -41,7 +41,7 @@ namespace IPTables.Net.Iptables.Modules.Connmark
         {
         }
 
-        public void SetXMark(int value, int mask = unchecked ((int)0xFFFFFFFF))
+        public void SetXMark(int value, int mask = unchecked((int) 0xFFFFFFFF))
         {
             _value = value;
             _mask = mask;
@@ -74,13 +74,11 @@ namespace IPTables.Net.Iptables.Modules.Connmark
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return _markProvided.Equals(other._markProvided) && _value == other._value && _mask == other._mask && _nfMask == other._nfMask && _ctMask == other._ctMask && _mode == other._mode;
+            return _markProvided.Equals(other._markProvided) && _value == other._value && _mask == other._mask &&
+                   _nfMask == other._nfMask && _ctMask == other._ctMask && _mode == other._mode;
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -139,7 +137,7 @@ namespace IPTables.Net.Iptables.Modules.Connmark
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -160,13 +158,9 @@ namespace IPTables.Net.Iptables.Modules.Connmark
             else
             {
                 if (_mode == Mode.RestoreMark)
-                {
                     sb.Append(OptionRestoreMarkLong + " ");
-                }
                 else
-                {
                     sb.Append(OptionSaveMarkLong + " ");
-                }
                 sb.Append(OptionCtMaskLong + " 0x" + _ctMask.ToString("X") + " ");
                 sb.Append(OptionNfMaskLong + " 0x" + _nfMask.ToString("X"));
             }
@@ -174,7 +168,7 @@ namespace IPTables.Net.Iptables.Modules.Connmark
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -200,15 +194,15 @@ namespace IPTables.Net.Iptables.Modules.Connmark
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((ConnmarkTargetModule)obj);
+            if (obj.GetType() != GetType()) return false;
+            return Equals((ConnmarkTargetModule) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                int hashCode = _markProvided.GetHashCode();
+                var hashCode = _markProvided.GetHashCode();
                 hashCode = (hashCode * 397) ^ _value;
                 hashCode = (hashCode * 397) ^ _mask;
                 hashCode = (hashCode * 397) ^ _ctMask;

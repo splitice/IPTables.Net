@@ -7,21 +7,22 @@ using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Adapter.Client.Helper
 {
-    class IPTablesSaveParser
+    internal class IPTablesSaveParser
     {
-        public static IpTablesChainSet GetRulesFromOutput(IpTablesSystem system, String output, String table, int ipVersion, bool ignoreErrors = false)
+        public static IpTablesChainSet GetRulesFromOutput(IpTablesSystem system, string output, string table,
+            int ipVersion, bool ignoreErrors = false)
         {
             var ret = new IpTablesChainSet(ipVersion);
-            String ttable = null;
+            string ttable = null;
 
-            foreach (string lineRaw in output.Split(new[] { '\n' }))
+            foreach (var lineRaw in output.Split(new[] {'\n'}))
             {
-                string line = lineRaw.Trim();
+                var line = lineRaw.Trim();
 
-                if (String.IsNullOrEmpty(line))
+                if (string.IsNullOrEmpty(line))
                     continue;
 
-                char c = line[0];
+                var c = line[0];
                 IpTablesRule rule;
                 IpTablesChain chain;
                 switch (c)
@@ -31,18 +32,16 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
                         break;
 
                     case ':':
-                        string[] split = line.Split(new[] { ' ' });
+                        var split = line.Split(new[] {' '});
                         ret.AddChain(new IpTablesChain(ttable, split[0].Substring(1), ipVersion, system));
                         break;
 
                     //Byte & packet count
                     case '[':
-                        int positionEnd = line.IndexOf(']');
+                        var positionEnd = line.IndexOf(']');
                         if (positionEnd == -1)
-                        {
                             throw new IpTablesNetException("Parsing error, could not find end of counters");
-                        }
-                        string[] counters = line.Substring(1, positionEnd - 1).Split(new[] { ':' });
+                        var counters = line.Substring(1, positionEnd - 1).Split(new[] {':'});
                         line = line.Substring(positionEnd + 1);
 
                         try
@@ -51,12 +50,10 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
                         }
                         catch
                         {
-                            if (ignoreErrors)
-                            {
-                                continue;
-                            }
+                            if (ignoreErrors) continue;
                             throw;
                         }
+
                         rule.Counters = new PacketCounters(long.Parse(counters[0]), long.Parse(counters[1]));
                         ret.AddRule(rule);
                         break;
@@ -73,13 +70,12 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
                     case 'C':
                         if (line == "COMMIT" && ttable == table)
                         {
-                            if (ttable == null)
-                            {
-                                throw new IpTablesNetException("Parsing error");
-                            }
+                            if (ttable == null) throw new IpTablesNetException("Parsing error");
                             return ret;
                         }
-                        throw new IpTablesNetException("Unexepected table \"" + table + "\" found \"" + ttable + "\" instead");
+
+                        throw new IpTablesNetException("Unexepected table \"" + table + "\" found \"" + ttable +
+                                                       "\" instead");
                 }
             }
 

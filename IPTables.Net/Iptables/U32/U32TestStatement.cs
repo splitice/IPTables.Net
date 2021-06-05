@@ -18,24 +18,18 @@ namespace IPTables.Net.Iptables.U32
 
         public override string ToString()
         {
-            return Left + "=" + String.Join(",", Right.Select((a) => a.ToString()).ToArray());
+            return Left + "=" + string.Join(",", Right.Select((a) => a.ToString()).ToArray());
         }
 
         public static U32TestStatement Parse(ref string strExpr)
         {
-            List<U32Range> right = new List<U32Range>();
+            var right = new List<U32Range>();
             var left = U32Location.Parse(ref strExpr);
-            if (strExpr.Length == 0 || strExpr[0] != '=')
-            {
-                return null;
-            }
+            if (strExpr.Length == 0 || strExpr[0] != '=') return null;
             strExpr = strExpr.Substring(1);
             do
             {
-                if (strExpr[0] == ',')
-                {
-                    strExpr = strExpr.Substring(1);
-                }
+                if (strExpr[0] == ',') strExpr = strExpr.Substring(1);
                 right.Add(U32Range.Parse(ref strExpr));
             } while (strExpr.Length != 0 && strExpr[0] == ',');
 
@@ -53,7 +47,7 @@ namespace IPTables.Net.Iptables.U32
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((U32TestStatement) obj);
         }
 
@@ -61,7 +55,7 @@ namespace IPTables.Net.Iptables.U32
         {
             unchecked
             {
-                return ((Left != null ? Left.GetHashCode() : 0)*397) ^ (Right != null ? Right.GetHashCode() : 0);
+                return ((Left != null ? Left.GetHashCode() : 0) * 397) ^ (Right != null ? Right.GetHashCode() : 0);
             }
         }
     }

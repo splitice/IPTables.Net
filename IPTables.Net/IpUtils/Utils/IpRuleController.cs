@@ -19,7 +19,7 @@ namespace IPTables.Net.IpUtils.Utils
 
         public List<IpObject> GetAll()
         {
-            List<IpObject> r = new List<IpObject>();
+            var r = new List<IpObject>();
             var ret = Command("show");
             var lines = ret[0].Trim().Split('\n');
             foreach (var line in lines)
@@ -27,18 +27,18 @@ namespace IPTables.Net.IpUtils.Utils
                 var l = line.Trim();
                 //Console.WriteLine(l);
                 IpObject obj;
-                try { 
+                try
+                {
                     obj = ParseObject(l);
                 }
                 catch (Exception ex)
                 {
                     throw new IpTablesNetException("An exception occured while parsing rule: " + line, ex);
                 }
-                if (obj != null)
-                {
-                    r.Add(obj);
-                }
+
+                if (obj != null) r.Add(obj);
             }
+
             return r;
         }
 
@@ -55,6 +55,7 @@ namespace IPTables.Net.IpUtils.Utils
                 ret.Add("from");
                 ret.Add("all");
             }
+
             return ret.ToArray();
         }
     }

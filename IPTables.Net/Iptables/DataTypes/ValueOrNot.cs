@@ -25,21 +25,15 @@ namespace IPTables.Net.Iptables.DataTypes
             _hasValue = !EqualityComparer<T>.Default.Equals(value, nullValue);
         }
 
-        public T Value
-        {
-            get { return _value; }
-        }
+        public T Value => _value;
 
         public bool Not
         {
-            get { return _not; }
-            set { _not = value; }
+            get => _not;
+            set => _not = value;
         }
 
-        public bool Null
-        {
-            get { return !_hasValue; }
-        }
+        public bool Null => !_hasValue;
 
         public bool Equals(ValueOrNot<T> other)
         {
@@ -64,34 +58,19 @@ namespace IPTables.Net.Iptables.DataTypes
             }
         }
 
-        public String ToOption(String optionKey, String value = null, bool escape = true)
+        public string ToOption(string optionKey, string value = null, bool escape = true)
         {
-            String built = "";
-            if (Null)
-            {
-                return built;
-            }
+            var built = "";
+            if (Null) return built;
 
-            if (Not)
-            {
-                built += "! ";
-            }
+            if (Not) built += "! ";
             built += optionKey;
 
-            if (value == null)
-            {
-                value = Value.ToString();
-            }
+            if (value == null) value = Value.ToString();
 
-            if (escape)
-            {
-                value = ShellHelper.EscapeArguments(value);
-            }
+            if (escape) value = ShellHelper.EscapeArguments(value);
 
-            if (!String.IsNullOrEmpty(value))
-            {
-                built += " " + value;
-            }
+            if (!string.IsNullOrEmpty(value)) built += " " + value;
             return built;
         }
 
@@ -107,9 +86,9 @@ namespace IPTables.Net.Iptables.DataTypes
         {
             unchecked
             {
-                int hashCode = _not.GetHashCode();
-                hashCode = (hashCode*397) ^ EqualityComparer<T>.Default.GetHashCode(_value);
-                hashCode = (hashCode*397) ^ _hasValue.GetHashCode();
+                var hashCode = _not.GetHashCode();
+                hashCode = (hashCode * 397) ^ EqualityComparer<T>.Default.GetHashCode(_value);
+                hashCode = (hashCode * 397) ^ _hasValue.GetHashCode();
                 return hashCode;
             }
         }

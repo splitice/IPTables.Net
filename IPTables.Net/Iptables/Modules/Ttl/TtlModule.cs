@@ -6,20 +6,17 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Ttl
 {
-    public class TtlModule : ModuleBase, IIpTablesModule//, IEquatable<TtlModule>
+    public class TtlModule : ModuleBase, IIpTablesModule //, IEquatable<TtlModule>
     {
-        private const String OptionInc = "--ttl-inc";
+        private const string OptionInc = "--ttl-inc";
 
-        public TtlModule(int version): base(version)
+        public TtlModule(int version) : base(version)
         {
         }
 
         public uint Increment { get; set; }
-        
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+
+        public bool NeedsLoading => false;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -33,7 +30,7 @@ namespace IPTables.Net.Iptables.Modules.Ttl
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -46,7 +43,7 @@ namespace IPTables.Net.Iptables.Modules.Ttl
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -57,7 +54,7 @@ namespace IPTables.Net.Iptables.Modules.Ttl
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("TTL", typeof (TtlModule), GetOptions, false);
+            return GetTargetModuleEntryInternal("TTL", typeof(TtlModule), GetOptions, false);
         }
 
         protected bool Equals(TtlModule other)
@@ -69,7 +66,7 @@ namespace IPTables.Net.Iptables.Modules.Ttl
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((TtlModule) obj);
         }
 

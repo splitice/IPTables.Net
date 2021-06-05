@@ -11,30 +11,31 @@ namespace IPTables.Net.Supporting
             IDictionary<TKey, TValue> second)
         {
             if (first == second) return true;
-            if ((first == null) || (second == null)) 
+            if (first == null || second == null)
                 return false;
-            if (first.Count != second.Count) 
+            if (first.Count != second.Count)
                 return false;
 
-            EqualityComparer<TValue> comparer = EqualityComparer<TValue>.Default;
+            var comparer = EqualityComparer<TValue>.Default;
 
             foreach (var kvp in first)
             {
                 TValue secondValue;
-                if (!second.TryGetValue(kvp.Key, out secondValue)) 
+                if (!second.TryGetValue(kvp.Key, out secondValue))
                     return false;
-                if (!comparer.Equals(kvp.Value, secondValue)) 
+                if (!comparer.Equals(kvp.Value, secondValue))
                     return false;
             }
+
             return true;
         }
 
         public static TKey DictionaryDiffering<TKey, TValue>(this IDictionary<TKey, TValue> first,
             IDictionary<TKey, TValue> second)
         {
-            if (first == second) return default(TKey);
+            if (first == second) return default;
 
-            EqualityComparer<TValue> comparer = EqualityComparer<TValue>.Default;
+            var comparer = EqualityComparer<TValue>.Default;
 
             foreach (var kvp in first)
             {
@@ -43,8 +44,8 @@ namespace IPTables.Net.Supporting
                     return kvp.Key;
                 if (!comparer.Equals(kvp.Value, secondValue))
                     return kvp.Key;
-            } 
-            
+            }
+
             foreach (var kvp in second)
             {
                 TValue secondValue;
@@ -54,12 +55,13 @@ namespace IPTables.Net.Supporting
                     return kvp.Key;
             }
 
-            return default(TKey);
+            return default;
         }
 
-        public static bool FindCidr<TValue>(this IDictionary<IpCidr, TValue> dict, IpCidr findOriginal, out IpCidr o, out TValue f)
+        public static bool FindCidr<TValue>(this IDictionary<IpCidr, TValue> dict, IpCidr findOriginal, out IpCidr o,
+            out TValue f)
         {
-            for (uint i = findOriginal.Prefix; i != 0; i++)
+            for (var i = findOriginal.Prefix; i != 0; i++)
             {
                 var find = IpCidr.NewRebase(findOriginal.Address, i);
                 if (dict.TryGetValue(find, out f))
@@ -70,15 +72,18 @@ namespace IPTables.Net.Supporting
                 }
             }
 
-            o = default(IpCidr);
-            f = default(TValue);
+            o = default;
+            f = default;
 
             return false;
         }
-        public static bool FindCidr<TValue>(this IDictionary<IpSetEntry, TValue> dict, IpSetEntry findOriginal, out IpSetEntry o, out TValue f)
+
+        public static bool FindCidr<TValue>(this IDictionary<IpSetEntry, TValue> dict, IpSetEntry findOriginal,
+            out IpSetEntry o, out TValue f)
         {
-            var find = new IpSetEntry(findOriginal.Set, findOriginal.Cidr, findOriginal.Protocol, findOriginal.Port, findOriginal.Mac);
-            for (uint i = find.Cidr.Prefix; i != 0; i--)
+            var find = new IpSetEntry(findOriginal.Set, findOriginal.Cidr, findOriginal.Protocol, findOriginal.Port,
+                findOriginal.Mac);
+            for (var i = find.Cidr.Prefix; i != 0; i--)
             {
                 find.Cidr = IpCidr.NewRebase(find.Cidr.Address, i);
                 if (dict.TryGetValue(find, out f))
@@ -89,8 +94,8 @@ namespace IPTables.Net.Supporting
                 }
             }
 
-            o = default(IpSetEntry);
-            f = default(TValue);
+            o = default;
+            f = default;
 
             return false;
         }

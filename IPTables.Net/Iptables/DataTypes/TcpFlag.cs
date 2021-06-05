@@ -8,6 +8,7 @@
         FIN,
         RST,
         URG,
+
         PSH
         // ReSharper restore InconsistentNaming
     }

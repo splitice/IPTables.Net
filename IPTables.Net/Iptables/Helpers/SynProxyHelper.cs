@@ -22,10 +22,7 @@ namespace IPTables.Net.Iptables.Helpers
         public static bool IptablesSupported(IIPTablesAdapterClient adapter)
         {
             var iptablesVersion = adapter.GetIptablesVersion();
-            if (iptablesVersion >= new Version(1, 4, 21))
-            {
-                return true;
-            }
+            if (iptablesVersion >= new Version(1, 4, 21)) return true;
             return false;
         }
 
@@ -36,15 +33,14 @@ namespace IPTables.Net.Iptables.Helpers
         /// <returns></returns>
         public static bool KernelSupported(ISystemFactory system)
         {
-            String output, error;
+            string output, error;
             using (var process = system.StartProcess("uname", "-r"))
             {
                 ProcessHelper.ReadToEnd(process, out output, out error);
                 if (process.ExitCode != 0)
-                {
                     throw new IpTablesNetException("Unable to execute uname and retreive the kenel version");
-                }
             }
+
             var regex = new Regex(@"([0-9]+)\.([0-9]+)\.([0-9]+)\-([0-9]+)");
             if (regex.IsMatch(output))
             {
@@ -52,10 +48,7 @@ namespace IPTables.Net.Iptables.Helpers
                 var version = new Version(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value),
                     int.Parse(match.Groups[3].Value), int.Parse(match.Groups[4].Value));
 
-                if (version >= new Version(3, 12))
-                {
-                    return true;
-                }
+                if (version >= new Version(3, 12)) return true;
             }
 
             return false;

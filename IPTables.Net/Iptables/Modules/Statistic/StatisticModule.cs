@@ -9,14 +9,15 @@ namespace IPTables.Net.Iptables.Modules.Statistic
 {
     public class StatisticModule : ModuleBase, IEquatable<StatisticModule>, IIpTablesModule
     {
-        private const String OptionModeLong = "--mode";
-        private const String OptionProbabilityLong = "--probability";
-        private const String OptionEveryLong = "--every";
-        private const String OptionPacketLong = "--packet";
+        private const string OptionModeLong = "--mode";
+        private const string OptionProbabilityLong = "--probability";
+        private const string OptionEveryLong = "--every";
+        private const string OptionPacketLong = "--packet";
 
         public enum Modes
         {
-            Random, Nth
+            Random,
+            Nth
         }
 
         public Modes Mode;
@@ -25,8 +26,8 @@ namespace IPTables.Net.Iptables.Modules.Statistic
 
         public ValueOrNot<float> Probability
         {
-            get { return new ValueOrNot<float>(Every.Value/2147483648.0f, Every.Not); }
-            set { Every = new ValueOrNot<uint>((uint)Math.Ceiling(value.Value * 2147483648), value.Not); }
+            get => new ValueOrNot<float>(Every.Value / 2147483648.0f, Every.Not);
+            set => Every = new ValueOrNot<uint>((uint) Math.Ceiling(value.Value * 2147483648), value.Not);
         }
 
         public StatisticModule(int version)
@@ -64,7 +65,7 @@ namespace IPTables.Net.Iptables.Modules.Statistic
                 case "nth":
                     return Modes.Nth;
                 default:
-                    throw new ArgumentException("Invalid argument: "+mode);
+                    throw new ArgumentException("Invalid argument: " + mode);
             }
         }
 
@@ -81,12 +82,9 @@ namespace IPTables.Net.Iptables.Modules.Statistic
             }
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -105,7 +103,7 @@ namespace IPTables.Net.Iptables.Modules.Statistic
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -119,14 +117,14 @@ namespace IPTables.Net.Iptables.Modules.Statistic
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("statistic", typeof (StatisticModule), GetOptions);
+            return GetModuleEntryInternal("statistic", typeof(StatisticModule), GetOptions);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((StatisticModule) obj);
         }
 
@@ -142,8 +140,8 @@ namespace IPTables.Net.Iptables.Modules.Statistic
             unchecked
             {
                 var hashCode = (int) Mode;
-                hashCode = (hashCode*397) ^ Every.GetHashCode();
-                hashCode = (hashCode*397) ^ (int) Packet;
+                hashCode = (hashCode * 397) ^ Every.GetHashCode();
+                hashCode = (hashCode * 397) ^ (int) Packet;
                 return hashCode;
             }
         }

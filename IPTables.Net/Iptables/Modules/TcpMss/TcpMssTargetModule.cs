@@ -6,8 +6,8 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
 {
     public class TcpMssTargetModule : ModuleBase, IIpTablesModule, IEquatable<TcpMssTargetModule>
     {
-        private const String OptionSetMss= "--set-mss";
-        private const String OptionClampMssToPmtuLong = "--clamp-mss-to-pmtu";
+        private const string OptionSetMss = "--set-mss";
+        private const string OptionClampMssToPmtuLong = "--clamp-mss-to-pmtu";
 
         public int SetMss = 0;
         public bool ClampMssToPmtu = false;
@@ -23,10 +23,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
             return SetMss == other.SetMss && ClampMssToPmtu.Equals(other.ClampMssToPmtu);
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -43,7 +40,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -66,7 +63,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -78,14 +75,14 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("TCPMSS", typeof (TcpMssTargetModule), GetOptions);
+            return GetTargetModuleEntryInternal("TCPMSS", typeof(TcpMssTargetModule), GetOptions);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((TcpMssTargetModule) obj);
         }
 
@@ -93,7 +90,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
         {
             unchecked
             {
-                return (SetMss*397) ^ ClampMssToPmtu.GetHashCode();
+                return (SetMss * 397) ^ ClampMssToPmtu.GetHashCode();
             }
         }
     }

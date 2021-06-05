@@ -8,9 +8,9 @@ namespace IPTables.Net.Iptables.Modules.Snat
 {
     public class SnatModule : ModuleBase, IIpTablesModule, IEquatable<SnatModule>
     {
-        private const String OptionToSource = "--to-source";
-        private const String OptionRandom = "--random";
-        private const String OptionPersisent = "--persistent";
+        private const string OptionToSource = "--to-source";
+        private const string OptionRandom = "--random";
+        private const string OptionPersisent = "--persistent";
 
         public bool Persistent = false;
         public bool Random = false;
@@ -24,13 +24,11 @@ namespace IPTables.Net.Iptables.Modules.Snat
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) && ToSource.Equals(other.ToSource);
+            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) &&
+                   ToSource.Equals(other.ToSource);
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -52,7 +50,7 @@ namespace IPTables.Net.Iptables.Modules.Snat
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -81,7 +79,7 @@ namespace IPTables.Net.Iptables.Modules.Snat
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -94,7 +92,7 @@ namespace IPTables.Net.Iptables.Modules.Snat
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("SNAT", typeof (SnatModule), GetOptions, false);
+            return GetTargetModuleEntryInternal("SNAT", typeof(SnatModule), GetOptions, false);
         }
 
         public override bool Equals(object obj)
@@ -109,9 +107,9 @@ namespace IPTables.Net.Iptables.Modules.Snat
         {
             unchecked
             {
-                int hashCode = Persistent.GetHashCode();
-                hashCode = (hashCode*397) ^ Random.GetHashCode();
-                hashCode = (hashCode*397) ^ ToSource.GetHashCode();
+                var hashCode = Persistent.GetHashCode();
+                hashCode = (hashCode * 397) ^ Random.GetHashCode();
+                hashCode = (hashCode * 397) ^ ToSource.GetHashCode();
                 return hashCode;
             }
         }

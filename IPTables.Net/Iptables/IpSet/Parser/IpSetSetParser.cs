@@ -3,7 +3,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.IpSet.Parser
 {
-    class IpSetSetParser
+    internal class IpSetSetParser
     {
         private readonly string[] _arguments;
         public int Position = 0;
@@ -38,7 +38,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
         public int FeedToSkip(int position, bool first)
         {
             Position = position;
-            String option = GetCurrentArg();
+            var option = GetCurrentArg();
 
             if (first)
             {
@@ -59,7 +59,7 @@ namespace IPTables.Net.Iptables.IpSet.Parser
                     _set.HashSize = int.Parse(GetNextArg());
                     break;
                 case "maxelem":
-                    _set.MaxElem = UInt32.Parse(GetNextArg());
+                    _set.MaxElem = uint.Parse(GetNextArg());
                     break;
                 case "range":
                     _set.BitmapRange = PortOrRange.Parse(GetNextArg(), '-');

@@ -8,7 +8,7 @@ namespace IPTables.Net.Iptables.Modules.U32
 {
     public class U32Module : ModuleBase, IEquatable<U32Module>, IIpTablesModule
     {
-        private const String OptionBytecode = "--u32";
+        private const string OptionBytecode = "--u32";
 
         public U32Expression ByteCode;
 
@@ -35,12 +35,9 @@ namespace IPTables.Net.Iptables.Modules.U32
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -53,7 +50,7 @@ namespace IPTables.Net.Iptables.Modules.U32
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -72,12 +69,12 @@ namespace IPTables.Net.Iptables.Modules.U32
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((U32Module)obj);
+            return Equals((U32Module) obj);
         }
 
         public override int GetHashCode()
         {
-            return (ByteCode != null ? ByteCode.GetHashCode() : 0);
+            return ByteCode != null ? ByteCode.GetHashCode() : 0;
         }
     }
 }

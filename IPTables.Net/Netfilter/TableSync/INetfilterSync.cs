@@ -8,6 +8,6 @@ namespace IPTables.Net.Netfilter.TableSync
     public interface INetfilterSync
     {
         void SyncChainRules(IIPTablesAdapterClient client, IEnumerable<IpTablesRule> with, IpTablesChain currentChain);
-        IEnumerable<String> TableOrder { get; }
+        IEnumerable<string> TableOrder { get; }
     }
 }

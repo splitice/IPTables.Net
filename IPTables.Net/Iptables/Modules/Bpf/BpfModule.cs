@@ -7,9 +7,9 @@ namespace IPTables.Net.Iptables.Modules.Bpf
 {
     public class BpfModule : ModuleBase, IEquatable<BpfModule>, IIpTablesModule
     {
-        private const String OptionBytecode = "--bytecode";
+        private const string OptionBytecode = "--bytecode";
 
-        public String ByteCode { get; set; }
+        public string ByteCode { get; set; }
 
         public BpfModule(int version) : base(version)
         {
@@ -34,12 +34,9 @@ namespace IPTables.Net.Iptables.Modules.Bpf
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -52,7 +49,7 @@ namespace IPTables.Net.Iptables.Modules.Bpf
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -71,12 +68,12 @@ namespace IPTables.Net.Iptables.Modules.Bpf
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((BpfModule)obj);
+            return Equals((BpfModule) obj);
         }
 
         public override int GetHashCode()
         {
-            return (ByteCode != null ? ByteCode.GetHashCode() : 0);
+            return ByteCode != null ? ByteCode.GetHashCode() : 0;
         }
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<package >
+
+<package>
 	<metadata>
 		<id>IPTables.Net</id>
 		<version>$version$</version>
@@ -11,7 +12,7 @@
 		<description>System Interact main package</description>
 		<releaseNotes>Automatic Updates via GitHub</releaseNotes>
 		<copyright>Copyright Never</copyright>
-		<dependencies> 
+		<dependencies>
 		</dependencies>
 	</metadata>
 	<files>

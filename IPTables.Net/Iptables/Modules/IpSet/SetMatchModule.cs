@@ -18,19 +18,19 @@ namespace IPTables.Net.Iptables.Modules.IpSet
             Lt
         }
 
-        private const String OptionMatchSet = "--match-set";
-        private const String OptionNoMatch = "--return-nomatch";
-        private const String OptionUpdateCounters = "--update-counters";
-        private const String OptionUpdateSubCounters = "--update-subcounters";
-        private const String OptionPacketsEq = "--packets-eq";
-        private const String OptionPacketsLt = "--packets-lt";
-        private const String OptionPacketsGt = "--packets-gt";
-        private const String OptionBytesEq = "--bytes-eq";
-        private const String OptionBytesLt = "--bytes-lt";
-        private const String OptionBytesGt = "--bytes-gt";
+        private const string OptionMatchSet = "--match-set";
+        private const string OptionNoMatch = "--return-nomatch";
+        private const string OptionUpdateCounters = "--update-counters";
+        private const string OptionUpdateSubCounters = "--update-subcounters";
+        private const string OptionPacketsEq = "--packets-eq";
+        private const string OptionPacketsLt = "--packets-lt";
+        private const string OptionPacketsGt = "--packets-gt";
+        private const string OptionBytesEq = "--bytes-eq";
+        private const string OptionBytesLt = "--bytes-lt";
+        private const string OptionBytesGt = "--bytes-gt";
 
-        public ValueOrNot<String> MatchSet;
-        public String MatchSetFlags;
+        public ValueOrNot<string> MatchSet;
+        public string MatchSetFlags;
         public bool ReturnNoMatch;
         public bool UpdateCounters = true;
         public bool UpdateSubCounters = true;
@@ -45,27 +45,21 @@ namespace IPTables.Net.Iptables.Modules.IpSet
 
         public int BytesValue
         {
-            get { return _bytesValue; }
+            get => _bytesValue;
             set
             {
                 _bytesValue = value;
-                if (BytesMatch == MatchMode.None)
-                {
-                    BytesMatch = MatchMode.Equal;
-                }
+                if (BytesMatch == MatchMode.None) BytesMatch = MatchMode.Equal;
             }
         }
 
         public int PacketsValue
         {
-            get { return _packetsValue; }
+            get => _packetsValue;
             set
             {
                 _packetsValue = value;
-                if (PacketsMatch == MatchMode.None)
-                {
-                    PacketsMatch = MatchMode.Equal;
-                }
+                if (PacketsMatch == MatchMode.None) PacketsMatch = MatchMode.Equal;
             }
         }
 
@@ -73,7 +67,11 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(MatchSet, other.MatchSet) && string.Equals(MatchSetFlags, other.MatchSetFlags) && ReturnNoMatch.Equals(other.ReturnNoMatch) && UpdateCounters.Equals(other.UpdateCounters) && UpdateSubCounters.Equals(other.UpdateSubCounters) && _packetsValue == other._packetsValue && PacketsMatch == other.PacketsMatch && _bytesValue == other._bytesValue && BytesMatch == other.BytesMatch;
+            return Equals(MatchSet, other.MatchSet) && string.Equals(MatchSetFlags, other.MatchSetFlags) &&
+                   ReturnNoMatch.Equals(other.ReturnNoMatch) && UpdateCounters.Equals(other.UpdateCounters) &&
+                   UpdateSubCounters.Equals(other.UpdateSubCounters) && _packetsValue == other._packetsValue &&
+                   PacketsMatch == other.PacketsMatch && _bytesValue == other._bytesValue &&
+                   BytesMatch == other.BytesMatch;
         }
 
         public int Feed(CommandParser parser, bool not)
@@ -81,7 +79,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
             switch (parser.GetCurrentArg())
             {
                 case OptionMatchSet:
-                    MatchSet = new ValueOrNot<String>(parser.GetNextArg(), not);
+                    MatchSet = new ValueOrNot<string>(parser.GetNextArg(), not);
                     MatchSetFlags = parser.GetNextArg(2);
                     return 2;
                 case OptionNoMatch:
@@ -122,12 +120,9 @@ namespace IPTables.Net.Iptables.Modules.IpSet
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
-        private String GetMatch(String type, MatchMode mode)
+        private string GetMatch(string type, MatchMode mode)
         {
             switch (mode)
             {
@@ -144,9 +139,9 @@ namespace IPTables.Net.Iptables.Modules.IpSet
             throw new Exception("Unknown match mode type, should not happen");
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (!MatchSet.Null)
             {
@@ -155,35 +150,20 @@ namespace IPTables.Net.Iptables.Modules.IpSet
                 sb.Append(" " + MatchSetFlags);
             }
 
-            if (ReturnNoMatch)
-            {
-                sb.Append(" " + OptionNoMatch);
-            }
+            if (ReturnNoMatch) sb.Append(" " + OptionNoMatch);
 
-            if (!UpdateCounters)
-            {
-                sb.Append(" ! " + OptionUpdateCounters);
-            }
+            if (!UpdateCounters) sb.Append(" ! " + OptionUpdateCounters);
 
-            if (!UpdateSubCounters)
-            {
-                sb.Append(" ! " + OptionUpdateSubCounters);
-            }
+            if (!UpdateSubCounters) sb.Append(" ! " + OptionUpdateSubCounters);
 
-            if (PacketsMatch != MatchMode.None)
-            {
-                sb.Append(" " + GetMatch("packets", PacketsMatch) + " " + PacketsValue);
-            }
+            if (PacketsMatch != MatchMode.None) sb.Append(" " + GetMatch("packets", PacketsMatch) + " " + PacketsValue);
 
-            if (BytesMatch != MatchMode.None)
-            {
-                sb.Append(" " + GetMatch("bytes", BytesMatch) + " " + BytesValue);
-            }
+            if (BytesMatch != MatchMode.None) sb.Append(" " + GetMatch("bytes", BytesMatch) + " " + BytesValue);
 
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -210,7 +190,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((SetMatchModule) obj);
         }
 
@@ -218,15 +198,15 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         {
             unchecked
             {
-                int hashCode = (MatchSet.GetHashCode());
-                hashCode = (hashCode*397) ^ (MatchSetFlags != null ? MatchSetFlags.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ ReturnNoMatch.GetHashCode();
-                hashCode = (hashCode*397) ^ UpdateCounters.GetHashCode();
-                hashCode = (hashCode*397) ^ UpdateSubCounters.GetHashCode();
-                hashCode = (hashCode*397) ^ _packetsValue;
-                hashCode = (hashCode*397) ^ (int) PacketsMatch;
-                hashCode = (hashCode*397) ^ _bytesValue;
-                hashCode = (hashCode*397) ^ (int) BytesMatch;
+                var hashCode = MatchSet.GetHashCode();
+                hashCode = (hashCode * 397) ^ (MatchSetFlags != null ? MatchSetFlags.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ ReturnNoMatch.GetHashCode();
+                hashCode = (hashCode * 397) ^ UpdateCounters.GetHashCode();
+                hashCode = (hashCode * 397) ^ UpdateSubCounters.GetHashCode();
+                hashCode = (hashCode * 397) ^ _packetsValue;
+                hashCode = (hashCode * 397) ^ (int) PacketsMatch;
+                hashCode = (hashCode * 397) ^ _bytesValue;
+                hashCode = (hashCode * 397) ^ (int) BytesMatch;
                 return hashCode;
             }
         }

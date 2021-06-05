@@ -12,36 +12,31 @@ namespace IPTables.Net.Conntrack
     public class ConntrackSystem
     {
         private object _queryLock = new object();
-        private Dictionary<String, UInt16> _constants = new Dictionary<string, UInt16>();
+        private Dictionary<string, ushort> _constants = new Dictionary<string, ushort>();
 
-        public UInt16 GetConstant(String key)
+        public ushort GetConstant(string key)
         {
             lock (_constants)
             {
-                UInt16 value;
+                ushort value;
                 if (!_constants.TryGetValue(key, out value))
                 {
-                    int v = ConntrackHelper.cr_constant(key);
-                    if (v == -1)
-                    {
-                        throw new KeyNotFoundException(String.Format("Unable to lookup constant {0}", key));
-                    }
-                    Debug.Assert(v <= UInt16.MaxValue);
-                    value = (UInt16)v;
+                    var v = ConntrackHelper.cr_constant(key);
+                    if (v == -1) throw new KeyNotFoundException(string.Format("Unable to lookup constant {0}", key));
+                    Debug.Assert(v <= ushort.MaxValue);
+                    value = (ushort) v;
                     _constants.Add(key, value);
                 }
+
                 return value;
             }
         }
 
-        public bool ExtractField<T>(ConntrackQueryFilter[] qf, byte[] conn, out T output) where T:struct
+        public bool ExtractField<T>(ConntrackQueryFilter[] qf, byte[] conn, out T output) where T : struct
         {
             var size = Marshal.SizeOf(typeof(T));
             var handle = Marshal.AllocHGlobal(size);
-            if (handle == IntPtr.Zero)
-            {
-                throw new IpTablesNetException("Unable to allocate memory for Conntrack field");
-            }
+            if (handle == IntPtr.Zero) throw new IpTablesNetException("Unable to allocate memory for Conntrack field");
 
             try
             {
@@ -54,8 +49,9 @@ namespace IPTables.Net.Conntrack
                 }
                 else
                 {
-                    output = default(T);
+                    output = default;
                 }
+
                 return ret;
             }
             finally
@@ -72,75 +68,60 @@ namespace IPTables.Net.Conntrack
         /// <param name="restoreMark"></param>
         /// <param name="restoreMarkMask"></param>
         /// <returns>remaining unprocessed data</returns>
-        public int Restore(bool expectationsTable, byte[] data, UInt32 restoreMark = 0, UInt32 restoreMarkMask = 0)
+        public int Restore(bool expectationsTable, byte[] data, uint restoreMark = 0, uint restoreMarkMask = 0)
         {
-            bool useRestoreMark = restoreMark != 0 || restoreMarkMask != 0;
-            if (useRestoreMark)
-            {
-                ConntrackHelper.restore_mark_init(restoreMark,restoreMarkMask);
-            }
-            int errorCode = ConntrackHelper.restore_nf_cts(expectationsTable, data, data.Length);
+            var useRestoreMark = restoreMark != 0 || restoreMarkMask != 0;
+            if (useRestoreMark) ConntrackHelper.restore_mark_init(restoreMark, restoreMarkMask);
+            var errorCode = ConntrackHelper.restore_nf_cts(expectationsTable, data, data.Length);
             if (errorCode < 0)
-            {
-                throw new IpTablesNetException(String.Format("An error occured while loading NFCTs with the errno: {0}", -errorCode));
-            }
-            if (useRestoreMark)
-            {
-                ConntrackHelper.restore_mark_free();
-            }
+                throw new IpTablesNetException(string.Format("An error occured while loading NFCTs with the errno: {0}",
+                    -errorCode));
+            if (useRestoreMark) ConntrackHelper.restore_mark_free();
 
             return errorCode;
         }
 
-        public void Dump(bool expectationTable, Action<byte[]> cb, ConntrackQueryFilter[] qf = null, AddressFamily addressFamily = AddressFamily.Unspecified)
+        public void Dump(bool expectationTable, Action<byte[]> cb, ConntrackQueryFilter[] qf = null,
+            AddressFamily addressFamily = AddressFamily.Unspecified)
         {
             lock (_queryLock)
             {
-                ConntrackHelper.conditional_init((int)addressFamily, qf, qf == null ? 0 : qf.Length);
+                ConntrackHelper.conditional_init((int) addressFamily, qf, qf == null ? 0 : qf.Length);
 
                 try
                 {
-                    byte[] buffer = new byte[1];
-                    ConntrackHelper.CrImg img = new ConntrackHelper.CrImg();
+                    var buffer = new byte[1];
+                    var img = new ConntrackHelper.CrImg();
                     Debug.Assert(img.CrNode == IntPtr.Zero);
 
                     ConntrackHelper.dump_nf_cts(expectationTable, ref img);
 
                     try
                     {
-                        IntPtr ptr = img.CrNode;
+                        var ptr = img.CrNode;
                         while (ptr != IntPtr.Zero)
                         {
-                            int crsize = ConntrackHelper.cr_length(ptr);
-                            IntPtr newPtr = Marshal.ReadIntPtr(ptr);
-                            
+                            var crsize = ConntrackHelper.cr_length(ptr);
+                            var newPtr = Marshal.ReadIntPtr(ptr);
+
                             crsize -= IntPtr.Size;
                             Debug.Assert(crsize > 0);
-                            if (buffer.Length != crsize)
-                            {
-                                buffer = new byte[crsize];
-                            }
-                            
+                            if (buffer.Length != crsize) buffer = new byte[crsize];
+
                             Marshal.Copy(new IntPtr((long) ptr + IntPtr.Size), buffer, 0, crsize);
                             cb(buffer);
-                            
+
                             ptr = newPtr;
                         }
                     }
                     finally
                     {
-                        if (img.CrNode != IntPtr.Zero)
-                        {
-                            ConntrackHelper.cr_free(img);
-                        }
+                        if (img.CrNode != IntPtr.Zero) ConntrackHelper.cr_free(img);
                     }
                 }
                 finally
                 {
-                    if (qf != null || addressFamily != AddressFamily.Unspecified)
-                    {
-                        ConntrackHelper.conditional_free();
-                    }
+                    if (qf != null || addressFamily != AddressFamily.Unspecified) ConntrackHelper.conditional_free();
                 }
             }
         }

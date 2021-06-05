@@ -7,7 +7,7 @@ namespace IPTables.Net.Iptables.Modules.State
 {
     public class StateModule : ModuleBase, IIpTablesModule, IEquatable<StateModule>
     {
-        private const String OptionState = "--state";
+        private const string OptionState = "--state";
 
         public ConnectionStateSet State = null;
 
@@ -22,10 +22,7 @@ namespace IPTables.Net.Iptables.Modules.State
             return Equals(State, other.State);
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -39,7 +36,7 @@ namespace IPTables.Net.Iptables.Modules.State
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -52,7 +49,7 @@ namespace IPTables.Net.Iptables.Modules.State
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -63,7 +60,7 @@ namespace IPTables.Net.Iptables.Modules.State
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("state", typeof (StateModule), GetOptions, false);
+            return GetModuleEntryInternal("state", typeof(StateModule), GetOptions, false);
         }
 
         public override bool Equals(object obj)
@@ -76,7 +73,7 @@ namespace IPTables.Net.Iptables.Modules.State
 
         public override int GetHashCode()
         {
-            return (State != null ? State.GetHashCode() : 0);
+            return State != null ? State.GetHashCode() : 0;
         }
     }
 }

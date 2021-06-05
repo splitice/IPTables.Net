@@ -26,15 +26,15 @@ namespace IPTables.Net.Iptables.DataTypes
             return Comparing.SetEquals(other.Comparing) && MustHave.SetEquals(other.MustHave);
         }
 
-        public override String ToString()
+        public override string ToString()
         {
-            String ret = "";
+            var ret = "";
             ret += Comparing.Select(GetFlag).Aggregate((current, next) => current + "," + next);
             ret += " " + MustHave.Select(GetFlag).Aggregate((current, next) => current + "," + next);
             return ret;
         }
 
-        private static TcpFlag GetFlag(String sFlag)
+        private static TcpFlag GetFlag(string sFlag)
         {
             switch (sFlag)
             {
@@ -55,7 +55,7 @@ namespace IPTables.Net.Iptables.DataTypes
             throw new IpTablesNetException("Invalid TCP Flag");
         }
 
-        private static String GetFlag(TcpFlag sFlag)
+        private static string GetFlag(TcpFlag sFlag)
         {
             switch (sFlag)
             {
@@ -76,21 +76,13 @@ namespace IPTables.Net.Iptables.DataTypes
             throw new IpTablesNetException("Invalid TCP Flag");
         }
 
-        private static IEnumerable<TcpFlag> GetFlags(String sFlags)
+        private static IEnumerable<TcpFlag> GetFlags(string sFlags)
         {
             if (sFlags == "ALL")
-            {
                 return new List<TcpFlag> {TcpFlag.ACK, TcpFlag.FIN, TcpFlag.PSH, TcpFlag.RST, TcpFlag.SYN, TcpFlag.URG};
-            }
-            if (sFlags == "NONE")
-            {
-                return new List<TcpFlag>();
-            }
+            if (sFlags == "NONE") return new List<TcpFlag>();
             var flags = new List<TcpFlag>();
-            foreach (string f in sFlags.Split(new[] {','}))
-            {
-                flags.Add(GetFlag(f));
-            }
+            foreach (var f in sFlags.Split(new[] {','})) flags.Add(GetFlag(f));
             return flags;
         }
 
@@ -111,7 +103,7 @@ namespace IPTables.Net.Iptables.DataTypes
         {
             unchecked
             {
-                return ((Comparing != null ? Comparing.GetHashCode() : 0)*397) ^
+                return ((Comparing != null ? Comparing.GetHashCode() : 0) * 397) ^
                        (MustHave != null ? MustHave.GetHashCode() : 0);
             }
         }

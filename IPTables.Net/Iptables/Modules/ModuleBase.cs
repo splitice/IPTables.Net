@@ -8,11 +8,10 @@ namespace IPTables.Net.Iptables.Modules
     {
         protected ModuleBase(int version)
         {
-            
         }
 
-        protected internal static ModuleEntry GetModuleEntryInternal(String moduleName, Type moduleType,
-            Func<IEnumerable<String>> options, bool preloaded = false)
+        protected internal static ModuleEntry GetModuleEntryInternal(string moduleName, Type moduleType,
+            Func<IEnumerable<string>> options, bool preloaded = false)
         {
             var entry = new ModuleEntry
             {
@@ -28,8 +27,8 @@ namespace IPTables.Net.Iptables.Modules
             return entry;
         }
 
-        protected internal static ModuleEntry GetTargetModuleEntryInternal(String moduleName, Type moduleType,
-            Func<IEnumerable<String>> options, bool preloaded = false)
+        protected internal static ModuleEntry GetTargetModuleEntryInternal(string moduleName, Type moduleType,
+            Func<IEnumerable<string>> options, bool preloaded = false)
         {
             var entry = new ModuleEntry
             {
@@ -40,7 +39,7 @@ namespace IPTables.Net.Iptables.Modules
                 IsTarget = true
             };
 
-            Debug.Assert(entry.Options != null, "Options null for "+moduleName);
+            Debug.Assert(entry.Options != null, "Options null for " + moduleName);
 
             return entry;
         }

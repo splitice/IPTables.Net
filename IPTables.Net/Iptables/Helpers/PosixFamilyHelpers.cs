@@ -8,7 +8,7 @@ namespace IPTables.Net.Iptables.Helpers
 {
     public class PosixFamilyHelpers
     {
-        public static String GetIpFamily(int ipVersion)
+        public static string GetIpFamily(int ipVersion)
         {
             switch (ipVersion)
             {

@@ -10,16 +10,10 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public ConnectionStateSet(IEnumerable<ConnectionState> states)
         {
-            foreach (ConnectionState s in states)
-            {
-                _states.Add(s);
-            }
+            foreach (var s in states) _states.Add(s);
         }
 
-        public IEnumerable<ConnectionState> States
-        {
-            get { return _states; }
-        }
+        public IEnumerable<ConnectionState> States => _states;
 
         public bool Equals(ConnectionStateSet other)
         {
@@ -28,14 +22,14 @@ namespace IPTables.Net.Iptables.DataTypes
             return _states.SetEquals(other._states);
         }
 
-        public override String ToString()
+        public override string ToString()
         {
-            return String.Join(",", _states.Select(ConnectionStateHelper.GetString).ToArray());
+            return string.Join(",", _states.Select(ConnectionStateHelper.GetString).ToArray());
         }
 
         public static ConnectionStateSet Parse(string stringRepresentation)
         {
-            string[] split = stringRepresentation.Split(new[] {','});
+            var split = stringRepresentation.Split(new[] {','});
             return new ConnectionStateSet(split.Select(ConnectionStateHelper.FromString));
         }
 
@@ -49,7 +43,7 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public override int GetHashCode()
         {
-            return (_states != null ? _states.GetHashCode() : 0);
+            return _states != null ? _states.GetHashCode() : 0;
         }
     }
 }

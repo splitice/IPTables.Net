@@ -8,9 +8,9 @@ namespace IPTables.Net.Iptables.Modules.Dnat
 {
     public class DnatModule : ModuleBase, IIpTablesModule, IEquatable<DnatModule>
     {
-        private const String OptionToDestination = "--to-destination";
-        private const String OptionRandom = "--random";
-        private const String OptionPersisent = "--persistent";
+        private const string OptionToDestination = "--to-destination";
+        private const string OptionRandom = "--random";
+        private const string OptionPersisent = "--persistent";
 
         public bool Persistent { get; set; } = false;
         public bool Random { get; set; } = false;
@@ -28,10 +28,7 @@ namespace IPTables.Net.Iptables.Modules.Dnat
                    ToDestination.Equals(other.ToDestination);
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -53,7 +50,7 @@ namespace IPTables.Net.Iptables.Modules.Dnat
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -82,7 +79,7 @@ namespace IPTables.Net.Iptables.Modules.Dnat
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -95,7 +92,7 @@ namespace IPTables.Net.Iptables.Modules.Dnat
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("DNAT", typeof (DnatModule), GetOptions, false);
+            return GetTargetModuleEntryInternal("DNAT", typeof(DnatModule), GetOptions, false);
         }
 
         public override bool Equals(object obj)
@@ -110,9 +107,9 @@ namespace IPTables.Net.Iptables.Modules.Dnat
         {
             unchecked
             {
-                int hashCode = Persistent.GetHashCode();
-                hashCode = (hashCode*397) ^ Random.GetHashCode();
-                hashCode = (hashCode*397) ^ ToDestination.GetHashCode();
+                var hashCode = Persistent.GetHashCode();
+                hashCode = (hashCode * 397) ^ Random.GetHashCode();
+                hashCode = (hashCode * 397) ^ ToDestination.GetHashCode();
                 return hashCode;
             }
         }

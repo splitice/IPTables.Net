@@ -6,8 +6,8 @@ namespace IPTables.Net.Iptables.Modules.Netflow
 {
     public class NetflowMatchModule : ModuleBase, IEquatable<NetflowMatchModule>, IIpTablesModule
     {
-        private const String OptionFwStatus = "--fw_status";
-        private const String OptionNoPorts = "--nf-noports";
+        private const string OptionFwStatus = "--fw_status";
+        private const string OptionNoPorts = "--nf-noports";
 
         public int FwStatus;
         public bool NoPorts;
@@ -39,27 +39,22 @@ namespace IPTables.Net.Iptables.Modules.Netflow
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
-            String ret = "";
-            if (FwStatus != 0)
-            {
-                ret = OptionFwStatus + " " + FwStatus;
-            }
+            var ret = "";
+            if (FwStatus != 0) ret = OptionFwStatus + " " + FwStatus;
             if (NoPorts)
             {
                 if (ret.Length != 0) ret += " ";
                 ret += OptionNoPorts;
             }
+
             return ret;
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -79,7 +74,7 @@ namespace IPTables.Net.Iptables.Modules.Netflow
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((NetflowMatchModule)obj);
+            return Equals((NetflowMatchModule) obj);
         }
 
         public override int GetHashCode()

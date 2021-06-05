@@ -7,10 +7,10 @@ namespace IPTables.Net.Iptables.Modules.Udp
 {
     public class UdpModule : ModuleBase, IIpTablesModule, IEquatable<UdpModule>
     {
-        private const String OptionSourcePortLong = "--source-port";
-        private const String OptionSourcePortShort = "--sport";
-        private const String OptionDestinationPortLong = "--destination-port";
-        private const String OptionDestinationPortShort = "--dport";
+        private const string OptionSourcePortLong = "--source-port";
+        private const string OptionSourcePortShort = "--sport";
+        private const string OptionDestinationPortLong = "--destination-port";
+        private const string OptionDestinationPortShort = "--dport";
 
         public ValueOrNot<PortOrRange> DestinationPort = new ValueOrNot<PortOrRange>();
         public ValueOrNot<PortOrRange> SourcePort = new ValueOrNot<PortOrRange>();
@@ -26,10 +26,7 @@ namespace IPTables.Net.Iptables.Modules.Udp
             return Equals(DestinationPort, other.DestinationPort) && Equals(SourcePort, other.SourcePort);
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -49,7 +46,7 @@ namespace IPTables.Net.Iptables.Modules.Udp
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -70,7 +67,7 @@ namespace IPTables.Net.Iptables.Modules.Udp
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -84,7 +81,7 @@ namespace IPTables.Net.Iptables.Modules.Udp
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("udp", typeof (UdpModule), GetOptions);
+            return GetModuleEntryInternal("udp", typeof(UdpModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -99,8 +96,8 @@ namespace IPTables.Net.Iptables.Modules.Udp
         {
             unchecked
             {
-                int hashCode = (DestinationPort.GetHashCode());
-                hashCode = (hashCode*397) ^ (SourcePort.GetHashCode());
+                var hashCode = DestinationPort.GetHashCode();
+                hashCode = (hashCode * 397) ^ SourcePort.GetHashCode();
                 return hashCode;
             }
         }

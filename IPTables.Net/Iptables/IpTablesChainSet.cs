@@ -18,31 +18,23 @@ namespace IPTables.Net.Iptables
             _ipVersion = ipVersion;
         }
 
-        public int IpVersion
-        {
-            get { return _ipVersion; }
-        }
+        public int IpVersion => _ipVersion;
 
-        public IEnumerable<IpTablesChain> Chains
-        {
-            get { return _chains; }
-        }
+        public IEnumerable<IpTablesChain> Chains => _chains;
 
 
         public void AddDefaultChains(IpTablesSystem system)
         {
             foreach (var tablePair in IPTablesTables.DefaultTables)
-            {
-                foreach (var chain in tablePair.Value)
-                {
-                    _chains.Add(new IpTablesChain(tablePair.Key, chain, _ipVersion, system));
-                }
-            }
+            foreach (var chain in tablePair.Value)
+                _chains.Add(new IpTablesChain(tablePair.Key, chain, _ipVersion, system));
         }
+
         protected IpTablesChain CreateChain(string tableName, string chainName, IpTablesSystem system)
         {
             return new IpTablesChain(tableName, chainName, _ipVersion, system);
         }
+
         public void RemoveChain(IpTablesChain chain)
         {
             _chains.Remove(chain);
@@ -55,15 +47,9 @@ namespace IPTables.Net.Iptables
             foreach (var c in _chains)
             {
                 IpTablesChain c2;
-                if (!other._chains.TryGetValue(c, out c2))
-                {
-                    return false;
-                }
-                
-                if (!c2.CompareRules(c))
-                {
-                    return false;
-                }
+                if (!other._chains.TryGetValue(c, out c2)) return false;
+
+                if (!c2.CompareRules(c)) return false;
             }
 
             return true;
@@ -73,40 +59,37 @@ namespace IPTables.Net.Iptables
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((IpTablesChainSet) obj);
         }
 
         public override int GetHashCode()
         {
-            int hashCode = _ipVersion;
+            var hashCode = _ipVersion;
             hashCode = (hashCode * 397) ^ _chains.Count;
             return hashCode;
         }
 
-        public bool HasChain(String chain, String table)
+        public bool HasChain(string chain, string table)
         {
             return GetChainOrDefault(chain, table) != null;
         }
 
         public void AddChain(IpTablesChain chain)
         {
-            if (_chains.Contains(chain))
-            {
-                throw new IpTablesNetException("Chain Set already contains this chain");
-            }
+            if (_chains.Contains(chain)) throw new IpTablesNetException("Chain Set already contains this chain");
 
-            if (_chains.FirstOrDefault(a => ((IpTablesChain) a).Name == ((IpTablesChain) chain).Name && ((IpTablesChain) a).Table == ((IpTablesChain) chain).Table) != null)
-            {
+            if (_chains.FirstOrDefault(a =>
+                ((IpTablesChain) a).Name == ((IpTablesChain) chain).Name &&
+                ((IpTablesChain) a).Table == ((IpTablesChain) chain).Table) != null)
                 throw new IpTablesNetException("Chain Set already contains a chain with the same name in this table");
-            }
 
             _chains.Add(chain);
         }
 
         public IpTablesChain GetChainOrAdd(string chainName, string tableName, IpTablesSystem system)
         {
-            IpTablesChain chain = GetChainOrDefault(chainName, tableName);
+            var chain = GetChainOrDefault(chainName, tableName);
 
             if (chain != null)
                 return chain;
@@ -124,16 +107,12 @@ namespace IPTables.Net.Iptables
 
         public IpTablesChain GetChainOrAdd(IpTablesChain chain)
         {
-            IpTablesChain chainFound = GetChainOrDefault(((IpTablesChain) chain).Name, ((IpTablesChain) chain).Table);
+            var chainFound = GetChainOrDefault(((IpTablesChain) chain).Name, ((IpTablesChain) chain).Table);
 
             if (chainFound == null)
-            {
                 AddChain(chain);
-            }
             else
-            {
                 return chainFound;
-            }
 
 
             return chain;
@@ -141,8 +120,8 @@ namespace IPTables.Net.Iptables
 
         public void AddRule(IpTablesRule rule)
         {
-            IpTablesChain chain = GetChainOrAdd(rule.Chain);
-            ((IpTablesChain) chain).AddRule(rule);
+            var chain = GetChainOrAdd(rule.Chain);
+            chain.AddRule(rule);
         }
 
         public IpTablesChain GetChainOrDefault(string chain, string table)

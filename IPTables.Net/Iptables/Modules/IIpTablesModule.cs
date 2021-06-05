@@ -2,10 +2,10 @@
 
 namespace IPTables.Net.Iptables.Modules
 {
-    public interface IIpTablesModule: ICloneable
+    public interface IIpTablesModule : ICloneable
     {
         bool NeedsLoading { get; }
-        String GetRuleString();
+        string GetRuleString();
         int Feed(CommandParser parser, bool not);
     }
 }

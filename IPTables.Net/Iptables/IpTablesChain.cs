@@ -10,17 +10,19 @@ using IPTables.Net.Netfilter.TableSync;
 
 [assembly: InternalsVisibleTo("IPTables.Net.Tests")]
 [assembly: InternalsVisibleTo("IPTables.Net.TestFramework")]
+
 namespace IPTables.Net.Iptables
 {
     public class IpTablesChain : IEquatable<IpTablesChain>
     {
-        private readonly String _name;
+        private readonly string _name;
         private readonly List<IpTablesRule> _rules;
         private readonly IpTablesSystem _system;
-        private readonly String _table;
+        private readonly string _table;
         private readonly int _ipVersion;
 
-        public IpTablesChain(String table, String chainName, int ipVersion, IpTablesSystem system, List<IpTablesRule> rules)
+        public IpTablesChain(string table, string chainName, int ipVersion, IpTablesSystem system,
+            List<IpTablesRule> rules)
         {
             _name = chainName;
             _table = table;
@@ -29,7 +31,7 @@ namespace IPTables.Net.Iptables
             _ipVersion = ipVersion;
         }
 
-        public IpTablesChain(String table, String chainName, int ipVersion, IpTablesSystem system)
+        public IpTablesChain(string table, string chainName, int ipVersion, IpTablesSystem system)
         {
             _name = chainName;
             _table = table;
@@ -38,30 +40,15 @@ namespace IPTables.Net.Iptables
             _ipVersion = ipVersion;
         }
 
-        public bool IsEmpty
-        {
-            get { return !_rules.Any(); }
-        }
+        public bool IsEmpty => !_rules.Any();
 
-        public String Name
-        {
-            get { return _name; }
-        }
+        public string Name => _name;
 
-        public String Table
-        {
-            get { return _table; }
-        }
+        public string Table => _table;
 
-        public List<IpTablesRule> Rules
-        {
-            get { return _rules; }
-        }
+        public List<IpTablesRule> Rules => _rules;
 
-        public int IpVersion
-        {
-            get { return _ipVersion; }
-        }
+        public int IpVersion => _ipVersion;
 
         public void AddRule(IpTablesRule rule)
         {
@@ -72,6 +59,7 @@ namespace IPTables.Net.Iptables
         {
             Rules.RemoveAt(offset);
         }
+
         public void DeleteRule(IpTablesRule rule)
         {
             Rules.Remove(rule);
@@ -87,10 +75,7 @@ namespace IPTables.Net.Iptables
             Rules[offset] = rule;
         }
 
-        public IpTablesSystem System
-        {
-            get { return _system; }
-        }
+        public IpTablesSystem System => _system;
 
         public void Sync(IIPTablesAdapterClient client, IEnumerable<IpTablesRule> with,
             INetfilterSync sync)
@@ -100,11 +85,13 @@ namespace IPTables.Net.Iptables
             try
             {
                 SyncInternal(client, with, sync);
-            } catch
+            }
+            catch
             {
                 client.EndTransactionRollback();
                 throw;
             }
+
             client.EndTransactionCommit();
         }
 
@@ -118,9 +105,9 @@ namespace IPTables.Net.Iptables
             _system.DeleteChain(_name, _table, _ipVersion, flush);
         }
 
-        public static bool ValidateChainName(String chainName)
+        public static bool ValidateChainName(string chainName)
         {
-            return (chainName.Length <= 30);
+            return chainName.Length <= 30;
         }
 
         internal void SyncInternal(IIPTablesAdapterClient client, IEnumerable<IpTablesRule> with, INetfilterSync sync)
@@ -131,10 +118,7 @@ namespace IPTables.Net.Iptables
         public int GetRulePosition(IpTablesRule rule)
         {
             var index = Rules.IndexOf(rule);
-            if (index == -1)
-            {
-                return -1;
-            }
+            if (index == -1) return -1;
             return index + 1;
         }
 
@@ -142,14 +126,15 @@ namespace IPTables.Net.Iptables
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(_name, other._name) && string.Equals(_table, other._table) && Equals(_system, other._system) && _ipVersion == other._ipVersion;
+            return string.Equals(_name, other._name) && string.Equals(_table, other._table) &&
+                   Equals(_system, other._system) && _ipVersion == other._ipVersion;
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((IpTablesChain) obj);
         }
 
@@ -157,8 +142,8 @@ namespace IPTables.Net.Iptables
         {
             unchecked
             {
-                int hashCode = (_name != null ? _name.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (_table != null ? _table.GetHashCode() : 0);
+                var hashCode = _name != null ? _name.GetHashCode() : 0;
+                hashCode = (hashCode * 397) ^ (_table != null ? _table.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ (_system != null ? _system.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ _ipVersion.GetHashCode();
                 return hashCode;

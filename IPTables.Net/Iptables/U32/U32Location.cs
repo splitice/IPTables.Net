@@ -17,6 +17,7 @@ namespace IPTables.Net.Iptables.U32
             Right,
             Move
         }
+
         public U32Location Location;
         public Operator Op;
         public uint Number;
@@ -30,10 +31,7 @@ namespace IPTables.Net.Iptables.U32
 
         public override string ToString()
         {
-            if (Op == Operator.None)
-            {
-                return Number.ToString();
-            }
+            if (Op == Operator.None) return Number.ToString();
             return Location + StrOp(Op) + Number;
         }
 
@@ -54,7 +52,7 @@ namespace IPTables.Net.Iptables.U32
             throw new Exception("Invalid Operator");
         }
 
-        public static Operator OpStr(String op)
+        public static Operator OpStr(string op)
         {
             switch (op)
             {
@@ -71,22 +69,19 @@ namespace IPTables.Net.Iptables.U32
             throw new Exception("Invalid Operator");
         }
 
-        public static U32Location Parse(ref String expr)
+        public static U32Location Parse(ref string expr)
         {
-            Regex r = new Regex(@"^(0x[a-f0-9A-F]+|[0-9]+)");
+            var r = new Regex(@"^(0x[a-f0-9A-F]+|[0-9]+)");
             var match = r.Match(expr);
             expr = expr.Substring(match.Length);
 
-            U32Location loc = new U32Location(null, Operator.None, FlexibleUInt32.Parse(match.Groups[1].Value));
+            var loc = new U32Location(null, Operator.None, FlexibleUInt32.Parse(match.Groups[1].Value));
 
             do
             {
                 r = new Regex(@"^(\&|\<\<|\>\>|\@)(0x[A-Fa-f0-9]+|[0-9]+)");
                 match = r.Match(expr);
-                if (!match.Success)
-                {
-                    break;
-                }
+                if (!match.Success) break;
                 expr = expr.Substring(match.Length);
 
                 loc = new U32Location(
@@ -109,7 +104,7 @@ namespace IPTables.Net.Iptables.U32
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((U32Location) obj);
         }
 
@@ -117,9 +112,9 @@ namespace IPTables.Net.Iptables.U32
         {
             unchecked
             {
-                int hashCode = (Location != null ? Location.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (int) Op;
-                hashCode = (hashCode*397) ^ (int) Number;
+                var hashCode = Location != null ? Location.GetHashCode() : 0;
+                hashCode = (hashCode * 397) ^ (int) Op;
+                hashCode = (hashCode * 397) ^ (int) Number;
                 return hashCode;
             }
         }

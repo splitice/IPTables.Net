@@ -6,9 +6,9 @@ using System.Text;
 
 namespace IPTables.Net.Conntrack
 {
-    class ConntrackHelper
+    internal class ConntrackHelper
     {
-        public const String Helper = "libipthelper.so";
+        public const string Helper = "libipthelper.so";
 
 
         internal struct CrImg
@@ -17,7 +17,8 @@ namespace IPTables.Net.Conntrack
         }
 
         [DllImport(Helper)]
-        public static extern void restore_mark_init(UInt32 mark, UInt32 mark_mask);
+        public static extern void restore_mark_init(uint mark, uint mark_mask);
+
         [DllImport(Helper)]
         public static extern void restore_mark_free();
 
@@ -25,10 +26,10 @@ namespace IPTables.Net.Conntrack
         public static extern int dump_nf_cts(bool expectations, ref CrImg img);
 
         [DllImport(Helper)]
-        public static extern int restore_nf_cts(bool expectations, byte[] data, Int32 data_length);
+        public static extern int restore_nf_cts(bool expectations, byte[] data, int data_length);
 
         [DllImport(Helper)]
-        public static extern Int32 cr_constant(string constant);
+        public static extern int cr_constant(string constant);
 
         [DllImport(Helper)]
         public static extern int cr_free(CrImg img);
@@ -40,9 +41,10 @@ namespace IPTables.Net.Conntrack
         public static extern int conditional_free();
 
         [DllImport(Helper)]
-        public static extern int conditional_init(Int32 address_family, [In] ConntrackQueryFilter[] qf, int qfLength);
+        public static extern int conditional_init(int address_family, [In] ConntrackQueryFilter[] qf, int qfLength);
 
         [DllImport(Helper)]
-        public static extern bool cr_extract_field([In] ConntrackQueryFilter[] qf, int qfLength, byte[] data, IntPtr output, int outputLen);
+        public static extern bool cr_extract_field([In] ConntrackQueryFilter[] qf, int qfLength, byte[] data,
+            IntPtr output, int outputLen);
     }
 }

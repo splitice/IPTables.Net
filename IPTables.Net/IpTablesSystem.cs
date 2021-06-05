@@ -13,6 +13,7 @@ using IPTables.Net.Exceptions;
 
 [assembly: InternalsVisibleTo("IPTables.Net.Tests")]
 [assembly: InternalsVisibleTo("IPTables.Net.TestFramework")]
+
 namespace IPTables.Net
 {
     /// <summary>
@@ -30,14 +31,15 @@ namespace IPTables.Net
 
         public IIPTablesAdapter TableAdapter => _tableAdapter;
 
-        public IpTablesSystem(ISystemFactory system, IIPTablesAdapter tableAdapter, IpSetBinaryAdapter setAdapter = null)
+        public IpTablesSystem(ISystemFactory system, IIPTablesAdapter tableAdapter,
+            IpSetBinaryAdapter setAdapter = null)
         {
             _system = system;
             _tableAdapter = tableAdapter;
             _setAdapter = setAdapter;
         }
-        
-        public List<String> GetChainNames(IIPTablesAdapterClient client, String table, int ipVersion)
+
+        public List<string> GetChainNames(IIPTablesAdapterClient client, string table, int ipVersion)
         {
             var adapter = client as IIPTablesAdapterClient;
             return adapter.GetChains(table);
@@ -48,19 +50,21 @@ namespace IPTables.Net
             return _tableAdapter.GetClient(this, version);
         }
 
-        public void DeleteChain(IIPTablesAdapterClient client, string name, string table = "filter", int ipVersion = 4, bool flush = false)
+        public void DeleteChain(IIPTablesAdapterClient client, string name, string table = "filter", int ipVersion = 4,
+            bool flush = false)
         {
             client.DeleteChain(table, name, flush);
         }
 
-        public IpTablesChain AddChain(IIPTablesAdapterClient client, String name, String table = "filter", int ipVersion = 4)
+        public IpTablesChain AddChain(IIPTablesAdapterClient client, string name, string table = "filter",
+            int ipVersion = 4)
         {
             client.AddChain(table, name);
 
             return new IpTablesChain(table, name, ipVersion, this, new List<IpTablesRule>());
         }
 
-        public List<String> GetChainNames(String table, int ipVersion)
+        public List<string> GetChainNames(string table, int ipVersion)
         {
             using (var client = GetTableAdapter(ipVersion))
             {
@@ -74,16 +78,10 @@ namespace IPTables.Net
             client.AddChain(chain.Table, chain.Name);
 
             if (addRules)
-            {
-                foreach (IpTablesRule r in chain.Rules)
-                {
+                foreach (var r in chain.Rules)
                     r.AddRule();
-                }
-            }
             else
-            {
                 chain = new IpTablesChain(chain.Table, chain.Name, chain.IpVersion, chain.System);
-            }
 
             return chain;
         }
@@ -97,7 +95,7 @@ namespace IPTables.Net
             }
         }
 
-        public IpTablesChain AddChain(String name, String table = "filter", int ipVersion = 4)
+        public IpTablesChain AddChain(string name, string table = "filter", int ipVersion = 4)
         {
             using (var client = GetTableAdapter(ipVersion))
             {
@@ -146,11 +144,8 @@ namespace IPTables.Net
 
         public IpTablesChain GetChain(IIPTablesAdapterClient client, string table, string chain)
         {
-            IpTablesChainSet tableRules = GetRules(client, table);
-            if (tableRules == null)
-            {
-                throw new IpTablesNetException("Unable to get a chainset for table: " + table);
-            }
+            var tableRules = GetRules(client, table);
+            if (tableRules == null) throw new IpTablesNetException("Unable to get a chainset for table: " + table);
             return tableRules.GetChainOrDefault(chain, table);
         }
 
@@ -169,6 +164,5 @@ namespace IPTables.Net
         {
             return GetRules(client, table).Chains;
         }
-
     }
 }

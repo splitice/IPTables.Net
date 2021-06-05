@@ -21,11 +21,11 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
             Hex
         }
 
-        private const String OptionAlgorithmLong = "--algo";
-        private const String OptionFromLong = "--from";
-        private const String OptionToLong = "--to";
-        private const String OptionStringLong = "--string";
-        private const String OptionHexStringLong = "--hex-string";
+        private const string OptionAlgorithmLong = "--algo";
+        private const string OptionFromLong = "--from";
+        private const string OptionToLong = "--to";
+        private const string OptionStringLong = "--string";
+        private const string OptionHexStringLong = "--hex-string";
 
         public Strategy Algorithm;
         public int From = 0;
@@ -39,18 +39,18 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
 
         public void SetHexString(byte[] pattern, bool not = false)
         {
-            StringBuilder hex = new StringBuilder();
+            var hex = new StringBuilder();
             hex.Append("|");
-            foreach (byte b in pattern)
+            foreach (var b in pattern)
                 hex.AppendFormat("{0:x2}", b);
 
             hex.Append("|");
             SetHexString(hex.ToString());
         }
 
-        public void SetHexString(String pattern, bool not = false)
+        public void SetHexString(string pattern, bool not = false)
         {
-            pattern = pattern.Replace(" ","");
+            pattern = pattern.Replace(" ", "");
             Pattern = new ValueOrNot<string>(pattern, not);
             Notation = NotationTypes.Hex;
         }
@@ -62,17 +62,11 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
                 case OptionAlgorithmLong:
                     var alg = parser.GetNextArg();
                     if (alg == "bm")
-                    {
                         Algorithm = Strategy.BoyerMoore;
-                    }
                     else if (alg == "kmp")
-                    {
                         Algorithm = Strategy.KnuthPrattMorris;
-                    }
                     else
-                    {
-                        throw new IpTablesNetException("Unknown algorithm: "+alg);
-                    }
+                        throw new IpTablesNetException("Unknown algorithm: " + alg);
                     return 1;
                 case OptionFromLong:
                     From = int.Parse(parser.GetNextArg());
@@ -81,7 +75,7 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
                     To = int.Parse(parser.GetNextArg());
                     return 1;
                 case OptionStringLong:
-                    Pattern = new ValueOrNot<string>(parser.GetNextArg(),not);
+                    Pattern = new ValueOrNot<string>(parser.GetNextArg(), not);
                     return 1;
                 case OptionHexStringLong:
                     SetHexString(parser.GetNextArg(), not);
@@ -91,46 +85,29 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
-            String ret = "--alg ";
+            var ret = "--alg ";
             if (Algorithm == Strategy.BoyerMoore)
-            {
                 ret += "bm";
-            }
             else
-            {
                 ret += "kmp";
-            }
 
-            if (From != 0)
-            {
-                ret += " --from "+From;
-            }
+            if (From != 0) ret += " --from " + From;
 
-            if (To != 0)
-            {
-                ret += " --to " + To;
-            }
+            if (To != 0) ret += " --to " + To;
 
             if (Notation == NotationTypes.Hex)
-            {
                 ret += " " + Pattern.ToOption(OptionHexStringLong);
-            }
             else
-            {
                 ret += " " + Pattern.ToOption(OptionStringLong);
-            }
 
             return ret;
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -152,14 +129,15 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Algorithm == other.Algorithm && From == other.From && To == other.To && Notation == other.Notation && Equals(Pattern, other.Pattern);
+            return Algorithm == other.Algorithm && From == other.From && To == other.To && Notation == other.Notation &&
+                   Equals(Pattern, other.Pattern);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((StringModule) obj);
         }
 
@@ -167,11 +145,11 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
         {
             unchecked
             {
-                int hashCode = (int) Algorithm;
-                hashCode = (hashCode*397) ^ From;
-                hashCode = (hashCode*397) ^ To;
-                hashCode = (hashCode*397) ^ (int) Notation;
-                hashCode = (hashCode*397) ^ (Pattern.GetHashCode());
+                var hashCode = (int) Algorithm;
+                hashCode = (hashCode * 397) ^ From;
+                hashCode = (hashCode * 397) ^ To;
+                hashCode = (hashCode * 397) ^ (int) Notation;
+                hashCode = (hashCode * 397) ^ Pattern.GetHashCode();
                 return hashCode;
             }
         }

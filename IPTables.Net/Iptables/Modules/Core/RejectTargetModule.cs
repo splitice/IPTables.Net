@@ -6,9 +6,9 @@ namespace IPTables.Net.Iptables.Modules.Core
 {
     internal class RejectTargetModule : ModuleBase, IIpTablesModule, IEquatable<RejectTargetModule>
     {
-        private const String OptionRejectWith = "--reject-with";
+        private const string OptionRejectWith = "--reject-with";
 
-        public String RejectWith { get; set; } = "";
+        public string RejectWith { get; set; } = "";
 
         public RejectTargetModule(int version) : base(version)
         {
@@ -21,10 +21,7 @@ namespace IPTables.Net.Iptables.Modules.Core
             return string.Equals(RejectWith, other.RejectWith);
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -38,11 +35,11 @@ namespace IPTables.Net.Iptables.Modules.Core
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
-            if (!String.IsNullOrEmpty(RejectWith))
+            if (!string.IsNullOrEmpty(RejectWith))
             {
                 if (sb.Length != 0)
                     sb.Append(" ");
@@ -53,7 +50,7 @@ namespace IPTables.Net.Iptables.Modules.Core
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -64,7 +61,7 @@ namespace IPTables.Net.Iptables.Modules.Core
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("REJECT", typeof (RejectTargetModule), GetOptions, true);
+            return GetTargetModuleEntryInternal("REJECT", typeof(RejectTargetModule), GetOptions, true);
         }
 
         public override bool Equals(object obj)
@@ -77,7 +74,7 @@ namespace IPTables.Net.Iptables.Modules.Core
 
         public override int GetHashCode()
         {
-            return (RejectWith != null ? RejectWith.GetHashCode() : 0);
+            return RejectWith != null ? RejectWith.GetHashCode() : 0;
         }
     }
 }

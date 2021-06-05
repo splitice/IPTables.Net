@@ -16,24 +16,18 @@ namespace IPTables.Net.Iptables.U32
 
         public override string ToString()
         {
-            return String.Join(" ", _statements.Select((a) => a.ToString()).ToArray());
+            return string.Join(" ", _statements.Select((a) => a.ToString()).ToArray());
         }
 
-        public static U32Expression Parse(String strExpr)
+        public static U32Expression Parse(string strExpr)
         {
             strExpr = strExpr.Replace(" ", "");
-            List<IU32Statement> statements = new List<IU32Statement>();
-            while (strExpr.Length!=0)
-            {
+            var statements = new List<IU32Statement>();
+            while (strExpr.Length != 0)
                 if (strExpr[0] == '&' && strExpr[1] == '&')
-                {
                     statements.Add(U32AndTestStatement.Parse(ref strExpr));
-                }
                 else
-                {
                     statements.Add(U32TestStatement.Parse(ref strExpr));
-                }
-            }
             return new U32Expression(statements);
         }
 
@@ -46,13 +40,13 @@ namespace IPTables.Net.Iptables.U32
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((U32Expression) obj);
         }
 
         public override int GetHashCode()
         {
-            return (_statements != null ? _statements.GetHashCode() : 0);
+            return _statements != null ? _statements.GetHashCode() : 0;
         }
     }
 }

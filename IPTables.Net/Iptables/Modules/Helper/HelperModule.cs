@@ -6,9 +6,9 @@ namespace IPTables.Net.Iptables.Modules.Helper
 {
     public class HelperModule : ModuleBase, IEquatable<HelperModule>, IIpTablesModule
     {
-        private const String OptionHelperLong = "--helper";
+        private const string OptionHelperLong = "--helper";
 
-        public ValueOrNot<String> Helper;
+        public ValueOrNot<string> Helper;
 
         public HelperModule(int version) : base(version)
         {
@@ -26,24 +26,21 @@ namespace IPTables.Net.Iptables.Modules.Helper
             switch (parser.GetCurrentArg())
             {
                 case OptionHelperLong:
-                    Helper = new ValueOrNot<String>(parser.GetNextArg(), not);
+                    Helper = new ValueOrNot<string>(parser.GetNextArg(), not);
                     return 1;
             }
 
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             return Helper.ToOption(OptionHelperLong);
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -62,7 +59,7 @@ namespace IPTables.Net.Iptables.Modules.Helper
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((HelperModule)obj);
+            return Equals((HelperModule) obj);
         }
 
         public override int GetHashCode()

@@ -11,17 +11,19 @@ namespace IPTables.Net.Iptables.Modules.IpSet
     {
         public enum MatchMode
         {
-            Add, Del, Map
+            Add,
+            Del,
+            Map
         }
 
-        private const String OptionAddSet = "--add-set";
-        private const String OptionDelSet = "--del-set";
-        private const String OptionMapSet = "--map-set";
-        private const String OptionExist = "--exist";
-        private const String OptionTimeout = "--timeout";
+        private const string OptionAddSet = "--add-set";
+        private const string OptionDelSet = "--del-set";
+        private const string OptionMapSet = "--map-set";
+        private const string OptionExist = "--exist";
+        private const string OptionTimeout = "--timeout";
 
-        public ValueOrNot<String> MatchSet;
-        public String MatchSetFlags;
+        public ValueOrNot<string> MatchSet;
+        public string MatchSetFlags;
         public MatchMode MatchSetMode;
         public bool Exist;
         public int Timeout = -1;
@@ -35,17 +37,17 @@ namespace IPTables.Net.Iptables.Modules.IpSet
             switch (parser.GetCurrentArg())
             {
                 case OptionAddSet:
-                    MatchSet = new ValueOrNot<String>(parser.GetNextArg(), not);
+                    MatchSet = new ValueOrNot<string>(parser.GetNextArg(), not);
                     MatchSetFlags = parser.GetNextArg(2);
                     MatchSetMode = MatchMode.Add;
                     return 2;
                 case OptionDelSet:
-                    MatchSet = new ValueOrNot<String>(parser.GetNextArg(), not);
+                    MatchSet = new ValueOrNot<string>(parser.GetNextArg(), not);
                     MatchSetFlags = parser.GetNextArg(2);
                     MatchSetMode = MatchMode.Del;
                     return 2;
                 case OptionMapSet:
-                    MatchSet = new ValueOrNot<String>(parser.GetNextArg(), not);
+                    MatchSet = new ValueOrNot<string>(parser.GetNextArg(), not);
                     MatchSetFlags = parser.GetNextArg(2);
                     MatchSetMode = MatchMode.Map;
                     return 2;
@@ -60,38 +62,29 @@ namespace IPTables.Net.Iptables.Modules.IpSet
             return 0;
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (!MatchSet.Null)
             {
-                String option = OptionAddSet;
+                var option = OptionAddSet;
                 if (MatchSetMode == MatchMode.Del) option = OptionDelSet;
                 if (MatchSetMode == MatchMode.Map) option = OptionMapSet;
                 sb.Append(option + " " + ShellHelper.EscapeArguments(MatchSet.Value));
                 sb.Append(" " + MatchSetFlags);
             }
 
-            if (Exist)
-            {
-                sb.Append(" " + OptionExist);
-            }
+            if (Exist) sb.Append(" " + OptionExist);
 
-            if (Timeout >= 0)
-            {
-                sb.Append(" " + OptionTimeout + " " + Timeout);
-            }
+            if (Timeout >= 0) sb.Append(" " + OptionTimeout + " " + Timeout);
 
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -109,14 +102,15 @@ namespace IPTables.Net.Iptables.Modules.IpSet
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return MatchSet.Equals(other.MatchSet) && string.Equals(MatchSetFlags, other.MatchSetFlags) && MatchSetMode == other.MatchSetMode && Exist == other.Exist && Timeout == other.Timeout;
+            return MatchSet.Equals(other.MatchSet) && string.Equals(MatchSetFlags, other.MatchSetFlags) &&
+                   MatchSetMode == other.MatchSetMode && Exist == other.Exist && Timeout == other.Timeout;
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((SetTargetModule) obj);
         }
 

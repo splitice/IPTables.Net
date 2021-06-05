@@ -17,24 +17,15 @@ namespace IPTables.Net.IpUtils.Sync
 
         public void Sync(IEnumerable<IpObject> with)
         {
-            HashSet<IpObject> objects = new HashSet<IpObject>(with);
+            var objects = new HashSet<IpObject>(with);
 
             foreach (var ipobj in _getter())
-            {
                 if (!objects.Contains(ipobj))
-                {
                     _controller.Delete(ipobj);
-                }
                 else
-                {
                     objects.Remove(ipobj);
-                }
-            }
 
-            foreach (var ipobj in objects)
-            {
-                _controller.Add(ipobj);
-            }
+            foreach (var ipobj in objects) _controller.Add(ipobj);
         }
     }
 }

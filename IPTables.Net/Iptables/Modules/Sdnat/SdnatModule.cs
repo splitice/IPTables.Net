@@ -8,21 +8,21 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
 {
     public class SdnatModule : ModuleBase, IIpTablesModule, IEquatable<SdnatModule>
     {
-        private const String OptionToSource = "--to-source";
-        private const String OptionToDestination = "--to-destination";
-        private const String OptionRandom = "--random";
-        private const String OptionPersisent = "--persistent";
-        private const String OptionCtMask = "--ctmask";
-        private const String OptionCtMark = "--ctmark";
-        private const String OptionSeqadj = "--also-seqadj";
+        private const string OptionToSource = "--to-source";
+        private const string OptionToDestination = "--to-destination";
+        private const string OptionRandom = "--random";
+        private const string OptionPersisent = "--persistent";
+        private const string OptionCtMask = "--ctmask";
+        private const string OptionCtMark = "--ctmark";
+        private const string OptionSeqadj = "--also-seqadj";
 
         public bool Persistent = false;
         public bool Random = false;
         public bool Seqadj = false;
         public IPPortOrRange ToSource = new IPPortOrRange(IPAddress.Any);
         public IPPortOrRange ToDestination = new IPPortOrRange(IPAddress.Any);
-        public UInt32 CtMark;
-        public UInt32 CtMask;
+        public uint CtMark;
+        public uint CtMask;
 
         public SdnatModule(int version) : base(version)
         {
@@ -32,13 +32,12 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) && ToSource.Equals(other.ToSource) && ToDestination.Equals(other.ToDestination) && CtMark == other.CtMark && CtMask == other.CtMask && Seqadj == other.Seqadj;
+            return Persistent.Equals(other.Persistent) && Random.Equals(other.Random) &&
+                   ToSource.Equals(other.ToSource) && ToDestination.Equals(other.ToDestination) &&
+                   CtMark == other.CtMark && CtMask == other.CtMask && Seqadj == other.Seqadj;
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -51,7 +50,7 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
                 case OptionToDestination:
                     ToDestination = IPPortOrRange.Parse(parser.GetNextArg());
                     return 1;
-                    
+
                 case OptionRandom:
                     Random = true;
                     return 0;
@@ -76,7 +75,7 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             var sb = new StringBuilder();
 
@@ -116,7 +115,7 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
                     sb.Append(" ");
                 sb.Append(OptionPersisent);
             }
-            
+
             if (CtMark != 0)
             {
                 if (sb.Length != 0)
@@ -134,7 +133,7 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
             return sb.ToString();
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -151,7 +150,7 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("SDNAT", typeof (SdnatModule), GetOptions, false);
+            return GetTargetModuleEntryInternal("SDNAT", typeof(SdnatModule), GetOptions, false);
         }
 
         public override bool Equals(object obj)
@@ -166,9 +165,9 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
         {
             unchecked
             {
-                int hashCode = Persistent.GetHashCode();
-                hashCode = (hashCode*397) ^ Random.GetHashCode();
-                hashCode = (hashCode*397) ^ ToSource.GetHashCode();
+                var hashCode = Persistent.GetHashCode();
+                hashCode = (hashCode * 397) ^ Random.GetHashCode();
+                hashCode = (hashCode * 397) ^ ToSource.GetHashCode();
                 hashCode = (hashCode * 397) ^ ToDestination.GetHashCode();
                 hashCode = (hashCode * 397) ^ CtMask.GetHashCode();
                 hashCode = (hashCode * 397) ^ CtMark.GetHashCode();

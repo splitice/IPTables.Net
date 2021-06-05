@@ -18,29 +18,26 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
             return true;
         }
 
-        public bool NeedsLoading
-        {
-            get { return false; }
-        }
+        public bool NeedsLoading => false;
 
         public int Feed(CommandParser parser, bool not)
         {
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             return "";
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             return new HashSet<string>();
         }
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("TS3INIT_RESET", typeof (Ts3InitGetCookieModule), GetOptions, false);
+            return GetTargetModuleEntryInternal("TS3INIT_RESET", typeof(Ts3InitGetCookieModule), GetOptions, false);
         }
 
         public override bool Equals(object obj)

@@ -5,14 +5,12 @@ namespace IPTables.Net.Iptables.DataTypes
 {
     internal class FlexibleUInt32
     {
-        public static uint Parse(String number)
+        public static uint Parse(string number)
         {
             if (number.Length > 2 && number.Substring(0, 2) == "0x")
-            {
-                return UInt32.Parse(number.Substring(2), NumberStyles.HexNumber);
-            }
+                return uint.Parse(number.Substring(2), NumberStyles.HexNumber);
 
-            return UInt32.Parse(number);
+            return uint.Parse(number);
         }
     }
 }

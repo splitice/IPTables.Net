@@ -7,7 +7,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.U32
 {
-    struct U32Range: IEquatable<U32Range>
+    internal struct U32Range : IEquatable<U32Range>
     {
         public uint From;
         public uint To;
@@ -20,20 +20,19 @@ namespace IPTables.Net.Iptables.U32
 
         public override string ToString()
         {
-            if (From == To)
-            {
-                return From.ToString();
-            }
+            if (From == To) return From.ToString();
             return From.ToString() + ":" + To.ToString();
         }
 
-        public static U32Range Parse(ref String expr)
+        public static U32Range Parse(ref string expr)
         {
-            Regex r = new Regex(@"^(0x[A-Fa-f0-9]+|[0-9]+)(?:\:(0x[A-Fa-f0-9]+|[0-9]+))?");
+            var r = new Regex(@"^(0x[A-Fa-f0-9]+|[0-9]+)(?:\:(0x[A-Fa-f0-9]+|[0-9]+))?");
             var match = r.Match(expr);
             expr = expr.Substring(match.Length);
-            return new U32Range(FlexibleUInt32.Parse(match.Groups[1].Value), 
-                FlexibleUInt32.Parse(String.IsNullOrEmpty(match.Groups[2].Value) ? match.Groups[1].Value : match.Groups[2].Value));
+            return new U32Range(FlexibleUInt32.Parse(match.Groups[1].Value),
+                FlexibleUInt32.Parse(string.IsNullOrEmpty(match.Groups[2].Value)
+                    ? match.Groups[1].Value
+                    : match.Groups[2].Value));
         }
 
         public bool Equals(U32Range other)
@@ -51,7 +50,7 @@ namespace IPTables.Net.Iptables.U32
         {
             unchecked
             {
-                return ((int) From*397) ^ (int) To;
+                return ((int) From * 397) ^ (int) To;
             }
         }
     }

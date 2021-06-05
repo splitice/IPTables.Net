@@ -7,7 +7,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
 {
     public class TcpMssMatchModule : ModuleBase, IIpTablesModule, IEquatable<TcpMssMatchModule>
     {
-        private const String OptionMss= "--mss";
+        private const string OptionMss = "--mss";
 
         public ValueOrNot<PortOrRange> MssRange;
 
@@ -22,10 +22,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
             return MssRange.Equals(other.MssRange);
         }
 
-        public bool NeedsLoading
-        {
-            get { return true; }
-        }
+        public bool NeedsLoading => true;
 
         public int Feed(CommandParser parser, bool not)
         {
@@ -40,12 +37,12 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
             return 0;
         }
 
-        public String GetRuleString()
+        public string GetRuleString()
         {
             return MssRange.ToOption(OptionMss);
         }
 
-        public static HashSet<String> GetOptions()
+        public static HashSet<string> GetOptions()
         {
             var options = new HashSet<string>
             {
@@ -56,14 +53,14 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("tcpmss", typeof (TcpMssMatchModule), GetOptions);
+            return GetModuleEntryInternal("tcpmss", typeof(TcpMssMatchModule), GetOptions);
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((TcpMssMatchModule) obj);
         }
 
