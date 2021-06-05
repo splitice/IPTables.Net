@@ -55,9 +55,7 @@ namespace IPTables.Net.Iptables.IpSet
                     //Add
                     System.SetAdapter.CreateSet(set);
                     systemSet = new IpSetSet(set.Type, set.Name, set.Timeout, set.Family, System, set.SyncMode,
-                        set.BitmapRange, set.CreateOptions);
-                    systemSet.HashSize = set.HashSize;
-                    systemSet.MaxElem = set.MaxElem;
+                        set.BitmapRange, set.CreateOptions) {HashSize = set.HashSize, MaxElem = set.MaxElem};
                     created = true;
                 }
                 else
