@@ -41,12 +41,12 @@ namespace IPTables.Net.Iptables.Modules
             return _chains.GetChainOrDefault(_ipCommand.ChainName, _ipCommand.Table);
         }
 
-        public IpTablesChain GetNewChain(NetfilterSystem system, int ipVersion)
+        public IpTablesChain GetNewChain(IpTablesSystem system, int ipVersion)
         {
             return new IpTablesChain(_ipCommand.Table, _ipCommand.ChainName, ipVersion, system);
         }
 
-        public IpTablesChain CreateChain(NetfilterSystem system, int ipVersion)
+        public IpTablesChain CreateChain(IpTablesSystem system, int ipVersion)
         {
             var chain = GetNewChain(system, ipVersion);
             _chains.AddChain(chain);

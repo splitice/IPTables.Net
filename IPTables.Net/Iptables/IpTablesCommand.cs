@@ -57,14 +57,14 @@ namespace IPTables.Net.Iptables
             throw new Exception("Unknown command type");
         }
 
-        public static IpTablesCommand Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
+        public static IpTablesCommand Parse(String rule, IpTablesSystem system, IpTablesChainSet chains,
             int version = 4, String defaultTable = "filter")
         {
             CommandParser parser;
             return Parse(rule, system, chains, out parser, version, defaultTable);
         }
 
-        internal static IpTablesCommand Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
+        internal static IpTablesCommand Parse(String rule, IpTablesSystem system, IpTablesChainSet chains,
             out CommandParser parserOut, int version = 4, String defaultTable = "filter")
         {
             Debug.Assert(chains.IpVersion == version);

@@ -7,9 +7,16 @@ using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables
 {
-    public class IpTablesChainSet : NetfilterChainSet<IpTablesChain, IpTablesRule>, IEnumerable<IpTablesChain>
+    public class IpTablesChainSet : IEnumerable<IpTablesChain>
     {
         private int _ipVersion;
+        protected HashSet<IpTablesChain> _chains;
+
+        public IpTablesChainSet(int ipVersion)
+        {
+            _chains = new HashSet<IpTablesChain>();
+            _ipVersion = ipVersion;
+        }
 
         public int IpVersion
         {
@@ -21,12 +28,8 @@ namespace IPTables.Net.Iptables
             get { return _chains; }
         }
 
-        public IpTablesChainSet(int ipVersion)
-        {
-            _ipVersion = ipVersion;
-        }
 
-        public void AddDefaultChains(NetfilterSystem system)
+        public void AddDefaultChains(IpTablesSystem system)
         {
             foreach (var tablePair in IPTablesTables.DefaultTables)
             {
@@ -36,23 +39,10 @@ namespace IPTables.Net.Iptables
                 }
             }
         }
-        protected override IpTablesChain CreateChain(string tableName, string chainName, NetfilterSystem system)
+        protected IpTablesChain CreateChain(string tableName, string chainName, IpTablesSystem system)
         {
             return new IpTablesChain(tableName, chainName, _ipVersion, system);
         }
-
-        public IpTablesChain AddChain(String name, String table, NetfilterSystem system)
-        {
-            if (HasChain(name, table))
-            {
-                throw new IpTablesNetException("A chain with that name already exists");
-            }
-
-            var newChain = new IpTablesChain(table, name, _ipVersion, system);
-            AddChain(newChain);
-            return newChain;
-        }
-
         public void RemoveChain(IpTablesChain chain)
         {
             _chains.Remove(chain);
@@ -92,6 +82,87 @@ namespace IPTables.Net.Iptables
             int hashCode = _ipVersion;
             hashCode = (hashCode * 397) ^ _chains.Count;
             return hashCode;
+        }
+
+        public bool HasChain(String chain, String table)
+        {
+            return GetChainOrDefault(chain, table) != null;
+        }
+
+        public void AddChain(IpTablesChain chain)
+        {
+            if (_chains.Contains(chain))
+            {
+                throw new IpTablesNetException("Chain Set already contains this chain");
+            }
+
+            if (_chains.FirstOrDefault(a => ((IpTablesChain) a).Name == ((IpTablesChain) chain).Name && ((IpTablesChain) a).Table == ((IpTablesChain) chain).Table) != null)
+            {
+                throw new IpTablesNetException("Chain Set already contains a chain with the same name in this table");
+            }
+
+            _chains.Add(chain);
+        }
+
+        public IpTablesChain GetChainOrAdd(string chainName, string tableName, IpTablesSystem system)
+        {
+            IpTablesChain chain = GetChainOrDefault(chainName, tableName);
+
+            if (chain != null)
+                return chain;
+
+            return AddChain(chainName, tableName, system);
+        }
+
+
+        public IpTablesChain AddChain(string chainName, string tableName, IpTablesSystem system)
+        {
+            var chain = CreateChain(tableName, chainName, system);
+            AddChain(chain);
+            return chain;
+        }
+
+        public IpTablesChain GetChainOrAdd(IpTablesChain chain)
+        {
+            IpTablesChain chainFound = GetChainOrDefault(((IpTablesChain) chain).Name, ((IpTablesChain) chain).Table);
+
+            if (chainFound == null)
+            {
+                AddChain(chain);
+            }
+            else
+            {
+                return chainFound;
+            }
+
+
+            return chain;
+        }
+
+        public void AddRule(IpTablesRule rule)
+        {
+            IpTablesChain chain = GetChainOrAdd(rule.Chain);
+            ((IpTablesChain) chain).AddRule(rule);
+        }
+
+        public IpTablesChain GetChainOrDefault(string chain, string table)
+        {
+            return _chains.FirstOrDefault(a => ((IpTablesChain) a).Name == chain && ((IpTablesChain) a).Table == table);
+        }
+
+        public IpTablesChain GetChain(string chain, string table)
+        {
+            return _chains.First(a => ((IpTablesChain) a).Name == chain && ((IpTablesChain) a).Table == table);
+        }
+
+        IEnumerator<IpTablesChain> IEnumerable<IpTablesChain>.GetEnumerator()
+        {
+            return _chains.Cast<IpTablesChain>().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _chains.GetEnumerator();
         }
     }
 }

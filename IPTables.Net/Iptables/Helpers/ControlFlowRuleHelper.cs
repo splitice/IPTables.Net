@@ -16,7 +16,7 @@ namespace IPTables.Net.Iptables.Helpers
         /// <param name="chainJump"></param>
         /// <param name="system"></param>
         /// <returns></returns>
-        public static IpTablesRule CreateJump(IpTablesChain chainIn, String chainJump, NetfilterSystem system)
+        public static IpTablesRule CreateJump(IpTablesChain chainIn, String chainJump, IpTablesSystem system)
         {
             var rule = new IpTablesRule(system, chainIn);
             rule.GetModuleOrLoad<CoreModule>("core").Jump = chainJump;
@@ -30,7 +30,7 @@ namespace IPTables.Net.Iptables.Helpers
         /// <param name="chainJump"></param>
         /// <param name="system"></param>
         /// <returns></returns>
-        public static IpTablesRule CreateGoto(IpTablesChain chainIn, String chainJump, NetfilterSystem system)
+        public static IpTablesRule CreateGoto(IpTablesChain chainIn, String chainJump, IpTablesSystem system)
         {
             var rule = new IpTablesRule(system, chainIn);
             rule.GetModuleOrLoad<CoreModule>("core").Goto = chainJump;

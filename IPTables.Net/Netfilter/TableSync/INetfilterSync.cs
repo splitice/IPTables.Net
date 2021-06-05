@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using IPTables.Net.Iptables;
+using IPTables.Net.Iptables.Adapter.Client;
 
 namespace IPTables.Net.Netfilter.TableSync
 {
-    public interface INetfilterSync<T>
+    public interface INetfilterSync
     {
-        void SyncChainRules(INetfilterAdapterClient client, IEnumerable<T> with, INetfilterChain<T> currentChain);
+        void SyncChainRules(IIPTablesAdapterClient client, IEnumerable<IpTablesRule> with, IpTablesChain currentChain);
         IEnumerable<String> TableOrder { get; }
     }
 }

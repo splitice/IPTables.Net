@@ -15,7 +15,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
         private const String NoFlushOption = "--noflush";
         private const String NoClearOption = "--noclear";
 
-        private readonly NetfilterSystem _system;
+        private readonly IpTablesSystem _system;
         private readonly String _iptablesRestoreBinary;
         private readonly String _iptablesSaveBinary;
         protected bool _inTransaction = false;
@@ -23,7 +23,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
         private string _iptablesBinary;
         private int _ipVersion;
 
-        public IPTablesRestoreAdapterClient(int ipVersion, NetfilterSystem system, String iptablesRestoreBinary = "iptables-restore", String iptableSaveBinary = "iptables-save", String iptablesBinary = "iptables")
+        public IPTablesRestoreAdapterClient(int ipVersion, IpTablesSystem system, String iptablesRestoreBinary = "iptables-restore", String iptableSaveBinary = "iptables-save", String iptablesBinary = "iptables")
         {
             _system = system;
             _iptablesRestoreBinary = iptablesRestoreBinary;
@@ -72,11 +72,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
             String command = "-D " + chainName + " " + position;
 
             _builder.AddCommand(table, command);
-        }
-
-        INetfilterChainSet INetfilterAdapterClient.ListRules(string table)
-        {
-            return ListRules(table);
         }
 
         public override void DeleteRule(IpTablesRule rule)
@@ -134,13 +129,13 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _builder.AddCommand(rule.Chain.Table, command);
         }
 
-        public void AddRule(String command)
+        public override void AddRule(String command)
         {
             var table = ExtractTable(command);
             _builder.AddCommand(table, command);
         }
 
-        public Version GetIptablesVersion()
+        public override Version GetIptablesVersion()
         {
             IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
             return binaryClient.GetIptablesVersion();

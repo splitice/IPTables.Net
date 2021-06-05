@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using IPTables.Net.Exceptions;
+using IPTables.Net.Iptables.Adapter.Client;
 using IPTables.Net.Netfilter;
 using IPTables.Net.Netfilter.TableSync;
 
@@ -11,15 +12,15 @@ using IPTables.Net.Netfilter.TableSync;
 [assembly: InternalsVisibleTo("IPTables.Net.TestFramework")]
 namespace IPTables.Net.Iptables
 {
-    public class IpTablesChain : INetfilterChain<IpTablesRule>, IEquatable<IpTablesChain>
+    public class IpTablesChain : IEquatable<IpTablesChain>
     {
         private readonly String _name;
         private readonly List<IpTablesRule> _rules;
-        private readonly NetfilterSystem _system;
+        private readonly IpTablesSystem _system;
         private readonly String _table;
         private readonly int _ipVersion;
 
-        public IpTablesChain(String table, String chainName, int ipVersion, NetfilterSystem system, List<IpTablesRule> rules)
+        public IpTablesChain(String table, String chainName, int ipVersion, IpTablesSystem system, List<IpTablesRule> rules)
         {
             _name = chainName;
             _table = table;
@@ -28,7 +29,7 @@ namespace IPTables.Net.Iptables
             _ipVersion = ipVersion;
         }
 
-        public IpTablesChain(String table, String chainName, int ipVersion, NetfilterSystem system)
+        public IpTablesChain(String table, String chainName, int ipVersion, IpTablesSystem system)
         {
             _name = chainName;
             _table = table;
@@ -57,25 +58,14 @@ namespace IPTables.Net.Iptables
             get { return _rules; }
         }
 
-        public INetfilterChain<T> Cast<T>() where T : INetfilterRule
-        {
-            throw new IpTablesNetException("Unable to cast");
-        }
-
         public int IpVersion
         {
             get { return _ipVersion; }
         }
 
-        IEnumerable<IpTablesRule> INetfilterChain<IpTablesRule>.Rules => Rules;
-
-        public void AddRule(INetfilterRule rule)
+        public void AddRule(IpTablesRule rule)
         {
-            var ruleCast = rule as IpTablesRule;
-            if(ruleCast == null)
-                throw new IpTablesNetException("Invalid rule type for this chain");
-
-            Rules.Add(ruleCast);
+            Rules.Add(rule);
         }
 
         public void DeleteRule(int offset)
@@ -96,18 +86,14 @@ namespace IPTables.Net.Iptables
         {
             Rules[offset] = rule;
         }
-        IEnumerable<INetfilterRule> INetfilterChain.Rules
-        {
-            get { return _rules.Cast<INetfilterRule>(); }
-        } 
 
-        public NetfilterSystem System
+        public IpTablesSystem System
         {
             get { return _system; }
         }
 
-        public void Sync(INetfilterAdapterClient client, IEnumerable<IpTablesRule> with,
-            INetfilterSync<IpTablesRule> sync)
+        public void Sync(IIPTablesAdapterClient client, IEnumerable<IpTablesRule> with,
+            INetfilterSync sync)
         {
             client.StartTransaction();
 
@@ -122,7 +108,7 @@ namespace IPTables.Net.Iptables
             client.EndTransactionCommit();
         }
 
-        public void Delete(INetfilterAdapterClient client, bool flush = false)
+        public void Delete(IIPTablesAdapterClient client, bool flush = false)
         {
             _system.DeleteChain(client, _name, _table, _ipVersion, flush);
         }
@@ -137,7 +123,7 @@ namespace IPTables.Net.Iptables
             return (chainName.Length <= 30);
         }
 
-        internal void SyncInternal(INetfilterAdapterClient client, IEnumerable<IpTablesRule> with, INetfilterSync<IpTablesRule> sync)
+        internal void SyncInternal(IIPTablesAdapterClient client, IEnumerable<IpTablesRule> with, INetfilterSync sync)
         {
             sync.SyncChainRules(client, with, this);
         }

@@ -11,13 +11,13 @@ namespace IPTables.Net.Iptables.Helpers
     internal static class ExecutionHelper
     {
 
-        public static void ExecuteIptables(NetfilterSystem system, String command, String iptablesBinary)
+        public static void ExecuteIptables(IpTablesSystem system, String command, String iptablesBinary)
         {
             String output, error;
             ExecuteIptables(system, command, iptablesBinary, out output, out error);
         }
 
-        public static void ExecuteIptables(NetfilterSystem system, String command, String iptablesBinary, out String output, out String error)
+        public static void ExecuteIptables(IpTablesSystem system, String command, String iptablesBinary, out String output, out String error)
         {
             using (ISystemProcess process = system.System.StartProcess(iptablesBinary, command))
             {

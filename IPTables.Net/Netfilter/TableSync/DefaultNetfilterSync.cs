@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using IPTables.Net.Iptables;
+using IPTables.Net.Iptables.Adapter.Client;
 
 namespace IPTables.Net.Netfilter.TableSync
 {
-    public class DefaultNetfilterSync<T> : INetfilterSync<T> where T : INetfilterRule
+    public class DefaultNetfilterSync: INetfilterSync
     {
-        private Func<T, bool> _shouldDelete = null;
+        private Func<IpTablesRule, bool> _shouldDelete = null;
 
-        public Func<T, bool> ShouldDelete
+        public Func<IpTablesRule, bool> ShouldDelete
         {
             get { return _shouldDelete; }
             set
@@ -25,8 +26,8 @@ namespace IPTables.Net.Netfilter.TableSync
             }
         }
 
-        private Func<T, T, bool> _ruleComparerForUpdate;
-        private IEqualityComparer<INetfilterRule> _comparer = null;
+        private Func<IpTablesRule, IpTablesRule, bool> _ruleComparerForUpdate;
+        private IEqualityComparer<IpTablesRule> _comparer = null;
 
 
         public IEnumerable<String> TableOrder
@@ -35,7 +36,7 @@ namespace IPTables.Net.Netfilter.TableSync
             set;
         } = new List<string> { "raw", "nat", "mangle", "filter" };
 
-        public Func<T, T, bool> RuleComparerForUpdate
+        public Func<IpTablesRule, IpTablesRule, bool> RuleComparerForUpdate
         {
             get { return _ruleComparerForUpdate; }
             set
@@ -51,23 +52,23 @@ namespace IPTables.Net.Netfilter.TableSync
             }
         }
 
-        public DefaultNetfilterSync(Func<T, T, bool> ruleComparerForUpdate = null, Func<T, bool> shouldDelete = null, IEqualityComparer<INetfilterRule> comparer = null)
+        public DefaultNetfilterSync(Func<IpTablesRule, IpTablesRule, bool> ruleComparerForUpdate = null, Func<IpTablesRule, bool> shouldDelete = null, IEqualityComparer<IpTablesRule> comparer = null)
         {
             ShouldDelete = shouldDelete;
             RuleComparerForUpdate = ruleComparerForUpdate;
             _comparer = comparer ?? new IpTablesRule.ValueComparison();
         } 
 
-        public void SyncChainRules(INetfilterAdapterClient client, IEnumerable<T> with, INetfilterChain<T> chain)
+        public void SyncChainRules(IIPTablesAdapterClient client, IEnumerable<IpTablesRule> with, IpTablesChain chain)
         {
             //Copy the rules
-            var currentRules = new List<T>(chain.Rules);
+            var currentRules = new List<IpTablesRule>(chain.Rules);
 
             
             int i = 0, len = with.Count();
 
             bool shouldUpdate = currentRules.Count == len;
-            foreach (T cR in currentRules)
+            foreach (IpTablesRule cR in currentRules)
             {
                 //Delete any extra rules
                 if (i == len)
@@ -80,7 +81,7 @@ namespace IPTables.Net.Netfilter.TableSync
                 }
 
                 //Get the rule for comparison
-                T withRule = with.ElementAt(i);
+                IpTablesRule withRule = with.ElementAt(i);
 
                 bool eq = _comparer.Equals(cR,withRule);
                 if (eq)
@@ -108,7 +109,7 @@ namespace IPTables.Net.Netfilter.TableSync
             }
 
             //Get rules to be added
-            foreach (T rR in with.Skip(i))
+            foreach (IpTablesRule rR in with.Skip(i))
             {
                 var newRule = rR.ShallowClone();
                 newRule.Chain = chain;

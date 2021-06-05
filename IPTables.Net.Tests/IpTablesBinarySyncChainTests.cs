@@ -35,7 +35,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { rulesNew.Chains.First().Rules[2].GetActionCommand() };
 
-            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            var sync = new DefaultNetfilterSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -57,7 +57,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { };
 
-            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            var sync = new DefaultNetfilterSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -79,7 +79,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { };
 
-            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            var sync = new DefaultNetfilterSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -102,7 +102,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { rulesNew.Chains.First().Rules[2].GetActionCommand() };
 
-            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            var sync = new DefaultNetfilterSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -124,7 +124,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { "-D INPUT 2" };
 
-            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            var sync = new DefaultNetfilterSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -147,7 +147,7 @@ namespace IPTables.Net.Tests
 
             List<String> expectedCommands = new List<String>() { "-D INPUT 1", "-D INPUT 2" };
 
-            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            var sync = new DefaultNetfilterSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -176,7 +176,7 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[2].GetActionCommand()
                                             };
 
-            var sync = new DefaultNetfilterSync<IpTablesRule>();
+            var sync = new DefaultNetfilterSync();
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -219,7 +219,7 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[1].GetActionCommand("-R")
                                             };
 
-            var sync = new DefaultNetfilterSync<IpTablesRule>(CommentComparer);
+            var sync = new DefaultNetfilterSync(CommentComparer);
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -245,7 +245,7 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[0].GetActionCommand("-R")
                                             };
 
-            var sync = new DefaultNetfilterSync<IpTablesRule>(CommentComparer);
+            var sync = new DefaultNetfilterSync(CommentComparer);
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
@@ -273,7 +273,7 @@ namespace IPTables.Net.Tests
                                                 rulesNew.Chains.First().Rules[1].GetActionCommand("-R")
                                             };
 
-            var sync = new DefaultNetfilterSync<IpTablesRule>(CommentComparer);
+            var sync = new DefaultNetfilterSync(CommentComparer);
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
     }

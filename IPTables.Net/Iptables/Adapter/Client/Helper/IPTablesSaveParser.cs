@@ -9,7 +9,7 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
 {
     class IPTablesSaveParser
     {
-        public static IpTablesChainSet GetRulesFromOutput(NetfilterSystem system, String output, String table, int ipVersion, bool ignoreErrors = false)
+        public static IpTablesChainSet GetRulesFromOutput(IpTablesSystem system, String output, String table, int ipVersion, bool ignoreErrors = false)
         {
             var ret = new IpTablesChainSet(ipVersion);
             String ttable = null;

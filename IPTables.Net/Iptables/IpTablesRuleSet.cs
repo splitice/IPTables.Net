@@ -154,7 +154,7 @@ namespace IPTables.Net.Iptables
         /// <param name="sync"></param>
         /// <param name="canDeleteChain"></param>
         /// <param name="maxRetries"></param>
-        public void Sync(INetfilterSync<IpTablesRule> sync,
+        public void Sync(INetfilterSync sync,
             Func<IpTablesChain, bool> canDeleteChain = null, int maxRetries = 10)
         {
             using (var client = _system.GetTableAdapter(_ipVersion))
@@ -177,7 +177,7 @@ namespace IPTables.Net.Iptables
                             {
                                 if (!tableChains.ContainsKey(chain.Table))
                                 {
-                                    var chains = _system.GetChains(client, chain.Table, _ipVersion).ToList();
+                                    var chains = _system.GetChains(client, chain.Table).ToList();
                                     tableChains.Add(chain.Table, chains);
                                 }
 

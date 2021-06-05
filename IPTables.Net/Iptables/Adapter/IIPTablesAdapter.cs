@@ -7,7 +7,7 @@ using IPTables.Net.Netfilter;
 
 namespace IPTables.Net.Iptables.Adapter
 {
-    public interface IIPTablesAdapter : INetfilterAdapter
+    public interface IIPTablesAdapter
     {
         IIPTablesAdapterClient GetClient(IpTablesSystem system, int ipVersion = 4);
     }

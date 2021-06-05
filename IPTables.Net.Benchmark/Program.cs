@@ -11,12 +11,25 @@ namespace IPTables.Net.Benchmark
             Stopwatch sw = new Stopwatch();
             sw.Start();
             IpTablesChainSet cs = new IpTablesChainSet(4);
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < 10000; i++)
             {
-                IpTablesRule.Parse("-A PREROUTING -t raw -d 1.1.1.1 -m comment --comment 'test' -j ACCEPT", null, cs);
+                IpTablesRule.Parse(String.Format("-A {0} -t raw -d 1.1.1.1 -m comment --comment 'test' -j ACCEPT", i), null, cs);
             }
             sw.Stop();
-            Console.WriteLine(sw.Elapsed);
+            Console.WriteLine("Parsed in {0}", sw.Elapsed);
+
+            sw.Reset();
+
+            var r = IpTablesRule.Parse("-A PREROUTING -t raw -d 1.1.1.1 -m comment --comment 'test' -j ACCEPT", null, cs);
+            sw.Start();
+            for (int i = 0; i < 100000; i++)
+            {
+                r.GetActionCommand();
+            }
+            sw.Stop();
+            Console.WriteLine("Rendered in {0}", sw.Elapsed);
+
+
         }
     }
 }

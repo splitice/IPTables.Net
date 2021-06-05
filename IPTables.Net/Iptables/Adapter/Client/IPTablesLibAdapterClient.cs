@@ -14,13 +14,13 @@ namespace IPTables.Net.Iptables.Adapter.Client
 {
     internal class IPTablesLibAdapterClient : IpTablesAdapterClientBase, IIPTablesAdapterClient
     {
-        private readonly NetfilterSystem _system;
+        private readonly IpTablesSystem _system;
         private bool _inTransaction = false;
         protected Dictionary<String, IptcInterface> _interfaces = new Dictionary<String, IptcInterface>();
         private string _iptablesBinary;
         private int _ipVersion;
 
-        public IPTablesLibAdapterClient(int ipVersion, NetfilterSystem system, String iptablesBinary)
+        public IPTablesLibAdapterClient(int ipVersion, IpTablesSystem system, String iptablesBinary)
         {
             _system = system;
             _iptablesBinary = iptablesBinary;
@@ -65,11 +65,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
             {
                 throw new IpTablesNetException(String.Format("Failed to delete rule \"{0}\" due to error: \"{1}\"", command, ipInterface.GetErrorString()));
             }
-        }
-
-        INetfilterChainSet INetfilterAdapterClient.ListRules(string table)
-        {
-            return ListRules(table);
         }
 
         public override void DeleteRule(IpTablesRule rule)
@@ -142,7 +137,13 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
 
 
-        public void AddRule(String command)
+        public override Version GetIptablesVersion()
+        {
+            IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
+            return binaryClient.GetIptablesVersion();
+        }
+
+        public override void AddRule(String command)
         {
             var table = ExtractTable(command);
             var iface = GetInterface(table);
@@ -150,12 +151,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
             {
                 throw new IpTablesNetException(String.Format("Failed to add rule \"{0}\" due to error: \"{1}\"", command, iface.GetErrorString()));
             }
-        }
-
-        public Version GetIptablesVersion()
-        {
-            IPTablesBinaryAdapterClient binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
-            return binaryClient.GetIptablesVersion();
         }
 
         public override bool HasChain(string table, string chainName)

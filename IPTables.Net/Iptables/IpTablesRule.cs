@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Dynamitey;
 using IPTables.Net.Exceptions;
+using IPTables.Net.Iptables.Adapter.Client;
 using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Netfilter;
 using IPTables.Net.Supporting;
@@ -13,7 +14,7 @@ namespace IPTables.Net.Iptables
     /// <summary>
     /// An IPTables Rule, which is tied to a specific system (ready to be added, removed, updated etc)
     /// </summary>
-    public class IpTablesRule : INetfilterRule
+    public class IpTablesRule
     {
         public enum ChainCreateMode
         {
@@ -22,7 +23,7 @@ namespace IPTables.Net.Iptables
             ReturnNewChain
         }
 
-        public class ValueComparison : IEqualityComparer<IpTablesRule>, IEqualityComparer<INetfilterRule>
+        public class ValueComparison : IEqualityComparer<IpTablesRule>
         {
             public virtual bool Equals(IpTablesRule x, IpTablesRule y)
             {
@@ -30,22 +31,6 @@ namespace IPTables.Net.Iptables
             }
 
             public int GetHashCode(IpTablesRule obj)
-            {
-                throw new NotImplementedException();
-            }
-
-            public virtual bool Equals(INetfilterRule x, INetfilterRule y)
-            {
-                if (x.GetType() != y.GetType())
-                {
-                    return false;
-                }
-
-                var xI = (IpTablesRule) x;
-                return Equals(xI, y as IpTablesRule);
-            }
-
-            public int GetHashCode(INetfilterRule obj)
             {
                 throw new NotImplementedException();
             }
@@ -107,11 +92,6 @@ namespace IPTables.Net.Iptables
 
                 return ret;
             }
-
-            public override bool Equals(INetfilterRule x, INetfilterRule y)
-            {
-                return Equals((IpTablesRule) x, (IpTablesRule) y);
-            }
         }
 
         #region Fields
@@ -127,7 +107,7 @@ namespace IPTables.Net.Iptables
         /// <summary>
         /// The System hosting this IPTables rule
         /// </summary>
-        protected internal readonly NetfilterSystem _system;
+        protected internal readonly IpTablesSystem _system;
 
         /// <summary>
         /// Packet Counters (byte / packets)
@@ -148,7 +128,7 @@ namespace IPTables.Net.Iptables
         /// </summary>
         /// <param name="system"></param>
         /// <param name="chain"></param>
-        public IpTablesRule(NetfilterSystem system, IpTablesChain chain)
+        public IpTablesRule(IpTablesSystem system, IpTablesChain chain)
         {
             _system = system;
             _chain = chain;
@@ -198,15 +178,6 @@ namespace IPTables.Net.Iptables
         }
 
         /// <summary>
-        /// The Netfilter chain in which this IPTables Rule exists
-        /// </summary>
-        INetfilterChain INetfilterRule.Chain
-        {
-            get { return _chain; }
-            set { _chain = (IpTablesChain)value; }
-        }
-
-        /// <summary>
         /// The packet and byte counters for the rule
         /// </summary>
         public PacketCounters Counters
@@ -218,7 +189,7 @@ namespace IPTables.Net.Iptables
         /// <summary>
         /// The Netfiler system to which this rule is tied
         /// </summary>
-        internal NetfilterSystem System
+        internal IpTablesSystem System
         {
             get { return _system; }
         }
@@ -244,7 +215,7 @@ namespace IPTables.Net.Iptables
         #region Methods
         
 
-        public INetfilterRule ShallowClone()
+        public IpTablesRule ShallowClone()
         {
             return new IpTablesRule(this);
         }
@@ -325,7 +296,7 @@ namespace IPTables.Net.Iptables
             return command;
         }
 
-        public void AddRule(INetfilterAdapterClient client)
+        public void AddRule(IIPTablesAdapterClient client)
         {
             if (Chain == null)
             {
@@ -344,23 +315,12 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public void ReplaceRule(INetfilterAdapterClient client, INetfilterRule with)
-        {
-            var withCast = with as IpTablesRule;
-            if (withCast == null)
-            {
-                throw new IpTablesNetException("Comparing different Netfilter rule types, unsupported");
-            }
-
-            ReplaceRule(client, withCast);
-        }
-
         public int IpVersion
         {
             get { return _chain.IpVersion; }
         }
 
-        public void ReplaceRule(INetfilterRule with)
+        public void ReplaceRule(IpTablesRule with)
         {
             using (var client = _system.GetTableAdapter(with.IpVersion))
             {
@@ -368,7 +328,7 @@ namespace IPTables.Net.Iptables
             }
         }
 
-        public void DeleteRule(INetfilterAdapterClient client, bool usingPosition = true)
+        public void DeleteRule(IIPTablesAdapterClient client, bool usingPosition = true)
         {
             if (Chain == null)
             {
@@ -481,7 +441,7 @@ namespace IPTables.Net.Iptables
         /// <param name="defaultTable"></param>
         /// <param name="createChain"></param>
         /// <returns></returns>
-        public static IpTablesRule Parse(String rule, NetfilterSystem system, IpTablesChainSet chains,
+        public static IpTablesRule Parse(String rule, IpTablesSystem system, IpTablesChainSet chains,
             int version = -1, String defaultTable = "filter", ChainCreateMode createChain = ChainCreateMode.CreateNewChainIfNeeded)
         {
             if(version == -1) version = chains.IpVersion;
@@ -562,7 +522,7 @@ namespace IPTables.Net.Iptables
             return module as T;
         }
 
-        public void ReplaceRule(INetfilterAdapterClient client, IpTablesRule withRule)
+        public void ReplaceRule(IIPTablesAdapterClient client, IpTablesRule withRule)
         {
             if (Chain == null)
             {
@@ -572,15 +532,6 @@ namespace IPTables.Net.Iptables
             if( idx == -1 ) throw new IpTablesNetException("Could not find rule to replace");
             client.ReplaceRule(withRule);
             Chain.Rules[idx] = withRule;
-        }
-
-
-        public void ReplaceRule(IpTablesRule withRule)
-        {
-            using (var client = _system.GetTableAdapter(Chain.IpVersion))
-            {
-                ReplaceRule(client, withRule);
-            }
         }
 
         #endregion
