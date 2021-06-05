@@ -22,7 +22,7 @@ namespace IPTables.Net
     {
         private readonly ISystemFactory _system;
         private readonly IpSetBinaryAdapter _setAdapter;
-        private IIPTablesAdapter _tableAdapter;
+        private readonly IIPTablesAdapter _tableAdapter;
 
         public ISystemFactory System => _system;
 
@@ -31,11 +31,18 @@ namespace IPTables.Net
         public IIPTablesAdapter TableAdapter => _tableAdapter;
 
         public IpTablesSystem(ISystemFactory system, IIPTablesAdapter tableAdapter,
-            IpSetBinaryAdapter setAdapter = null)
+            IpSetBinaryAdapter setAdapter)
         {
             _system = system;
             _tableAdapter = tableAdapter;
             _setAdapter = setAdapter;
+        }
+
+        public IpTablesSystem(ISystemFactory system, IIPTablesAdapter tableAdapter)
+        {
+            _system = system;
+            _tableAdapter = tableAdapter;
+            _setAdapter = new IpSetBinaryAdapter(system);
         }
 
         public List<string> GetChainNames(IIPTablesAdapterClient client, string table, int ipVersion)
