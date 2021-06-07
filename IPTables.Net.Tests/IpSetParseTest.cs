@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using IPTables.Net.IpSet;
 using IPTables.Net.Iptables.DataTypes;
-using IPTables.Net.Iptables.IpSet;
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests

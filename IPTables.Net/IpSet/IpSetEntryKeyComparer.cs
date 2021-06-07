@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace IPTables.Net.Iptables.IpSet
+namespace IPTables.Net.IpSet
 {
     internal class IpSetEntryKeyComparer : IEqualityComparer<IpSetEntry>
     {

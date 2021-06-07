@@ -1,4 +1,4 @@
-﻿namespace IPTables.Net.Iptables.Utils
+﻿namespace IPTables.Net.NfAcct
 {
     public class NfAcctUsage
     {

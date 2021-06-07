@@ -6,9 +6,9 @@ using SystemInteract;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Adapter.Client;
-using IPTables.Net.Iptables.IpSet.Adapter;
 using System.Runtime.CompilerServices;
 using IPTables.Net.Exceptions;
+using IPTables.Net.IpSet.Adapter;
 
 [assembly: InternalsVisibleTo("IPTables.Net.Tests")]
 [assembly: InternalsVisibleTo("IPTables.Net.TestFramework")]

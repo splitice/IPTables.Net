@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Security.Policy;
-using System.Text;
 using IPTables.Net.Exceptions;
+using IPTables.Net.IpSet.Parser;
 using IPTables.Net.Iptables.DataTypes;
-using IPTables.Net.Iptables.IpSet.Parser;
 using IPTables.Net.Supporting;
 
-namespace IPTables.Net.Iptables.IpSet
+namespace IPTables.Net.IpSet
 {
     /// <summary>
     /// A IPSet "set" possibly containing "entries"

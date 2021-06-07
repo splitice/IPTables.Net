@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Net.Sockets;
-using System.Reflection.Emit;
-using System.Text;
 using IPTables.Net.Exceptions;
+using IPTables.Net.IpSet.Parser;
 using IPTables.Net.Iptables.DataTypes;
-using IPTables.Net.Iptables.IpSet.Parser;
 using IPTables.Net.Supporting;
 
-namespace IPTables.Net.Iptables.IpSet
+namespace IPTables.Net.IpSet
 {
     /// <summary>
     /// A "entry" in an IPSet "set"

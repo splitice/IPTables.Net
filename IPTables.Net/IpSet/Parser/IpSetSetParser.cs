@@ -1,7 +1,6 @@
-﻿using System;
-using IPTables.Net.Iptables.DataTypes;
+﻿using IPTables.Net.Iptables.DataTypes;
 
-namespace IPTables.Net.Iptables.IpSet.Parser
+namespace IPTables.Net.IpSet.Parser
 {
     internal class IpSetSetParser
     {

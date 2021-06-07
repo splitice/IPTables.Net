@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using IPTables.Net.Exceptions;
+﻿using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 
-namespace IPTables.Net.Iptables.IpSet.Parser
+namespace IPTables.Net.IpSet.Parser
 {
     internal class IpSetEntryParser
     {

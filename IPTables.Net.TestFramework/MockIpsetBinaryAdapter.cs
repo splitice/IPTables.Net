@@ -1,5 +1,5 @@
-﻿using IPTables.Net.Iptables.IpSet;
-using IPTables.Net.Iptables.IpSet.Adapter;
+﻿using IPTables.Net.IpSet;
+using IPTables.Net.IpSet.Adapter;
 
 namespace IPTables.Net.TestFramework
 {

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using IPTables.Net.Exceptions;
 
-namespace IPTables.Net.Iptables.IpSet
+namespace IPTables.Net.IpSet
 {
     public class IpSetTypeHelper
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using IPTables.Net.IpSet;
 using IPTables.Net.Iptables.DataTypes;
-using IPTables.Net.Iptables.IpSet;
 
 namespace IPTables.Net.Supporting
 {

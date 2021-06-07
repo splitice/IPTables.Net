@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using SystemInteract;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Helpers;
 using Serilog;
 
-namespace IPTables.Net.Iptables.IpSet.Adapter
+namespace IPTables.Net.IpSet.Adapter
 {
     public class IpSetBinaryAdapter
     {

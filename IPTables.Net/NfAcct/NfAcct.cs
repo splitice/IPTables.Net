@@ -4,7 +4,7 @@ using System.Xml;
 using System.Xml.Linq;
 using SystemInteract;
 
-namespace IPTables.Net.Iptables.Utils
+namespace IPTables.Net.NfAcct
 {
     public class NfAcct
     {

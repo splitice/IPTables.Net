@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using SystemInteract;
-using IPTables.Net.Iptables.IpSet;
+using IPTables.Net.IpSet;
 using NUnit.Framework;
 
 namespace IPTables.Net.TestFramework

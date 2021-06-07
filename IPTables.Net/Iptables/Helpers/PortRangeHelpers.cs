@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using IPTables.Net.IpSet;
 using IPTables.Net.Iptables.DataTypes;
-using IPTables.Net.Iptables.IpSet;
 using IPTables.Net.Iptables.Modules.Core;
 using IPTables.Net.Iptables.Modules.IpSet;
 using IPTables.Net.Iptables.Modules.Multiport;
