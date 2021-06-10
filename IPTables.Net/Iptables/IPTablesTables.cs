@@ -14,7 +14,7 @@ namespace IPTables.Net.Iptables
         internal static Dictionary<string, List<string>> DefaultTables = new Dictionary<string, List<string>>
         {
             {"filter", new List<string> {"INPUT", "FORWARD", "OUTPUT"}},
-            {"nat", new List<string> {"PREROUTING", "POSTROUTING", "OUTPUT"}},
+            {"nat", new List<string> {"PREROUTING", "POSTROUTING", "INPUT", "OUTPUT"}},
             {"raw", new List<string> {"PREROUTING", "OUTPUT"}},
             {"mangle", new List<string> {"INPUT", "FORWARD", "OUTPUT", "PREROUTING", "POSTROUTING"}}
         };
