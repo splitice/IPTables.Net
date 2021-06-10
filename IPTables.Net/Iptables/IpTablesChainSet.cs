@@ -21,12 +21,19 @@ namespace IPTables.Net.Iptables
 
         public IEnumerable<IpTablesChain> Chains => _chains;
 
+        public void AddDefaultChains(String table, IpTablesSystem system)
+        {
+            var list = IPTablesTables.DefaultTables[table];
+            foreach (var chain in list)
+                _chains.Add(new IpTablesChain(table, chain, _ipVersion, system));
+        }
 
         public void AddDefaultChains(IpTablesSystem system)
         {
             foreach (var tablePair in IPTablesTables.DefaultTables)
-            foreach (var chain in tablePair.Value)
-                _chains.Add(new IpTablesChain(tablePair.Key, chain, _ipVersion, system));
+            {
+                AddDefaultChains(tablePair.Key, system)
+            }
         }
 
         protected IpTablesChain CreateChain(string tableName, string chainName, IpTablesSystem system)
