@@ -32,7 +32,7 @@ namespace IPTables.Net.Iptables
         {
             foreach (var tablePair in IPTablesTables.DefaultTables)
             {
-                AddDefaultChains(tablePair.Key, system)
+                AddDefaultChains(tablePair.Key, system);
             }
         }
 
