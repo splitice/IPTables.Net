@@ -9,9 +9,9 @@ namespace IPTables.Net.Iptables
     /// <summary>
     /// Data to define the default IPTables tables and chains
     /// </summary>
-    internal class IPTablesTables
+    public class IPTablesTables
     {
-        internal static Dictionary<string, List<string>> DefaultTables = new Dictionary<string, List<string>>
+        public static Dictionary<string, List<string>> DefaultTables = new Dictionary<string, List<string>>
         {
             {"filter", new List<string> {"INPUT", "FORWARD", "OUTPUT"}},
             {"nat", new List<string> {"PREROUTING", "POSTROUTING", "INPUT", "OUTPUT"}},
