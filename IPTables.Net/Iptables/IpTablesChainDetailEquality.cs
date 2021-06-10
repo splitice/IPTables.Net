@@ -15,6 +15,7 @@ namespace IPTables.Net.Iptables
 
         public int GetHashCode(IpTablesChain obj)
         {
+            if (obj.Name == null) return 0;
             return obj.Name.GetHashCode();
         }
     }
