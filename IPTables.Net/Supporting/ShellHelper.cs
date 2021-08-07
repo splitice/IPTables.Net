@@ -1,4 +1,9 @@
-﻿namespace IPTables.Net.Iptables.Helpers
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace IPTables.Net.Supporting
 {
     public class ShellHelper
     {
@@ -19,6 +24,11 @@
                 return original;
 
             return "'" + original.Replace("\\", "\\\\").Replace("'", "\\'") + "'";
+        }
+
+        public static string BuildArgumentString(IEnumerable<String> arguments)
+        {
+            return string.Join(" ", arguments.Select(ShellHelper.EscapeArguments));
         }
     }
 }

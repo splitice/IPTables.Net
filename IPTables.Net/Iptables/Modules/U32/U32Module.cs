@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using IPTables.Net.Iptables.Helpers;
 using IPTables.Net.Iptables.U32;
+using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables.Modules.U32
 {

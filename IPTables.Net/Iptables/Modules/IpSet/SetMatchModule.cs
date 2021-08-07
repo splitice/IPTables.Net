@@ -4,6 +4,7 @@ using System.Text;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Helpers;
+using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables.Modules.IpSet
 {

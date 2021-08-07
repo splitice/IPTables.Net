@@ -3,6 +3,7 @@ using System.IO;
 using SystemInteract;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Helpers;
+using IPTables.Net.Supporting;
 using Serilog;
 
 namespace IPTables.Net.IpSet.Adapter
