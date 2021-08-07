@@ -63,7 +63,7 @@ namespace IPTables.Net.Iptables.Modules
             CommentModule.GetModuleEntry,
             NfacctModule.GetModuleEntry,
             StateModule.GetModuleEntry,
-            MarkLoadableModule.GetModuleEntry,
+            MarkMatchModule.GetModuleEntry,
             MarkTargetModule.GetModuleEntry,
             ConnmarkMatchModule.GetModuleEntry,
             ConnmarkTargetModule.GetModuleEntry,

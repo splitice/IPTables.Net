@@ -5,22 +5,21 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Mark
 {
-    public class MarkLoadableModule : ModuleBase, IIpTablesModule, IEquatable<MarkLoadableModule>
+    public class MarkMatchModule : ModuleBase, IIpTablesModule, IEquatable<MarkMatchModule>
     {
         private const string OptionMarkLong = "--mark";
 
-        public ValueOrNot<int> Mark = new ValueOrNot<int>();
-        public int Mask = unchecked((int) 0xFFFFFFFF);
+        public ValueOrNot<UInt32Masked> Mark = new ValueOrNot<UInt32Masked>(new UInt32Masked(0, UInt32.MaxValue));
 
-        public MarkLoadableModule(int version) : base(version)
+        public MarkMatchModule(int version) : base(version)
         {
         }
 
-        public bool Equals(MarkLoadableModule other)
+        public bool Equals(MarkMatchModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(Mark, other.Mark) && Mask == other.Mask;
+            return Equals(Mark, other.Mark);
         }
 
         public bool NeedsLoading => true;
@@ -30,9 +29,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
             switch (parser.GetCurrentArg())
             {
                 case OptionMarkLong:
-                    var s = parser.GetNextArg().Split(new char[] {'/'});
-                    Mark.Set(not, FlexibleInt32.Parse(s[0]));
-                    if (s.Length != 1) Mask = FlexibleInt32.Parse(s[1]);
+                    Mark.Set(not, UInt32Masked.Parse(parser.GetNextArg()));
                     return 1;
             }
 
@@ -48,11 +45,6 @@ namespace IPTables.Net.Iptables.Modules.Mark
                 if (sb.Length != 0)
                     sb.Append(" ");
                 sb.Append(Mark.ToOption(OptionMarkLong));
-                if (Mask != unchecked((int) 0xFFFFFFFF))
-                {
-                    sb.Append("/0x");
-                    sb.Append(Mask.ToString("X"));
-                }
             }
 
             return sb.ToString();
@@ -69,7 +61,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("mark", typeof(MarkLoadableModule), GetOptions);
+            return GetModuleEntryInternal("mark", typeof(MarkMatchModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -77,14 +69,14 @@ namespace IPTables.Net.Iptables.Modules.Mark
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((MarkLoadableModule) obj);
+            return Equals((MarkMatchModule) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (Mark.GetHashCode() * 397) ^ Mask;
+                return Mark.GetHashCode();
             }
         }
     }

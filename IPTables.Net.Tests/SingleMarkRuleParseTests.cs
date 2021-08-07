@@ -11,7 +11,7 @@ namespace IPTables.Net.Tests
         public void MatchMarkDec()
         {
             String rule = "-A INPUT -p tcp -j ACCEPT -m mark --mark 13041408/0xFFFF00";
-            String ruleExpect = "-A INPUT -p tcp -j ACCEPT -m mark --mark 13041408/0xFFFF00";
+            String ruleExpect = "-A INPUT -p tcp -j ACCEPT -m mark --mark 0xC6FF00/0xFFFF00";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
@@ -24,7 +24,7 @@ namespace IPTables.Net.Tests
         public void MatchMarkHex()
         {
             String rule = "-A INPUT -p tcp -j ACCEPT -m mark --mark 0xc6ff00/0xFFFF00";
-            String ruleExpect = "-A INPUT -p tcp -j ACCEPT -m mark --mark 13041408/0xFFFF00";
+            String ruleExpect = "-A INPUT -p tcp -j ACCEPT -m mark --mark 0xC6FF00/0xFFFF00";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
