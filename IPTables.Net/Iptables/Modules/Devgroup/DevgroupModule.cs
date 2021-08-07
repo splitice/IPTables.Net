@@ -9,8 +9,8 @@ namespace IPTables.Net.Iptables.Modules.Devgroup
         private const string OptionSrcGroup = "--src-group";
         private const string OptionDstGroup = "--dst-group";
 
-        public ValueOrNot<uint> SrcGroup { get; set; }
-        public ValueOrNot<uint> DstGroup { get; set; }
+        public ValueOrNot<UInt32Masked> SrcGroup { get; set; }
+        public ValueOrNot<UInt32Masked> DstGroup { get; set; }
 
         public DevgroupModule(int version) : base(version)
         {
@@ -28,10 +28,10 @@ namespace IPTables.Net.Iptables.Modules.Devgroup
             switch (parser.GetCurrentArg())
             {
                 case OptionSrcGroup:
-                    SrcGroup = new ValueOrNot<uint>(FlexibleUInt32.Parse(parser.GetNextArg()), not);
+                    SrcGroup = new ValueOrNot<UInt32Masked>(UInt32Masked.Parse(parser.GetNextArg()), not);
                     return 1;
                 case OptionDstGroup:
-                    DstGroup = new ValueOrNot<uint>(FlexibleUInt32.Parse(parser.GetNextArg()), not);
+                    DstGroup = new ValueOrNot<UInt32Masked>(UInt32Masked.Parse(parser.GetNextArg()), not);
                     return 1;
             }
 
