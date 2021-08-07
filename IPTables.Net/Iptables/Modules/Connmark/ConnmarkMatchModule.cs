@@ -5,33 +5,26 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Connmark
 {
-    public class ConnmarkLoadableModule : ModuleBase, IIpTablesModule, IEquatable<ConnmarkLoadableModule>
+    public class ConnmarkMatchModule : ModuleBase, IIpTablesModule, IEquatable<ConnmarkMatchModule>
     {
         private const string OptionMarkLong = "--mark";
-        private int _mask = unchecked((int) 0xFFFFFFFF);
-        private ValueOrNot<int> _mark = new ValueOrNot<int>();
+        private ValueOrNot<UInt32Masked> _mark = new ValueOrNot<UInt32Masked>();
 
-        public ValueOrNot<int> Mark
+        public ValueOrNot<UInt32Masked> Mark
         {
             get => _mark;
             set => _mark = value;
         }
 
-        public int Mask
-        {
-            get => _mask;
-            set => _mask = value;
-        }
-
-        public ConnmarkLoadableModule(int version) : base(version)
+        public ConnmarkMatchModule(int version) : base(version)
         {
         }
 
-        public bool Equals(ConnmarkLoadableModule other)
+        public bool Equals(ConnmarkMatchModule other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(Mark, other.Mark) && Mask == other.Mask;
+            return Equals(Mark, other.Mark);
         }
 
         public bool NeedsLoading => true;
@@ -41,9 +34,7 @@ namespace IPTables.Net.Iptables.Modules.Connmark
             switch (parser.GetCurrentArg())
             {
                 case OptionMarkLong:
-                    var s = parser.GetNextArg().Split(new char[] {'/'});
-                    _mark.Set(not, FlexibleInt32.Parse(s[0]));
-                    if (s.Length != 1) _mask = FlexibleInt32.Parse(s[1]);
+                    _mark = new ValueOrNot<UInt32Masked>(UInt32Masked.Parse(parser.GetNextArg()), not);
                     return 1;
             }
 
@@ -59,11 +50,6 @@ namespace IPTables.Net.Iptables.Modules.Connmark
                 if (sb.Length != 0)
                     sb.Append(" ");
                 sb.Append(Mark.ToOption(OptionMarkLong));
-                if (Mask != unchecked((int) 0xFFFFFFFF))
-                {
-                    sb.Append("/0x");
-                    sb.Append(Mask.ToString("X"));
-                }
             }
 
             return sb.ToString();
@@ -80,7 +66,7 @@ namespace IPTables.Net.Iptables.Modules.Connmark
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("connmark", typeof(ConnmarkLoadableModule), GetOptions);
+            return GetModuleEntryInternal("connmark", typeof(ConnmarkMatchModule), GetOptions);
         }
 
         public override bool Equals(object obj)
@@ -88,14 +74,14 @@ namespace IPTables.Net.Iptables.Modules.Connmark
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((ConnmarkLoadableModule) obj);
+            return Equals((ConnmarkMatchModule) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (Mark.GetHashCode() * 397) ^ Mask;
+                return Mark.GetHashCode();
             }
         }
     }

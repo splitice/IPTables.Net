@@ -19,6 +19,43 @@ namespace IPTables.Net.Tests
             Assert.AreEqual(ruleExpect, irule.GetActionCommand());
         }
 
+
+        [Test]
+        public void TestMatchMark1()
+        {
+            String rule = "-A INPUT -p tcp -m connmark --mark 0xFF";
+            String ruleExpect = "-A INPUT -p tcp -m connmark --mark 0xFF";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
+
+            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+        }
+        [Test]
+        public void TestMatchMark2()
+        {
+            String rule = "-A INPUT -p tcp -m connmark --mark 255";
+            String ruleExpect = "-A INPUT -p tcp -m connmark --mark 0xFF";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
+
+            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+        }
+        [Test]
+        public void TestMatchMark3()
+        {
+            String rule = "-A INPUT -p tcp -m connmark --mark 255/0xFF";
+            String ruleExpect = "-A INPUT -p tcp -m connmark --mark 0xFF/0xFF";
+            IpTablesChainSet chains = new IpTablesChainSet(4);
+
+            IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
+            IpTablesRule irule2 = IpTablesRule.Parse(ruleExpect, null, chains, 4);
+
+            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+            Assert.IsTrue(irule.Compare(irule2));
+        }
+
         [Test]
         public void TestAndMark()
         {
