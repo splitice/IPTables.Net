@@ -88,7 +88,7 @@ namespace IPTables.Net.Iptables
 
         public void AddChain(IpTablesChain chain)
         {
-            if (HasChain(chain)) throw new IpTablesNetException("Chain already contains this set");
+            if (HasChain(chain)) throw new IpTablesNetException(String.Format("ChainSet already contains {0} chain", chain.Name));
 
             _chains.Add(chain);
         }
