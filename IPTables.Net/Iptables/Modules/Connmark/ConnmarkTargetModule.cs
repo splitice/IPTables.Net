@@ -36,6 +36,24 @@ namespace IPTables.Net.Iptables.Modules.Connmark
         private int _nfMask;
         private Mode _mode = Mode.SetMark;
 
+        public UInt32Masked SetValue
+        {
+            get
+            {
+                return _value;
+            }
+        }
+
+        public int CtMask
+        {
+            get { return _ctMask; }
+        }
+
+        public int NfMask
+        {
+            get { return _nfMask; }
+        }
+
         public ConnmarkTargetModule(int version) : base(version)
         {
         }
