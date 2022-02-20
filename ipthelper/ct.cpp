@@ -211,7 +211,7 @@ void restore_mark_free() {
 int cr_constant(const char* key)
 {
 	auto it = constants.find(key);
-	if (it == constants.begin())
+	if (it == constants.end())
 	{
 		return -1;
 	}
@@ -348,7 +348,7 @@ bool cr_extract_field(cr_filter* filter,
 	
 
 	//Root data storage
-	struct nlattr *tb[CTA_MAX + 1];
+	struct nlattr *tb[CTA_MAX + 1] = {};
 	struct nlattr ** tb_buf;			
 		
 	//Pointer to the current tb being queried
@@ -366,11 +366,15 @@ bool cr_extract_field(cr_filter* filter,
 		
 		if (f->max != 0)
 		{
+			assert(i < (filter_len - 1));
+			assert(filter[i+1].key < f->max);
+
 			// nested
 			if (tb_cur[f->key] == NULL){
 				goto free_err;
 			}
 			tb_buf = (struct nlattr **)malloc(sizeof(struct nlattr *) * (f->max + 1));
+			memset(tb_buf, 0, sizeof(struct nlattr *) * (f->max + 1));
 			if(tb_buf == NULL) goto err;
 			err = nla_parse_nested(tb_buf, f->max, tb_cur[f->key], NULL);
 			if (err < 0)
@@ -386,8 +390,11 @@ bool cr_extract_field(cr_filter* filter,
 		else
 		{
 			//printf("compare len: %d\n", f->compare_len);
+			if (tb_cur[f->key] == NULL){
+				goto free_err;
+			}
 			data = (char *)nla_data(tb_cur[f->key]);
-			if (data == NULL){
+			if(data == NULL || nla_len(tb_cur[f->key]) < output_len){
 				goto free_err;
 			}
 			memcpy(output, data, output_len);
