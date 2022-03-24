@@ -34,7 +34,7 @@ namespace IPTables.Net.Supporting
         /// </summary>
         /// <param name="args">The arguments</param>
         /// <returns>A single string of escaped arguments</returns>
-        public static string BuildArgumentString(params string[] args)
+        public static string BuildArgumentString(string[] args)
         {
             StringBuilder arguments = new StringBuilder();
             Regex invalidChar = new Regex("[\x00\x0a\x0d]");//  these can not be escaped
@@ -56,6 +56,39 @@ namespace IPTables.Net.Supporting
                     arguments.Append('"');
                 }
                 if (carg + 1 < args.Length)
+                    arguments.Append(' ');
+            }
+            return arguments.ToString();
+        }
+
+        /// <summary>
+        /// Undo the processing which took place to create string[] args in Main, so that the next process will
+        /// receive the same string[] args.
+        /// </summary>
+        /// <param name="args">The arguments</param>
+        /// <returns>A single string of escaped arguments</returns>
+        public static string BuildArgumentString(List<string> args)
+        {
+            StringBuilder arguments = new StringBuilder();
+            Regex invalidChar = new Regex("[\x00\x0a\x0d]");//  these can not be escaped
+            Regex needsQuotes = new Regex(@"\s|""");//          contains whitespace or two quote characters
+            Regex escapeQuote = new Regex(@"(\\*)(""|$)");//    one or more '\' followed with a quote or end of string
+            for (int carg = 0; args != null && carg < args.Count; carg++)
+            {
+                if (args[carg] == null) { throw new ArgumentNullException("args[" + carg + "]"); }
+                if (invalidChar.IsMatch(args[carg])) { throw new ArgumentOutOfRangeException("args[" + carg + "]"); }
+                if (args[carg] == String.Empty) { arguments.Append("\"\""); }
+                else if (!needsQuotes.IsMatch(args[carg])) { arguments.Append(args[carg]); }
+                else
+                {
+                    arguments.Append('"');
+                    arguments.Append(escapeQuote.Replace(args[carg], m =>
+                        m.Groups[1].Value + m.Groups[1].Value +
+                        (m.Groups[2].Value == "\"" ? "\\\"" : "")
+                    ));
+                    arguments.Append('"');
+                }
+                if (carg + 1 < args.Count)
                     arguments.Append(' ');
             }
             return arguments.ToString();
