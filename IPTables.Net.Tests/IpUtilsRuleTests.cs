@@ -29,6 +29,14 @@ namespace IPTables.Net.Tests
         }
 
         [Test]
+        public void TestParsePref()
+        {
+            var systemFactory = new MockIptablesSystemFactory();
+            var ipUtils = new IpRuleController(systemFactory);
+            var one = ipUtils.ParseObject("0: from all fwmark 0x1000200/0x1ffff00 lookup 15002");
+        }
+
+        [Test]
         public void TestAddRule()
         {
             var systemFactory = new MockIptablesSystemFactory();

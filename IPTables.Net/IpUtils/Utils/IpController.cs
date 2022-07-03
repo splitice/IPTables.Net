@@ -103,7 +103,7 @@ namespace IPTables.Net.IpUtils.Utils
                     _module, ret[0], string.Join(" ", args)));
             if (ret[1].Length != 0)
                 throw new IpControllerException(string.Format(
-                    "Unable to add {0} error \"{1}\" occured while processing: {2}", _module, ret[0],
+                    "Unable to add {0} error \"{1}\" occured while processing: {2}", _module, ret[1],
                     string.Join(" ", args)));
         }
 
@@ -121,7 +121,7 @@ namespace IPTables.Net.IpUtils.Utils
                     string.Join(" ", args)));
             if (ret[1].Length != 0)
                 throw new IpControllerException(string.Format(
-                    "Unable to delete {0} error \"{1}\" occured while processing: {2}", _module, ret[0],
+                    "Error unable to delete {0} error \"{1}\" occured while processing: {2}", _module, ret[1],
                     string.Join(" ", args)));
         }
 
