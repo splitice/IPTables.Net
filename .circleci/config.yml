@@ -45,7 +45,7 @@ jobs:
           sudo dpkg -i packages-microsoft-prod.deb
 
           sudo apt-get update && \
-          sudo apt-get install -y dotnet-sdk-3.1 build-essential libxtables-dev libip6tc-dev libip4tc-dev libiptc-dev libnl-3-dev libnl-3-200 libnetfilter-conntrack3 libnfnetlink-dev libnfnetlink0 libpcap0.8 libpcap0.8-dev sudo
+          sudo apt-get install -y dotnet-sdk-7.0 build-essential libxtables-dev libip6tc-dev libip4tc-dev libiptc-dev libnl-3-dev libnl-3-200 libnetfilter-conntrack3 libnfnetlink-dev libnfnetlink0 libpcap0.8 libpcap0.8-dev sudo
       - run: |
           cd ipthelper
           CONFIG="Release" sudo -E bash install.sh
