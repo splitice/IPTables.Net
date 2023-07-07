@@ -23,7 +23,7 @@ workflows:
 jobs:
   build:
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:7.0-buster
+      - image: mcr.microsoft.com/dotnet/sdk:7.0-bullseye
       
     working_directory: /root/repo
 
@@ -56,7 +56,7 @@ jobs:
 
   upload:
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:7.0-buster
+      - image: mcr.microsoft.com/dotnet/sdk:7.0-bullseye
       
     working_directory: /root/repo
 
