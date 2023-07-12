@@ -61,7 +61,7 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("ts3init_get_puzzle", typeof(Ts3InitGetPuzzleModule), GetOptions);
+            return GetModuleEntryInternal("ts3init_get_puzzle", typeof(Ts3InitGetPuzzleModule), GetOptions, (version) => new Ts3InitGetPuzzleModule(version));
         }
 
         public bool Equals(Ts3InitGetPuzzleModule other)

@@ -62,7 +62,7 @@ namespace IPTables.Net.Iptables.Modules.U32
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("u32", typeof(U32Module), GetOptions);
+            return GetModuleEntryInternal("u32", typeof(U32Module), GetOptions, (version) => new U32Module(version));
         }
 
         public override bool Equals(object obj)

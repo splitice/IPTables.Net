@@ -65,19 +65,15 @@ namespace IPTables.Net.Iptables.Modules.Polyfill
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetPolyModuleEntryInternal(typeof(PolyfillModule));
-        }
-
-        private static ModuleEntry GetPolyModuleEntryInternal(Type moduleType)
-        {
             var entry = new ModuleEntry
             {
                 Name = "_",
-                Module = moduleType,
+                Activator = (version) => new PolyfillModule(version),
                 Polyfill = true
             };
             return entry;
         }
+        
 
         public override bool Equals(object obj)
         {

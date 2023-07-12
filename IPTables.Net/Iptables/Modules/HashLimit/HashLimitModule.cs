@@ -418,7 +418,7 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("hashlimit", typeof(HashLimitModule), GetOptions);
+            return GetModuleEntryInternal("hashlimit", typeof(HashLimitModule), GetOptions, (version) => new HashLimitModule(version));
         }
 
         public override bool Equals(object obj)

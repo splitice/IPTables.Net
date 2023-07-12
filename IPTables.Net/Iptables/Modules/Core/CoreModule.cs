@@ -225,7 +225,7 @@ namespace IPTables.Net.Iptables.Modules.Core
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("core", typeof(CoreModule), GetOptions, true);
+            return GetModuleEntryInternal("core", typeof(CoreModule), GetOptions, (version) => new CoreModule(version), true);
         }
 
         public override bool Equals(object obj)

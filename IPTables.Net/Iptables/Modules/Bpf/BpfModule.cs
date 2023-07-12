@@ -61,7 +61,7 @@ namespace IPTables.Net.Iptables.Modules.Bpf
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("bpf", typeof(BpfModule), GetOptions);
+            return GetModuleEntryInternal("bpf", typeof(BpfModule), GetOptions, (version) => new BpfModule(version));
         }
 
         public override bool Equals(object obj)

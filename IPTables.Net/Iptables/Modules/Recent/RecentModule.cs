@@ -230,7 +230,7 @@ namespace IPTables.Net.Iptables.Modules.Recent
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("recent", typeof(RecentModule), GetOptions);
+            return GetModuleEntryInternal("recent", typeof(RecentModule), GetOptions, (version) => new RecentModule(version));
         }
 
         public override bool Equals(object obj)

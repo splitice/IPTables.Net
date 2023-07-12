@@ -66,7 +66,7 @@ namespace IPTables.Net.Iptables.Modules.Netflow
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("netflow", typeof(NetflowMatchModule), GetOptions);
+            return GetModuleEntryInternal("netflow", typeof(NetflowMatchModule), GetOptions, (version) => new NetflowMatchModule(version));
         }
 
         public override bool Equals(object obj)

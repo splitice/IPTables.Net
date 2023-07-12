@@ -73,7 +73,7 @@ namespace IPTables.Net.Iptables.Modules.Log
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("LOG", typeof(LogModule), GetOptions);
+            return GetTargetModuleEntryInternal("LOG", typeof(LogModule), GetOptions, (version) => new LogModule(version));
         }
 
         public override bool Equals(object obj)

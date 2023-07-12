@@ -61,7 +61,7 @@ namespace IPTables.Net.Iptables.Modules.Comment
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("comment", typeof(CommentModule), GetOptions);
+            return GetModuleEntryInternal("comment", typeof(CommentModule), GetOptions, (version) => new CommentModule(version));
         }
 
         public override bool Equals(object obj)

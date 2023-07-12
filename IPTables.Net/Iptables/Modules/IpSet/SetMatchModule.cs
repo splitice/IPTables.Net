@@ -184,7 +184,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("set", typeof(SetMatchModule), GetOptions);
+            return GetModuleEntryInternal("set", typeof(SetMatchModule), GetOptions, (version) => new SetMatchModule(version));
         }
 
         public override bool Equals(object obj)

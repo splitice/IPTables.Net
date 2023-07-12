@@ -190,7 +190,7 @@ namespace IPTables.Net.Iptables.Modules.Limit
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("limit", typeof(LimitModule), GetOptions);
+            return GetModuleEntryInternal("limit", typeof(LimitModule), GetOptions, (version) => new LimitModule(version));
         }
 
         public override bool Equals(object obj)

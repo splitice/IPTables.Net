@@ -52,7 +52,7 @@ namespace IPTables.Net.Iptables.Modules.Netflow
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("ctnetflow", typeof(CtNetflowMatchModule), GetOptions);
+            return GetModuleEntryInternal("ctnetflow", typeof(CtNetflowMatchModule), GetOptions, (version) => new CtNetflowMatchModule(version));
         }
 
         public override bool Equals(object obj)

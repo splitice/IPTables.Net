@@ -95,7 +95,7 @@ namespace IPTables.Net.Iptables.Modules.Nflog
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("NFLOG", typeof(NflogModule), GetOptions);
+            return GetTargetModuleEntryInternal("NFLOG", typeof(NflogModule), GetOptions, (version)=>new NflogModule(version));
         }
 
         public bool Equals(NflogModule other)

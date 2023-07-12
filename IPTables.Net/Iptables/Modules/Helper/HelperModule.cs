@@ -51,7 +51,7 @@ namespace IPTables.Net.Iptables.Modules.Helper
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("helper", typeof(HelperModule), GetOptions);
+            return GetModuleEntryInternal("helper", typeof(HelperModule), GetOptions, (version) => new HelperModule(version));
         }
 
         public override bool Equals(object obj)

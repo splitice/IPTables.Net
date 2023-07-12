@@ -81,7 +81,7 @@ namespace IPTables.Net.Iptables.Modules.Udp
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("udp", typeof(UdpModule), GetOptions);
+            return GetModuleEntryInternal("udp", typeof(UdpModule), GetOptions, (version) => new UdpModule(version));
         }
 
         public override bool Equals(object obj)

@@ -102,7 +102,7 @@ namespace IPTables.Net.Iptables.Modules.TProxy
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("TPROXY", typeof(TProxyModule), GetOptions, false);
+            return GetTargetModuleEntryInternal("TPROXY", typeof(TProxyModule), GetOptions, (version) => new TProxyModule(version), false);
         }
 
         protected bool Equals(TProxyModule other)

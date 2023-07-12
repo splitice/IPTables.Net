@@ -61,7 +61,7 @@ namespace IPTables.Net.Iptables.Modules.Nfacct
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("nfacct", typeof(NfacctModule), GetOptions);
+            return GetModuleEntryInternal("nfacct", typeof(NfacctModule), GetOptions, (version) => new NfacctModule(version));
         }
 
         public override bool Equals(object obj)

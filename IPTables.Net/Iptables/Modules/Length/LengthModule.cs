@@ -54,7 +54,7 @@ namespace IPTables.Net.Iptables.Modules.Length
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("length", typeof(LengthModule), GetOptions);
+            return GetModuleEntryInternal("length", typeof(LengthModule), GetOptions, (version) => new LengthModule(version));
         }
 
         public override bool Equals(object obj)

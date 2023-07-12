@@ -124,7 +124,7 @@ namespace IPTables.Net.Iptables.Modules.Mark
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("MARK", typeof(MarkTargetModule), GetOptions);
+            return GetTargetModuleEntryInternal("MARK", typeof(MarkTargetModule), GetOptions, (version) => new MarkTargetModule(version));
         }
 
         public override bool Equals(object obj)

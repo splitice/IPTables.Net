@@ -120,7 +120,7 @@ namespace IPTables.Net.Iptables.Modules.Tcp
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("tcp", typeof(TcpModule), GetOptions);
+            return GetModuleEntryInternal("tcp", typeof(TcpModule), GetOptions, (version) => new TcpModule(version));
         }
 
         public override bool Equals(object obj)

@@ -65,7 +65,7 @@ namespace IPTables.Net.Iptables.Modules.Devgroup
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("devgroup", typeof(DevgroupModule), GetOptions);
+            return GetModuleEntryInternal("devgroup", typeof(DevgroupModule), GetOptions, (version) => new DevgroupModule(version));
         }
 
         public override bool Equals(object obj)

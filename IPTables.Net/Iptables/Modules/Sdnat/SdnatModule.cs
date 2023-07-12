@@ -150,7 +150,7 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("SDNAT", typeof(SdnatModule), GetOptions, false);
+            return GetTargetModuleEntryInternal("SDNAT", typeof(SdnatModule), GetOptions, (version) => new SdnatModule(version), false);
         }
 
         public override bool Equals(object obj)

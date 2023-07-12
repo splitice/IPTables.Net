@@ -122,7 +122,7 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("string", typeof(StringModule), GetOptions);
+            return GetModuleEntryInternal("string", typeof(StringModule), GetOptions, (version) => new StringModule(version));
         }
 
         public bool Equals(StringModule other)

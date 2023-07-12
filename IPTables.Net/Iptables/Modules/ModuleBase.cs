@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dynamitey;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -11,15 +12,15 @@ namespace IPTables.Net.Iptables.Modules
         }
 
         protected internal static ModuleEntry GetModuleEntryInternal(string moduleName, Type moduleType,
-            Func<IEnumerable<string>> options, bool preloaded = false)
+            Func<IEnumerable<string>> options, ModuleEntry.ObjectActivator activator, bool preloaded = false)
         {
-            var entry = new ModuleEntry
+            var entry = new ModuleEntry()
             {
                 Name = moduleName,
-                Module = moduleType,
                 Options = options(),
                 Preloaded = preloaded,
-                IsTarget = false
+                IsTarget = false,
+                Activator = activator,
             };
 
             Debug.Assert(entry.Options != null, "Options null for " + moduleName);
@@ -28,15 +29,15 @@ namespace IPTables.Net.Iptables.Modules
         }
 
         protected internal static ModuleEntry GetTargetModuleEntryInternal(string moduleName, Type moduleType,
-            Func<IEnumerable<string>> options, bool preloaded = false)
+            Func<IEnumerable<string>> options, ModuleEntry.ObjectActivator activator, bool preloaded = false)
         {
             var entry = new ModuleEntry
             {
                 Name = moduleName,
-                Module = moduleType,
                 Options = options(),
                 Preloaded = preloaded,
-                IsTarget = true
+                IsTarget = true,
+                Activator = activator
             };
 
             Debug.Assert(entry.Options != null, "Options null for " + moduleName);

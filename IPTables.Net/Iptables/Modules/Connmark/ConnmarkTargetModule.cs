@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
+using IPTables.Net.Iptables.Modules.Nfqueue;
 
 namespace IPTables.Net.Iptables.Modules.Connmark
 {
@@ -196,7 +197,7 @@ namespace IPTables.Net.Iptables.Modules.Connmark
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("CONNMARK", typeof(ConnmarkTargetModule), GetOptions);
+            return GetTargetModuleEntryInternal("CONNMARK", typeof(ConnmarkTargetModule), GetOptions, (version) => new ConnmarkTargetModule(version));
         }
 
         public override bool Equals(object obj)

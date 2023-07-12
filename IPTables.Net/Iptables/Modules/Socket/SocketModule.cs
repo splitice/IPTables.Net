@@ -52,7 +52,7 @@ namespace IPTables.Net.Iptables.Modules.Socket
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("socket", typeof(SocketModule), GetOptions);
+            return GetModuleEntryInternal("socket", typeof(SocketModule), GetOptions, (version) => new SocketModule(version));
         }
 
         public override bool Equals(object obj)

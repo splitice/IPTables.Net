@@ -117,7 +117,7 @@ namespace IPTables.Net.Iptables.Modules.Connlimit
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("connlimit", typeof(ConnlimitModule), GetOptions);
+            return GetModuleEntryInternal("connlimit", typeof(ConnlimitModule), GetOptions, (version) => new ConnlimitModule(version));
         }
 
         public override bool Equals(object obj)

@@ -37,7 +37,7 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("TS3INIT_RESET", typeof(Ts3InitGetCookieModule), GetOptions, false);
+            return GetTargetModuleEntryInternal("TS3INIT_RESET", typeof(Ts3InitGetCookieModule), GetOptions, (version) => new Ts3InitReset(version), false);
         }
 
         public override bool Equals(object obj)

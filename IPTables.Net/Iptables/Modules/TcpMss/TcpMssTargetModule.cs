@@ -75,7 +75,7 @@ namespace IPTables.Net.Iptables.Modules.TcpMss
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("TCPMSS", typeof(TcpMssTargetModule), GetOptions);
+            return GetTargetModuleEntryInternal("TCPMSS", typeof(TcpMssTargetModule), GetOptions, (version) => new TcpMssTargetModule(version));
         }
 
         public override bool Equals(object obj)

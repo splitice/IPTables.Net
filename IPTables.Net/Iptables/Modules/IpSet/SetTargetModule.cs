@@ -96,7 +96,7 @@ namespace IPTables.Net.Iptables.Modules.IpSet
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("SET", typeof(SetTargetModule), GetOptions);
+            return GetTargetModuleEntryInternal("SET", typeof(SetTargetModule), GetOptions, (version) => new SetTargetModule(version));
         }
 
         public bool Equals(SetTargetModule other)

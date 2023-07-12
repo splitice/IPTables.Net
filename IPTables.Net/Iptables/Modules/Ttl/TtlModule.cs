@@ -54,7 +54,7 @@ namespace IPTables.Net.Iptables.Modules.Ttl
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("TTL", typeof(TtlModule), GetOptions, false);
+            return GetTargetModuleEntryInternal("TTL", typeof(TtlModule), GetOptions, (version) => new TtlModule(version), false);
         }
 
         protected bool Equals(TtlModule other)

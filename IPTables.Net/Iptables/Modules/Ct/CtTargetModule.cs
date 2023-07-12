@@ -95,7 +95,7 @@ namespace IPTables.Net.Iptables.Modules.Ct
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("CT", typeof(CtTargetModule), GetOptions);
+            return GetTargetModuleEntryInternal("CT", typeof(CtTargetModule), GetOptions, (version) => new CtTargetModule(version));
         }
 
         public override bool Equals(object obj)

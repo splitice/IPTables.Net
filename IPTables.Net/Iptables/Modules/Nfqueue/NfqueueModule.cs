@@ -67,7 +67,7 @@ namespace IPTables.Net.Iptables.Modules.Nfqueue
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("NFQUEUE", typeof(NfqueueModule), GetOptions);
+            return GetTargetModuleEntryInternal("NFQUEUE", typeof(NfqueueModule), GetOptions, (version)=>new NfqueueModule(version));
         }
 
         public bool Equals(NfqueueModule other)

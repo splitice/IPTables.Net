@@ -141,7 +141,7 @@ namespace IPTables.Net.Iptables.Modules.Multiport
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("multiport", typeof(MultiportModule), GetOptions);
+            return GetModuleEntryInternal("multiport", typeof(MultiportModule), GetOptions, (version) => new MultiportModule(version));
         }
 
         public override bool Equals(object obj)

@@ -66,7 +66,7 @@ namespace IPTables.Net.Iptables.Modules.Connmark
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("connmark", typeof(ConnmarkMatchModule), GetOptions);
+            return GetModuleEntryInternal("connmark", typeof(ConnmarkMatchModule), GetOptions, (version) => new ConnmarkMatchModule(version));
         }
 
         public override bool Equals(object obj)

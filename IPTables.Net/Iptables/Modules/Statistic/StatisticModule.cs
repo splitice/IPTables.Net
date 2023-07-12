@@ -117,7 +117,7 @@ namespace IPTables.Net.Iptables.Modules.Statistic
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetModuleEntryInternal("statistic", typeof(StatisticModule), GetOptions);
+            return GetModuleEntryInternal("statistic", typeof(StatisticModule), GetOptions, (version) => new StatisticModule(version));
         }
 
         public override bool Equals(object obj)
