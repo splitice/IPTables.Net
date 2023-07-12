@@ -92,8 +92,6 @@ namespace IPTables.Net.Iptables
 
         #region Fields
 
-        private bool _cow;
-
         /// <summary>
         /// Data stored for each IPTables module / extension (including "core")
         /// </summary>
@@ -139,7 +137,6 @@ namespace IPTables.Net.Iptables
             _system = rule.System;
             Chain = rule.Chain;
             _moduleData = rule.ModuleDataInternal;
-            _cow = true;
         }
 
         #endregion
@@ -150,8 +147,6 @@ namespace IPTables.Net.Iptables
             _moduleData = new OrderedDictionary<string, IIpTablesModule>(moduleData.Count);
 
             foreach (var module in moduleData) _moduleData.Add(module.Key, module.Value.Clone() as IIpTablesModule);
-
-            _cow = false;
         }
 
         #region Properties

@@ -370,10 +370,8 @@ namespace IPTables.Net.Iptables.Modules.HashLimit
             {
                 case LimitUnit.Second:
                     return "second";
-                    break;
                 case LimitUnit.Minute:
                     return "minute";
-                    break;
                 case LimitUnit.Hour:
                     return "hour";
                 case LimitUnit.Day:

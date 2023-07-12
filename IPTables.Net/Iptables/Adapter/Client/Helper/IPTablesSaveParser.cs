@@ -23,7 +23,6 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
 
                 var c = line[0];
                 IpTablesRule rule;
-                IpTablesChain chain;
                 switch (c)
                 {
                     case '*':

@@ -613,7 +613,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public string GetRuleString(string chain, IntPtr rule, bool counters = false)
         {
-            Debug.Assert(rule != IntPtr.Zero && rule != null, "A valid rule must be provided");
+            Debug.Assert(rule != IntPtr.Zero, "A valid rule must be provided");
             RequireHandle();
 
             IntPtr ptr;
@@ -621,7 +621,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
                 ptr = output_rule4(rule, _handle, chain, counters ? 1 : 0);
             else
                 ptr = output_rule6(rule, _handle, chain, counters ? 1 : 0);
-            if (ptr == IntPtr.Zero || ptr == null) throw new IpTablesNetException("IPTCH Error: " + LastError().Trim());
+            if (ptr == IntPtr.Zero) throw new IpTablesNetException("IPTCH Error: " + LastError().Trim());
             return Marshal.PtrToStringAnsi(ptr);
         }
 

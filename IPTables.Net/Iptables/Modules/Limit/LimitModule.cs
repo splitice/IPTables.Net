@@ -129,12 +129,10 @@ namespace IPTables.Net.Iptables.Modules.Limit
                 case "sec":
                 case "s":
                     return LimitUnit.Second;
-                    break;
                 case "minute":
                 case "min":
                 case "m":
                     return LimitUnit.Minute;
-                    break;
                 case "hour":
                 case "h":
                     return LimitUnit.Hour;
@@ -165,10 +163,8 @@ namespace IPTables.Net.Iptables.Modules.Limit
             {
                 case LimitUnit.Second:
                     return "second";
-                    break;
                 case LimitUnit.Minute:
                     return "minute";
-                    break;
                 case LimitUnit.Hour:
                     return "hour";
                 case LimitUnit.Day:
