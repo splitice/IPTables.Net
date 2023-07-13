@@ -22,7 +22,7 @@ namespace IPTables.Net.Tests
             {
                 Assert.AreEqual(rulesNew, rulesSynced);
             }
-            catch (Exception ex)
+            catch
             {
                 Console.WriteLine("Sync:");
                 DumpRuleset(rulesSynced);
@@ -55,7 +55,7 @@ namespace IPTables.Net.Tests
             {
                 Assert.AreEqual(rulesNew, rulesOrig);
             }
-            catch (Exception ex)
+            catch
             {
                 Console.WriteLine("Orig:");
                 DumpRuleset(rulesOrig);
@@ -438,7 +438,6 @@ namespace IPTables.Net.Tests
                                                 "-D INPUT 2",
                                                 rulesNew.Chains.First().Rules[1].GetActionCommand(),
                                                 rulesNew.Chains.First().Rules[2].GetActionCommand(), "COMMIT" };
-            List<String> commands;
 
             using (var client = system.GetTableAdapter(4))
             {

@@ -72,7 +72,6 @@ namespace IPTables.Net.Tests
         [Test]
         public void TestSetMark1()
         {
-            Int32 mark = 0;
             String rule = "-A INPUT -j CONNMARK --set-xmark 0x200/0x1ffff00";
             String ruleExpect = "-A INPUT -j CONNMARK --set-xmark 0x200/0x1FFFF00";
             IpTablesChainSet chains = new IpTablesChainSet(4);
@@ -86,7 +85,6 @@ namespace IPTables.Net.Tests
         [Test]
         public void TestSetMark2()
         {
-            Int32 mark = 0;
             String rule = "-A INPUT -j CONNMARK --set-xmark "+0x200+"/0x1ffff00";
             String ruleExpect = "-A INPUT -j CONNMARK --set-xmark 0x200/0x1FFFF00";
             IpTablesChainSet chains = new IpTablesChainSet(4);
@@ -100,7 +98,6 @@ namespace IPTables.Net.Tests
         [Test]
         public void TestSetMark3()
         {
-            Int32 mark = 0;
             String rule = "-A INPUT -j CONNMARK --set-xmark " + 0x200 + "/0x1ffff00";
             String ruleExpect = "-A INPUT -j CONNMARK --set-xmark 0x200/0x1ffff00";
             IpTablesChainSet chains = new IpTablesChainSet(4);

@@ -9,8 +9,10 @@ namespace IPTables.Net.Supporting
         {
             // careful of sign extension: convert to uint first;
             // unsigned NetworkToHostOrder ought to be provided.
-            return (uint) IPAddress.NetworkToHostOrder(
-                (int) addr.Address);
+            return unchecked((uint) IPAddress.NetworkToHostOrder(
+#pragma warning disable CS0618
+                unchecked((int) addr.Address)));
+#pragma warning restore CS0618
         }
 
         public static string LongToIP(long longIP)

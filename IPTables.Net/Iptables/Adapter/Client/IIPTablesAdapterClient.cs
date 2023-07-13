@@ -17,7 +17,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         //Rules
         void DeleteRule(string table, string chainName, int position);
-        new IpTablesChainSet ListRules(string table);
+        IpTablesChainSet ListRules(string table);
 
 
         void DeleteRule(IpTablesRule rule);

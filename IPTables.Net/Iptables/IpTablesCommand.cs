@@ -47,7 +47,7 @@ namespace IPTables.Net.Iptables
         }
 
 
-        public string ToString()
+        public override string ToString()
         {
             if (_type == IpTablesCommandType.Add) return _rule.GetCommand();
             if (_type == IpTablesCommandType.Delete) return string.Format("-D {0} {1}", ChainName, _offset + 1);

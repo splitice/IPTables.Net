@@ -20,10 +20,6 @@ namespace IPTables.Net.Iptables.Modules.Netflow
 
         public int Feed(CommandParser parser, bool not)
         {
-            switch (parser.GetCurrentArg())
-            {
-            }
-
             return 0;
         }
 

@@ -38,8 +38,6 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public bool Equals(ValueOrNot<T> other)
         {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
             return _not.Equals(other._not) && _hasValue.Equals(other._hasValue) &&
                    (!_hasValue || EqualityComparer<T>.Default.Equals(_value, other._value));
         }
@@ -78,7 +76,6 @@ namespace IPTables.Net.Iptables.DataTypes
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
             return Equals((ValueOrNot<T>) obj);
         }
