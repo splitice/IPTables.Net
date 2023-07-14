@@ -1,5 +1,6 @@
 ﻿using System;
 using IPTables.Net.Iptables;
+using IPTables.Net.Iptables.Modules.Connmark;
 using NUnit.Framework;
 
 namespace IPTables.Net.Tests
@@ -155,6 +156,5 @@ namespace IPTables.Net.Tests
 
             Assert.AreEqual(rule, irule.GetActionCommand());
         }
-
     }
 }

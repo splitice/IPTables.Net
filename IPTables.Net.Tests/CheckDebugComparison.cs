@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System;
 using System.Linq;
+using IPTables.Net.Iptables;
 using static IPTables.Net.Iptables.IpTablesRule;
 
 namespace IPTables.Net.Tests
@@ -12,9 +13,8 @@ namespace IPTables.Net.Tests
         [TestCase]
         public void TestHashLimitMemberProperties()
         {
-            var compare = new DebugComparison();
             var hl = new HashLimitModule(4);
-            var properties = compare.GetModuleProperties(hl).ToList();
+            var properties = IpTablesRule.DebugComparison.GetModuleProperties(hl).ToList();
             Assert.Contains("Name", properties);
         }
     }

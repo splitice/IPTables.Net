@@ -37,7 +37,7 @@ namespace IPTables.Net.Iptables
 
         public class DebugComparison : ValueComparison
         {
-            internal IEnumerable<string> GetModuleProperties(IIpTablesModule module)
+            public static IEnumerable<string> GetModuleProperties(IIpTablesModule module)
             {
                 return Dynamic.GetMemberNames(module).OrderBy(m => m);
             }
