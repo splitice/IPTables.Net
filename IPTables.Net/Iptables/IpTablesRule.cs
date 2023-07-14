@@ -76,11 +76,15 @@ namespace IPTables.Net.Iptables
                     {
                         var found = false;
                         foreach (var memberName in list1)
-                            if (!Dynamic.InvokeGet(xModule, memberName).Equals(Dynamic.InvokeGet(yModule, memberName)))
+                        {
+                            var xValue = Dynamic.InvokeGet(xModule, memberName);
+                            var yValue = Dynamic.InvokeGet(yModule, memberName);
+                            if (!xValue.Equals(yValue))
                             {
                                 found = true;
                                 Console.WriteLine("{0} did not match", memberName);
                             }
+                        }
 
                         if (!found) Console.WriteLine("Out of {0} members all matched unexpectedly", list1.Count);
                     }
