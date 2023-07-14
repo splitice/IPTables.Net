@@ -31,11 +31,9 @@ namespace IPTables.Net.Supporting
         }
 
         public static TKey DictionaryDiffering<TKey, TValue>(this IDictionary<TKey, TValue> first,
-            IDictionary<TKey, TValue> second)
+            IDictionary<TKey, TValue> second, EqualityComparer<TValue> comparer)
         {
-            if (first == second) return default;
-
-            var comparer = EqualityComparer<TValue>.Default;
+            if (ReferenceEquals(first, second)) return default;
 
             foreach (var kvp in first)
             {
@@ -49,13 +47,17 @@ namespace IPTables.Net.Supporting
             foreach (var kvp in second)
             {
                 TValue secondValue;
-                if (!first.TryGetValue(kvp.Key, out secondValue))
-                    return kvp.Key;
-                if (!comparer.Equals(kvp.Value, secondValue))
+                if (!first.ContainsKey(kvp.Key))
                     return kvp.Key;
             }
 
             return default;
+        }
+
+        public static TKey DictionaryDiffering<TKey, TValue>(this IDictionary<TKey, TValue> first,
+            IDictionary<TKey, TValue> second)
+        {
+            return first.DictionaryDiffering(second, EqualityComparer<TValue>.Default);
         }
 
         public static bool FindCidr<TValue>(this IDictionary<IpCidr, TValue> dict, IpCidr findOriginal, out IpCidr o,
