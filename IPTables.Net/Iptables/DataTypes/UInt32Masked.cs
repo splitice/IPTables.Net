@@ -35,5 +35,20 @@ namespace IPTables.Net.Iptables.DataTypes
             }
             return "0x"+value.ToString("X") + "/" + "0x" + Mask.ToString("X");
         }
+
+        public bool Equals(UInt32Masked other)
+        {
+            return Value == other.Value && Mask == other.Mask;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is UInt32Masked other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Value, Mask);
+        }
     }
 }
