@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using IPTables.Net.Iptables.Helpers;
@@ -7,6 +8,7 @@ using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables.Modules.Polyfill
 {
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicFields)]
     public class PolyfillModule : ModuleBase, IIpTablesModule, IEquatable<PolyfillModule>
     {
         private readonly Dictionary<string, List<string>> _data = new Dictionary<string, List<string>>();

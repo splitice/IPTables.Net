@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Modules.Nfqueue;
 
 namespace IPTables.Net.Iptables.Modules.Connmark
 {
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicFields)]
     public class ConnmarkTargetModule : ModuleBase, IIpTablesModule, IEquatable<ConnmarkTargetModule>
     {
         private const string OptionRestoreMarkLong = "--restore-mark";
@@ -30,14 +33,14 @@ namespace IPTables.Net.Iptables.Modules.Connmark
         }
 
         public const UInt32 DefaultMask = UInt32.MaxValue;
-        private bool _markProvided = false;
         private UInt32Masked _value = new UInt32Masked(0, DefaultMask);
+        private bool _markProvided = false;
 
         private int _ctMask;
         private int _nfMask;
         private Mode _mode = Mode.SetMark;
 
-        public UInt32Masked SetValue
+        public UInt32Masked Value
         {
             get
             {
@@ -82,7 +85,7 @@ namespace IPTables.Net.Iptables.Modules.Connmark
 
         public void SetMark(UInt32 value, UInt32 mask)
         {
-            _value = new UInt32Masked(value, mask | value);
+            _value = new UInt32Masked(value, value | mask);
             _markProvided = true;
         }
 
@@ -90,7 +93,7 @@ namespace IPTables.Net.Iptables.Modules.Connmark
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return _markProvided.Equals(other._markProvided) && _value.Equals(other._value) &&
+            return _markProvided == other._markProvided && _value.Equals(other._value) &&
                    _nfMask == other._nfMask && _ctMask == other._ctMask && _mode == other._mode;
         }
 

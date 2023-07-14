@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace IPTables.Net.Iptables.Modules.Core
 {
-    internal class RejectTargetModule : ModuleBase, IIpTablesModule, IEquatable<RejectTargetModule>
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicFields)]
+    public class RejectTargetModule : ModuleBase, IIpTablesModule, IEquatable<RejectTargetModule>
     {
         private const string OptionRejectWith = "--reject-with";
 

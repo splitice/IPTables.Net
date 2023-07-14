@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.State
 {
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicFields)]
     public class StateModule : ModuleBase, IIpTablesModule, IEquatable<StateModule>
     {
         private const string OptionState = "--state";

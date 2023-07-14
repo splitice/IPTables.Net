@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text;
 using IPTables.Net.Exceptions;
@@ -7,6 +8,7 @@ using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.Iptables.Modules.Recent
 {
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicFields)]
     public class RecentModule : ModuleBase, IIpTablesModule, IEquatable<RecentModule>
     {
         private static IPAddress IPv6Max = IPAddress.Parse("ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff");

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
@@ -8,6 +9,7 @@ using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables.Modules.HashLimit
 {
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicFields)]
     public class HashLimitModule : ModuleBase, IIpTablesModule, IEquatable<HashLimitModule>
     {
         private const string OptionHashLimit = "--hashlimit";

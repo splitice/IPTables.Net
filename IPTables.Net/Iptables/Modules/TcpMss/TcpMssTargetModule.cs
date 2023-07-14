@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace IPTables.Net.Iptables.Modules.TcpMss
 {
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicFields)]
     public class TcpMssTargetModule : ModuleBase, IIpTablesModule, IEquatable<TcpMssTargetModule>
     {
         private const string OptionSetMss = "--set-mss";
