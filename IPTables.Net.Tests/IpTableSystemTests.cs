@@ -36,7 +36,7 @@ namespace IPTables.Net.Tests
                 }
 
                 // Invalid table cause exception
-                Assert.Throws<ArgumentException>(() => _system.GetRules("INPUT", IP_VERSION));
+                Assert.Throws<ArgumentException>(() => _system.GetRules("_invalidTableName", IP_VERSION));
             }
         }
 
