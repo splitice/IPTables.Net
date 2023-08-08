@@ -110,6 +110,12 @@ namespace IPTables.Net.Iptables.Adapter.Client
             {
                 string output, error;
                 ProcessHelper.ReadToEnd(process, out output, out error);
+
+                if (string.IsNullOrEmpty(output) && !string.IsNullOrEmpty(error))
+                {
+                    throw new IpTablesNetException(error);
+                }
+
                 return Helper.IPTablesSaveParser.GetRulesFromOutput(_iptables, output, table, _ipVersion);
             }
         }

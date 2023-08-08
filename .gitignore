@@ -13,6 +13,8 @@ TestResults
 *.user
 *.sln.docstates
 MigrationBackup/
+testEnvironments.json
+
 # Build results
 [Dd]ebug/
 [Rr]elease/
