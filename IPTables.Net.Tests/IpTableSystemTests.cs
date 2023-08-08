@@ -1,4 +1,5 @@
-﻿using IPTables.Net.Iptables;
+﻿using IPTables.Net.Exceptions;
+using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
 using NUnit.Framework;
 using System;
@@ -36,7 +37,7 @@ namespace IPTables.Net.Tests
                 }
 
                 // Invalid table cause exception
-                Assert.Throws<ArgumentException>(() => _system.GetRules("_invalidTableName", IP_VERSION));
+                Assert.Throws<IpTablesNetException>(() => _system.GetRules("_invalidTableName", IP_VERSION));
             }
         }
 
