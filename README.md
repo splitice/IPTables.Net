@@ -38,10 +38,10 @@ For more examples see the Tests project. These are generally more full featured 
     IpTablesChainSet chains = new IpTablesChainSet();
     IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
-### Deleting all defined rules:
+### Deleting all IPv4 defined rules:
 
-    var system = new IPTablesSystem();
-    foreach(var rule in system.GetRules("nat")){
+    var system = new IPTablesSystem(system: new LocalFactory(), tableAdapter: new IPTablesBinaryAdapter());
+    foreach(var rule in system.GetRules(table: "nat", ipVersion: 4)){
         rule.Delete();
     }
 
