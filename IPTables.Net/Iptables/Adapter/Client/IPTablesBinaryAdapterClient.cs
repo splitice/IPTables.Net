@@ -113,7 +113,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
                 if (string.IsNullOrEmpty(output) && !string.IsNullOrEmpty(error))
                 {
-                    throw new ArgumentException(error);
+                    throw new IpTablesNetException(error);
                 }
 
                 return Helper.IPTablesSaveParser.GetRulesFromOutput(_iptables, output, table, _ipVersion);
