@@ -1,0 +1,111 @@
+# ITNOA
+# Based on https://github.com/flcdrg/VsShowMissing
+
+name: CI
+
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+  DOTNET_VERSION: '6.0.412' # The .NET SDK version to use
+  PRODUCT_VERSION: '0.1.0'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    name: build-${{matrix.os}}
+    strategy:
+      matrix:
+        include: 
+          - os: [ubuntu-latest]
+
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }} 
+
+    - uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        # Look to see if there is a cache hit for the corresponding requirements file
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Build
+      id: build
+      run: dotnet build --configuration Release --no-restore
+
+  test:
+    name: test-${{matrix.os}}
+    strategy:
+      matrix:
+        include: 
+          - os: [ubuntu-latest]
+
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }} 
+
+    - uses: actions/cache@v3
+      with:
+        path: ~/.nuget/packages
+        # Look to see if there is a cache hit for the corresponding requirements file
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget
+
+    - name: Install system dependencies
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: build-essential libxtables-dev libip6tc-dev libip4tc-dev libiptc-dev libnl-3-dev libnl-3-200 libnetfilter-conntrack3 libnfnetlink-dev libnfnetlink0 libpcap0.8 libpcap0.8-dev sudo
+        version: 1.0
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: NUnit Tests
+      run: SKIP_SYSTEM_TESTS=1 dotnet test IPTables.Net.Tests
+
+    - name: Install ipthelper dependency
+      run: |
+          CONFIG="Release" sudo -E bash install.sh
+          CONFIG="Debug" sudo -E bash install.sh
+          sudo ldconfig
+
+    - name: All Tests
+      run: sudo dotnet test
+
+    
