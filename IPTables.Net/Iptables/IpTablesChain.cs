@@ -14,6 +14,9 @@ namespace IPTables.Net.Iptables
 {
     public class IpTablesChain : IEquatable<IpTablesChain>
     {
+        /// <summary>
+        /// Data to define the default and chains
+        /// </summary>
         public const string Input = "INPUT";
         public const string Output = "OUTPUT";
         public const string Forward = "FORWARD";
