@@ -14,6 +14,12 @@ namespace IPTables.Net.Iptables
 {
     public class IpTablesChain : IEquatable<IpTablesChain>
     {
+        public const string Input = "INPUT";
+        public const string Output = "OUTPUT";
+        public const string Forward = "FORWARD";
+        public const string Prerouting = "PREROUTING";
+        public const string Postrouting = "POSTROUTING";
+
         private readonly string _name;
         private readonly List<IpTablesRule> _rules;
         private readonly IpTablesSystem _system;
