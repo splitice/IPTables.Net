@@ -108,4 +108,17 @@ jobs:
     - name: All Tests
       run: sudo dotnet test
 
-    
+  upload:
+    name: upload
+    runs-on: ubuntu-latest
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }} 
+    - name: Upload
+      run: bash nuget-upload.sh IPTables.Net
