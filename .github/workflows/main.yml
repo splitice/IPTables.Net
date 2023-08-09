@@ -14,7 +14,7 @@ on:
 
 env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
-  DOTNET_VERSION: '6.0.412' # The .NET SDK version to use
+  DOTNET_VERSION: '7.0.400' # The .NET SDK version to use
   PRODUCT_VERSION: '0.1.0'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
