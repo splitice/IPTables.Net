@@ -9,7 +9,7 @@ namespace IPTables.Net.Iptables
     /// <summary>
     /// Data to define the default IPTables tables and chains
     /// </summary>
-    public class IPTablesTables
+    public static class IPTablesTables
     {
         /// <summary>
         /// The filter table is one of the most widely used tables in iptables.
@@ -60,11 +60,11 @@ namespace IPTables.Net.Iptables
 
         public static Dictionary<string, List<string>> DefaultTables = new Dictionary<string, List<string>>
         {
-            {Filter, new List<string> {"INPUT", "FORWARD", "OUTPUT"}},
-            {Nat, new List<string> {"PREROUTING", "POSTROUTING", "INPUT", "OUTPUT"}},
-            {Raw, new List<string> {"PREROUTING", "OUTPUT"}},
-            {Mangle, new List<string> {"INPUT", "FORWARD", "OUTPUT", "PREROUTING", "POSTROUTING"}},
-            {Security, new List<string> {"INPUT", "FORWARD", "OUTPUT"}},
+            {Filter, new List<string> {IpTablesChain.Input, IpTablesChain.Forward, IpTablesChain.Output}},
+            {Nat, new List<string> {IpTablesChain.Prerouting, IpTablesChain.Postrouting, IpTablesChain.Input, IpTablesChain.Output}},
+            {Raw, new List<string> {IpTablesChain.Prerouting, IpTablesChain.Output}},
+            {Mangle, new List<string> {IpTablesChain.Input, IpTablesChain.Forward, IpTablesChain.Output, IpTablesChain.Prerouting, IpTablesChain.Postrouting}},
+            {Security, new List<string> {IpTablesChain.Input, IpTablesChain.Forward, IpTablesChain.Output}},
         };
 
         internal static List<string> GetInternalChains(string table)
