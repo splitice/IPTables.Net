@@ -8,9 +8,9 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
