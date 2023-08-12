@@ -22,8 +22,7 @@ jobs:
     name: build-${{matrix.os}}
     strategy:
       matrix:
-        include: 
-          - os: [ubuntu-latest]
+        os: [ubuntu-latest]
 
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
