@@ -40,50 +40,12 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }} 
 
-    - uses: actions/cache@v3
-      with:
-        path: ~/.nuget/packages
-        # Look to see if there is a cache hit for the corresponding requirements file
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget
-
     - name: Install dependencies
       run: dotnet restore
 
     - name: Build
       id: build
       run: dotnet build --configuration Release --no-restore
-
-  test:
-    name: test-${{matrix.os}}
-    strategy:
-      matrix:
-        include: 
-          - os: [ubuntu-latest]
-
-    # The type of runner that the job will run on
-    runs-on: ${{ matrix.os }}
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }} 
-
-    - uses: actions/cache@v3
-      with:
-        path: ~/.nuget/packages
-        # Look to see if there is a cache hit for the corresponding requirements file
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget
 
     - name: Install system dependencies
       uses: awalsh128/cache-apt-pkgs-action@latest
@@ -99,9 +61,11 @@ jobs:
 
     - name: Install ipthelper dependency
       run: |
-          CONFIG="Release" sudo -E bash install.sh
-          CONFIG="Debug" sudo -E bash install.sh
-          sudo ldconfig
+        cd ipthelper
+        CONFIG="Release" sudo -E bash install.sh
+        CONFIG="Debug" sudo -E bash install.sh
+        sudo ldconfig
+        cd ..
 
     - name: All Tests
       run: sudo dotnet test
