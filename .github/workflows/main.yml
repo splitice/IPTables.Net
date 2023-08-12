@@ -8,9 +8,7 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
 
 env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
@@ -111,6 +109,7 @@ jobs:
   upload:
     name: upload
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v3
