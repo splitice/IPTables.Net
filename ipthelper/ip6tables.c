@@ -1372,6 +1372,7 @@ EXPORT void* init_handle6(const char* table){
 	const char* err;
 	void* handle = ip6tc_init(table);
 	err = ip6tc_strerror(errno);
+	printf("%s: error: %s\n", __FUNCTION__, err);
 	
 	/* try to insmod the module if iptc_init failed */
 	if (!handle)
