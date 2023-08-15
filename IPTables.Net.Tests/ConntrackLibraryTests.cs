@@ -48,7 +48,6 @@ namespace IPTables.Net.Tests
         }
 
         [Test]
-        [Ignore("FIXME: Does not work on Ubuntu 22.04")]
         public void TestDumpFiltered()
         {
             if (IsLinux)

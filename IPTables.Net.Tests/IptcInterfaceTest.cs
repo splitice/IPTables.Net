@@ -11,8 +11,7 @@ using NUnit.Framework;
 namespace IPTables.Net.Tests
 {
     [TestFixture(4)]
-// FIXME: Fix bug in Ubuntu
-//    [TestFixture(6)]
+    [TestFixture(6)]
     class IptcInterfaceTest
     {
         private int _ipVersion;

@@ -12,8 +12,7 @@ using NUnit.Framework;
 namespace IPTables.Net.Tests
 {
     [TestFixture(4)]
-// FIXME: Fix bug in Ubuntu
-//    [TestFixture(6)]
+    [TestFixture(6)]
     class IptablesLibraryTest
     {
         private int _ipVersion;
@@ -104,7 +103,6 @@ namespace IPTables.Net.Tests
         }
 
         [Test]
-        [Ignore("FIXME: Does not work on Ubuntu 22.04")]
         public void TestRuleAdd()
         {
             if (IsLinux)
