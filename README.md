@@ -57,7 +57,7 @@ For more examples see the Tests project. These are generally more full featured 
 ### Adding rule to system
 ```csharp
 // Create rule
-String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53 -m comment --comment 'this is a test rule'";
+String rule = "-A INPUT --destination 1.1.1.1 -j DROP";
 IpTablesChainSet chains = new IpTablesChainSet();
 IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 
@@ -65,6 +65,9 @@ IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
 var system = new IPTablesSystem(system: new LocalFactory(), tableAdapter: new IPTablesBinaryAdapter());
 IIPTablesAdapter table = ipTablesSystem.GetTableAdapter(version: 4);
 table.AddRule(irule);
+
+// Remove rule
+table.DeleteRule(irule);
 ```
 
 ## Contributing
