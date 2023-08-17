@@ -33,23 +33,42 @@ This method is only compatible locally, will not work over SSH (SystemInteract.R
 For more examples see the Tests project. These are generally more full featured and up-to-date.
 
 ### Parsing an IPTables Rule:
-
+```csharp
     String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53 -m comment --comment 'this is a test rule'";
     IpTablesChainSet chains = new IpTablesChainSet();
     IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+```
 
 ### Deleting all IPv4 defined rules:
-
+```csharp
     var system = new IPTablesSystem(system: new LocalFactory(), tableAdapter: new IPTablesBinaryAdapter());
     foreach(var rule in system.GetRules(table: "nat", ipVersion: 4)){
         rule.Delete();
     }
+```
 
 ### Syncing a chain set:
-
+```csharp
     IpTablesChain chain = new IpTablesChain("filter","INPUT",system); 
     chain.AddRule("-A INPUT !-f"); 
     system.GetChain("filter","INPUT").Sync(chain);
-	
+```
+
+### Adding rule to system
+```csharp
+// Create rule
+String rule = "-A INPUT --destination 1.1.1.1 -j DROP";
+IpTablesChainSet chains = new IpTablesChainSet();
+IpTablesRule irule = IpTablesRule.Parse(rule, null, chains);
+
+// Add rule
+var system = new IPTablesSystem(system: new LocalFactory(), tableAdapter: new IPTablesBinaryAdapter());
+IIPTablesAdapter table = ipTablesSystem.GetTableAdapter(version: 4);
+table.AddRule(irule);
+
+// Remove rule
+table.DeleteRule(irule);
+```
+
 ## Contributing
 Pull-Requests and Patches are very welcome.
