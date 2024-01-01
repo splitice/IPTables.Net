@@ -91,9 +91,9 @@ namespace IPTables.Net.IpUtils.Utils
             {
                 string output, error;
                 ProcessHelper.ReadToEnd(process, out output, out error);
-                Console.WriteLine(cmd);
+                /*Console.WriteLine(cmd);
                 Console.WriteLine("output" + output);
-                Console.WriteLine("error" + error);
+                Console.WriteLine("error" + error);*/
                 return new string[] {output.Trim(), error.Trim()};
             }
         }

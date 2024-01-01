@@ -22,7 +22,7 @@ jobs:
     name: build-${{matrix.os}}
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-2004, ubuntu-latest]
 
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
@@ -56,7 +56,15 @@ jobs:
       run: dotnet restore
 
     - name: Modprobe IP6 tables
-      run: sudo modprobe ip6_tables
+      run: |
+         sudo modprobe ip6_tables
+         sudo modprobe ip6table_filter
+         sudo modprobe ip6table_mangle
+
+         if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+          sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+          sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+         fi
 
     - name: NUnit Tests
       run: SKIP_SYSTEM_TESTS=1 dotnet test IPTables.Net.Tests

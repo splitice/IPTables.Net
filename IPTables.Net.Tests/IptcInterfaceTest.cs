@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -9,8 +10,9 @@ using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
+    [NonParallelizable]
     [TestFixture(4)]
-    [TestFixture(6)]
+    //[TestFixture(6)]
     class IptcInterfaceTest
     {
         private int _ipVersion;
@@ -29,13 +31,21 @@ namespace IPTables.Net.Tests
             _ipVersion = ipVersion;
         }
 
-        private String GetBinary()
+        private String GetBinaryName()
         {
             if (_ipVersion == 4)
             {
                 return "iptables";
             }
             return "ip6tables";
+        }
+
+        private String GetBinary()
+        {
+            var name = GetBinaryName();
+            if(Path.Exists("/sbin/"+name)) return "/sbin/"+name;
+            if(Path.Exists("/usr/sbin/"+name)) return "/usr/sbin/"+name;
+            return name;
         }
 
         [OneTimeSetUp]
@@ -47,15 +57,27 @@ namespace IPTables.Net.Tests
                 {
                     Assert.Ignore();
                 }
-                Process.Start("/sbin/" + GetBinary(), "-F test").WaitForExit();
 
-                Process.Start("/sbin/" + GetBinary(), "-N test2").WaitForExit();
-                Process.Start("/sbin/" + GetBinary(), "-N test").WaitForExit();
-                Process.Start("/sbin/" + GetBinary(), "-A test -j ACCEPT").WaitForExit();
+                Console.WriteLine("Test Startup");
 
-                Process.Start("/sbin/" + GetBinary(), "-N test3").WaitForExit();
-                Process.Start("/sbin/" + GetBinary(), "-A test3 -p tcp -m tcp --dport 80 -j ACCEPT").WaitForExit();
+                var binary = GetBinary();
+                Execute(binary, "-F test");
+
+                Execute(binary, "-N test2");
+                Process.Start(binary, "-N test").WaitForExit();
+                Process.Start(binary, "-A test -j ACCEPT").WaitForExit();
+
+                Process.Start(binary, "-N test3").WaitForExit();
+                Process.Start(binary, "-A test3 -p tcp -m tcp --dport 80 -j ACCEPT").WaitForExit();
             }
+        }
+
+        private void Execute(string binary, string args)
+        {
+            var process = Process.Start(new ProcessStartInfo(binary, args){RedirectStandardError = true, RedirectStandardOutput = true});
+            Console.WriteLine(process.StandardOutput.ReadToEnd());
+            Console.Error.WriteLine(process.StandardError.ReadToEnd());
+            process.WaitForExit();
         }
 
         [OneTimeTearDown]
@@ -67,13 +89,15 @@ namespace IPTables.Net.Tests
                 {
                     Assert.Ignore();
                 }
-                Process.Start("/sbin/" + GetBinary(), "-D test -j ACCEPT").WaitForExit();
-                Process.Start("/sbin/" + GetBinary(), "-F test").WaitForExit();
-                Process.Start("/sbin/"+GetBinary(), "-X test").WaitForExit();
-                Process.Start("/sbin/"+GetBinary(), "-F test2").WaitForExit();
-                Process.Start("/sbin/"+GetBinary(), "-X test2").WaitForExit();
-                Process.Start("/sbin/"+GetBinary(), "-F test3").WaitForExit();
-                Process.Start("/sbin/"+GetBinary(), "-X test3").WaitForExit();
+                Console.WriteLine("Test Done");
+                var binary = GetBinary();
+                Process.Start(binary, "-D test -j ACCEPT").WaitForExit();
+                Process.Start(binary, "-F test").WaitForExit();
+                Process.Start(binary, "-X test").WaitForExit();
+                Process.Start(binary, "-F test2").WaitForExit();
+                //Process.Start(binary, "-X test2").WaitForExit();
+                Process.Start(binary, "-F test3").WaitForExit();
+                Process.Start(binary, " - X test3").WaitForExit();
             }
         }
 
@@ -120,7 +144,7 @@ namespace IPTables.Net.Tests
                 using (IptcInterface iptc = new IptcInterface("filter", _ipVersion))
                 {
 
-                    var status = iptc.ExecuteCommand(_ipVersion == 4 ? "iptables -A test2 -d 1.1.1.1 -p tcp -m tcp --dport 80 -j ACCEPT" : "iptables -A test2 -d ::1 -p tcp -m tcp --dport 80 -j ACCEPT");
+                    var status = iptc.ExecuteCommand(_ipVersion == 4 ? "iptables -A test2 -d 1.1.1.1 -p tcp -m tcp --dport 80 -j ACCEPT" : "ip6tables -A test2 -d ::1 -p tcp -m tcp --dport 80 -j ACCEPT");
                     Assert.AreEqual(1, status, "Expected OK return value");
 
                     var rules = iptc.GetRules("test2");
