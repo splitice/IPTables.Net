@@ -1,10 +1,5 @@
 set -e
 
-DIR=~/repo
-P=$DIR/$1
-
-cd $P
-
 
 VERSION=$(git describe --abbrev=0 --tags)
 REVISION=$(git log "$VERSION..HEAD" --oneline | wc -l)
@@ -22,10 +17,8 @@ if [[ $VERSION =~ $re ]]; then
         VERSION_STR="$VERSION_STR-cibuild$padded"
     fi
 
-    echo "Version of $1 is now: $VERSION_STR"
+    echo "Version is now: $VERSION_STR"
 fi
 
-if [ "${CIRCLE_PULL_REQUEST}" = "" ]; then
-    dotnet pack --configuration Release /p:Version=$VERSION_STR
-    dotnet nuget push bin/Release/*.nupkg --api-key $NUGET_API -s https://www.nuget.org/api/v2/package
-fi
+dotnet pack --configuration Release /p:Version=$VERSION_STR
+#dotnet nuget push */bin/Release/*.nupkg --api-key $NUGET_API_KEY -s https://www.nuget.org/api/v2/package

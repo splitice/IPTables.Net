@@ -10,7 +10,7 @@ namespace IPTables.Net.TestFramework
 {
     public class MockIptablesSystemProcess : ISystemProcess
     {
-        private ProcessStartInfo _startInfo = new ProcessStartInfo();
+        private ProcessStartInfo _startInfo = new ProcessStartInfo { UseShellExecute = false };
         private Thread _outputReader;
         private Thread _errorReader;
 

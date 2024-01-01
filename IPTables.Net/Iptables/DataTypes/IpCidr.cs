@@ -7,6 +7,8 @@ using IPTables.Net.Supporting;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
+    extern alias IPNetwork2;
+
     public struct IpCidr : IEquatable<IpCidr>, IComparable<IpCidr>, IComparable
     {
         public static IpCidr Any = new IpCidr(IPAddress.Any, 0);
@@ -35,9 +37,9 @@ namespace IPTables.Net.Iptables.DataTypes
             }
         }
 
-        public IPNetwork GetIPNetwork()
+        public IPNetwork2::System.Net.IPNetwork GetIPNetwork()
         {
-            return IPNetwork.Parse(Address, IPNetwork.ToNetmask((byte) Prefix, Address.AddressFamily));
+            return IPNetwork2::System.Net.IPNetwork.Parse(Address, IPNetwork2::System.Net.IPNetwork.ToNetmask((byte) Prefix, Address.AddressFamily));
         }
 
         public bool Equals(IpCidr other)
@@ -171,7 +173,7 @@ namespace IPTables.Net.Iptables.DataTypes
 
             // IPv6
             if (u == 128) return new IpCidr(findAddress, u);
-            var ipNet = IPNetwork.Parse(findAddress.ToString(), (byte) u);
+            var ipNet = IPNetwork2::System.Net.IPNetwork.Parse(findAddress.ToString(), (byte) u);
             return new IpCidr(ipNet.Network, u);
         }
     }
