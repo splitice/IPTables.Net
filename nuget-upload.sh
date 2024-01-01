@@ -21,4 +21,4 @@ if [[ $VERSION =~ $re ]]; then
 fi
 
 dotnet pack --configuration Release /p:Version=$VERSION_STR
-#dotnet nuget push */bin/Release/*.nupkg --api-key $NUGET_API_KEY -s https://www.nuget.org/api/v2/package
+dotnet nuget push */bin/Release/*.nupkg --api-key "$NUGET_API_KEY" --source https://www.nuget.org/api/v2/package
