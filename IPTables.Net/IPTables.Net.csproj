@@ -9,7 +9,7 @@
 	<PackageReference Include="IPNetwork2" Version="2.6.618">
 		<Aliases>IPNetwork2</Aliases>
 	</PackageReference>
-    <PackageReference Include="SystemInteract" Version="1.1.4-cibuild0006" />
+    <PackageReference Include="SystemInteract" Version="1.1.5" />
   </ItemGroup>
 
 </Project>
