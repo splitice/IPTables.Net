@@ -22,7 +22,8 @@ jobs:
     name: build-${{matrix.os}}
     strategy:
       matrix:
-        os: [ubuntu-2004, ubuntu-latest]
+        # ubuntu-2004
+        os: [ubuntu-latest]
 
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
@@ -93,5 +94,7 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }} 
-    #- name: Upload
-    #  run: bash nuget-upload.sh IPTables.Net
+    - name: Upload
+      run: bash nuget-upload.sh
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
