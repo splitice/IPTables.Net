@@ -1,12 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Dynamitey" Version="2.0.10.189" />
-    <PackageReference Include="IPNetwork2" Version="2.5.329" />
+	<PackageReference Include="IPNetwork2" Version="2.6.609">
+		<Aliases>IPNetwork2</Aliases>
+	</PackageReference>
     <PackageReference Include="SystemInteract" Version="1.1.4-cibuild0001" />
   </ItemGroup>
 
