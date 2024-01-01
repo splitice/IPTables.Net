@@ -55,6 +55,9 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
 
+    - name: Modprobe IP6 tables
+      run: sudo modprobe ip6_tables
+
     - name: NUnit Tests
       run: SKIP_SYSTEM_TESTS=1 dotnet test IPTables.Net.Tests
 
