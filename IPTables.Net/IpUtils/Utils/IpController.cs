@@ -86,11 +86,14 @@ namespace IPTables.Net.IpUtils.Utils
 
         protected string[] Command(string command, params string[] args)
         {
-            var cmd = string.Format("{0} {1} {2}", _module, command, string.Join(" ", args));
+            var cmd = $"{_module} {command} {string.Join(" ", args)}";
             using (var process = _system.StartProcess("ip", cmd.TrimEnd()))
             {
                 string output, error;
                 ProcessHelper.ReadToEnd(process, out output, out error);
+                Console.WriteLine(cmd);
+                Console.WriteLine("output" + output);
+                Console.WriteLine("error" + error);
                 return new string[] {output.Trim(), error.Trim()};
             }
         }

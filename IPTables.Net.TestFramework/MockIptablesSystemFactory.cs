@@ -14,22 +14,32 @@ namespace IPTables.Net.TestFramework
     {
         public List<KeyValuePair<String, String>> ExecutionLog = new List<KeyValuePair<string, string>>();
         public Dictionary<KeyValuePair<String, String>,StreamReader[]> MockOutputs = new Dictionary<KeyValuePair<string, string>, StreamReader[]>();
+        private readonly bool _strict;
+
+        public MockIptablesSystemFactory(bool strict = false)
+        {
+            _strict = strict;
+        }
 
         public ISystemProcess StartProcess(string command, string arguments)
         {
             var exe = new KeyValuePair<string, string>(command, arguments);
             ExecutionLog.Add(exe);
             StreamReader output = null, error = null;
-            if (MockOutputs.ContainsKey(exe))
+            if (MockOutputs.TryGetValue(exe, out var mo))
             {
-                if(MockOutputs[exe].Length >= 1)
+                if(mo.Length >= 1)
                 {
-                    output = MockOutputs[exe][0];
+                    output = mo[0];
                 }
                 if (MockOutputs[exe].Length >= 2)
                 {
-                    error = MockOutputs[exe][1];
+                    error = mo[1];
                 }
+            }
+            else if(_strict)
+            {
+                throw new Exception("Mock output \"" + command + "\" " + arguments + " not found");
             }
             return new MockIptablesSystemProcess(output,error);
         }
