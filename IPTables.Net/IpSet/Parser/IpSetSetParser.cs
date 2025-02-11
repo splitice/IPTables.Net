@@ -63,6 +63,12 @@ namespace IPTables.Net.IpSet.Parser
                 case "range":
                     _set.BitmapRange = PortOrRange.Parse(GetNextArg(), '-');
                     break;
+                case "bucketsize":
+                    _set.BucketSize = int.Parse(GetNextArg());
+                    break;
+                case "initval":
+                    _set.InitVal = FlexibleUInt32.Parse(GetNextArg());
+                    break;
                 default:
                     _set.CreateOptions.Add(GetCurrentArg());
                     return 0;

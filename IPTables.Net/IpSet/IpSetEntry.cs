@@ -152,7 +152,7 @@ namespace IPTables.Net.IpSet
 
         public string GetFullCommand(string command = "add")
         {
-            var ret = string.Format("{0} {1} {2}", command, Set.Name, GetKeyCommand());
+            var ret = $"{command} {Set.Name} {GetKeyCommand()}";
             if (_timeout != 0) ret += " timeout " + _timeout;
 
             return ret;

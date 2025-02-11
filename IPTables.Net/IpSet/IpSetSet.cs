@@ -28,6 +28,8 @@ namespace IPTables.Net.IpSet
         private IpSetSyncMode _syncMode = IpSetSyncMode.SetAndEntries;
         private string[] _typeComponents;
         private List<string> _createOptions;
+        private int _bucketSize = 12;
+        private uint _initVal;
 
         internal string InternalName
         {
@@ -102,6 +104,18 @@ namespace IPTables.Net.IpSet
             set => _bitmapRange = value;
         }
 
+        public int BucketSize
+        {
+            get => _bucketSize;
+            set => _bucketSize = value;
+        }
+
+        public uint InitVal
+        {
+            get => _initVal;
+            set => _initVal = value;
+        }
+
         #endregion
 
         #region Constructor
@@ -163,6 +177,8 @@ namespace IPTables.Net.IpSet
 
             if (_timeout > 0) command += " timeout " + _timeout;
 
+            if (_bucketSize > 0) command += " bucketsize " + _bucketSize;
+
             foreach (var co in _createOptions) command += " " + co;
 
             return command;
@@ -201,7 +217,7 @@ namespace IPTables.Net.IpSet
 
         public bool SetEquals(IpSetSet set, bool size = true)
         {
-            if (!(set.MaxElem == MaxElem && set.Name == Name && set.Timeout == Timeout &&
+            if (!(set.MaxElem == MaxElem && set.Name == Name && set.Timeout == Timeout && _bucketSize == set._bucketSize &&
                   set.Type == Type && set.BitmapRange.Equals(BitmapRange) && set.CreateOptions.OrderBy(a => a)
                       .SequenceEqual(CreateOptions.OrderBy(a => a))))
                 return false;
