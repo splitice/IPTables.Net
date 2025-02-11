@@ -153,5 +153,18 @@ namespace IPTables.Net.Tests
 
             Assert.AreEqual(2, PortRangeHelpers.CountRequiredMultiports(input));
         }
+
+        [TestCase]
+        public void TestRangeCount6()
+        {
+            List<PortOrRange> input = new List<PortOrRange> { };
+
+            for (int i = 0; i < 15; i++)
+            {
+                input.Add(new PortOrRange((uint)(100 + i)));
+            }
+
+            Assert.AreEqual(1, PortRangeHelpers.CountRequiredMultiports(input));
+        }
     }
 }
