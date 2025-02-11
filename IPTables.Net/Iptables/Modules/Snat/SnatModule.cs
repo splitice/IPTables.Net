@@ -94,7 +94,7 @@ namespace IPTables.Net.Iptables.Modules.Snat
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("SNAT", typeof(SnatModule), GetOptions, (version) => new SnatModule(version), false);
+            return GetTargetModuleEntryInternal("SNAT", typeof(SnatModule), GetOptions, (version) => new SnatModule(version));
         }
 
         public override bool Equals(object obj)

@@ -61,7 +61,7 @@ namespace IPTables.Net.Iptables.Modules.Rts
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("RTS", typeof(RtsModule), GetOptions, (version) => new RtsModule(version), false);
+            return GetTargetModuleEntryInternal("RTS", typeof(RtsModule), GetOptions, (version) => new RtsModule(version));
         }
 
         protected bool Equals(RtsModule other)

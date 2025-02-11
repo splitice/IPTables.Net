@@ -40,7 +40,7 @@ namespace IPTables.Net.Iptables.Modules.Netflow
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("NETFLOW", typeof(NetflowModule), GetOptions, (version) => new NetflowModule(version), true);
+            return GetTargetModuleEntryInternal("NETFLOW", typeof(NetflowModule), GetOptions, (version) => new NetflowModule(version));
         }
 
         public override bool Equals(object obj)

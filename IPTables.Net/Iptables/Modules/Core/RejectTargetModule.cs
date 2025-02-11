@@ -63,7 +63,7 @@ namespace IPTables.Net.Iptables.Modules.Core
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("REJECT", typeof(RejectTargetModule), GetOptions, (version) => new RejectTargetModule(version), true);
+            return GetTargetModuleEntryInternal("REJECT", typeof(RejectTargetModule), GetOptions, (version) => new RejectTargetModule(version));
         }
 
         public override bool Equals(object obj)

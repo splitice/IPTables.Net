@@ -39,7 +39,7 @@ namespace IPTables.Net.Iptables.Modules.Dynjmp
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("DYNJMP", typeof(DynjmpModule), GetOptions, (version) => new DynjmpModule(version), false);
+            return GetTargetModuleEntryInternal("DYNJMP", typeof(DynjmpModule), GetOptions, (version) => new DynjmpModule(version));
         }
 
         public override bool Equals(object obj)

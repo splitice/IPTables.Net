@@ -94,7 +94,7 @@ namespace IPTables.Net.Iptables.Modules.Dnat
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("DNAT", typeof(DnatModule), GetOptions, (version) => new DnatModule(version), false);
+            return GetTargetModuleEntryInternal("DNAT", typeof(DnatModule), GetOptions, (version) => new DnatModule(version));
         }
 
         public override bool Equals(object obj)
