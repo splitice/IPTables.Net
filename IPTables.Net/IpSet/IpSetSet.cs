@@ -177,7 +177,7 @@ namespace IPTables.Net.IpSet
 
             if (_timeout > 0) command += " timeout " + _timeout;
 
-            if (_bucketSize > 0) command += " bucketsize " + _bucketSize;
+            if (_bucketSize > 0 && _bucketSize != 12) command += " bucketsize " + _bucketSize;
 
             foreach (var co in _createOptions) command += " " + co;
 
