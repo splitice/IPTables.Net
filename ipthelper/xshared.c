@@ -643,23 +643,22 @@ void command_match(struct iptables_command_state *cs)
 		return;
 	/* Merge options for non-cloned matches */
 	{
-		bool merged = false;
 		size_t merge_start = xs_longopts_count(opts, NULL);
 
 		if (m->x6_options != NULL) {
 			opts = xtables_options_xfrm(xt_params->orig_opts, opts,
 					    m->x6_options, &m->option_offset);
-			merged = true;
 		} else if (m->extra_opts != NULL) {
 			opts = xtables_merge_options(xt_params->orig_opts, opts,
 					     m->extra_opts, &m->option_offset);
-			merged = true;
-		}
+		
+		} else
+			return;
 
 		if (opts == NULL)
 			xtables_error(OTHER_PROBLEM, "can't alloc memory!");
-		if (merged)
-			xs_validate_new_longopts(opts, merge_start,
+			
+		xs_validate_new_longopts(opts, merge_start,
 					     m->real_name != NULL ?
 					     m->real_name : m->name);
 	}
@@ -723,19 +722,16 @@ void command_jump(struct iptables_command_state *cs)
 			opts = xtables_options_xfrm(xt_params->orig_opts, opts,
 					    cs->target->x6_options,
 					    &cs->target->option_offset);
-			merged = true;
-		} else if (cs->target->extra_opts != NULL) {
-			opts = xtables_merge_options(xt_params->orig_opts, opts,
+	else if (cs->target->extra_opts != NULL)
+		opts = xtables_merge_options(xt_params->orig_opts, opts,
 					     cs->target->extra_opts,
 					     &cs->target->option_offset);
-			merged = true;
-		}
-		if (opts == NULL)
-			xtables_error(OTHER_PROBLEM, "can't alloc memory!");
-		if (merged)
-			xs_validate_new_longopts(opts, merge_start,
-					 cs->target->real_name != NULL ?
-					 cs->target->real_name : cs->jumpto);
-	}
+	else
+		return;
+	if (opts == NULL)
+		xtables_error(OTHER_PROBLEM, "can't alloc memory!");
+	xs_validate_new_longopts(opts, merge_start,
+				cs->target->real_name != NULL ?
+				cs->target->real_name : cs->jumpto);
 	xt_params->opts = opts;
 }
