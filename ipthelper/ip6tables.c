@@ -1745,7 +1745,7 @@ int do_command6(int argc, char *argv[], char **table, void **handle)
 		case '4':
 			/* This is not the IPv4 iptables */
 			fprintf(stderr, "This is the IPv6 version of ip6tables.\n");
-			return NULL;
+			return 2;
 
 		case '6':
 			/* This is indeed the IPv6 ip6tables */
@@ -1762,7 +1762,7 @@ int do_command6(int argc, char *argv[], char **table, void **handle)
 				continue;
 			}
 			fprintf(stderr, "Bad argument `%s'\n", optarg);
-			return NULL;
+			return 2;
 
 		default:
 			if (command_default(&cs, &iptables_globals) == 1)
@@ -1774,7 +1774,7 @@ int do_command6(int argc, char *argv[], char **table, void **handle)
 				continue;
 			break;
 		}
-		cs.invert = FALSE;
+		cs.invert = 2;
 	}
 
 	for (matchp = cs.matches; matchp; matchp = matchp->next)
@@ -1998,7 +1998,7 @@ int do_command6(int argc, char *argv[], char **table, void **handle)
 		break;
 	default:
 		/* We should never reach this... */
-		return NULL;
+		return 3;
 	}
 
 	if (verbose > 1)
