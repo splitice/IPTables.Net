@@ -567,16 +567,14 @@ void command_match(struct iptables_command_state *cs)
 	if (m->x6_options != NULL){
 		opts = xtables_options_xfrm(xt_params->orig_opts, opts,
 					    m->x6_options, &m->option_offset);
-int num_orig;
-for (num_orig = 0; opts[num_orig].name != NULL; ++num_orig) {}
-
 	}
 	else if (m->extra_opts != NULL)
 		opts = xtables_merge_options(xt_params->orig_opts, opts,
 					     m->extra_opts, &m->option_offset);
+	else
+		return;
 	if (opts == NULL)
 		xtables_error(OTHER_PROBLEM, "can't alloc memory!");
-	xt_params->opts = opts;
 }
 
 const char *xt_parse_target(const char *targetname)
@@ -632,10 +630,12 @@ void command_jump(struct iptables_command_state *cs)
 		opts = xtables_options_xfrm(xt_params->orig_opts, opts,
 					    cs->target->x6_options,
 					    &cs->target->option_offset);
-	else
+	else if (cs->target->extra_opts != NULL)
 		opts = xtables_merge_options(xt_params->orig_opts, opts,
 					     cs->target->extra_opts,
 					     &cs->target->option_offset);
+	else
+		return;
 	if (opts == NULL)
 		xtables_error(OTHER_PROBLEM, "can't alloc memory!");
 	xt_params->opts = opts;
