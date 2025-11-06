@@ -152,21 +152,6 @@ static struct option original_opts[] = {
 
 extern struct xtables_globals iptables_globals;
 
-static struct option *clone_original_options(const struct option *orig)
-{
-	size_t count = 0;
-
-	while (orig[count].name != NULL)
-		count++;
-	count++;
-
-	struct option *copy = xtables_calloc(count, sizeof(*copy));
-	memcpy(copy, orig, count * sizeof(*copy));
-	copy[count - 1] = (struct option){0};
-
-	return copy;
-}
-	
 /* Table of legal combinations of commands and options.  If any of the
  * given commands make an option legal, that option is legal (applies to
  * CMD_LIST and CMD_ZERO only).
@@ -1440,6 +1425,7 @@ int do_command6(int argc, char *argv[], char **table, void **handle)
 	optind = 0;
 	iptables_globals.option_offset = 0;
 	iptables_globals.orig_opts = original_opts;
+	iptables_globals.opts = NULL;
 
 	/* clear mflags in case do_command6 gets called a second time
 	 * (we clear the global list of all matches for security)*/
@@ -1455,11 +1441,9 @@ int do_command6(int argc, char *argv[], char **table, void **handle)
            demand-load a protocol. */
 	opterr = 0;
 
-	iptables_globals.opts = clone_original_options(iptables_globals.orig_opts);
-		
 	while ((cs.c = getopt_long(argc, argv,
 	   "-:A:C:D:R:I:L::S::M:F::Z::N:X::E:P:Vh::o:p:s:d:j:i:bvnt:m:xc:g:46",
-	   iptables_globals.opts, NULL)) != -1) {
+	   iptables_globals.opts ? iptables_globals.opts : iptables_globals.orig_opts, NULL)) != -1) {
 		switch (cs.c) {
 			/*
 			 * Command selection
