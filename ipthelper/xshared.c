@@ -738,8 +738,8 @@ void command_jump(struct iptables_command_state *cs)
 		return;
 	if (opts == NULL)
 		xtables_error(OTHER_PROBLEM, "can't alloc memory!");
-	/*xs_validate_new_longopts(opts, merge_start,
+	xs_validate_new_longopts(opts, merge_start,
 				cs->target->real_name != NULL ?
-				cs->target->real_name : cs->jumpto);*/
+				cs->target->real_name : cs->jumpto);
 	xt_params->opts = opts;
 }
