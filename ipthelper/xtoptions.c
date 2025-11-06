@@ -128,6 +128,68 @@ xtables_options_xfrm(struct option *orig_opts, struct option *oldopts,
 	return merge;
 }
 
+struct option *
+xs_merge_options(struct option *orig_opts, struct option *oldopts,
+	    const struct option *newopts, unsigned int *option_offset)
+{
+	unsigned int num_orig = 0, num_old = 0, num_new = 0, i;
+	struct option *merge;
+	struct option *mp;
+	struct option *oldbase = oldopts;
+
+	if (newopts == NULL || newopts[0].name == NULL)
+		return oldopts;
+
+	if (orig_opts != NULL)
+		for (; orig_opts[num_orig].name != NULL; ++num_orig)
+			;
+
+	if (oldopts != NULL)
+		for (num_old = 0; oldopts[num_old].name != NULL; ++num_old)
+			;
+
+	for (; newopts[num_new].name != NULL; ++num_new)
+		;
+
+	if (oldopts != NULL && num_old >= num_orig) {
+		oldopts += num_orig;
+		num_old -= num_orig;
+	} else {
+		oldopts = NULL;
+		num_old = 0;
+	}
+
+	merge = malloc(sizeof(*merge) * (num_orig + num_new + num_old + 1));
+	if (merge == NULL)
+		return NULL;
+
+	if (num_orig != 0)
+		memcpy(merge, orig_opts, sizeof(*merge) * num_orig);
+	mp = merge + num_orig;
+
+	xt_params->option_offset += XT_OPTION_OFFSET_SCALE;
+	*option_offset = xt_params->option_offset;
+
+	for (i = 0; i < num_new; ++i, ++mp) {
+		mp->name    = newopts[i].name;
+		mp->has_arg = newopts[i].has_arg;
+		mp->flag    = newopts[i].flag;
+		mp->val     = newopts[i].val + *option_offset;
+	}
+
+	if (oldopts != NULL && num_old != 0) {
+		memcpy(mp, oldopts, sizeof(*mp) * num_old);
+		mp += num_old;
+	}
+
+	memset(mp, 0, sizeof(*mp));
+
+	if (oldbase != NULL && oldbase != xt_params->orig_opts)
+		free(oldbase);
+
+	return merge;
+}
+
 /**
  * Give the upper limit for a certain type.
  */

@@ -248,10 +248,10 @@ int command_default(struct iptables_command_state *cs,
 							m->x6_options,
 							&m->option_offset);
 		else
-			gl->opts = xtables_merge_options(gl->orig_opts,
-						 	 gl->opts,
-						 	 m->extra_opts,
-						 	 &m->option_offset);
+			gl->opts = xs_merge_options(gl->orig_opts,
+							 gl->opts,
+							 m->extra_opts,
+							 &m->option_offset);
 		if (gl->opts == NULL)
 			xtables_error(OTHER_PROBLEM, "can't alloc memory!");
 		xs_validate_new_longopts(gl->opts, merge_start,
@@ -661,7 +661,7 @@ void command_match(struct iptables_command_state *cs)
 					    m->x6_options, &m->option_offset);
 			merged = true;
 		} else if (m->extra_opts != NULL) {
-			opts = xtables_merge_options(xt_params->orig_opts, opts,
+			opts = xs_merge_options(xt_params->orig_opts, opts,
 					     m->extra_opts, &m->option_offset);
 			merged = true;
 		}
@@ -735,7 +735,7 @@ void command_jump(struct iptables_command_state *cs)
 					    &cs->target->option_offset);
 			merged = true;
 		} else if (cs->target->extra_opts != NULL) {
-			opts = xtables_merge_options(xt_params->orig_opts, opts,
+			opts = xs_merge_options(xt_params->orig_opts, opts,
 					     cs->target->extra_opts,
 					     &cs->target->option_offset);
 			merged = true;
