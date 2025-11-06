@@ -575,6 +575,8 @@ void command_match(struct iptables_command_state *cs)
 		return;
 	if (opts == NULL)
 		xtables_error(OTHER_PROBLEM, "can't alloc memory!");
+
+	xt_params->opts = opts;
 }
 
 const char *xt_parse_target(const char *targetname)
