@@ -155,6 +155,21 @@ struct xtables_globals iptables_globals = {
 	.exit_err = iptables_exit_error
 };
 
+static struct option *clone_original_options(const struct option *orig)
+{
+	size_t count = 0;
+
+	while (orig[count].name != NULL)
+		count++;
+	count++;
+
+	struct option *copy = xtables_calloc(count, sizeof(*copy));
+	memcpy(copy, orig, count * sizeof(*copy));
+	copy[count - 1] = (struct option){0};
+
+	return copy;
+}
+
 extern jmp_buf buf;
 
 void
@@ -1002,6 +1017,8 @@ int do_command4(int argc, char *argv[], char **table, void **handle)
 	/* re-set optind to 0 in case do_command4 gets called
 	 * a second time */
 	optind = 0;
+	iptables_globals.option_offset = 0;
+	iptables_globals.orig_opts = original_opts;
 
 	/* clear mflags in case do_command4 gets called a second time
 	 * (we clear the global list of all matches for security)*/
@@ -1017,22 +1034,7 @@ int do_command4(int argc, char *argv[], char **table, void **handle)
            demand-load a protocol. */
 	opterr = 0;
 
-	/* Create a malloc'd copy of orig_opts */
-	size_t num_opts = 0;
-	struct option *orig_opts = iptables_globals.orig_opts;
-
-	/* Count the number of options (including the NULL terminator) */
-	while (orig_opts[num_opts].name != NULL) {
-		num_opts++;
-	}
-	num_opts++; /* Include the NULL terminator */
-
-	/* Allocate memory and copy the options */
-	iptables_globals.opts = malloc(num_opts * sizeof(struct option));
-	if (iptables_globals.opts == NULL) {
-		xtables_error(OTHER_PROBLEM, "malloc failed for options array");
-	}
-	memcpy(iptables_globals.opts, iptables_globals.orig_opts, num_opts * sizeof(struct option));
+	iptables_globals.opts = clone_original_options(iptables_globals.orig_opts);
 		
 	while ((cs.c = getopt_long(argc, argv,
 	   "-:A:C:D:R:I:L::S::M:F::Z::N:X::E:P:Vh::o:p:s:d:j:i:fbvnt:m:xc:g:46",
@@ -1538,13 +1540,7 @@ int do_command4(int argc, char *argv[], char **table, void **handle)
 	free(smasks);
 	free(daddrs);
 	free(dmasks);
-	//xtables_free_opts(1);
-
-	/* Free the malloc'd copy of opts if it was allocated */
-	if (iptables_globals.opts != iptables_globals.orig_opts) {
-		free(iptables_globals.opts);
-		iptables_globals.opts = NULL;
-	}
+	xtables_free_opts(1);
 
 	return ret;
 }
