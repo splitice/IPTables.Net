@@ -179,5 +179,9 @@ void print_ifaces(const char *iniface, const char *outiface, uint8_t invflags,
 void command_match(struct iptables_command_state *cs);
 const char *xt_parse_target(const char *targetname);
 void command_jump(struct iptables_command_state *cs);
+struct option *xs_merge_options(struct option *orig_opts,
+	struct option *oldopts,
+	const struct option *newopts,
+	unsigned int *option_offset);
 
 #endif /* IPTABLES_XSHARED_H */

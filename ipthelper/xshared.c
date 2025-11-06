@@ -248,7 +248,7 @@ int command_default(struct iptables_command_state *cs,
 							m->x6_options,
 							&m->option_offset);
 		else
-			gl->opts = xtables_merge_options(gl->orig_opts,
+			gl->opts = xs_merge_options(gl->orig_opts,
 						 	 gl->opts,
 						 	 m->extra_opts,
 						 	 &m->option_offset);
@@ -659,7 +659,7 @@ void command_match(struct iptables_command_state *cs)
 			opts = xtables_options_xfrm(xt_params->orig_opts, opts,
 					    m->x6_options, &m->option_offset);
 		} else if (m->extra_opts != NULL) {
-			opts = xtables_merge_options(xt_params->orig_opts, opts,
+			opts = xs_merge_options(xt_params->orig_opts, opts,
 					     m->extra_opts, &m->option_offset);
 		
 		} else
@@ -731,7 +731,7 @@ void command_jump(struct iptables_command_state *cs)
 					cs->target->x6_options,
 					&cs->target->option_offset);
 	} else if (cs->target->extra_opts != NULL)
-		opts = xtables_merge_options(xt_params->orig_opts, opts,
+		opts = xs_merge_options(xt_params->orig_opts, opts,
 					     cs->target->extra_opts,
 					     &cs->target->option_offset);
 	else
