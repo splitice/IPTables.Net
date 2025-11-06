@@ -1790,7 +1790,7 @@ int do_command6(int argc, char *argv[], char **table, void **handle)
 				continue;
 			break;
 		}
-		cs.invert = 2;
+		cs.invert = FALSE;
 	}
 
 	for (matchp = cs.matches; matchp; matchp = matchp->next)
