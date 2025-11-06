@@ -1018,26 +1018,25 @@ int do_command4(int argc, char *argv[], char **table, void **handle)
 	opterr = 0;
 
 	/* Create a malloc'd copy of orig_opts */
-	if (iptables_globals.opts == NULL) {
-		size_t num_opts = 0;
-		struct option *orig_opts = iptables_globals.orig_opts;
-		
-		/* Count the number of options (including the NULL terminator) */
-		while (orig_opts[num_opts].name != NULL) {
-			num_opts++;
-		}
-		num_opts++; /* Include the NULL terminator */
-		
-		/* Allocate memory and copy the options */
-		iptables_globals.opts = malloc(num_opts * sizeof(struct option));
-		if (iptables_globals.opts == NULL) {
-			xtables_error(OTHER_PROBLEM, "malloc failed for options array");
-		}
-		memcpy(iptables_globals.opts, iptables_globals.orig_opts, num_opts * sizeof(struct option));
+	size_t num_opts = 0;
+	struct option *orig_opts = iptables_globals.orig_opts;
+
+	/* Count the number of options (including the NULL terminator) */
+	while (orig_opts[num_opts].name != NULL) {
+		num_opts++;
 	}
+	num_opts++; /* Include the NULL terminator */
+
+	/* Allocate memory and copy the options */
+	iptables_globals.opts = malloc(num_opts * sizeof(struct option));
+	if (iptables_globals.opts == NULL) {
+		xtables_error(OTHER_PROBLEM, "malloc failed for options array");
+	}
+	memcpy(iptables_globals.opts, iptables_globals.orig_opts, num_opts * sizeof(struct option));
+		
 	while ((cs.c = getopt_long(argc, argv,
 	   "-:A:C:D:R:I:L::S::M:F::Z::N:X::E:P:Vh::o:p:s:d:j:i:fbvnt:m:xc:g:46",
-	   iptables_globals.opts?: iptables_globals.orig_opts,
+	   iptables_globals.opts,
 				    NULL)) != -1) {
 		switch (cs.c) {
 			/*
