@@ -724,14 +724,12 @@ void command_jump(struct iptables_command_state *cs)
 	cs->target->t->u.user.revision = cs->target->revision;
 	xs_init_target(cs->target);
 
-	{
-		bool merged = false;
-		size_t merge_start = xs_longopts_count(opts, NULL);
+	size_t merge_start = xs_longopts_count(opts, NULL);
 
-		if (cs->target->x6_options != NULL) {
-			opts = xtables_options_xfrm(xt_params->orig_opts, opts,
-					    cs->target->x6_options,
-					    &cs->target->option_offset);
+	if (cs->target->x6_options != NULL) {
+		opts = xtables_options_xfrm(xt_params->orig_opts, opts,
+					cs->target->x6_options,
+					&cs->target->option_offset);
 	else if (cs->target->extra_opts != NULL)
 		opts = xtables_merge_options(xt_params->orig_opts, opts,
 					     cs->target->extra_opts,
