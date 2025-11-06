@@ -216,7 +216,6 @@ static const unsigned int inverse_for_options[NUMBER_OF_OPT] =
 	0,
 };
 
-#define opts iptables_globals.opts
 #define prog_name iptables_globals.program_name
 #define prog_vers iptables_globals.program_version
 /* A few hardcoded protocols for 'all' and in case the user has no
@@ -1439,10 +1438,27 @@ int do_command6(int argc, char *argv[], char **table, void **handle)
            demand-load a protocol. */
 	opterr = 0;
 
-	opts = xt_params->orig_opts;
+	/* Create a malloc'd copy of orig_opts */
+	if (iptables_globals.opts == NULL) {
+		size_t num_opts = 0;
+		struct option *orig_opts = iptables_globals.orig_opts;
+		
+		/* Count the number of options (including the NULL terminator) */
+		while (orig_opts[num_opts].name != NULL) {
+			num_opts++;
+		}
+		num_opts++; /* Include the NULL terminator */
+		
+		/* Allocate memory and copy the options */
+		iptables_globals.opts = malloc(num_opts * sizeof(struct option));
+		if (iptables_globals.opts == NULL) {
+			xtables_error(OTHER_PROBLEM, "malloc failed for options array");
+		}
+		memcpy(iptables_globals.opts, iptables_globals.orig_opts, num_opts * sizeof(struct option));
+	}
 	while ((cs.c = getopt_long(argc, argv,
 	   "-:A:C:D:R:I:L::S::M:F::Z::N:X::E:P:Vh::o:p:s:d:j:i:bvnt:m:xc:g:46",
-					   opts, NULL)) != -1) {
+	   iptables_globals.opts?: iptables_globals.orig_opts, NULL)) != -1) {
 		switch (cs.c) {
 			/*
 			 * Command selection
@@ -1774,7 +1790,7 @@ int do_command6(int argc, char *argv[], char **table, void **handle)
 				continue;
 			break;
 		}
-		cs.invert = 2;
+		cs.invert = FALSE;
 	}
 
 	for (matchp = cs.matches; matchp; matchp = matchp->next)
@@ -2016,6 +2032,12 @@ int do_command6(int argc, char *argv[], char **table, void **handle)
 	free(daddrs);
 	free(dmasks);
 	xtables_free_opts(1);
+
+	/* Free the malloc'd copy of opts if it was allocated */
+	if (iptables_globals.opts != iptables_globals.orig_opts) {
+		free(iptables_globals.opts);
+		iptables_globals.opts = NULL;
+	}
 
 	return ret;
 }

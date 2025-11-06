@@ -120,7 +120,8 @@ xtables_options_xfrm(struct option *orig_opts, struct option *oldopts,
 		memcpy(mp, oldopts, sizeof(*mp) * num_old);
 		mp += num_old;
 	}
-	xtables_free_opts(0);
+	if (xt_params->opts != NULL && xt_params->opts != xt_params->orig_opts)
+		xtables_free_opts(0);
 
 	/* Clear trailing entry */
 	memset(mp, 0, sizeof(*mp));

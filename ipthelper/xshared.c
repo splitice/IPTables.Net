@@ -1,3 +1,7 @@
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE 1
+#endif
+
 #include <ctype.h>
 #include <getopt.h>
 #include <errno.h>
@@ -14,9 +18,88 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <fcntl.h>
+#if defined(__unix__) || defined(__APPLE__)
+#include <dlfcn.h>
+#endif
 #include "xtables.h"
 #include <math.h>
 #include "xshared.h"
+
+#define XS_LONGOPTS_SCAN_LIMIT 4096U
+
+#if defined(__unix__) || defined(__APPLE__)
+#define XS_HAVE_DLADDR 1
+#else
+#define XS_HAVE_DLADDR 0
+#endif
+
+static size_t xs_longopts_count(const struct option *opts, const char *ext_name)
+{
+	size_t i;
+
+	if (opts == NULL)
+		return 0;
+
+	for (i = 0; i < XS_LONGOPTS_SCAN_LIMIT; ++i) {
+		if (opts[i].name == NULL)
+			return i;
+	}
+
+	if (ext_name != NULL)
+		xtables_error(OTHER_PROBLEM,
+					  "Extension \"%s\" returned an unterminated option table.",
+					  ext_name);
+
+	xtables_error(OTHER_PROBLEM,
+				  "xtables option table is missing its terminator.");
+	return 0;
+}
+
+#if XS_HAVE_DLADDR
+static bool xs_option_name_pointer_is_valid(const char *name)
+{
+	Dl_info info;
+
+	if (name == NULL)
+		return true;
+
+	return dladdr((const void *)name, &info) != 0;
+}
+#else
+static bool xs_option_name_pointer_is_valid(const char *name)
+{
+	if (name == NULL)
+		return true;
+
+#if INTPTR_MAX > 0xffffffff
+	if ((uintptr_t)name < 0x100000000ULL)
+		return false;
+#endif
+	return true;
+}
+#endif
+
+static void xs_validate_new_longopts(struct option *opts, size_t start,
+									 const char *ext_name)
+{
+	size_t total;
+	size_t i;
+
+	if (opts == NULL || ext_name == NULL)
+		return;
+
+	total = xs_longopts_count(opts, ext_name);
+	if (start >= total)
+		return;
+
+	for (i = start; i < total; ++i) {
+		if (!xs_option_name_pointer_is_valid(opts[i].name)) {
+			xtables_error(OTHER_PROBLEM,
+						  "Extension \"%s\" was built against an incompatible libxtables release (detected corrupt option metadata). Please rebuild the module.",
+						  ext_name);
+		}
+	}
+}
 
 /*
  * Print out any special helps. A user might like to be able to add a --help
@@ -146,6 +229,7 @@ int command_default(struct iptables_command_state *cs,
 	m = load_proto(cs);
 	if (m != NULL) {
 		size_t size;
+		size_t merge_start;
 
 		cs->proto_used = 1;
 
@@ -157,18 +241,22 @@ int command_default(struct iptables_command_state *cs,
 		m->m->u.user.revision = m->revision;
 		xs_init_match(m);
 
+		merge_start = xs_longopts_count(gl->opts, NULL);
 		if (m->x6_options != NULL)
 			gl->opts = xtables_options_xfrm(gl->orig_opts,
 							gl->opts,
 							m->x6_options,
 							&m->option_offset);
 		else
-			gl->opts = xtables_merge_options(gl->orig_opts,
-							 gl->opts,
-							 m->extra_opts,
-							 &m->option_offset);
+			gl->opts = xs_merge_options(gl->orig_opts,
+						 	 gl->opts,
+						 	 m->extra_opts,
+						 	 &m->option_offset);
 		if (gl->opts == NULL)
 			xtables_error(OTHER_PROBLEM, "can't alloc memory!");
+		xs_validate_new_longopts(gl->opts, merge_start,
+					     m->real_name != NULL ?
+					     m->real_name : m->name);
 		optind--;
 		/* Indicate to rerun getopt *immediately* */
  		return 1;
@@ -564,18 +652,26 @@ void command_match(struct iptables_command_state *cs)
 	if (m == m->next)
 		return;
 	/* Merge options for non-cloned matches */
-	if (m->x6_options != NULL){
-		opts = xtables_options_xfrm(xt_params->orig_opts, opts,
-					    m->x6_options, &m->option_offset);
-int num_orig;
-for (num_orig = 0; opts[num_orig].name != NULL; ++num_orig) {}
+	{
+		size_t merge_start = xs_longopts_count(opts, NULL);
 
-	}
-	else if (m->extra_opts != NULL)
-		opts = xtables_merge_options(xt_params->orig_opts, opts,
+		if (m->x6_options != NULL) {
+			opts = xtables_options_xfrm(xt_params->orig_opts, opts,
+					    m->x6_options, &m->option_offset);
+		} else if (m->extra_opts != NULL) {
+			opts = xs_merge_options(xt_params->orig_opts, opts,
 					     m->extra_opts, &m->option_offset);
-	if (opts == NULL)
-		xtables_error(OTHER_PROBLEM, "can't alloc memory!");
+		
+		} else
+			return;
+
+		if (opts == NULL)
+			xtables_error(OTHER_PROBLEM, "can't alloc memory!");
+			
+		xs_validate_new_longopts(opts, merge_start,
+					     m->real_name != NULL ?
+					     m->real_name : m->name);
+	}
 	xt_params->opts = opts;
 }
 
@@ -628,15 +724,85 @@ void command_jump(struct iptables_command_state *cs)
 	cs->target->t->u.user.revision = cs->target->revision;
 	xs_init_target(cs->target);
 
-	if (cs->target->x6_options != NULL)
+	size_t merge_start = xs_longopts_count(opts, NULL);
+
+	if (cs->target->x6_options != NULL) {
 		opts = xtables_options_xfrm(xt_params->orig_opts, opts,
-					    cs->target->x6_options,
-					    &cs->target->option_offset);
-	else
-		opts = xtables_merge_options(xt_params->orig_opts, opts,
+					cs->target->x6_options,
+					&cs->target->option_offset);
+	} else if (cs->target->extra_opts != NULL)
+		opts = xs_merge_options(xt_params->orig_opts, opts,
 					     cs->target->extra_opts,
 					     &cs->target->option_offset);
+	else
+		return;
 	if (opts == NULL)
 		xtables_error(OTHER_PROBLEM, "can't alloc memory!");
+	xs_validate_new_longopts(opts, merge_start,
+				cs->target->real_name != NULL ?
+				cs->target->real_name : cs->jumpto);
 	xt_params->opts = opts;
+}
+
+
+struct option *
+xs_merge_options(struct option *orig_opts, struct option *oldopts,
+	    const struct option *newopts, unsigned int *option_offset)
+{
+	unsigned int num_orig = 0, num_old = 0, num_new = 0, i;
+	struct option *merge;
+	struct option *mp;
+	struct option *old_base = oldopts;
+
+	if (newopts == NULL || newopts->name == NULL)
+		return oldopts;
+
+	if (orig_opts != NULL)
+		for (; orig_opts[num_orig].name != NULL; ++num_orig)
+			;
+
+	if (oldopts != NULL)
+		for (; oldopts[num_old].name != NULL; ++num_old)
+			;
+
+	for (; newopts[num_new].name != NULL; ++num_new)
+		;
+
+	if (oldopts != NULL && num_old >= num_orig) {
+		oldopts += num_orig;
+		num_old -= num_orig;
+	} else {
+		oldopts = NULL;
+		num_old = 0;
+	}
+
+	merge = malloc(sizeof(*merge) * (num_orig + num_new + num_old + 1));
+	if (merge == NULL)
+		return NULL;
+
+	if (num_orig != 0)
+		memcpy(merge, orig_opts, sizeof(*merge) * num_orig);
+	mp = merge + num_orig;
+
+	xt_params->option_offset += XT_OPTION_OFFSET_SCALE;
+	*option_offset = xt_params->option_offset;
+
+	for (i = 0; i < num_new; ++i, ++mp) {
+		mp->name    = newopts[i].name;
+		mp->has_arg = newopts[i].has_arg;
+		mp->flag    = newopts[i].flag;
+		mp->val     = newopts[i].val + *option_offset;
+	}
+
+	if (oldopts != NULL && num_old != 0) {
+		memcpy(mp, oldopts, sizeof(*mp) * num_old);
+		mp += num_old;
+	}
+
+	memset(mp, 0, sizeof(*mp));
+
+	if (old_base != NULL && old_base != orig_opts && old_base != xt_params->orig_opts)
+		free(old_base);
+
+	return merge;
 }
