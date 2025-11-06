@@ -1,3 +1,7 @@
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE 1
+#endif
+
 #include <ctype.h>
 #include <getopt.h>
 #include <errno.h>
@@ -64,7 +68,13 @@ static bool xs_option_name_pointer_is_valid(const char *name)
 #else
 static bool xs_option_name_pointer_is_valid(const char *name)
 {
-	(void)name;
+	if (name == NULL)
+		return true;
+
+#if INTPTR_MAX > 0xffffffff
+	if ((uintptr_t)name < 0x100000000ULL)
+		return false;
+#endif
 	return true;
 }
 #endif
