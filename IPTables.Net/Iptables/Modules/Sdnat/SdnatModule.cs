@@ -16,7 +16,7 @@ namespace IPTables.Net.Iptables.Modules.Sdnat
         private const string OptionPersisent = "--persistent";
         private const string OptionCtMask = "--ctmask";
         private const string OptionCtMark = "--ctmark";
-        private const string OptionSeqadj = "--also-seqadj";
+        private const string OptionSeqadj = "--add-seqadj";
 
         public bool Persistent = false;
         public bool Random = false;
