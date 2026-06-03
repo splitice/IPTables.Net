@@ -16,6 +16,6 @@
 		</dependencies>
 	</metadata>
 	<files>
-		<file src="bin/Release/netcoreapp3.1/IPTables.Net.dll" target="lib" />
+		<file src="bin/Release/net10.0/IPTables.Net.dll" target="lib/net10.0" />
 	</files>
 </package>

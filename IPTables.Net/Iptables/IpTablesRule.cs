@@ -99,8 +99,8 @@ namespace IPTables.Net.Iptables
         /// <summary>
         /// Data stored for each IPTables module / extension (including "core")
         /// </summary>
-        private OrderedDictionary<string, IIpTablesModule> _moduleData =
-            new OrderedDictionary<string, IIpTablesModule>();
+        private IPTables.Net.Supporting.OrderedDictionary<string, IIpTablesModule> _moduleData =
+            new IPTables.Net.Supporting.OrderedDictionary<string, IIpTablesModule>();
 
         /// <summary>
         /// The System hosting this IPTables rule
@@ -148,7 +148,7 @@ namespace IPTables.Net.Iptables
         private void Cow()
         {
             var moduleData = _moduleData;
-            _moduleData = new OrderedDictionary<string, IIpTablesModule>(moduleData.Count);
+            _moduleData = new IPTables.Net.Supporting.OrderedDictionary<string, IIpTablesModule>(moduleData.Count);
 
             foreach (var module in moduleData) _moduleData.Add(module.Key, module.Value.Clone() as IIpTablesModule);
         }
@@ -183,7 +183,7 @@ namespace IPTables.Net.Iptables
         /// <summary>
         /// The parameters for all modules used in the rule (internal)
         /// </summary>
-        internal OrderedDictionary<string, IIpTablesModule> ModuleDataInternal => _moduleData;
+        internal IPTables.Net.Supporting.OrderedDictionary<string, IIpTablesModule> ModuleDataInternal => _moduleData;
 
         /// <summary>
         /// The parameters for all modules used in the rule
