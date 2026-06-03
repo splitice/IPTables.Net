@@ -80,12 +80,31 @@ load_kernel_modules() {
     done
 }
 
+cleanup_test_chains_for_binary() {
+    local binary="$1"
+    local chain
+
+    if ! command_exists "$binary"; then
+        return
+    fi
+
+    for chain in test test2 test3; do
+        run_as_root "$binary" -F "$chain" >/dev/null 2>&1 || true
+        run_as_root "$binary" -X "$chain" >/dev/null 2>&1 || true
+    done
+}
+
+cleanup_test_chains() {
+    cleanup_test_chains_for_binary iptables
+    cleanup_test_chains_for_binary ip6tables
+}
+
 run_full_tests() {
     local results_dir
     local trap_command
     local -a effective_test_args=("${DOTNET_TEST_ARGS[@]}")
     results_dir="$(mktemp -d)"
-    trap_command="$(printf 'rm -rf -- %q; restore_iptables_backend' "$results_dir")"
+    trap_command="$(printf 'rm -rf -- %q; cleanup_test_chains; restore_iptables_backend' "$results_dir")"
     trap "$trap_command" EXIT
 
     switch_to_legacy_backend_if_available
@@ -93,6 +112,7 @@ run_full_tests() {
 
     command_exists iptables || die "The iptables binary is required for full system tests."
     command_exists ip6tables || die "The ip6tables binary is required for full system tests."
+    cleanup_test_chains
 
     if [[ "$RUN_UNSTABLE_SYSTEM_TESTS" != "1" ]] && ! has_explicit_test_filter; then
         effective_test_args+=("--filter" "TestCategory!=NotWorkingOnTravis")
@@ -104,7 +124,7 @@ run_full_tests() {
         return
     fi
 
-    run_as_root env \
+    run_and_check_core_dumps run_as_root env \
         "PATH=$PATH" \
         "DOTNET_ROOT=${DOTNET_ROOT}" \
         "DOTNET_CLI_HOME=/root/.dotnet-cli" \
@@ -118,6 +138,8 @@ run_full_tests() {
         --no-build \
         --no-restore \
         --nologo \
+        -m:1 \
+        -p:UseSharedCompilation=false \
         --results-directory "$results_dir" \
         "${effective_test_args[@]}"
 }

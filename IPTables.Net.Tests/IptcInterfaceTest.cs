@@ -61,23 +61,57 @@ namespace IPTables.Net.Tests
                 Console.WriteLine("Test Startup");
 
                 var binary = GetBinary();
-                Execute(binary, "-F test");
-
-                Execute(binary, "-N test2");
-                Process.Start(binary, "-N test").WaitForExit();
-                Process.Start(binary, "-A test -j ACCEPT").WaitForExit();
-
-                Process.Start(binary, "-N test3").WaitForExit();
-                Process.Start(binary, "-A test3 -p tcp -m tcp --dport 80 -j ACCEPT").WaitForExit();
+                CleanupTestChains(binary);
+                RequireSuccess(binary, "-N test2");
+                RequireSuccess(binary, "-N test");
+                RequireSuccess(binary, "-A test -j ACCEPT");
+                RequireSuccess(binary, "-N test3");
+                RequireSuccess(binary, "-A test3 -p tcp -m tcp --dport 80 -j ACCEPT");
             }
         }
 
-        private void Execute(string binary, string args)
+        private int Execute(string binary, string args, bool logOutput = true)
         {
-            var process = Process.Start(new ProcessStartInfo(binary, args){RedirectStandardError = true, RedirectStandardOutput = true});
-            Console.WriteLine(process.StandardOutput.ReadToEnd());
-            Console.Error.WriteLine(process.StandardError.ReadToEnd());
-            process.WaitForExit();
+            using (var process = Process.Start(new ProcessStartInfo(binary, args)
+            {
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false
+            }))
+            {
+                var standardOutput = process.StandardOutput.ReadToEnd();
+                var standardError = process.StandardError.ReadToEnd();
+                process.WaitForExit();
+
+                if (logOutput)
+                {
+                    if (!string.IsNullOrWhiteSpace(standardOutput))
+                    {
+                        Console.WriteLine(standardOutput);
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(standardError))
+                    {
+                        Console.Error.WriteLine(standardError);
+                    }
+                }
+
+                return process.ExitCode;
+            }
+        }
+
+        private void RequireSuccess(string binary, string args)
+        {
+            Assert.That(Execute(binary, args), Is.EqualTo(0), "Command should succeed: " + binary + " " + args);
+        }
+
+        private void CleanupTestChains(string binary)
+        {
+            foreach (var chain in new[] {"test", "test2", "test3"})
+            {
+                Execute(binary, "-F " + chain, false);
+                Execute(binary, "-X " + chain, false);
+            }
         }
 
         [OneTimeTearDown]
@@ -87,17 +121,11 @@ namespace IPTables.Net.Tests
             {
                 if (Environment.GetEnvironmentVariable("SKIP_SYSTEM_TESTS") == "1")
                 {
-                    Assert.Ignore();
+                    return;
                 }
                 Console.WriteLine("Test Done");
                 var binary = GetBinary();
-                Process.Start(binary, "-D test -j ACCEPT").WaitForExit();
-                Process.Start(binary, "-F test").WaitForExit();
-                Process.Start(binary, "-X test").WaitForExit();
-                Process.Start(binary, "-F test2").WaitForExit();
-                //Process.Start(binary, "-X test2").WaitForExit();
-                Process.Start(binary, "-F test3").WaitForExit();
-                Process.Start(binary, " - X test3").WaitForExit();
+                CleanupTestChains(binary);
             }
         }
 
