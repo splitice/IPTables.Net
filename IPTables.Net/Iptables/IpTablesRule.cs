@@ -470,11 +470,29 @@ namespace IPTables.Net.Iptables
             IIpTablesModule module;
             if (!_moduleData.TryGetValue(moduleName, out module))
             {
-                var moduleEntry = ModuleRegistry.Instance.GetModule(moduleName, IpVersion);
+                var isTarget = IsTargetModuleName(moduleName);
+                var moduleEntry = ModuleRegistry.Instance.GetModule(moduleName, IpVersion, isTarget, !isTarget);
                 module = GetModuleForParseInternal(moduleName, moduleEntry.Activator, Chain.IpVersion, index);
             }
 
             return module as T;
+        }
+
+        private static bool IsTargetModuleName(string moduleName)
+        {
+            var sawLetter = false;
+
+            foreach (var ch in moduleName)
+            {
+                if (!char.IsLetter(ch))
+                    continue;
+
+                sawLetter = true;
+                if (!char.IsUpper(ch))
+                    return false;
+            }
+
+            return sawLetter;
         }
 
         public void ReplaceRule(IIPTablesAdapterClient client, IpTablesRule withRule)
