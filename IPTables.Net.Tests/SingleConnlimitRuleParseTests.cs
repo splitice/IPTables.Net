@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleConnlimitRuleParseTests
+    public class SingleConnlimitRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestDropConnectionLimit()
         {
             String rule = "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10";
@@ -15,10 +13,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestDropConnectionLimitEquality()
         {
             String rule = "-A INPUT -p tcp -j DROP -m connlimit --connlimit-above 10";
@@ -27,7 +25,7 @@ namespace IPTables.Net.Tests
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.IsTrue(irule2.Compare(irule1));
+            Assert.True(irule2.Compare(irule1));
         }
     }
 }

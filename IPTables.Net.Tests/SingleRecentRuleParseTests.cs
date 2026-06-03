@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleRecentRuleParseTests
+    public class SingleRecentRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestSet()
         {
             String rule = "-A ATTK_CHECK -m recent --set --name ATTK";
@@ -15,10 +13,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestUpdate()
         {
             String rule = "-A ATTK_CHECK -m recent --update --name ATTK --seconds 180 --hitcount 20 -j ATTACKED";
@@ -26,16 +24,16 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestCompare1()
         {
             String rule = "-A ATTK_CHECK -m recent --rcheck --name BANNED --seconds 180 --reap --rttl -j ATTACKED";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule, null, chains, 4)));
+            Assert.True(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule, null, chains, 4)));
         }
     }
 }

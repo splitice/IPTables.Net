@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains a .NET 10 solution for working with Linux iptables from C#. The managed code lives under `IPTables.Net/`, the NUnit tests live under `IPTables.Net.Tests/`, and the native helper library used by the libiptc-based adapter lives under `ipthelper/`.
+This repository contains a .NET 10 solution for working with Linux iptables from C#. The managed code lives under `IPTables.Net/`, the xUnit tests live under `IPTables.Net.Tests/`, and the native helper library used by the libiptc-based adapter lives under `ipthelper/`.
 
 ## Build And Test
 
@@ -31,7 +31,7 @@ Both scripts will bootstrap a usable .NET SDK if `dotnet` is missing. By default
 
 ## Development Guidance
 
-- Keep changes narrow and add or update NUnit coverage in `IPTables.Net.Tests/` when behavior changes.
+- Keep changes narrow and add or update xUnit coverage in `IPTables.Net.Tests/` when behavior changes.
 - Prefer following the existing project layout instead of introducing new abstractions unless the current design is clearly blocking the work.
 - When changing native interop behavior, verify both the managed call sites in `IPTables.Net/Iptables/NativeLibrary/` and the corresponding code in `ipthelper/`.
 - The tests project is also the best source of usage examples for the public API.

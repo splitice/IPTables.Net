@@ -9,14 +9,12 @@ using IPTables.Net.Iptables.Modules.Udp;
 using IPTables.Net.Iptables.RuleGenerator;
 using IPTables.Net.TestFramework;
 using IPTables.Net.TestFramework.IpTablesRestore;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class RuleBuilderNestedTests
+    public class RuleBuilderNestedTests
     {
-        [Test]
+        [Fact]
         public void TestNesting()
         {
             var mock = new MockIptablesSystemFactory();
@@ -31,9 +29,9 @@ namespace IPTables.Net.Tests
             IpTablesRuleSet rules = new IpTablesRuleSet(4,system);
             ma.Output(system, rules);
 
-            Assert.AreEqual(3, rules.Chains.Count());
-            Assert.AreEqual(2, rules.Chains.Skip(1).First().Rules.Count);
-            Assert.AreEqual(1, rules.Chains.Skip(2).First().Rules.Count);
+            Assert.Equal(3, rules.Chains.Count());
+            Assert.Equal(2, rules.Chains.Skip(1).First().Rules.Count);
+            Assert.Equal(1, rules.Chains.Skip(2).First().Rules.Count);
         }
 
         private MultiportAggregator<IPAddress> nestedGenerator(string arg1, string arg2)

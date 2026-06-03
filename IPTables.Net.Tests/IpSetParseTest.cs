@@ -5,60 +5,58 @@ using System.Net;
 using System.Text;
 using IPTables.Net.IpSet;
 using IPTables.Net.Iptables.DataTypes;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    class IpSetParseTest
+    public class IpSetParseTest
     {
-        [Test]
+        [Fact]
         public void TestParseSet1()
         {
             String toParse = "test_set hash:ip family inet hashsize 10 maxelem 14";
 
             var set = IpSetSet.Parse(toParse, null);
 
-            Assert.AreEqual("test_set", set.Name);
-            Assert.AreEqual(IpSetType.Hash | IpSetType.Ip, set.Type);
-            Assert.AreEqual(10, set.HashSize);
-            Assert.AreEqual(14, set.MaxElem);
+            Assert.Equal("test_set", set.Name);
+            Assert.Equal(IpSetType.Hash | IpSetType.Ip, set.Type);
+            Assert.Equal(10, set.HashSize);
+            Assert.Equal((uint)14, set.MaxElem);
 
-            Assert.AreEqual(toParse,set.GetCommand());
+            Assert.Equal(toParse,set.GetCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestParseSet2()
         {
             String toParse = "test_set hash:ip family inet hashsize 10 maxelem 14 timeout 613";
 
             var set = IpSetSet.Parse(toParse, null);
 
-            Assert.AreEqual("test_set", set.Name);
-            Assert.AreEqual(IpSetType.Hash | IpSetType.Ip, set.Type);
-            Assert.AreEqual(10, set.HashSize);
-            Assert.AreEqual(14, set.MaxElem);
-            Assert.AreEqual(613, set.Timeout);
+            Assert.Equal("test_set", set.Name);
+            Assert.Equal(IpSetType.Hash | IpSetType.Ip, set.Type);
+            Assert.Equal(10, set.HashSize);
+            Assert.Equal((uint)14, set.MaxElem);
+            Assert.Equal(613, set.Timeout);
 
-            Assert.AreEqual(toParse, set.GetCommand());
+            Assert.Equal(toParse, set.GetCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestParseSet3()
         {
             String toParse = "test_set bitmap:port range 123-234 timeout 613";
 
             var set = IpSetSet.Parse(toParse, null);
 
-            Assert.AreEqual("test_set", set.Name);
-            Assert.AreEqual(IpSetType.Bitmap | IpSetType.Port, set.Type);
-            Assert.AreEqual(new PortOrRange(123,234,'-'), set.BitmapRange);
-            Assert.AreEqual(613, set.Timeout);
+            Assert.Equal("test_set", set.Name);
+            Assert.Equal(IpSetType.Bitmap | IpSetType.Port, set.Type);
+            Assert.Equal(new PortOrRange(123,234,'-'), set.BitmapRange);
+            Assert.Equal(613, set.Timeout);
 
-            Assert.AreEqual(toParse, set.GetCommand());
+            Assert.Equal(toParse, set.GetCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestParseEntry1()
         {
 
@@ -71,11 +69,11 @@ namespace IPTables.Net.Tests
             String toParse = "test_set 8.8.8.8";
             var entry = IpSetEntry.Parse(toParse, sets);
 
-            Assert.AreEqual("test_set", entry.Set.Name);
-            Assert.AreEqual(IPAddress.Parse("8.8.8.8"), entry.Cidr.Address);
+            Assert.Equal("test_set", entry.Set.Name);
+            Assert.Equal(IPAddress.Parse("8.8.8.8"), entry.Cidr.Address);
         }
 
-        [Test]
+        [Fact]
         public void TestParseEntry2()
         {
 
@@ -88,12 +86,12 @@ namespace IPTables.Net.Tests
             String toParse = "test_set 8.8.8.8,tcp:80";
             var entry = IpSetEntry.Parse(toParse, sets);
 
-            Assert.AreEqual("test_set", entry.Set.Name);
-            Assert.AreEqual(IPAddress.Parse("8.8.8.8"), entry.Cidr.Address);
-            Assert.AreEqual(80, entry.Port);
+            Assert.Equal("test_set", entry.Set.Name);
+            Assert.Equal(IPAddress.Parse("8.8.8.8"), entry.Cidr.Address);
+            Assert.Equal(80, entry.Port);
         }
 
-        [Test]
+        [Fact]
         public void TestParseEntryIp()
         {
 
@@ -106,12 +104,12 @@ namespace IPTables.Net.Tests
             String toParse = "test_set 1.2.3.4";
             var entry = IpSetEntry.Parse(toParse, sets);
 
-            Assert.AreEqual("test_set", entry.Set.Name);
-            Assert.AreEqual(IPAddress.Parse("1.2.3.4"), entry.Cidr.Address);
+            Assert.Equal("test_set", entry.Set.Name);
+            Assert.Equal(IPAddress.Parse("1.2.3.4"), entry.Cidr.Address);
         }
 
 
-        [Test]
+        [Fact]
         public void TestParseEntryIpPort()
         {
 
@@ -124,13 +122,13 @@ namespace IPTables.Net.Tests
             String toParse = "test_set 1.1.1.1,tcp:80";
             var entry = IpSetEntry.Parse(toParse, sets);
 
-            Assert.AreEqual("test_set", entry.Set.Name);
-            Assert.AreEqual(IPAddress.Parse("1.1.1.1"), entry.Cidr.Address);
-            Assert.AreEqual(80, entry.Port);
-            Assert.AreEqual("tcp", entry.Protocol);
+            Assert.Equal("test_set", entry.Set.Name);
+            Assert.Equal(IPAddress.Parse("1.1.1.1"), entry.Cidr.Address);
+            Assert.Equal(80, entry.Port);
+            Assert.Equal("tcp", entry.Protocol);
         }
 
-        [Test]
+        [Fact]
         public void TestParseEntryIpIpFlag()
         {
 
@@ -143,12 +141,12 @@ namespace IPTables.Net.Tests
             String toParse = "test_set 1.1.1.1,2.2.2.2,80";
             var entry = IpSetEntry.Parse(toParse, sets);
 
-            Assert.AreEqual("test_set", entry.Set.Name);
-            Assert.AreEqual(IPAddress.Parse("1.1.1.1"), entry.Cidr.Address);
-            Assert.AreEqual(80, entry.Port);;
+            Assert.Equal("test_set", entry.Set.Name);
+            Assert.Equal(IPAddress.Parse("1.1.1.1"), entry.Cidr.Address);
+            Assert.Equal(80, entry.Port);;
         }
 
-        [Test]
+        [Fact]
         public void TestParseEntryCtIpPort()
         {
 
@@ -161,14 +159,14 @@ namespace IPTables.Net.Tests
             String toParse = "test_set 1.1.1.1,tcp:80";
             var entry = IpSetEntry.Parse(toParse, sets);
 
-            Assert.AreEqual("test_set", entry.Set.Name);
-            Assert.AreEqual(IPAddress.Parse("1.1.1.1"), entry.Cidr.Address);
-            Assert.AreEqual(80, entry.Port);
-            Assert.AreEqual("tcp", entry.Protocol);
+            Assert.Equal("test_set", entry.Set.Name);
+            Assert.Equal(IPAddress.Parse("1.1.1.1"), entry.Cidr.Address);
+            Assert.Equal(80, entry.Port);
+            Assert.Equal("tcp", entry.Protocol);
         }
 
 
-        [Test]
+        [Fact]
         public void TestParseEntryIpIp()
         {
 
@@ -181,11 +179,11 @@ namespace IPTables.Net.Tests
             String toParse = "test_set 1.2.3.4,2.2.2.2";
             var entry = IpSetEntry.Parse(toParse, sets);
 
-            Assert.AreEqual("test_set", entry.Set.Name);
-            Assert.AreEqual(IPAddress.Parse("1.2.3.4"), entry.Cidr.Address);
-            Assert.AreEqual(IPAddress.Parse("2.2.2.2"), entry.Cidr2.Address);
+            Assert.Equal("test_set", entry.Set.Name);
+            Assert.Equal(IPAddress.Parse("1.2.3.4"), entry.Cidr.Address);
+            Assert.Equal(IPAddress.Parse("2.2.2.2"), entry.Cidr2.Address);
         }
-        [Test]
+        [Fact]
         public void TestParseEntryIpCounters()
         {
 
@@ -198,10 +196,10 @@ namespace IPTables.Net.Tests
             String toParse = "test_set 1.2.3.4 packets 1 bytes 40";
             var entry = IpSetEntry.Parse(toParse, sets);
 
-            Assert.AreEqual("test_set", entry.Set.Name);
-            Assert.AreEqual(IPAddress.Parse("1.2.3.4"), entry.Cidr.Address);
+            Assert.Equal("test_set", entry.Set.Name);
+            Assert.Equal(IPAddress.Parse("1.2.3.4"), entry.Cidr.Address);
         }
-        [Test]
+        [Fact]
         public void TestParseEntryIpIpCounters()
         {
             var set = IpSetSet.Parse("test_set hash:ip,ip family inet hashsize 10 maxelem 14", null);
@@ -213,9 +211,9 @@ namespace IPTables.Net.Tests
             String toParse = "test_set 1.2.3.4,2.2.2.2 packets 1 bytes 40";
             var entry = IpSetEntry.Parse(toParse, sets);
 
-            Assert.AreEqual("test_set", entry.Set.Name);
-            Assert.AreEqual(IPAddress.Parse("1.2.3.4"), entry.Cidr.Address);
-            Assert.AreEqual(IPAddress.Parse("2.2.2.2"), entry.Cidr2.Address);
+            Assert.Equal("test_set", entry.Set.Name);
+            Assert.Equal(IPAddress.Parse("1.2.3.4"), entry.Cidr.Address);
+            Assert.Equal(IPAddress.Parse("2.2.2.2"), entry.Cidr2.Address);
         }
     }
 }

@@ -1,14 +1,12 @@
 ﻿using System;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Modules.Comment;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleCommentRuleParseTests
+    public class SingleCommentRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestDropFragmentedTcpDnsWithComment()
         {
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53 -m comment --comment 'this is a test rule'";
@@ -16,10 +14,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestDropFragmentedTcpDnsWithCommentEquality()
         {
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53 -m comment --comment 'this is a test rule'";
@@ -28,11 +26,11 @@ namespace IPTables.Net.Tests
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.IsTrue(irule2.Compare(irule1));
+            Assert.True(irule2.Compare(irule1));
         }
 
 
-        [Test]
+        [Fact]
         public void TestBlankComment ()
         {
             String rule = "-A INPUT -p tcp ! -f -j DROP -m comment --comment '' -m tcp --dport 53";
@@ -41,10 +39,10 @@ namespace IPTables.Net.Tests
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.IsTrue(irule2.Compare(irule1));
+            Assert.True(irule2.Compare(irule1));
         }
 
-        [Test]
+        [Fact]
         public void TestAddCommentAfter()
         {
             String rule1 = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53";
@@ -54,7 +52,7 @@ namespace IPTables.Net.Tests
             IpTablesRule irule1 = IpTablesRule.Parse(rule1, null, chains);
             irule1.SetComment("this is a test rule");
 
-            Assert.AreEqual(rule2, irule1.GetActionCommand());
+            Assert.Equal(rule2, irule1.GetActionCommand());
         }
     }
 }

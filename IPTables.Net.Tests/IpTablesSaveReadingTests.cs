@@ -5,16 +5,14 @@ using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Adapter.Client;
 using IPTables.Net.Iptables.Adapter.Client.Helper;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class IpTablesSaveReadingTests
+    public class IpTablesSaveReadingTests
     {
         private static readonly IpTablesSystem System = new IpTablesSystem(null, new IPTablesBinaryAdapter());
 
-        [Test]
+        [Fact]
         public void TestParseBlocklist()
         {
             String toParse =
@@ -22,10 +20,10 @@ namespace IPTables.Net.Tests
 
             var rules = IPTablesSaveParser.GetRulesFromOutput(System, toParse, "filter", 4);
 
-            Assert.AreEqual(3, rules.Chains.Count());
+            Assert.Equal(3, rules.Chains.Count());
         }
 
-        [Test]
+        [Fact]
         public void TestParseEmpty()
         {
             String toParse =
@@ -33,13 +31,13 @@ namespace IPTables.Net.Tests
 
             var rules = IPTablesSaveParser.GetRulesFromOutput(System, toParse, "filter", 4);
 
-            Assert.AreEqual(3, rules.Chains.Count());
-            Assert.AreEqual(0, rules.Chains.ElementAt(0).Rules.Count);
-            Assert.AreEqual(0, rules.Chains.ElementAt(1).Rules.Count);
-            Assert.AreEqual(0, rules.Chains.ElementAt(2).Rules.Count);
+            Assert.Equal(3, rules.Chains.Count());
+            Assert.Equal(0, rules.Chains.ElementAt(0).Rules.Count);
+            Assert.Equal(0, rules.Chains.ElementAt(1).Rules.Count);
+            Assert.Equal(0, rules.Chains.ElementAt(2).Rules.Count);
         }
 
-        [Test]
+        [Fact]
         public static void TestParsePortForward()
         {
             String toParse =
@@ -47,8 +45,8 @@ namespace IPTables.Net.Tests
 
             var rules = IPTablesSaveParser.GetRulesFromOutput(System, toParse, "nat", 4);
 
-            Assert.AreEqual(1, rules.GetChainOrDefault("PREROUTING", "nat").Rules.Count);
-            Assert.AreEqual(1, rules.GetChainOrDefault("POSTROUTING", "nat").Rules.Count);
+            Assert.Equal(1, rules.GetChainOrDefault("PREROUTING", "nat").Rules.Count);
+            Assert.Equal(1, rules.GetChainOrDefault("POSTROUTING", "nat").Rules.Count);
         }
     }
 }

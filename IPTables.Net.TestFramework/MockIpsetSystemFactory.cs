@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using SystemInteract;
 using IPTables.Net.IpSet;
-using NUnit.Framework;
 
 namespace IPTables.Net.TestFramework
 {
@@ -31,7 +30,7 @@ namespace IPTables.Net.TestFramework
         {
             TestSync(rulesNew);
 
-            CollectionAssert.AreEqual(expectedCommands, Commands.Select(a => a.Value).ToList());
+            Assert.Equal(expectedCommands, Commands.Select(a => a.Value).ToList());
         }
     }
 }

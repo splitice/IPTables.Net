@@ -4,35 +4,33 @@ using System.Linq;
 using System.Text;
 using IPTables.Net.Iptables.Helpers;
 using IPTables.Net.Supporting;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    class EscapeHelperTests
+    public class EscapeHelperTests
     {
-        [Test]
+        [Fact]
         public void TestSpaces()
         {
-            Assert.AreEqual("'a word'", ShellHelper.EscapeArguments("a word"));
-            Assert.AreEqual("singleword", ShellHelper.EscapeArguments("singleword"));
+            Assert.Equal("'a word'", ShellHelper.EscapeArguments("a word"));
+            Assert.Equal("singleword", ShellHelper.EscapeArguments("singleword"));
         }
 
-        [Test]
+        [Fact]
         public void TestPipe()
         {
-            Assert.AreEqual("'|'", ShellHelper.EscapeArguments("|"));
-            Assert.AreEqual("'a|word'", ShellHelper.EscapeArguments("a|word"));
-            Assert.AreEqual("singleword", ShellHelper.EscapeArguments("singleword"));
+            Assert.Equal("'|'", ShellHelper.EscapeArguments("|"));
+            Assert.Equal("'a|word'", ShellHelper.EscapeArguments("a|word"));
+            Assert.Equal("singleword", ShellHelper.EscapeArguments("singleword"));
         }
-        [Test]
+        [Fact]
         public void TestSpace()
         {
-            Assert.AreEqual("a word", ShellHelper.BuildArgumentString(new []{"a", "word"}));
-            Assert.AreEqual("\"two words\"", ShellHelper.BuildArgumentString(new[] { "two words" }));
-            Assert.AreEqual("\"two words and \\\"punctuation\\\"\"", ShellHelper.BuildArgumentString(new[] { "two words and \"punctuation\"" }));
-            Assert.AreEqual("bash -c \"bash -c \\\"echo a\\\"\"", ShellHelper.BuildArgumentString(new[] { "bash", "-c", ShellHelper.BuildArgumentString(new []{"bash", "-c", "echo a"}) }));
-            Assert.AreEqual("bash -c \"bash -c \\\"echo \\\\\\\"a\\\\\\\"\\\"\"", ShellHelper.BuildArgumentString(new[] { "bash", "-c", ShellHelper.BuildArgumentString(new[] { "bash", "-c", "echo \"a\"" }) }));
+            Assert.Equal("a word", ShellHelper.BuildArgumentString(new []{"a", "word"}));
+            Assert.Equal("\"two words\"", ShellHelper.BuildArgumentString(new[] { "two words" }));
+            Assert.Equal("\"two words and \\\"punctuation\\\"\"", ShellHelper.BuildArgumentString(new[] { "two words and \"punctuation\"" }));
+            Assert.Equal("bash -c \"bash -c \\\"echo a\\\"\"", ShellHelper.BuildArgumentString(new[] { "bash", "-c", ShellHelper.BuildArgumentString(new []{"bash", "-c", "echo a"}) }));
+            Assert.Equal("bash -c \"bash -c \\\"echo \\\\\\\"a\\\\\\\"\\\"\"", ShellHelper.BuildArgumentString(new[] { "bash", "-c", ShellHelper.BuildArgumentString(new[] { "bash", "-c", "echo \"a\"" }) }));
         }
     }
 }

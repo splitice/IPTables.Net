@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleMssRuleParseTests
+    public class SingleMssRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestMssRange()
         {
             String rule = "-A INPUT -m tcpmss --mss 10:100 -j ACCEPT";
@@ -15,9 +13,9 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
-        [Test]
+        [Fact]
         public void TestMssWithSetMssRange()
         {
             String rule = "-A INPUT -m tcpmss --mss 10:100 -j TCPMSS --set-mss 1000";
@@ -25,7 +23,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
     }
 }

@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleConntrackRuleParseTests
+    public class SingleConntrackRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestParse()
         {
             String rule1 = "-A PREROUTING -t raw -p tcp -j CT --ctevents new,destroy";
@@ -18,7 +16,7 @@ namespace IPTables.Net.Tests
             IpTablesRule irule2 = IpTablesRule.Parse(rule2, null, chains, 4);
 
             irule2.Equals(irule1);
-            Assert.IsTrue(irule2.Compare(irule1));
+            Assert.True(irule2.Compare(irule1));
         }
     }
 }

@@ -4,14 +4,12 @@ using System.Linq;
 using System.Text;
 using IPTables.Net.Iptables.DataTypes;
 using IPTables.Net.Iptables.Helpers;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
     public class PortRangeHelpersTests
     {
-        [TestCase]
+        [Fact]
         public void TestCompress1()
         {
             List<PortOrRange> input = new List<PortOrRange> { new PortOrRange(80) };
@@ -19,10 +17,10 @@ namespace IPTables.Net.Tests
 
             List<PortOrRange> actual = PortRangeHelpers.CompressRanges(input);
 
-            CollectionAssert.AreEqual(output,actual);
+            Assert.Equal(output,actual);
         }
 
-        [TestCase]
+        [Fact]
         public void TestCompress2()
         {
             List<PortOrRange> input = new List<PortOrRange> { new PortOrRange(80), new PortOrRange(82) };
@@ -30,10 +28,10 @@ namespace IPTables.Net.Tests
 
             List<PortOrRange> actual = PortRangeHelpers.CompressRanges(input);
 
-            CollectionAssert.AreEqual(output, actual);
+            Assert.Equal(output, actual);
         }
 
-        [TestCase]
+        [Fact]
         public void TestCompress3()
         {
             List<PortOrRange> input = new List<PortOrRange> { new PortOrRange(80), new PortOrRange(82, 84) };
@@ -41,10 +39,10 @@ namespace IPTables.Net.Tests
 
             List<PortOrRange> actual = PortRangeHelpers.CompressRanges(input);
 
-            CollectionAssert.AreEqual(output, actual);
+            Assert.Equal(output, actual);
         }
 
-        [TestCase]
+        [Fact]
         public void TestCompress4()
         {
             List<PortOrRange> input = new List<PortOrRange> { new PortOrRange(80), new PortOrRange(81, 84) };
@@ -52,10 +50,10 @@ namespace IPTables.Net.Tests
 
             List<PortOrRange> actual = PortRangeHelpers.CompressRanges(input);
 
-            CollectionAssert.AreEqual(output, actual);
+            Assert.Equal(output, actual);
         }
 
-        [TestCase]
+        [Fact]
         public void TestCompress5()
         {
             List<PortOrRange> input = new List<PortOrRange> { new PortOrRange(80), new PortOrRange(81) };
@@ -63,10 +61,10 @@ namespace IPTables.Net.Tests
 
             List<PortOrRange> actual = PortRangeHelpers.CompressRanges(input);
 
-            CollectionAssert.AreEqual(output, actual);
+            Assert.Equal(output, actual);
         }
 
-        [TestCase]
+        [Fact]
         public void TestCompress6()
         {
             List<PortOrRange> input = new List<PortOrRange> { new PortOrRange(80), new PortOrRange(81), new PortOrRange(82, 83), new PortOrRange(85), new PortOrRange(86,90) };
@@ -74,10 +72,10 @@ namespace IPTables.Net.Tests
 
             List<PortOrRange> actual = PortRangeHelpers.CompressRanges(input);
 
-            CollectionAssert.AreEqual(output, actual);
+            Assert.Equal(output, actual);
         }
 
-        [TestCase]
+        [Fact]
         public void TestCompress7()
         {
             List<PortOrRange> input = new List<PortOrRange> { new PortOrRange(80) };
@@ -85,10 +83,10 @@ namespace IPTables.Net.Tests
 
             List<PortOrRange> actual = PortRangeHelpers.CompressRanges(input);
 
-            CollectionAssert.AreEqual(output, actual);
+            Assert.Equal(output, actual);
         }
 
-        [TestCase]
+        [Fact]
         public void TestCompress8()
         {
             List<PortOrRange> input = new List<PortOrRange> { new PortOrRange(80, 90) };
@@ -96,26 +94,26 @@ namespace IPTables.Net.Tests
 
             List<PortOrRange> actual = PortRangeHelpers.CompressRanges(input);
 
-            CollectionAssert.AreEqual(output, actual);
+            Assert.Equal(output, actual);
         }
 
-        [TestCase]
+        [Fact]
         public void TestRangeCount1()
         {
             List<PortOrRange> input = new List<PortOrRange> { new PortOrRange(80), new PortOrRange(81), new PortOrRange(82, 83), new PortOrRange(85), new PortOrRange(86, 90) };
 
-            Assert.AreEqual(1, PortRangeHelpers.CountRequiredMultiports(input));
+            Assert.Equal(1, PortRangeHelpers.CountRequiredMultiports(input));
         }
 
-        [TestCase]
+        [Fact]
         public void TestRangeCount2()
         {
             List<PortOrRange> input = new List<PortOrRange> { new PortOrRange(80), new PortOrRange(81), new PortOrRange(82, 83), new PortOrRange(85), new PortOrRange(86, 90), new PortOrRange(180) };
 
-            Assert.AreEqual(1, PortRangeHelpers.CountRequiredMultiports(input));
+            Assert.Equal(1, PortRangeHelpers.CountRequiredMultiports(input));
         }
 
-        [TestCase]
+        [Fact]
         public void TestRangeCount3()
         {
             List<PortOrRange> input = new List<PortOrRange> { };
@@ -125,10 +123,10 @@ namespace IPTables.Net.Tests
                 input.Add(new PortOrRange((uint)(100 + i)));
             }
 
-            Assert.AreEqual(1, PortRangeHelpers.CountRequiredMultiports(input));
+            Assert.Equal(1, PortRangeHelpers.CountRequiredMultiports(input));
         }
 
-        [TestCase]
+        [Fact]
         public void TestRangeCount4()
         {
             List<PortOrRange> input = new List<PortOrRange> { };
@@ -138,10 +136,10 @@ namespace IPTables.Net.Tests
                 input.Add(new PortOrRange((uint)(100 + i)));
             }
 
-            Assert.AreEqual(2, PortRangeHelpers.CountRequiredMultiports(input));
+            Assert.Equal(2, PortRangeHelpers.CountRequiredMultiports(input));
         }
 
-        [TestCase]
+        [Fact]
         public void TestRangeCount5()
         {
             List<PortOrRange> input = new List<PortOrRange> { };
@@ -151,10 +149,10 @@ namespace IPTables.Net.Tests
                 input.Add(new PortOrRange((uint)(100*i),(uint)((100*i) + 1)));
             }
 
-            Assert.AreEqual(2, PortRangeHelpers.CountRequiredMultiports(input));
+            Assert.Equal(2, PortRangeHelpers.CountRequiredMultiports(input));
         }
 
-        [TestCase]
+        [Fact]
         public void TestRangeCount6()
         {
             List<PortOrRange> input = new List<PortOrRange> { };
@@ -164,7 +162,7 @@ namespace IPTables.Net.Tests
                 input.Add(new PortOrRange((uint)(100 + i)));
             }
 
-            Assert.AreEqual(1, PortRangeHelpers.CountRequiredMultiports(input));
+            Assert.Equal(1, PortRangeHelpers.CountRequiredMultiports(input));
         }
     }
 }

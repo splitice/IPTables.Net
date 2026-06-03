@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleSdnatRuleParseTests
+    public class SingleSdnatRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestSnatSingleSource()
         {
             String rule = "-A PREROUTING -t nat -j SDNAT --to-source 78.141.209.124 --to-destination 104.236.152.141:80 --ctmark 145 --ctmask 1";
@@ -15,7 +13,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
         
     }
