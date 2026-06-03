@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains a .NET 8 solution for working with Linux iptables from C#. The managed code lives under `IPTables.Net/`, the NUnit tests live under `IPTables.Net.Tests/`, and the native helper library used by the libiptc-based adapter lives under `ipthelper/`.
+This repository contains a .NET 10 solution for working with Linux iptables from C#. The managed code lives under `IPTables.Net/`, the NUnit tests live under `IPTables.Net.Tests/`, and the native helper library used by the libiptc-based adapter lives under `ipthelper/`.
 
 ## Build And Test
 
@@ -10,6 +10,7 @@ This repository contains a .NET 8 solution for working with Linux iptables from 
 - Use `./test.sh` to build and run tests.
 - Use `./test.sh --fast` for the managed-heavy test pass that sets `SKIP_SYSTEM_TESTS=1`.
 - Use `./test.sh --full` on Linux when root or passwordless `sudo` is available to run the stable native and system iptables tests.
+- Use `./test.sh --full --iptables-backend legacy|nft|current` to choose the iptables backend explicitly. Full mode defaults to `legacy`.
 - Set `RUN_UNSTABLE_SYSTEM_TESTS=1` with `./test.sh --full` to include tests marked `NotWorkingOnTravis`, including the conntrack coverage that can crash on some containerized hosts.
 
 Both scripts will bootstrap a usable .NET SDK if `dotnet` is missing. By default they infer the needed SDK channel from the highest `TargetFramework` declared in the repo's `.csproj` files. On Linux they also build `libipthelper` and install missing native build dependencies through a supported package manager when needed.
@@ -19,7 +20,8 @@ Both scripts will bootstrap a usable .NET SDK if `dotnet` is missing. By default
 - `ipthelper/` builds `libipthelper.so`, which is required for `IPTablesLibAdapter`, `IptcInterface`, and the conntrack/native tests.
 - The helper links against the system iptables development libraries, `libnl3`, and `libpcap`.
 - The scripts first try a normal helper build and then retry with `-DOLD_IPTABLES` if the local iptables headers are older.
-- `test.sh --full` prefers the `iptables-legacy` / `ip6tables-legacy` alternatives when they are available because that matches the native test expectations more closely.
+- `test.sh --full` defaults to the `iptables-legacy` / `ip6tables-legacy` alternatives because that matches the native test expectations more closely.
+- Pass `--iptables-backend current` if you need to keep the host's existing backend, or `--iptables-backend nft` to exercise the nft variants explicitly.
 
 ## Testing Guidance
 

@@ -122,7 +122,7 @@ namespace IPTables.Net.Tests
             {
                 if (Environment.GetEnvironmentVariable("SKIP_SYSTEM_TESTS") == "1")
                 {
-                    Assert.Ignore();
+                    return;
                 }
 
                 var binary = GetBinary();

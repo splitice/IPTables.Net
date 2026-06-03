@@ -10,6 +10,7 @@ TEST_MODE="${TEST_MODE:-auto}"
 DOTNET_TEST_ARGS=()
 ORIGINAL_IPTABLES_TARGET=""
 ORIGINAL_IP6TABLES_TARGET=""
+IPTABLES_BACKEND="${IPTABLES_BACKEND:-legacy}"
 RUN_UNSTABLE_SYSTEM_TESTS="${RUN_UNSTABLE_SYSTEM_TESTS:-0}"
 
 has_explicit_test_filter() {
@@ -23,6 +24,32 @@ has_explicit_test_filter() {
     return 1
 }
 
+normalize_iptables_backend() {
+    local value="${1:-legacy}"
+
+    case "${value,,}" in
+        legacy|nft|current)
+            printf '%s\n' "${value,,}"
+            ;;
+        *)
+            die "Unsupported iptables backend '${value}'. Expected one of: legacy, nft, current."
+            ;;
+    esac
+}
+
+resolve_command_path() {
+    local command_path
+
+    command_path="$(command -v "$1" 2>/dev/null)" || return 1
+
+    if command_exists readlink; then
+        readlink -f "$command_path" 2>/dev/null || printf '%s\n' "$command_path"
+        return
+    fi
+
+    printf '%s\n' "$command_path"
+}
+
 restore_iptables_backend() {
     if [[ -n "$ORIGINAL_IPTABLES_TARGET" ]]; then
         run_as_root update-alternatives --set iptables "$ORIGINAL_IPTABLES_TARGET" >/dev/null 2>&1 || true
@@ -33,39 +60,54 @@ restore_iptables_backend() {
     fi
 }
 
-switch_to_legacy_backend_if_available() {
-    if ! command_exists update-alternatives; then
-        return
-    fi
-
-    if ! command_exists iptables-legacy || ! command_exists ip6tables-legacy; then
-        return
-    fi
-
+switch_to_selected_backend() {
+    local backend="$1"
     local current_v4
     local current_v6
-    local legacy_v4
-    local legacy_v6
+    local desired_v4
+    local desired_v6
+    local resolved_current_v4
+    local resolved_current_v6
+    local resolved_desired_v4
+    local resolved_desired_v6
+
+    if [[ "$backend" == "current" ]]; then
+        info "Using the current iptables backend for full-system tests"
+        return
+    fi
+
+    desired_v4="$(command -v "iptables-${backend}" 2>/dev/null)" || die "The iptables-${backend} binary is required for --iptables-backend ${backend}."
+    desired_v6="$(command -v "ip6tables-${backend}" 2>/dev/null)" || die "The ip6tables-${backend} binary is required for --iptables-backend ${backend}."
+    resolved_current_v4="$(resolve_command_path iptables)" || die "The iptables binary is required for full system tests."
+    resolved_current_v6="$(resolve_command_path ip6tables)" || die "The ip6tables binary is required for full system tests."
+    resolved_desired_v4="$(resolve_command_path "iptables-${backend}")"
+    resolved_desired_v6="$(resolve_command_path "ip6tables-${backend}")"
+
+    if [[ "$resolved_current_v4" == "$resolved_desired_v4" && "$resolved_current_v6" == "$resolved_desired_v6" ]]; then
+        info "Using iptables-${backend} for full-system tests"
+        return
+    fi
+
+    if ! command_exists update-alternatives; then
+        die "Cannot switch to the ${backend} backend because update-alternatives is unavailable. Use --iptables-backend current to keep the existing backend."
+    fi
 
     current_v4="$(update-alternatives --query iptables 2>/dev/null | awk '/^Value: / { print $2 }')"
     current_v6="$(update-alternatives --query ip6tables 2>/dev/null | awk '/^Value: / { print $2 }')"
-    legacy_v4="$(command -v iptables-legacy)"
-    legacy_v6="$(command -v ip6tables-legacy)"
-
     if [[ -z "$current_v4" || -z "$current_v6" ]]; then
-        return
+        die "Unable to determine the current iptables alternatives."
     fi
 
-    if [[ "$current_v4" != "$legacy_v4" ]]; then
+    if [[ "$resolved_current_v4" != "$resolved_desired_v4" ]]; then
         ORIGINAL_IPTABLES_TARGET="$current_v4"
-        info "Switching iptables to the legacy backend for native library tests"
-        run_as_root update-alternatives --set iptables "$legacy_v4"
+        info "Switching iptables to the ${backend} backend for full-system tests"
+        run_as_root update-alternatives --set iptables "$desired_v4"
     fi
 
-    if [[ "$current_v6" != "$legacy_v6" ]]; then
+    if [[ "$resolved_current_v6" != "$resolved_desired_v6" ]]; then
         ORIGINAL_IP6TABLES_TARGET="$current_v6"
-        info "Switching ip6tables to the legacy backend for native library tests"
-        run_as_root update-alternatives --set ip6tables "$legacy_v6"
+        info "Switching ip6tables to the ${backend} backend for full-system tests"
+        run_as_root update-alternatives --set ip6tables "$desired_v6"
     fi
 }
 
@@ -95,8 +137,19 @@ cleanup_test_chains_for_binary() {
 }
 
 cleanup_test_chains() {
-    cleanup_test_chains_for_binary iptables
-    cleanup_test_chains_for_binary ip6tables
+    local binary
+    local -a binaries=(
+        iptables
+        iptables-legacy
+        iptables-nft
+        ip6tables
+        ip6tables-legacy
+        ip6tables-nft
+    )
+
+    for binary in "${binaries[@]}"; do
+        cleanup_test_chains_for_binary "$binary"
+    done
 }
 
 run_full_tests() {
@@ -107,7 +160,7 @@ run_full_tests() {
     trap_command="$(printf 'rm -rf -- %q; cleanup_test_chains; restore_iptables_backend' "$results_dir")"
     trap "$trap_command" EXIT
 
-    switch_to_legacy_backend_if_available
+    switch_to_selected_backend "$IPTABLES_BACKEND"
     load_kernel_modules
 
     command_exists iptables || die "The iptables binary is required for full system tests."
@@ -157,19 +210,33 @@ while (($# > 0)); do
             [[ $# -gt 0 ]] || die "--configuration requires a value"
             CONFIGURATION="$(normalize_configuration "$1")"
             ;;
+        --iptables-backend)
+            shift
+            [[ $# -gt 0 ]] || die "--iptables-backend requires a value"
+            IPTABLES_BACKEND="$(normalize_iptables_backend "$1")"
+            ;;
+        --iptables-backend=*)
+            IPTABLES_BACKEND="$(normalize_iptables_backend "${1#*=}")"
+            ;;
         --help|-h)
             cat <<'EOF'
-Usage: ./test.sh [--fast|--full] [--configuration <Debug|Release>] [dotnet test arguments...]
+Usage: ./test.sh [--fast|--full] [--iptables-backend <legacy|nft|current>] [--configuration <Debug|Release>] [dotnet test arguments...]
 
 Modes:
   --fast   Skip privileged/system iptables tests by setting SKIP_SYSTEM_TESTS=1.
   --full   Run the full NUnit suite, including native helper and system iptables tests.
+
+Backend selection:
+  --iptables-backend legacy   Use iptables-legacy/ip6tables-legacy for full-system tests. This is the default.
+  --iptables-backend nft      Use iptables-nft/ip6tables-nft for full-system tests.
+  --iptables-backend current  Keep the host's current iptables/ip6tables backend.
 
 Default behavior:
   TEST_MODE=auto chooses --full on Linux when passwordless sudo/root is available,
   otherwise it falls back to --fast.
 
 Environment:
+  IPTABLES_BACKEND=legacy|nft|current sets the default full-test backend.
   RUN_UNSTABLE_SYSTEM_TESTS=1 includes tests marked NotWorkingOnTravis, such as
   the conntrack coverage that can crash on some containerized hosts.
 EOF
@@ -181,6 +248,8 @@ EOF
     esac
     shift
 done
+
+IPTABLES_BACKEND="$(normalize_iptables_backend "$IPTABLES_BACKEND")"
 
 if [[ "$TEST_MODE" == "auto" ]]; then
     if is_linux && can_run_privileged; then
