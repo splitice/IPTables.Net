@@ -1,14 +1,12 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleLimitRuleParseTests
+    public class SingleLimitRuleParseTests
     {
 
-        [Test]
+        [Fact]
         public void TestRateCompare()
         {
             String rule = "-A ABC -m limit --limit 500/s";
@@ -18,9 +16,9 @@ namespace IPTables.Net.Tests
             var r1 = IpTablesRule.Parse(rule, null, chains, 4);
             var r2 = IpTablesRule.Parse(rule2, null, chains, 4);
 
-            Assert.IsFalse(r1.Compare(r2));
+            Assert.False(r1.Compare(r2));
         }
-        [Test]
+        [Fact]
         public void TestRateCompare2()
         {
             String rule = "-A ABC -m limit --limit 3333/s";
@@ -30,9 +28,9 @@ namespace IPTables.Net.Tests
             var r1 = IpTablesRule.Parse(rule, null, chains, 4);
             var r2 = IpTablesRule.Parse(rule2, null, chains, 4);
 
-            Assert.IsTrue(r1.Compare(r2));
+            Assert.True(r1.Compare(r2));
         }
-        [Test]
+        [Fact]
         public void TestRateCompare3()
         {
             String rule = "-A ABC -m limit --limit 1500/s";
@@ -42,7 +40,7 @@ namespace IPTables.Net.Tests
             var r1 = IpTablesRule.Parse(rule, null, chains, 4);
             var r2 = IpTablesRule.Parse(rule2, null, chains, 4);
 
-            Assert.IsTrue(r1.Compare(r2));
+            Assert.True(r1.Compare(r2));
         }
     }
 }

@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleNfacctRuleParseTests
+    public class SingleNfacctRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestSmall()
         {
             String rule = "-A INPUT -j ACCEPT -m nfacct --nfacct-name test";
@@ -15,10 +13,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestQuote()
         {
             String rule = "-A INPUT -j ACCEPT -m nfacct --nfacct-name \"test\"";
@@ -27,11 +25,11 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule2, irule.GetActionCommand());
-            Assert.IsTrue(IpTablesRule.Parse(rule2, null, chains, 4).Compare(irule));
+            Assert.Equal(rule2, irule.GetActionCommand());
+            Assert.True(IpTablesRule.Parse(rule2, null, chains, 4).Compare(irule));
         }
 
-        [Test]
+        [Fact]
         public void TestDoubleSpace()
         {
             String rule = "-A INPUT -j ACCEPT -m nfacct --nfacct-name  \"test\"";
@@ -40,8 +38,8 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule2, irule.GetActionCommand());
-            Assert.IsTrue(IpTablesRule.Parse(rule2, null, chains, 4).Compare(irule));
+            Assert.Equal(rule2, irule.GetActionCommand());
+            Assert.True(IpTablesRule.Parse(rule2, null, chains, 4).Compare(irule));
         }
     }
 }

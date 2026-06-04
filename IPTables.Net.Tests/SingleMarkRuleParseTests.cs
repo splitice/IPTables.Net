@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleMarkRuleParseTests
+    public class SingleMarkRuleParseTests
     {
-        [Test]
+        [Fact]
         public void MatchMarkDec()
         {
             String rule = "-A INPUT -p tcp -j ACCEPT -m mark --mark 13041408/0xFFFF00";
@@ -16,11 +14,11 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
-            Assert.IsTrue(IpTablesRule.Parse(ruleExpect, null, chains, 4).Compare(irule));
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
+            Assert.True(IpTablesRule.Parse(ruleExpect, null, chains, 4).Compare(irule));
         }
 
-        [Test]
+        [Fact]
         public void MatchMarkHex()
         {
             String rule = "-A INPUT -p tcp -j ACCEPT -m mark --mark 0xc6ff00/0xFFFF00";
@@ -29,12 +27,12 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
-            Assert.IsTrue(IpTablesRule.Parse(ruleExpect, null, chains, 4).Compare(irule));
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
+            Assert.True(IpTablesRule.Parse(ruleExpect, null, chains, 4).Compare(irule));
         }
 
 
-        [Test]
+        [Fact]
         public void TestXmark()
         {
             String rule = "-A INPUT -p tcp -j MARK --set-xmark 0xFF";
@@ -43,10 +41,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestAndMark()
         {
             Int32 mark = 0;
@@ -56,10 +54,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestOrMark()
         {
             Int32 mark = 0;
@@ -69,10 +67,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestXorMark()
         {
             Int32 mark = 0;
@@ -82,7 +80,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
         }
     }
 }

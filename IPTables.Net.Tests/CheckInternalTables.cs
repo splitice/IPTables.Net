@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    class CheckInternalTables
+    public class CheckInternalTables
     {
-        [Test]
+        [Fact]
         public void TestChains()
         {
             TestChain("filter", "INPUT");
@@ -33,7 +31,7 @@ namespace IPTables.Net.Tests
 
         private void TestChain(string table, string chain)
         {
-            Assert.IsTrue(IPTablesTables.IsInternalChain(table, chain), String.Format("{0}:{1} should be internal", table, chain));
+            Assert.True(IPTablesTables.IsInternalChain(table, chain), String.Format("{0}:{1} should be internal", table, chain));
         }
     }
 }

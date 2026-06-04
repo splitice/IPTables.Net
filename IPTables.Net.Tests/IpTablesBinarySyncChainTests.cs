@@ -8,14 +8,12 @@ using IPTables.Net.Iptables.Modules;
 using IPTables.Net.Iptables.Modules.Comment;
 using IPTables.Net.Iptables.TableSync;
 using IPTables.Net.TestFramework;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    class IpTablesBinarySyncChainTests
+    public class IpTablesBinarySyncChainTests
     {
-        [Test]
+        [Fact]
         public void TestAdd()
         {
             var mock = new MockIptablesSystemFactory();
@@ -38,7 +36,7 @@ namespace IPTables.Net.Tests
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
-        [Test]
+        [Fact]
         public void TestSimpleDoNothing()
         {
             var mock = new MockIptablesSystemFactory();
@@ -60,7 +58,7 @@ namespace IPTables.Net.Tests
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
-        [Test]
+        [Fact]
         public void TestNatDoNothing()
         {
             var mock = new MockIptablesSystemFactory();
@@ -82,7 +80,7 @@ namespace IPTables.Net.Tests
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
-        [Test]
+        [Fact]
         public void TestAddDuplicate()
         {
             var mock = new MockIptablesSystemFactory();
@@ -105,7 +103,7 @@ namespace IPTables.Net.Tests
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
-        [Test]
+        [Fact]
         public void TestDelete()
         {
             var mock = new MockIptablesSystemFactory();
@@ -127,7 +125,7 @@ namespace IPTables.Net.Tests
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
-        [Test]
+        [Fact]
         public void TestDeleteMultiples()
         {
             var mock = new MockIptablesSystemFactory();
@@ -150,7 +148,7 @@ namespace IPTables.Net.Tests
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
-        [Test]
+        [Fact]
         public void TestInsertMiddle()
         {
             var mock = new MockIptablesSystemFactory();
@@ -196,7 +194,7 @@ namespace IPTables.Net.Tests
             return comment1.CommentText == comment2.CommentText;
         }
 
-        [Test]
+        [Fact]
         public void TestUpdateEnd()
         {
             var mock = new MockIptablesSystemFactory();
@@ -222,7 +220,7 @@ namespace IPTables.Net.Tests
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
-        [Test]
+        [Fact]
         public void TestUpdateBegin()
         {
             var mock = new MockIptablesSystemFactory();
@@ -248,7 +246,7 @@ namespace IPTables.Net.Tests
             mock.TestSync(system.GetTableAdapter(4), rulesOriginal, rulesNew, sync, expectedCommands);
         }
 
-        [Test]
+        [Fact]
         public void TestUpdateMiddle()
         {
             var mock = new MockIptablesSystemFactory();

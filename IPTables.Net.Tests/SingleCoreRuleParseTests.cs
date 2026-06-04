@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleCoreRuleParseTests
+    public class SingleCoreRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestCoreDropingDestination()
         {
             String rule = "-A INPUT -d 1.2.3.4/16 -j DROP";
@@ -15,10 +13,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestCoreDropingInterface()
         {
             String rule = "-A INPUT -i eth0 -j DROP";
@@ -26,10 +24,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestCoreDropingSource()
         {
             String rule = "-A INPUT -s 1.2.3.4 -j DROP";
@@ -37,10 +35,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestParsingWithMultipleSpaces()
         {
             String rule = "-A INPUT -s   1.2.3.4   -j DROP";
@@ -49,7 +47,7 @@ namespace IPTables.Net.Tests
             IpTablesRule.Parse(rule, null, chains, 4);
         }
 
-        [Test]
+        [Fact]
         public void TestParsingWithSpaceAtEnd()
         {
             String rule = "-A INPUT -s 1.2.3.4 -j DROP ";
@@ -58,7 +56,7 @@ namespace IPTables.Net.Tests
             IpTablesRule.Parse(rule, null, chains, 4);
         }
 
-        [Test]
+        [Fact]
         public void TestParsingWithSpaceAtStart()
         {
             String rule = " -A INPUT -s 1.2.3.4 -j DROP";
@@ -66,7 +64,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule.Parse(rule, null, chains, 4);
         }
-        [Test]
+        [Fact]
         public void TestParsingWithSpacesAtStart()
         {
             String rule = "  -A INPUT -s 1.2.3.4 -j DROP";
@@ -75,7 +73,7 @@ namespace IPTables.Net.Tests
             IpTablesRule.Parse(rule, null, chains, 4);
         }
 
-        [Test]
+        [Fact]
         public void TestCoreDropingUdp()
         {
             String rule = "-A INPUT -p udp -j DROP";
@@ -83,10 +81,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestCoreFragmenting()
         {
             String rule = "-A INPUT ! -f -j test";
@@ -94,10 +92,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestCoreDropingDestinationEquality()
         {
             String rule = "-A INPUT -d 1.2.3.4/16 -j DROP";
@@ -106,10 +104,10 @@ namespace IPTables.Net.Tests
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.IsTrue(irule2.Compare(irule1));
+            Assert.True(irule2.Compare(irule1));
         }
 
-        [Test]
+        [Fact]
         public void TestCoreDropingInterfaceEquality()
         {
             String rule = "-A INPUT -i eth0 -j DROP";
@@ -118,10 +116,10 @@ namespace IPTables.Net.Tests
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.IsTrue(irule2.Compare(irule1));
+            Assert.True(irule2.Compare(irule1));
         }
 
-        [Test]
+        [Fact]
         public void TestCoreDropingSourceEquality()
         {
             String rule = "-A INPUT -s 1.2.3.4 -j DROP";
@@ -130,10 +128,10 @@ namespace IPTables.Net.Tests
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.IsTrue(irule2.Compare(irule1));
+            Assert.True(irule2.Compare(irule1));
         }
 
-        [Test]
+        [Fact]
         public void TestCoreDropingUdpEquality()
         {
             String rule = "-A INPUT -p udp -j DROP";
@@ -142,10 +140,10 @@ namespace IPTables.Net.Tests
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.IsTrue(irule2.Compare(irule1));
+            Assert.True(irule2.Compare(irule1));
         }
 
-        [Test]
+        [Fact]
         public void TestCoreFragmentingEquality()
         {
             String rule = "-A INPUT ! -f -j test";
@@ -154,7 +152,7 @@ namespace IPTables.Net.Tests
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.IsTrue(irule2.Compare(irule1));
+            Assert.True(irule2.Compare(irule1));
         }
     }
 }

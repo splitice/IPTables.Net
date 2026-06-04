@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleHelperRuleParseTests
+    public class SingleHelperRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestNotHelper()
         {
             String rule = "-A INPUT -m helper ! --helper cba -j ACCEPT";
@@ -15,10 +13,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestHelper()
         {
             String rule = "-A INPUT -m helper ! --helper abc -j ACCEPT";
@@ -26,7 +24,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
     }
 }

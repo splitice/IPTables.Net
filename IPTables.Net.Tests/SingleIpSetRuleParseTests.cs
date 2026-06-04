@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleIpSetRuleParseTests
+    public class SingleIpSetRuleParseTests
     {
-        [Test]
+        [Fact]
         public void Test1()
         {
             String rule = "-A FORWARD -m set --match-set test src";
@@ -15,10 +13,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void Test2()
         {
             String rule = "-A FORWARD -m set --match-set test src --return-nomatch ! --update-counters --packets-lt 3 ! --bytes-eq 1";
@@ -26,7 +24,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
     }
 }

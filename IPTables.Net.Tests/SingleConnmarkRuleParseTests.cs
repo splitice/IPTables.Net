@@ -1,14 +1,12 @@
 ﻿using System;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Modules.Connmark;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleConnmarkRuleParseTests
+    public class SingleConnmarkRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestXmark()
         {
             String rule = "-A INPUT -p tcp -j CONNMARK --set-xmark 0xFF";
@@ -17,11 +15,11 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
         }
 
 
-        [Test]
+        [Fact]
         public void TestMatchMark1()
         {
             String rule = "-A INPUT -p tcp -m connmark --mark 0xFF";
@@ -30,9 +28,9 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
         }
-        [Test]
+        [Fact]
         public void TestMatchMark2()
         {
             String rule = "-A INPUT -p tcp -m connmark --mark 255";
@@ -41,9 +39,9 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
         }
-        [Test]
+        [Fact]
         public void TestMatchMark3()
         {
             String rule = "-A INPUT -p tcp -m connmark --mark 255/0xFF";
@@ -53,11 +51,11 @@ namespace IPTables.Net.Tests
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
             IpTablesRule irule2 = IpTablesRule.Parse(ruleExpect, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
-            Assert.IsTrue(irule.Compare(irule2));
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
+            Assert.True(irule.Compare(irule2));
         }
 
-        [Test]
+        [Fact]
         public void TestAndMark()
         {
             Int32 mark = 0;
@@ -67,10 +65,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestSetMark1()
         {
             String rule = "-A INPUT -j CONNMARK --set-xmark 0x200/0x1ffff00";
@@ -79,11 +77,11 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
-            Assert.IsTrue(IpTablesRule.Parse(ruleExpect, null, chains, 4).Compare(irule));
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
+            Assert.True(IpTablesRule.Parse(ruleExpect, null, chains, 4).Compare(irule));
         }
 
-        [Test]
+        [Fact]
         public void TestSetMark2()
         {
             String rule = "-A INPUT -j CONNMARK --set-xmark "+0x200+"/0x1ffff00";
@@ -92,11 +90,11 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
-            Assert.IsTrue(IpTablesRule.Parse(ruleExpect, null, chains, 4).Compare(irule));
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
+            Assert.True(IpTablesRule.Parse(ruleExpect, null, chains, 4).Compare(irule));
         }
 
-        [Test]
+        [Fact]
         public void TestSetMark3()
         {
             String rule = "-A INPUT -j CONNMARK --set-xmark " + 0x200 + "/0x1ffff00";
@@ -105,10 +103,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
             
-            Assert.IsTrue(IpTablesRule.Parse(ruleExpect, null, chains, 4).Compare(irule));
+            Assert.True(IpTablesRule.Parse(ruleExpect, null, chains, 4).Compare(irule));
         }
 
-        [Test]
+        [Fact]
         public void TestOrMark()
         {
             Int32 mark = 0;
@@ -118,10 +116,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestXorMark()
         {
             Int32 mark = 0;
@@ -131,10 +129,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(ruleExpect, irule.GetActionCommand());
+            Assert.Equal(ruleExpect, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestXMarkMasked()
         {
             String rule = "-A RETURN_AFWCON -j CONNMARK --set-xmark 0x1/0x1";
@@ -142,11 +140,11 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
 
-        [Test]
+        [Fact]
         public void TestRestoreMark()
         {
             String rule = "-A PREROUTING -j CONNMARK --restore-mark --ctmask 0x11 --nfmask 0x3FFFF00";
@@ -154,7 +152,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
     }
 }
