@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
-    internal class FlexibleUInt32
+    public static class FlexibleUInt32
     {
         public static uint Parse(string number)
         {
