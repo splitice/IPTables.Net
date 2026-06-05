@@ -1,4 +1,7 @@
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 
 VERSION=$(git describe --abbrev=0 --tags)
@@ -18,7 +21,12 @@ if [[ $VERSION =~ $re ]]; then
     fi
 
     echo "Version is now: $VERSION_STR"
+else
+    echo "Unable to derive a NuGet version from tag '$VERSION'." >&2
+    exit 1
 fi
 
-dotnet pack --configuration Release /p:Version=$VERSION_STR
-dotnet nuget push */bin/Release/*.nupkg --api-key "$NUGET_API_KEY" --source https://www.nuget.org/api/v2/package
+PACKAGE_PATH="${SCRIPT_DIR}/IPTables.Net/bin/Release/IPTables.Net.${VERSION_STR}.nupkg"
+
+dotnet pack "${SCRIPT_DIR}/IPTables.Net/IPTables.Net.csproj" --configuration Release /p:Version="$VERSION_STR"
+dotnet nuget push "$PACKAGE_PATH" --api-key "$NUGET_API_KEY" --source https://www.nuget.org/api/v2/package
