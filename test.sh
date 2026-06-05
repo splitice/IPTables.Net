@@ -168,7 +168,7 @@ run_full_tests() {
     cleanup_test_chains
 
     if [[ "$RUN_UNSTABLE_SYSTEM_TESTS" != "1" ]] && ! has_explicit_test_filter; then
-        effective_test_args+=("--filter" "TestCategory!=NotWorkingOnTravis")
+        effective_test_args+=("--filter" "Category!=NotWorkingOnTravis")
     fi
 
     if [[ "${EUID:-$(id -u)}" -eq 0 ]]; then
@@ -224,7 +224,7 @@ Usage: ./test.sh [--fast|--full] [--iptables-backend <legacy|nft|current>] [--co
 
 Modes:
   --fast   Skip privileged/system iptables tests by setting SKIP_SYSTEM_TESTS=1.
-  --full   Run the full NUnit suite, including native helper and system iptables tests.
+  --full   Run the full xUnit suite, including native helper and system iptables tests.
 
 Backend selection:
   --iptables-backend legacy   Use iptables-legacy/ip6tables-legacy for full-system tests. This is the default.

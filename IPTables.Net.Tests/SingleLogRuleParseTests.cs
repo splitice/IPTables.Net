@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleLogRuleParseTests
+    public class SingleLogRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestLogWithPrefix()
         {
             String rule = "-A INPUT -j LOG --log-prefix 'IPTABLES (Rule ATTACKED): ' --log-level 7";
@@ -15,7 +13,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
     }
 }

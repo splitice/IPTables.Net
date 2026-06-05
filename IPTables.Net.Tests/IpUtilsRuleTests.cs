@@ -9,14 +9,12 @@ using IPTables.Net.IpUtils;
 using IPTables.Net.IpUtils.Utils;
 using IPTables.Net.TestFramework;
 using Microsoft.VisualStudio.TestPlatform.Utilities;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    class IpUtilsRuleTests
+    public class IpUtilsRuleTests
     {
-        [Test]
+        [Fact]
         public void TestParseRule()
         {
             var systemFactory = new MockIptablesSystemFactory(true);
@@ -24,12 +22,12 @@ namespace IPTables.Net.Tests
             var one = ipUtils.ParseObjectInternal("default via 10.17.199.1 dev s4  table 200", "to");
             var two = ipUtils.ParseObjectInternal("default via 10.17.199.1 dev s4 table 200", "to");
 
-            CollectionAssert.AreEqual(one.Pairs, two.Pairs);
-            Assert.AreEqual("default", one.Pairs["to"]);
-            Assert.AreEqual("200",one.Pairs["table"]);
+            Assert.Equal(one.Pairs, two.Pairs);
+            Assert.Equal("default", one.Pairs["to"]);
+            Assert.Equal("200",one.Pairs["table"]);
         }
 
-        [Test]
+        [Fact]
         public void TestParsePref()
         {
             var systemFactory = new MockIptablesSystemFactory(true);
@@ -37,7 +35,7 @@ namespace IPTables.Net.Tests
             var one = ipUtils.ParseObject("0: from all fwmark 0x1000200/0x1ffff00 lookup 15002");
         }
 
-        [Test]
+        [Fact]
         public void TestAddRule()
         {
             var systemFactory = new MockIptablesSystemFactory(true);
@@ -50,10 +48,10 @@ namespace IPTables.Net.Tests
                 new KeyValuePair<string, string> ("ip","rule add from 1.1.1.1 lookup 100")
             };
 
-            CollectionAssert.AreEqual(expected, systemFactory.ExecutionLog);
+            Assert.Equal(expected, systemFactory.ExecutionLog);
         }
 
-        [Test]
+        [Fact]
         public void TestAddRule2()
         {
             var systemFactory = new MockIptablesSystemFactory(true);
@@ -66,10 +64,10 @@ namespace IPTables.Net.Tests
                 new KeyValuePair<string, string> ("ip","rule add not from 1.1.1.1 lookup 100")
             };
 
-            CollectionAssert.AreEqual(expected, systemFactory.ExecutionLog);
+            Assert.Equal(expected, systemFactory.ExecutionLog);
         }
 
-        [Test]
+        [Fact]
         public void TestAddObjRule()
         {
             var systemFactory = new MockIptablesSystemFactory(true);
@@ -89,10 +87,10 @@ namespace IPTables.Net.Tests
                 new KeyValuePair<string, string> ("ip","rule add not from 1.1.1.1 lookup 100")
             };
 
-            CollectionAssert.AreEqual(expected, systemFactory.ExecutionLog);
+            Assert.Equal(expected, systemFactory.ExecutionLog);
         }
 
-        [Test]
+        [Fact]
         public void TestDeleteRule()
         {
             var systemFactory = new MockIptablesSystemFactory(true);
@@ -105,10 +103,10 @@ namespace IPTables.Net.Tests
                 new KeyValuePair<string, string> ("ip","rule delete from 1.1.1.1 lookup 100")
             };
 
-            CollectionAssert.AreEqual(expected, systemFactory.ExecutionLog);
+            Assert.Equal(expected, systemFactory.ExecutionLog);
         }
 
-        [Test]
+        [Fact]
         public void TestDeleteRuleId()
         {
             var systemFactory = new MockIptablesSystemFactory(true);
@@ -124,10 +122,10 @@ namespace IPTables.Net.Tests
                 new KeyValuePair<string, string> ("ip","rule delete pref 100 from 1.1.1.1")
             };
 
-            CollectionAssert.AreEqual(expected, systemFactory.ExecutionLog);
+            Assert.Equal(expected, systemFactory.ExecutionLog);
         }
 
-        [Test]
+        [Fact]
         public void TestGetRules()
         {
             var systemFactory = new MockIptablesSystemFactory(true);
@@ -136,9 +134,9 @@ namespace IPTables.Net.Tests
             var ipUtils = new IpRuleController(systemFactory);
             var rules = ipUtils.GetAll();
 
-            Assert.AreEqual(2, rules.Count);
-            Assert.AreEqual("pref 32766 from all lookup main", string.Join(" ", ipUtils.ExportObject(rules[0])));
-            Assert.AreEqual("pref 32767 from all lookup default", string.Join(" ", ipUtils.ExportObject(rules[1])));
+            Assert.Equal(2, rules.Count);
+            Assert.Equal("pref 32766 from all lookup main", string.Join(" ", ipUtils.ExportObject(rules[0])));
+            Assert.Equal("pref 32767 from all lookup default", string.Join(" ", ipUtils.ExportObject(rules[1])));
         }
     }
 }

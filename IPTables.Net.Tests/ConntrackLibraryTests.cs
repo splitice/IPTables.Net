@@ -8,64 +8,44 @@ using System.Text;
 using IPTables.Net.Conntrack;
 using IPTables.Net.Iptables.NativeLibrary;
 using IPTables.Net.Supporting;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    [Category("NotWorkingOnTravis")]
-    class ConntrackLibraryTests
+    [Trait("Category", "NotWorkingOnTravis")]
+    public class ConntrackLibraryTests
     {
-        public static bool IsLinux
-        {
-            get
-            {
-                int p = (int)Environment.OSVersion.Platform;
-                return (p == 4) || (p == 6) || (p == 128);
-            }
-        }
-
-        [Test]
+        [Fact]
         public void TestStructureSize()
         {
-            Assert.AreEqual(8 + IntPtr.Size, Marshal.SizeOf(typeof(ConntrackQueryFilter)));
+            Assert.Equal(8 + IntPtr.Size, Marshal.SizeOf(typeof(ConntrackQueryFilter)));
         }
 
-        [Test]
+        [Fact]
         public void TestDump()
         {
-            if (IsLinux)
-            {
-                if (Environment.GetEnvironmentVariable("SKIP_SYSTEM_TESTS") == "1")
-                {
-                    Assert.Ignore();
-                }
-                ConntrackSystem cts = new ConntrackSystem();
-                List<byte[]> list = new List<byte[]>();
-                cts.Dump(false,list.Add);
-            }
+            TestEnvironment.RequireLinuxSystemTests();
+
+            ConntrackSystem cts = new ConntrackSystem();
+            List<byte[]> list = new List<byte[]>();
+            cts.Dump(false, list.Add);
         }
 
-        [Test]
+        [Fact]
         public void TestDumpFiltered()
         {
-            if (IsLinux)
+            TestEnvironment.RequireLinuxSystemTests();
+
+            ConntrackSystem cts = new ConntrackSystem();
+            IPAddress addr = IPAddress.Parse("1.1.1.1");
+            UInt32 addr32;
+            unchecked
             {
-                if (Environment.GetEnvironmentVariable("SKIP_SYSTEM_TESTS") == "1")
-                {
-                    Assert.Ignore();
-                }
-                ConntrackSystem cts = new ConntrackSystem();
-                IPAddress addr = IPAddress.Parse("1.1.1.1");
-                UInt32 addr32;
-                unchecked
-                {
-                    addr32 = (UInt32)addr.ToInt();
-                }
+                addr32 = (UInt32)addr.ToInt();
+            }
 
-
-
-                var pinned = GCHandle.Alloc(addr32, GCHandleType.Pinned);
+            var pinned = GCHandle.Alloc(addr32, GCHandleType.Pinned);
+            try
+            {
                 ConntrackQueryFilter[] qf = new ConntrackQueryFilter[]
                 {
                     new ConntrackQueryFilter{Key = cts.GetConstant("CTA_TUPLE_ORIG"), Max = cts.GetConstant("CTA_TUPLE_MAX"), CompareLength = 0},
@@ -77,7 +57,9 @@ namespace IPTables.Net.Tests
 
                 List<byte[]> list = new List<byte[]>();
                 cts.Dump(false, list.Add, qf);
-
+            }
+            finally
+            {
                 pinned.Free();
             }
         }

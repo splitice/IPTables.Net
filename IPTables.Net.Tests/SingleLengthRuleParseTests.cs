@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleLengthRuleParseTests
+    public class SingleLengthRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestLengthRange()
         {
             String rule = "-A INPUT -m length --length 10:100 -j ACCEPT";
@@ -15,9 +13,9 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
-        [Test]
+        [Fact]
         public void TestNotLengthRange()
         {
             String rule = "-A INPUT -m length ! --length 10:100 -j ACCEPT";
@@ -25,10 +23,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestNotLength()
         {
             String rule = "-A INPUT -m length ! --length 10 -j ACCEPT";
@@ -36,7 +34,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
     }
 }

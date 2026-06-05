@@ -8,14 +8,12 @@ using System.Text;
 using IPTables.Net.IpUtils;
 using IPTables.Net.IpUtils.Utils;
 using IPTables.Net.TestFramework;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    class IpUtilsRouteTests
+    public class IpUtilsRouteTests
     {
-        [Test]
+        [Fact]
         public void TestParseRule()
         {
             var systemFactory = new MockIptablesSystemFactory();
@@ -24,7 +22,7 @@ namespace IPTables.Net.Tests
             var two = ipUtils.ParseObjectInternal("10.128.1.0/24 dev tap0  proto kernel  scope link  src 10.128.1.201", "to");
 
         }
-        [Test]
+        [Fact]
         public void TestParseRuleLocal()
         {
             var systemFactory = new MockIptablesSystemFactory();
@@ -32,7 +30,7 @@ namespace IPTables.Net.Tests
             var one = ipUtils.ParseObjectInternal("local default dev lo  table 100  scope host", "to");
             ipUtils.ExportObject(one);
         }
-        [Test]
+        [Fact]
         public void TestParseRuleAnycastV6()
         {
             var systemFactory = new MockIptablesSystemFactory();

@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using IPTables.Net.Supporting;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    class LevensheteinSolutionTest
+    public class LevensheteinSolutionTest
     {
-        [TestCase(Ignore = "igonre")]
+        [Fact(Skip = "igonre")]
         public void DistanceTest()
         {
             String s = "democrat";
@@ -18,10 +17,10 @@ namespace IPTables.Net.Tests
             LevenshteinSolution<char> l = new LevenshteinSolution<char>();
             var distance = l.GetDistance(s.ToCharArray(), t.ToCharArray());
 
-            Assert.AreEqual(8, distance);
+            Assert.Equal(8, distance);
         }
 
-        [TestCase(Ignore = "igonre")]
+        [Fact(Skip = "igonre")]
         public void InstructionsTest()
         {
             String s = "democrat";
@@ -34,10 +33,10 @@ namespace IPTables.Net.Tests
 
             string tApplied = new string(applied);
 
-            Assert.AreEqual(t, tApplied);
+            Assert.Equal(t, tApplied);
         }
 
-        [TestCase(Ignore= "igonre")]
+        [Fact(Skip = "igonre")]
         public void InstructionsBulkTest()
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -61,7 +60,7 @@ namespace IPTables.Net.Tests
 
                 string tApplied = new string(applied);
 
-                Assert.AreEqual(t, tApplied);
+                Assert.Equal(t, tApplied);
             }
         }
     }

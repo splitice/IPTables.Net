@@ -6,7 +6,6 @@ using SystemInteract;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter.Client;
 using IPTables.Net.Iptables.TableSync;
-using NUnit.Framework;
 
 namespace IPTables.Net.TestFramework
 {
@@ -57,7 +56,7 @@ namespace IPTables.Net.TestFramework
 
             if (expectedCommands != null)
             {
-                CollectionAssert.AreEqual(expectedCommands, ExecutionLog.Select(a => a.Value).ToList());
+                Assert.Equal(expectedCommands, ExecutionLog.Select(a => a.Value).ToList());
             }
         }
     }

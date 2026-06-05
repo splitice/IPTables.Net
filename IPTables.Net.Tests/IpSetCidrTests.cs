@@ -5,14 +5,12 @@ using System.Net;
 using System.Text;
 using IPTables.Net.IpSet;
 using IPTables.Net.TestFramework;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    class IpSetCidrTests
+    public class IpSetCidrTests
     {
-        [Test]
+        [Fact]
         public void TestSyncCreateLarger()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -40,7 +38,7 @@ namespace IPTables.Net.Tests
             });
         }
 
-        [Test]
+        [Fact]
         public void TestSyncLargerIsTheSame()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -66,7 +64,7 @@ namespace IPTables.Net.Tests
             {
             });
         }
-        [Test]
+        [Fact]
         public void TestSyncCreateSmaller()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -94,7 +92,7 @@ namespace IPTables.Net.Tests
             });
         }
 
-        [Test]
+        [Fact]
         public void TestSyncCreateMultipleLarger()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -123,7 +121,7 @@ namespace IPTables.Net.Tests
                 "add test 8.8.0.0/16"
             });
         }
-        [Test]
+        [Fact]
         public void TestSyncCreateSmallerWithPort()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -152,7 +150,7 @@ namespace IPTables.Net.Tests
                 "add test 8.8.8.0/30,udp:123"
             });
         }
-        [Test]
+        [Fact]
         public void TestSyncNoChangeWithPort()
         {
             var systemFactory = new MockIpsetSystemFactory();

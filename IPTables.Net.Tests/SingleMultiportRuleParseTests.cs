@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleMultiportRuleParseTests
+    public class SingleMultiportRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestMultiports()
         {
             String rule = "-A INPUT -p tcp -m multiport --ports 80,1000:1080";
@@ -15,9 +13,9 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
-        [Test]
+        [Fact]
         public void TestDestinationMultiports()
         {
             String rule = "-A INPUT -p tcp -m multiport --sports 80,1000:1080";
@@ -25,9 +23,9 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
-        [Test]
+        [Fact]
         public void TestSourceMultiports()
         {
             String rule = "-A INPUT -p tcp -m multiport --dports 80,1000:1080";
@@ -35,10 +33,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TesNottMultiports()
         {
             String rule = "-A INPUT -p tcp -m multiport ! --ports 80,1000:1080";
@@ -46,9 +44,9 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
-        [Test]
+        [Fact]
         public void TestDestinationNotMultiports()
         {
             String rule = "-A INPUT -p tcp -m multiport ! --sports 80,1000:1080";
@@ -56,9 +54,9 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
-        [Test]
+        [Fact]
         public void TestSourceNotMultiports()
         {
             String rule = "-A INPUT -p tcp -m multiport ! --dports 80,1000:1080";
@@ -66,7 +64,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
     }
 }

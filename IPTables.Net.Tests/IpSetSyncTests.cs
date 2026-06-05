@@ -5,15 +5,13 @@ using System.Net;
 using System.Text;
 using IPTables.Net.IpSet;
 using IPTables.Net.TestFramework;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    class IpSetSyncTests
+    public class IpSetSyncTests
     {
 
-        [Test]
+        [Fact]
         public void TestSyncIPPort1()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -44,7 +42,7 @@ namespace IPTables.Net.Tests
         }
 
 
-        [Test]
+        [Fact]
         public void TestSyncCreate()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -70,7 +68,7 @@ namespace IPTables.Net.Tests
             });
         }
 
-        [Test]
+        [Fact]
         public void TestSyncDelete()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -95,7 +93,7 @@ namespace IPTables.Net.Tests
             });
         }
 
-        [Test]
+        [Fact]
         public void TestSyncEntryAdd()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -120,7 +118,7 @@ namespace IPTables.Net.Tests
                 "add test 8.8.8.8"
             });
         }
-        [Test]
+        [Fact]
         public void TestSyncEntrySameIp()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -145,7 +143,7 @@ namespace IPTables.Net.Tests
             {
             });
         }
-        [Test]
+        [Fact]
         public void TestSyncEntryMultipleIp()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -174,7 +172,7 @@ namespace IPTables.Net.Tests
             {
             });
         }
-        [Test]
+        [Fact]
         public void TestSyncEntryOrderIp()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -204,7 +202,7 @@ namespace IPTables.Net.Tests
             });
         }
 
-        [Test]
+        [Fact]
         public void TestSyncEntryDelete()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -230,7 +228,7 @@ namespace IPTables.Net.Tests
             });
         }
 
-        [Test]
+        [Fact]
         public void TestSyncEntryNotValues()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -258,7 +256,7 @@ namespace IPTables.Net.Tests
             });
         }
 
-        [Test]
+        [Fact]
         public void TestBitmapPort()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -286,7 +284,7 @@ namespace IPTables.Net.Tests
             });
         }
 
-        [Test]
+        [Fact]
         public void TestBitmapPortNoChange()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -319,7 +317,7 @@ namespace IPTables.Net.Tests
             });
         }
 
-        [Test]
+        [Fact]
         public void TestSyncCreateNet()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -345,7 +343,7 @@ namespace IPTables.Net.Tests
             });
         }
         
-        [Test]
+        [Fact]
         public void TestSyncChangeNet()
         {
             var systemFactory = new MockIpsetSystemFactory();
@@ -375,7 +373,7 @@ namespace IPTables.Net.Tests
             });
         }
 
-        [Test]
+        [Fact]
         public void TestSameNet()
         {
             var systemFactory = new MockIpsetSystemFactory();

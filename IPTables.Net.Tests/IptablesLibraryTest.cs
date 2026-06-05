@@ -1,197 +1,141 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
 using IPTables.Net.Iptables;
 using IPTables.Net.Iptables.Adapter;
 using IPTables.Net.Iptables.Adapter.Client;
 using IPTables.Net.Iptables.NativeLibrary;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [NonParallelizable]
-    [TestFixture(4)]
-    //[TestFixture(6)]
-    class IptablesLibraryTest
+    public sealed class IptablesLibraryFixture : IDisposable
     {
-        private int _ipVersion;
+        public int IpVersion => IptablesSystemTestSupport.IpVersion;
 
-        public static bool IsLinux
+        public string SkipReason { get; }
+
+        public IptablesLibraryFixture()
         {
-            get
+            SkipReason = TestEnvironment.GetLinuxSystemTestSkipReason();
+            if (SkipReason != null)
             {
-                int p = (int)Environment.OSVersion.Platform;
-                return (p == 4) || (p == 6) || (p == 128);
+                return;
+            }
+
+            var binary = GetBinary();
+            IptablesSystemTestSupport.CleanupTestChains(binary);
+            IptablesSystemTestSupport.RequireSuccess(binary, "-N test2");
+            IptablesSystemTestSupport.RequireSuccess(binary, "-N test");
+            IptablesSystemTestSupport.RequireSuccess(binary, "-A test -j ACCEPT");
+            IptablesSystemTestSupport.RequireSuccess(binary, "-N test3");
+            IptablesSystemTestSupport.RequireSuccess(binary, "-A test3 -p tcp -m tcp --dport 80 -j ACCEPT");
+        }
+
+        public string GetBinary()
+        {
+            return IptablesSystemTestSupport.GetBinary(IpVersion);
+        }
+
+        public void SkipIfNeeded()
+        {
+            if (SkipReason != null)
+            {
+                Assert.Skip(SkipReason);
             }
         }
 
-        public IptablesLibraryTest(int ipVersion)
+        public void Dispose()
         {
-            _ipVersion = ipVersion;
-        }
-
-
-        private String GetBinaryName()
-        {
-            if (_ipVersion == 4)
+            if (SkipReason != null)
             {
-                return "iptables";
+                return;
             }
-            return "ip6tables";
-        }
 
-        private String GetBinary()
+            IptablesSystemTestSupport.CleanupTestChains(GetBinary());
+        }
+    }
+
+    [Collection(SystemIptablesCollectionDefinition.Name)]
+    public class IptablesLibraryTest : IClassFixture<IptablesLibraryFixture>
+    {
+        private readonly IptablesLibraryFixture _fixture;
+
+        public IptablesLibraryTest(IptablesLibraryFixture fixture)
         {
-            var name = GetBinaryName();
-            if (Path.Exists("/sbin/" + name)) return "/sbin/" + name;
-            if (Path.Exists("/usr/sbin/" + name)) return "/usr/sbin/" + name;
-            return name;
+            _fixture = fixture;
         }
 
-        [OneTimeSetUp]
-        public void TestStartup()
-        {
-            if (IsLinux)
-            {
-                if (Environment.GetEnvironmentVariable("SKIP_SYSTEM_TESTS") == "1")
-                {
-                    Assert.Ignore();
-                }
-
-                var binary = GetBinary();
-                CleanupTestChains(binary);
-                RequireSuccess(binary, "-N test2");
-                RequireSuccess(binary, "-N test");
-                RequireSuccess(binary, "-A test -j ACCEPT");
-                RequireSuccess(binary, "-N test3");
-                RequireSuccess(binary, "-A test3 -p tcp -m tcp --dport 80 -j ACCEPT");
-            }
-        }
-
-        private int Execute(string binary, string args, bool logOutput = true)
-        {
-            using (var process = Process.Start(new ProcessStartInfo(binary, args)
-            {
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                UseShellExecute = false
-            }))
-            {
-                var standardOutput = process.StandardOutput.ReadToEnd();
-                var standardError = process.StandardError.ReadToEnd();
-                process.WaitForExit();
-
-                if (logOutput)
-                {
-                    if (!string.IsNullOrWhiteSpace(standardOutput))
-                    {
-                        Console.WriteLine(standardOutput);
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(standardError))
-                    {
-                        Console.Error.WriteLine(standardError);
-                    }
-                }
-
-                return process.ExitCode;
-            }
-        }
-
-        private void RequireSuccess(string binary, string args)
-        {
-            Assert.That(Execute(binary, args), Is.EqualTo(0), "Command should succeed: " + binary + " " + args);
-        }
-
-        private void CleanupTestChains(string binary)
-        {
-            foreach (var chain in new[] {"test", "test2", "test3"})
-            {
-                Execute(binary, "-F " + chain, false);
-                Execute(binary, "-X " + chain, false);
-            }
-        }
-
-        [OneTimeTearDown]
-        public void TestDestroy()
-        {
-            if (IsLinux)
-            {
-                if (Environment.GetEnvironmentVariable("SKIP_SYSTEM_TESTS") == "1")
-                {
-                    return;
-                }
-
-                var binary = GetBinary();
-                CleanupTestChains(binary);
-            }
-        }
-
-        [Test]
+        [Fact]
         public void TestRuleOutput()
         {
-            if (IsLinux)
+            _fixture.SkipIfNeeded();
+
+            Assert.Equal(0, IptcInterface.RefCount);
+            var system = new IpTablesSystem(null, new IPTablesLibAdapter());
+            using (var client = system.GetTableAdapter(_fixture.IpVersion))
             {
-                Assert.AreEqual(0, IptcInterface.RefCount);
-                var system = new IpTablesSystem(null, new IPTablesLibAdapter());
-                using (var client = system.GetTableAdapter(_ipVersion))
+                Assert.True(client is IPTablesLibAdapterClient);
+                var rules = client.ListRules("filter");
+                Assert.NotNull(rules);
+
+                foreach (var chain in rules.Chains)
                 {
-                    Assert.IsTrue(client is IPTablesLibAdapterClient);
-                    var rules = client.ListRules("filter");
-                    Assert.IsTrue(rules != null, "Expected to find filter table");
-                    foreach (var chain in rules.Chains)
-                    {
-                        Assert.AreEqual(_ipVersion, chain.IpVersion, "Incorrect IP Version for chain: " + chain);
-                    }
-                    Assert.AreNotEqual(0, rules.Chains.SelectMany((a)=>a.Rules).Count());
-                    foreach (var rule in rules.Chains.SelectMany((a) => a.Rules))
-                    {
-                        Assert.AreEqual(_ipVersion, rule.IpVersion, "Incorrect IP Version for rule: " + rule);
-                    }
+                    Assert.True(chain.IpVersion == _fixture.IpVersion, "Incorrect IP Version for chain: " + chain);
                 }
-                Assert.AreEqual(0, IptcInterface.RefCount);
-            }   
+
+                Assert.True(rules.Chains.SelectMany(a => a.Rules).Any(), "Expected at least one rule");
+
+                foreach (var rule in rules.Chains.SelectMany(a => a.Rules))
+                {
+                    Assert.True(rule.IpVersion == _fixture.IpVersion, "Incorrect IP Version for rule: " + rule);
+                }
+            }
+            Assert.Equal(0, IptcInterface.RefCount);
         }
 
-
-        [Test]
+        [Fact]
         public void TestRuleAdd()
         {
-            if (IsLinux)
-            {
-                Assert.AreEqual(0, IptcInterface.RefCount);
-                var system = new IpTablesSystem(null, new IPTablesLibAdapter());
-                using (var client = system.GetTableAdapter(_ipVersion))
-                {
-                    Assert.IsTrue(client is IPTablesLibAdapterClient);
-                    var rules = client.ListRules("filter");
-                    var chain = new IpTablesChainSet(_ipVersion);
-                    foreach (var c in rules.Chains)
-                    {
-                        Assert.AreEqual(_ipVersion, c.IpVersion);
-                        chain.AddChain(c as IpTablesChain);
-                    }
-                    var rule = IpTablesRule.Parse("-A test2 -p 80 -j ACCEPT", system, chain);
-                    client.StartTransaction();
-                    try
-                    {
-                        client.AddRule(rule);
-                    }
-                    finally
-                    {
-                        client.EndTransactionCommit();
-                    }
+            _fixture.SkipIfNeeded();
 
-                    var proc = Process.Start(new ProcessStartInfo(GetBinary(), "-L test2"){RedirectStandardOutput = true, UseShellExecute = false});
-                    proc.WaitForExit();
-                    String listOutput = proc.StandardOutput.ReadToEnd();
-                    Assert.IsTrue(listOutput.Contains("anywhere"), "must have created rule");
+            Assert.Equal(0, IptcInterface.RefCount);
+            var system = new IpTablesSystem(null, new IPTablesLibAdapter());
+            using (var client = system.GetTableAdapter(_fixture.IpVersion))
+            {
+                Assert.True(client is IPTablesLibAdapterClient);
+                var rules = client.ListRules("filter");
+                Assert.NotNull(rules);
+
+                var chain = new IpTablesChainSet(_fixture.IpVersion);
+                foreach (var existingChain in rules.Chains)
+                {
+                    Assert.Equal(_fixture.IpVersion, existingChain.IpVersion);
+                    chain.AddChain(existingChain as IpTablesChain);
                 }
-                Assert.AreEqual(0, IptcInterface.RefCount);
+
+                var rule = IpTablesRule.Parse("-A test2 -p 80 -j ACCEPT", system, chain);
+                client.StartTransaction();
+                try
+                {
+                    client.AddRule(rule);
+                }
+                finally
+                {
+                    client.EndTransactionCommit();
+                }
+
+                using (var process = Process.Start(new ProcessStartInfo(_fixture.GetBinary(), "-L test2")
+                {
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false
+                }))
+                {
+                    process.WaitForExit();
+                    string listOutput = process.StandardOutput.ReadToEnd();
+                    Assert.True(listOutput.Contains("anywhere"), "must have created rule");
+                }
             }
+            Assert.Equal(0, IptcInterface.RefCount);
         }
     }
 }

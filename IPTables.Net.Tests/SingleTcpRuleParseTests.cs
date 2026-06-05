@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleTcpRuleParseTests
+    public class SingleTcpRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestDropFragmentedTcpDns()
         {
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53";
@@ -15,10 +13,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestDropFragmentedTcpDnsEquality()
         {
             String rule = "-A INPUT -p tcp ! -f -j DROP -m tcp --sport 53";
@@ -27,10 +25,10 @@ namespace IPTables.Net.Tests
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.IsTrue(irule2.Compare(irule1));
+            Assert.True(irule2.Compare(irule1));
         }
 
-        [Test]
+        [Fact]
         public void TestCoreSportEquality()
         {
             String rule = "-A INPUT -p tcp -j DROP -m tcp --sport 1";
@@ -39,10 +37,10 @@ namespace IPTables.Net.Tests
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
             IpTablesRule irule2 = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.IsTrue(irule2.Compare(irule1));
+            Assert.True(irule2.Compare(irule1));
         }
 
-        [Test]
+        [Fact]
         public void TestCoreSportZeroValue()
         {
             String rule = "-A INPUT -p tcp -j DROP -m tcp --sport 0";
@@ -50,7 +48,7 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule1 = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule1.GetActionCommand());
+            Assert.Equal(rule, irule1.GetActionCommand());
         }
     }
 }

@@ -1,73 +1,71 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleHashlimitRuleParseTests
+    public class SingleHashlimitRuleParseTests
     {
-        [Test]
+        [Fact]
         public void TestCompare1()
         {
             String rule = "-A ABC -m hashlimit --hashlimit-name aaaaaaaaaaaaaaaaaaaaaa --hashlimit-above 125/second --hashlimit-burst 500 --hashlimit-mode dstip,dstport --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 65000 --hashlimit-htable-max 30000 --hashlimit-htable-expire 6 --hashlimit-htable-gcinterval 600 -j AVS";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule, null, chains, 4)));
+            Assert.True(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule, null, chains, 4)));
         }
 
-        [Test]
+        [Fact]
         public void TestCompare2()
         {
             String rule = "-A AAAA -t raw -m hashlimit --hashlimit-name synflood_spoofe --hashlimit-above 111/second --hashlimit-burst 500 --hashlimit-mode dstip,dstport --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 65000 --hashlimit-htable-max 30000 --hashlimit-htable-expire 6 --hashlimit-htable-gcinterval 600 -g AA";
             String rule2 = "-A AAAA -t raw -m hashlimit --hashlimit-above 111/sec --hashlimit-burst 500 --hashlimit-mode dstip,dstport --hashlimit-name synflood_spoofe --hashlimit-htable-size 65000 --hashlimit-htable-max 30000 --hashlimit-htable-gcinterval 600 --hashlimit-htable-expire 6 -g AA";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule2, null, chains)));
+            Assert.True(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule2, null, chains)));
         }
 
-        [Test]
+        [Fact]
         public void TestCompare3()
         {
             String rule = "-A AAAA -t raw -m hashlimit --hashlimit-name X$a|b|c --hashlimit-above 111/second --hashlimit-burst 500 --hashlimit-mode dstport --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 65000 --hashlimit-htable-max 30000 --hashlimit-htable-expire 6 --hashlimit-htable-gcinterval 600 -g AA";
             String rule2 = "-A AAAA -t raw -m hashlimit --hashlimit-above 111/sec --hashlimit-burst 500 --hashlimit-mode dstport --hashlimit-name 'X$a|b|c' --hashlimit-htable-size 65000 --hashlimit-htable-max 30000 --hashlimit-htable-gcinterval 600 --hashlimit-htable-expire 6 -g AA";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule2, null, chains)));
+            Assert.True(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule2, null, chains)));
         }
 
-        [Test]
+        [Fact]
         public void TestCompare4()
         {
             String rule = "-A AAA -p udp -m hashlimit --hashlimit-upto 5000/sec --hashlimit-burst 10000 --hashlimit-mode dstport --hashlimit-name X|gm2nkFUEm3KMQelhNE9A --hashlimit-htable-size 32782 --hashlimit-htable-max 200000 --hashlimit-htable-expire 10000 -m comment --comment \"X|A|B\" -g aaaa";
             String rule2 = "-A AAA -p udp -g N_RE_gm2nkFUEm3KMQelhNE9A -m hashlimit --hashlimit-name 'X|gm2nkFUEm3KMQelhNE9A' --hashlimit-upto 5000/second --hashlimit-burst 10000 --hashlimit-mode dstport --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 32782 --hashlimit-htable-max 200000 --hashlimit-htable-expire 10000 --hashlimit-htable-gcinterval 1000 -m comment --comment 'X|A|B' -g aaaa";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule2, null, chains)));
+            Assert.True(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule2, null, chains)));
         }
 
-        [Test]
+        [Fact]
         public void TestByte1()
         {
             String rule = "-A ABC -m hashlimit --hashlimit-name aaaaaaaaaaaaaaaaaaaaaa --hashlimit-above 5kb/second --hashlimit-burst 500 --hashlimit-mode dstip,dstport --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 65000 --hashlimit-htable-max 30000 --hashlimit-htable-expire 6 --hashlimit-htable-gcinterval 600 -j AVS";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule, null, chains, 4)));
+            Assert.True(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule, null, chains, 4)));
 
             String outputRule = IpTablesRule.Parse(rule, null, chains, 4).GetActionCommand();
-            Assert.IsTrue(outputRule.Contains("5kb/s"));
+            Assert.True(outputRule.Contains("5kb/s"));
         }
-        [Test]
+        [Fact]
         public void TestByte2()
         {
             String rule = "-A ABC -m hashlimit --hashlimit-name aaaaaaaaaaaaaaaaaaaaaa --hashlimit-above 5kb/second --hashlimit-burst 1mb --hashlimit-mode dstip,dstport --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 65000 --hashlimit-htable-max 30000 --hashlimit-htable-expire 6 --hashlimit-htable-gcinterval 600 -j AVS";
             IpTablesChainSet chains = new IpTablesChainSet(4);
 
-            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule, null, chains, 4)));
-            Assert.IsTrue(IpTablesRule.Parse(rule, null, chains, 4).GetActionCommand().Contains("5kb/s"));
+            Assert.True(IpTablesRule.Parse(rule, null, chains, 4).Compare(IpTablesRule.Parse(rule, null, chains, 4)));
+            Assert.True(IpTablesRule.Parse(rule, null, chains, 4).GetActionCommand().Contains("5kb/s"));
         }
 
-        [Test]
+        [Fact]
         public void TestByte3()
         {
             String rule1 = "-A ABC -m hashlimit --hashlimit-above 16b/s --hashlimit-burst 32b --hashlimit-mode srcip,dstip --hashlimit-name C_82 --hashlimit-htable-size 16000 --hashlimit-htable-max 256000 --hashlimit-htable-expire 10000";
@@ -76,7 +74,7 @@ namespace IPTables.Net.Tests
             var r1 = IpTablesRule.Parse(rule1, null, chains, 4);
         }
         
-        [Test]
+        [Fact]
         public void TestByte4()
         {
             String rule2 = "-A ABC -m hashlimit --hashlimit-name C_82 --hashlimit-above 10kb/second --hashlimit-burst 10kb --hashlimit-mode srcip,dstip --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 16000 --hashlimit-htable-max 256000 --hashlimit-htable-expire 10000 --hashlimit-htable-gcinterval 1000";
@@ -85,11 +83,11 @@ namespace IPTables.Net.Tests
 
             var r1 = IpTablesRule.Parse(rule, null, chains, 4);
             var r2 = IpTablesRule.Parse(rule2, null, chains, 4);
-            Assert.IsTrue(r1.Compare(r2));
-            Assert.IsTrue(r1.GetActionCommand().Contains(" 10kb"), r1.GetActionCommand());
+            Assert.True(r1.Compare(r2));
+            Assert.True(r1.GetActionCommand().Contains(" 10kb"), r1.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestByte5()
         {
             String rule = "-A ABC -m hashlimit --hashlimit-name C_82 --hashlimit-above 100b/second --hashlimit-burst 200b --hashlimit-mode srcip,dstip --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 16000 --hashlimit-htable-max 256000 --hashlimit-htable-expire 10000 --hashlimit-htable-gcinterval 1000";
@@ -97,12 +95,12 @@ namespace IPTables.Net.Tests
 
             var r1 = IpTablesRule.Parse(rule, null, chains, 4);
             var outputRule = r1.GetActionCommand();
-            Assert.IsTrue(outputRule.Contains(" 96b/s"), r1.GetActionCommand());
-            Assert.IsTrue(outputRule.Contains(" 192b "), r1.GetActionCommand());
+            Assert.True(outputRule.Contains(" 96b/s"), r1.GetActionCommand());
+            Assert.True(outputRule.Contains(" 192b "), r1.GetActionCommand());
         }
 
 
-        [Test]
+        [Fact]
         public void TestRateCompare()
         {
             String rule = "-A ABC -m hashlimit --hashlimit-name C_82 --hashlimit-above 500/s --hashlimit-mode srcip,dstip --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 16000 --hashlimit-htable-max 256000 --hashlimit-htable-expire 10000 --hashlimit-htable-gcinterval 1000";
@@ -112,7 +110,7 @@ namespace IPTables.Net.Tests
             var r1 = IpTablesRule.Parse(rule, null, chains, 4);
             var r2 = IpTablesRule.Parse(rule2, null, chains, 4);
 
-            Assert.IsFalse(r1.Compare(r2));
+            Assert.False(r1.Compare(r2));
         }
     }
 }

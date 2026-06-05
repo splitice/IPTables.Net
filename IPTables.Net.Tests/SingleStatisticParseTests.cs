@@ -1,13 +1,11 @@
 ﻿using System;
 using IPTables.Net.Iptables;
-using NUnit.Framework;
 
 namespace IPTables.Net.Tests
 {
-    [TestFixture]
-    internal class SingleStatisticParseTests
+    public class SingleStatisticParseTests
     {
-        [Test]
+        [Fact]
         public void TestEvery()
         {
             String rule = "-A FORWARD -m statistic --mode nth --every 3 --packet 1";
@@ -15,10 +13,10 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
 
-        [Test]
+        [Fact]
         public void TestRandom()
         {
             String rule = "-A CHAIN -t raw -m statistic --mode random --probability 0.04";
@@ -26,9 +24,9 @@ namespace IPTables.Net.Tests
 
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
 
-            Assert.AreEqual(rule, irule.GetActionCommand());
+            Assert.Equal(rule, irule.GetActionCommand());
         }
-        [Test]
+        [Fact]
         public void TestRandomRounding()
         {
             String rule = "-A CHAIN -t raw -m statistic --mode random --probability 0.03999999911";
@@ -38,9 +36,9 @@ namespace IPTables.Net.Tests
             IpTablesRule irule = IpTablesRule.Parse(rule, null, chains, 4);
             IpTablesRule irule2 = IpTablesRule.Parse(rule2, null, chains, 4);
 
-            Assert.IsTrue(irule.Compare(irule2));
+            Assert.True(irule.Compare(irule2));
         }
-        [Test]
+        [Fact]
         public void TestRandomRoundingNot()
         {
             String rule = "-A CHAIN -t raw -m statistic --mode random --probability 0.04";
@@ -51,10 +49,10 @@ namespace IPTables.Net.Tests
             IpTablesRule irule2 = IpTablesRule.Parse(rule2, null, chains, 4);
 
 
-            Assert.AreEqual(irule.GetActionCommand(), irule2.GetActionCommand());
-            Assert.IsTrue(irule.Compare(irule2));
+            Assert.Equal(irule.GetActionCommand(), irule2.GetActionCommand());
+            Assert.True(irule.Compare(irule2));
         }
-        [Test]
+        [Fact]
         public void TestRandomRounding2()
         {
             String rule = "-A CHAIN -t raw -m statistic --mode random ! --probability 0.04";
@@ -65,10 +63,10 @@ namespace IPTables.Net.Tests
             IpTablesRule irule2 = IpTablesRule.Parse(rule2, null, chains, 4);
 
 
-            Assert.AreEqual(irule.GetActionCommand(), irule2.GetActionCommand());
-            Assert.IsTrue(irule.Compare(irule2));
+            Assert.Equal(irule.GetActionCommand(), irule2.GetActionCommand());
+            Assert.True(irule.Compare(irule2));
         }
-        [Test]
+        [Fact]
         public void TestRandomRounding3()
         {
             String rule = "-A CHAIN -t raw -m statistic --mode random --probability 0.09000000000";
@@ -79,8 +77,8 @@ namespace IPTables.Net.Tests
             IpTablesRule irule2 = IpTablesRule.Parse(rule2, null, chains, 4);
 
 
-            Assert.AreEqual(irule.GetActionCommand(), irule2.GetActionCommand());
-            Assert.IsTrue(irule.Compare(irule2));
+            Assert.Equal(irule.GetActionCommand(), irule2.GetActionCommand());
+            Assert.True(irule.Compare(irule2));
         }
     }
 }
