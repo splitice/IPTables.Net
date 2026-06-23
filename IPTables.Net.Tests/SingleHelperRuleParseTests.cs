@@ -26,5 +26,11 @@ namespace IPTables.Net.Tests
 
             Assert.Equal(rule, irule.GetActionCommand());
         }
+
+        [Fact]
+        public void TestPositiveHelperRoundTrip()
+        {
+            RuleParseAssert.RoundTrips("-A INPUT -m helper --helper ftp -j ACCEPT");
+        }
     }
 }

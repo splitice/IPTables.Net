@@ -41,5 +41,13 @@ namespace IPTables.Net.Tests
             Assert.Equal(rule2, irule.GetActionCommand());
             Assert.True(IpTablesRule.Parse(rule2, null, chains, 4).Compare(irule));
         }
+
+        [Fact]
+        public void TestNfacctQuotedNameRoundTrip()
+        {
+            RuleParseAssert.RoundTrips(
+                "-A INPUT -j ACCEPT -m nfacct --nfacct-name 'test name'",
+                "-A INPUT -j ACCEPT -m nfacct --nfacct-name 'test name'");
+        }
     }
 }

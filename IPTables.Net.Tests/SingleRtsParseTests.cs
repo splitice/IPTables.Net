@@ -27,5 +27,11 @@ namespace IPTables.Net.Tests
 
             Assert.True(irule2.Compare(irule1));
         }
+
+        [Fact]
+        public void TestRtsDestinationRoundTrip()
+        {
+            RuleParseAssert.RoundTrips("-A INPUT -j RTS --rts-dst 1.1.1.1");
+        }
     }
 }

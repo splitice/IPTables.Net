@@ -36,5 +36,11 @@ namespace IPTables.Net.Tests
 
             Assert.Equal(rule, irule.GetActionCommand());
         }
+
+        [Fact]
+        public void TestLengthRoundTrip()
+        {
+            RuleParseAssert.RoundTrips("-A INPUT -m length --length 10 -j ACCEPT");
+        }
     }
 }

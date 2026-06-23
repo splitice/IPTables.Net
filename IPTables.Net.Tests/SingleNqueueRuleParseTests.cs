@@ -15,5 +15,13 @@ namespace IPTables.Net.Tests
 
             Assert.Equal(rule, irule.GetActionCommand());
         }
+
+        [Theory]
+        [InlineData("-A INPUT -j NFQUEUE --queue-num 2")]
+        [InlineData("-A INPUT -j NFQUEUE --queue-bypass")]
+        public void TestNfqueueOptionRoundTrip(string rule)
+        {
+            RuleParseAssert.RoundTrips(rule);
+        }
     }
 }

@@ -29,5 +29,15 @@ namespace IPTables.Net.Tests
             Assert.Equal(rule, irule1.GetActionCommand());
             Assert.Equal(rule, irule2.GetActionCommand());
         }
+
+        [Theory]
+        [InlineData("-A POSTROUTING -t nat -j SNAT --to-source 2.2.2.2:1000-2000")]
+        [InlineData("-A POSTROUTING -t nat -j SNAT --random")]
+        [InlineData("-A POSTROUTING -t nat -j SNAT --persistent")]
+        [InlineData("-A POSTROUTING -t nat -j SNAT --to-source 2.2.2.2 --random --persistent")]
+        public void TestSnatOptionRoundTrip(string rule)
+        {
+            RuleParseAssert.RoundTrips(rule);
+        }
     }
 }

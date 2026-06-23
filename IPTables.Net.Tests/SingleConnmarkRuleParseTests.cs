@@ -154,5 +154,17 @@ namespace IPTables.Net.Tests
 
             Assert.Equal(rule, irule.GetActionCommand());
         }
+
+        [Theory]
+        [InlineData("-A INPUT -m connmark ! --mark 0xFF", "-A INPUT -m connmark ! --mark 0xFF")]
+        [InlineData("-A INPUT -j CONNMARK --set-mark 0xFF", "-A INPUT -j CONNMARK --set-xmark 0xFF")]
+        [InlineData("-A INPUT -j CONNMARK --and-mark 0x0", "-A INPUT -j CONNMARK --set-xmark 0x0")]
+        [InlineData("-A INPUT -j CONNMARK --or-mark 0", "-A INPUT -j CONNMARK --set-xmark 0x0/0x0")]
+        [InlineData("-A INPUT -j CONNMARK --xor-mark 0", "-A INPUT -j CONNMARK --set-xmark 0x0/0x0")]
+        [InlineData("-A INPUT -j CONNMARK --save-mark --ctmask 0x11 --nfmask 0x3FFFF00", "-A INPUT -j CONNMARK --save-mark --ctmask 0x11 --nfmask 0x3FFFF00")]
+        public void TestConnmarkOptionRoundTrip(string input, string expected)
+        {
+            RuleParseAssert.RoundTrips(input, expected);
+        }
     }
 }

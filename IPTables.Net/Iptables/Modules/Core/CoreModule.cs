@@ -178,7 +178,17 @@ namespace IPTables.Net.Iptables.Modules.Core
                 sb.Append("-f");
             }
 
-            sb.Append(SetCounters.ToOption(OptionFragmentShort));
+            if (!SetCounters.Null)
+            {
+                if (sb.Length != 0)
+                    sb.Append(" ");
+                if (SetCounters.Not) sb.Append("! ");
+                sb.Append(OptionSetCountersShort);
+                sb.Append(" ");
+                sb.Append(SetCounters.Value.Packets);
+                sb.Append(" ");
+                sb.Append(SetCounters.Value.Bytes);
+            }
 
             if (Target != null)
             {

@@ -80,5 +80,13 @@ namespace IPTables.Net.Tests
             Assert.Equal(irule.GetActionCommand(), irule2.GetActionCommand());
             Assert.True(irule.Compare(irule2));
         }
+
+        [Theory]
+        [InlineData("-A FORWARD -m statistic --mode nth ! --every 3 --packet 1")]
+        [InlineData("-A CHAIN -t raw -m statistic --mode random ! --probability 0.04")]
+        public void TestStatisticOptionRoundTrip(string rule)
+        {
+            RuleParseAssert.RoundTrips(rule);
+        }
     }
 }

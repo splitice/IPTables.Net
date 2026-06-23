@@ -27,5 +27,15 @@ namespace IPTables.Net.Tests
 
             Assert.True(irule2.Compare(irule1));
         }
+
+        [Theory]
+        [InlineData("-A INPUT -p tcp -m connlimit --connlimit-upto 5", "-A INPUT -p tcp -m connlimit --connlimit-upto 5")]
+        [InlineData("-A INPUT -p tcp -m connlimit --connlimit-above 10 --connlimit-mask 24", "-A INPUT -p tcp -m connlimit --connlimit-above 10 --connlimit-mask 24")]
+        [InlineData("-A INPUT -p tcp -m connlimit --connlimit-above 10 --connlimit-daddr", "-A INPUT -p tcp -m connlimit --connlimit-above 10 --connlimit-daddr")]
+        [InlineData("-A INPUT -p tcp -m connlimit --connlimit-above 10 --connlimit-saddr", "-A INPUT -p tcp -m connlimit --connlimit-above 10")]
+        public void TestConnlimitOptionRoundTrip(string input, string expected)
+        {
+            RuleParseAssert.RoundTrips(input, expected);
+        }
     }
 }

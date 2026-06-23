@@ -64,18 +64,21 @@ namespace IPTables.Net.Iptables.Modules.Ct
 
             if (Helper != null)
             {
+                if (sb.Length != 0) sb.Append(" ");
                 sb.Append(OptionHelperLong + " ");
                 sb.Append(Helper);
             }
 
             if (CtEvents.Any())
             {
+                if (sb.Length != 0) sb.Append(" ");
                 sb.Append(OptionCtEventsLong + " ");
                 sb.Append(string.Join(",", CtEvents));
             }
 
             if (ExpEvents.Any())
             {
+                if (sb.Length != 0) sb.Append(" ");
                 sb.Append(OptionExpEventsLong + " ");
                 sb.Append(string.Join(",", ExpEvents));
             }
