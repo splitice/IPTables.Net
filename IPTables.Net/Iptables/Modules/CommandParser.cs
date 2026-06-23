@@ -111,7 +111,11 @@ namespace IPTables.Net.Iptables.Modules
                 return 1;
             }
 
-            if (option == "-j") LoadParserModule(GetNextArg(), true);
+            ModuleEntry? targetEntry = null;
+            if (option == "-j" || option == "--jump")
+            {
+                targetEntry = LoadParserModule(GetNextArg(), true);
+            }
 
             //Search each module, do it verbosely from the most recently added
             ModuleEntry m;
@@ -124,10 +128,17 @@ namespace IPTables.Net.Iptables.Modules
             }
 
             var module = _ipCommand.Rule.GetModuleForParseInternal(m.Name, m.Activator, _version);
-            return module.Feed(this, not);
+            var consumed = module.Feed(this, not);
+
+            if (targetEntry.HasValue)
+            {
+                _ipCommand.Rule.LoadModule(targetEntry.Value);
+            }
+
+            return consumed;
         }
 
-        private void LoadParserModule(string name, bool isTarget = false)
+        private ModuleEntry? LoadParserModule(string name, bool isTarget = false)
         {
             ModuleEntry entry;
             if (isTarget)
@@ -136,7 +147,7 @@ namespace IPTables.Net.Iptables.Modules
 
                 //Check if this target is loadable target
                 if (!entryOrNull.HasValue)
-                    return;
+                    return null;
 
                 entry = entryOrNull.Value;
             }
@@ -150,6 +161,8 @@ namespace IPTables.Net.Iptables.Modules
             if (!entry.Polyfill)
                 foreach (var o in entry.Options)
                     _parsers.Add(o, entry);
+
+            return entry;
         }
     }
 }
