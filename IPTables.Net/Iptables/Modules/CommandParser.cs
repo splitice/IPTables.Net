@@ -130,6 +130,9 @@ namespace IPTables.Net.Iptables.Modules
             var module = _ipCommand.Rule.GetModuleForParseInternal(m.Name, m.Activator, _version);
             var consumed = module.Feed(this, not);
 
+            if (targetEntry.HasValue)
+                _ipCommand.Rule.LoadModule(targetEntry.Value);
+
             return consumed;
         }
 

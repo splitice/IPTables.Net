@@ -23,6 +23,7 @@ namespace IPTables.Net.Tests
             var generated = CreateGeneratedRule(target, jump: true, loadTarget: true);
 
             Assert.Equal(parsed.GetActionCommand(), generated.GetActionCommand());
+            Assert.True(parsed.HasModule(target));
             Assert.True(parsed.Compare(generated));
         }
 
@@ -35,6 +36,7 @@ namespace IPTables.Net.Tests
             var generated = CreateGeneratedRule(target, jump: false, loadTarget: false);
 
             Assert.Equal(parsed.GetActionCommand(), generated.GetActionCommand());
+            Assert.False(parsed.HasModule(target));
             Assert.True(parsed.Compare(generated));
         }
 

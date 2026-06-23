@@ -39,7 +39,7 @@ namespace IPTables.Net.Iptables.Modules.Ts3Init
 
         public static ModuleEntry GetModuleEntry()
         {
-            return GetTargetModuleEntryInternal("TS3INIT_GET_COOKIE", typeof(Ts3InitGetCookieModule), GetOptions, (version) => new Ts3InitGetCookieMatchModule(version),
+            return GetTargetModuleEntryInternal("TS3INIT_GET_COOKIE", typeof(Ts3InitGetCookieModule), GetOptions, (version) => new Ts3InitGetCookieModule(version),
                 false);
         }
 
