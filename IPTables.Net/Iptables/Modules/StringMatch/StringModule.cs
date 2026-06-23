@@ -89,7 +89,7 @@ namespace IPTables.Net.Iptables.Modules.StringMatch
 
         public string GetRuleString()
         {
-            var ret = "--alg ";
+            var ret = "--algo ";
             if (Algorithm == Strategy.BoyerMoore)
                 ret += "bm";
             else

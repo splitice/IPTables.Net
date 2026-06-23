@@ -15,5 +15,11 @@ namespace IPTables.Net.Tests
 
             Assert.Equal(rule, irule.GetActionCommand());
         }
+
+        [Fact]
+        public void TestRejectRoundTrip()
+        {
+            RuleParseAssert.RoundTrips("-A ufw-user-limit -j REJECT --reject-with icmp-port-unreachable");
+        }
     }
 }

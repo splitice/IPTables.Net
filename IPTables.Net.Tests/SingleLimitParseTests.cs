@@ -42,5 +42,16 @@ namespace IPTables.Net.Tests
 
             Assert.True(r1.Compare(r2));
         }
+
+        [Theory]
+        [InlineData("-A ABC -m limit --limit 10/s", "-A ABC -m limit --limit 10/second --limit-burst 5")]
+        [InlineData("-A ABC -m limit --limit 10/sec --limit-burst 7", "-A ABC -m limit --limit 10/second --limit-burst 7")]
+        [InlineData("-A ABC -m limit --limit 10/minute --limit-burst 7", "-A ABC -m limit --limit 10/minute --limit-burst 7")]
+        [InlineData("-A ABC -m limit --limit 10/h --limit-burst 7", "-A ABC -m limit --limit 10/hour --limit-burst 7")]
+        [InlineData("-A ABC -m limit --limit 10/day --limit-burst 7", "-A ABC -m limit --limit 10/day --limit-burst 7")]
+        public void TestLimitOptionRoundTrip(string input, string expected)
+        {
+            RuleParseAssert.RoundTrips(input, expected);
+        }
     }
 }

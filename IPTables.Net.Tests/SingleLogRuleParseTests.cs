@@ -15,5 +15,13 @@ namespace IPTables.Net.Tests
 
             Assert.Equal(rule, irule.GetActionCommand());
         }
+
+        [Theory]
+        [InlineData("-A INPUT -j LOG --log-level 4", "-A INPUT -j LOG --log-level 4")]
+        [InlineData("-A INPUT -j LOG --log-prefix prefix", "-A INPUT -j LOG --log-prefix prefix --log-level 7")]
+        public void TestLogOptionRoundTrip(string input, string expected)
+        {
+            RuleParseAssert.RoundTrips(input, expected);
+        }
     }
 }

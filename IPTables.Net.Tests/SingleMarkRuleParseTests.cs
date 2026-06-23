@@ -82,5 +82,17 @@ namespace IPTables.Net.Tests
 
             Assert.Equal(ruleExpect, irule.GetActionCommand());
         }
+
+        [Theory]
+        [InlineData("-A INPUT -m mark ! --mark 0xFF", "-A INPUT -m mark ! --mark 0xFF")]
+        [InlineData("-A INPUT -j MARK --set-mark 0xFF", "-A INPUT -j MARK --set-xmark 0xFF")]
+        [InlineData("-A INPUT -j MARK --set-mark 0xF/0xF0", "-A INPUT -j MARK --set-xmark 0xF/0xFF")]
+        [InlineData("-A INPUT -j MARK --and-mark 0x0", "-A INPUT -j MARK --set-xmark 0x0")]
+        [InlineData("-A INPUT -j MARK --or-mark 0", "-A INPUT -j MARK --set-xmark 0x0/0x0")]
+        [InlineData("-A INPUT -j MARK --xor-mark 0", "-A INPUT -j MARK --set-xmark 0x0/0x0")]
+        public void TestMarkOptionRoundTrip(string input, string expected)
+        {
+            RuleParseAssert.RoundTrips(input, expected);
+        }
     }
 }

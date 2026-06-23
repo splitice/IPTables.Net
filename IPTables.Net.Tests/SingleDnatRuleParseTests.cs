@@ -29,5 +29,15 @@ namespace IPTables.Net.Tests
             Assert.Equal(rule, irule1.GetActionCommand());
             Assert.Equal(rule, irule2.GetActionCommand());
         }
+
+        [Theory]
+        [InlineData("-A PREROUTING -t nat -j DNAT --to-destination 2.2.2.2:1000-2000")]
+        [InlineData("-A PREROUTING -t nat -j DNAT --random")]
+        [InlineData("-A PREROUTING -t nat -j DNAT --persistent")]
+        [InlineData("-A PREROUTING -t nat -j DNAT --to-destination 2.2.2.2 --random --persistent")]
+        public void TestDnatOptionRoundTrip(string rule)
+        {
+            RuleParseAssert.RoundTrips(rule);
+        }
     }
 }

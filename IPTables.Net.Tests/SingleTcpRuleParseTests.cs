@@ -50,5 +50,27 @@ namespace IPTables.Net.Tests
 
             Assert.Equal(rule, irule1.GetActionCommand());
         }
+
+        [Theory]
+        [InlineData("-A INPUT -p tcp -m tcp --source-port 1000:2000", "-A INPUT -p tcp -m tcp --sport 1000:2000")]
+        [InlineData("-A INPUT -p tcp -m tcp ! --source-port 1000:2000", "-A INPUT -p tcp -m tcp ! --sport 1000:2000")]
+        [InlineData("-A INPUT -p tcp -m tcp --destination-port 443", "-A INPUT -p tcp -m tcp --dport 443")]
+        [InlineData("-A INPUT -p tcp -m tcp ! --destination-port 443", "-A INPUT -p tcp -m tcp ! --dport 443")]
+        [InlineData("-A INPUT -p tcp -m tcp --tcp-flags SYN,ACK SYN", "-A INPUT -p tcp -m tcp --tcp-flags SYN,ACK SYN")]
+        [InlineData("-A INPUT -p tcp -m tcp ! --tcp-flags SYN,ACK SYN", "-A INPUT -p tcp -m tcp ! --tcp-flags SYN,ACK SYN")]
+        [InlineData("-A INPUT -p tcp -m tcp --tcp-option 2", "-A INPUT -p tcp -m tcp --tcp-option 2")]
+        [InlineData("-A INPUT -p tcp -m tcp ! --tcp-option 2", "-A INPUT -p tcp -m tcp ! --tcp-option 2")]
+        public void TestTcpOptionRoundTrip(string input, string expected)
+        {
+            RuleParseAssert.RoundTrips(input, expected);
+        }
+
+        [Fact]
+        public void TestTcpSynAliasRoundTrip()
+        {
+            RuleParseAssert.RoundTrips(
+                "-A INPUT -p tcp -m tcp --syn",
+                "-A INPUT -p tcp -m tcp --tcp-flags SYN,RST,ACK,FIN SYN");
+        }
     }
 }

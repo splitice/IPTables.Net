@@ -112,5 +112,14 @@ namespace IPTables.Net.Tests
 
             Assert.False(r1.Compare(r2));
         }
+
+        [Theory]
+        [InlineData("-A ABC -m hashlimit --hashlimit 9/min --hashlimit-burst 4 --hashlimit-mode srcip --hashlimit-name h --hashlimit-srcmask 24 --hashlimit-dstmask 32 --hashlimit-htable-size 111 --hashlimit-htable-max 222 --hashlimit-htable-expire 333 --hashlimit-htable-gcinterval 444", "-A ABC -m hashlimit --hashlimit-name h --hashlimit-upto 9/minute --hashlimit-burst 4 --hashlimit-mode srcip --hashlimit-srcmask 24 --hashlimit-dstmask 32 --hashlimit-htable-size 111 --hashlimit-htable-max 222 --hashlimit-htable-expire 333 --hashlimit-htable-gcinterval 444")]
+        [InlineData("-A ABC -m hashlimit --hashlimit-upto 8/s --hashlimit-burst 4 --hashlimit-mode dstip --hashlimit-name h", "-A ABC -m hashlimit --hashlimit-name h --hashlimit-upto 8/second --hashlimit-burst 4 --hashlimit-mode dstip --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 65000 --hashlimit-htable-max 200000 --hashlimit-htable-expire 10000 --hashlimit-htable-gcinterval 1000")]
+        [InlineData("-A ABC -m hashlimit --hashlimit-above 8/s --hashlimit-burst 4 --hashlimit-mode dstip --hashlimit-name h", "-A ABC -m hashlimit --hashlimit-name h --hashlimit-above 8/second --hashlimit-burst 4 --hashlimit-mode dstip --hashlimit-srcmask 32 --hashlimit-dstmask 32 --hashlimit-htable-size 65000 --hashlimit-htable-max 200000 --hashlimit-htable-expire 10000 --hashlimit-htable-gcinterval 1000")]
+        public void TestHashlimitOptionRoundTrip(string input, string expected)
+        {
+            RuleParseAssert.RoundTrips(input, expected);
+        }
     }
 }

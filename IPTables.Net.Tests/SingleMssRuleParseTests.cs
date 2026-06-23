@@ -25,5 +25,14 @@ namespace IPTables.Net.Tests
 
             Assert.Equal(rule, irule.GetActionCommand());
         }
+
+        [Theory]
+        [InlineData("-A INPUT -m tcpmss ! --mss 536:1460 -j ACCEPT")]
+        [InlineData("-A INPUT -j TCPMSS --clamp-mss-to-pmtu")]
+        [InlineData("-A INPUT -j TCPMSS --set-mss 1200")]
+        public void TestMssOptionRoundTrip(string rule)
+        {
+            RuleParseAssert.RoundTrips(rule);
+        }
     }
 }

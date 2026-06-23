@@ -54,5 +54,11 @@ namespace IPTables.Net.Tests
 
             Assert.Equal(rule2, irule1.GetActionCommand());
         }
+
+        [Fact]
+        public void TestCommentRoundTrip()
+        {
+            RuleParseAssert.RoundTrips("-A INPUT -m comment --comment 'this is a test rule'");
+        }
     }
 }

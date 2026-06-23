@@ -66,5 +66,21 @@ namespace IPTables.Net.Tests
 
             Assert.Equal(rule, irule.GetActionCommand());
         }
+
+        [Theory]
+        [InlineData("-A INPUT -p tcp -m multiport --ports 80,1000:1080", "-A INPUT -p tcp -m multiport --ports 80,1000:1080")]
+        [InlineData("-A INPUT -p tcp -m multiport --sports 80,1000:1080", "-A INPUT -p tcp -m multiport --sports 80,1000:1080")]
+        [InlineData("-A INPUT -p tcp -m multiport --dports 80,1000:1080", "-A INPUT -p tcp -m multiport --dports 80,1000:1080")]
+        [InlineData("-A INPUT -p tcp -m multiport ! --ports 80,1000:1080", "-A INPUT -p tcp -m multiport ! --ports 80,1000:1080")]
+        [InlineData("-A INPUT -p tcp -m multiport ! --sports 80,1000:1080", "-A INPUT -p tcp -m multiport ! --sports 80,1000:1080")]
+        [InlineData("-A INPUT -p tcp -m multiport ! --dports 80,1000:1080", "-A INPUT -p tcp -m multiport ! --dports 80,1000:1080")]
+        [InlineData("-A INPUT -p tcp -m multiport --source-ports 80,1000:1080", "-A INPUT -p tcp -m multiport --sports 80,1000:1080")]
+        [InlineData("-A INPUT -p tcp -m multiport --destination-ports 80,1000:1080", "-A INPUT -p tcp -m multiport --dports 80,1000:1080")]
+        [InlineData("-A INPUT -p tcp -m multiport ! --source-ports 80,1000:1080", "-A INPUT -p tcp -m multiport ! --sports 80,1000:1080")]
+        [InlineData("-A INPUT -p tcp -m multiport ! --destination-ports 80,1000:1080", "-A INPUT -p tcp -m multiport ! --dports 80,1000:1080")]
+        public void TestMultiportLongAliasRoundTrip(string input, string expected)
+        {
+            RuleParseAssert.RoundTrips(input, expected);
+        }
     }
 }
