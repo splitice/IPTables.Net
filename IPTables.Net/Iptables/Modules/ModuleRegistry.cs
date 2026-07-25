@@ -128,6 +128,7 @@ namespace IPTables.Net.Iptables.Modules
         }
 
         private readonly Dictionary<string, ModuleEntry> _modules = new Dictionary<string, ModuleEntry>();
+        private readonly object _modulesLock = new object();
         private static ModuleRegistry _instance = new ModuleRegistry();
 
         internal ModuleRegistry()
@@ -137,10 +138,13 @@ namespace IPTables.Net.Iptables.Modules
 
         public void RegisterModule(ModuleEntry entry, bool replace = true)
         {
-            if (replace && _modules.ContainsKey(entry.Name))
-                _modules[entry.Name] = entry;
-            else
-                _modules.Add(entry.Name, entry);
+            lock (_modulesLock)
+            {
+                if (replace && _modules.ContainsKey(entry.Name))
+                    _modules[entry.Name] = entry;
+                else
+                    _modules.Add(entry.Name, entry);
+            }
         }
 
         public static ModuleRegistry Instance => _instance;
@@ -148,30 +152,37 @@ namespace IPTables.Net.Iptables.Modules
         public ModuleEntry GetModule(string module, int version, bool target = false, bool polyfill = true)
         {
             ModuleEntry m;
-            if (!_modules.TryGetValue(module, out m))
+            lock (_modulesLock)
             {
-                if (polyfill)
+                if (_modules.TryGetValue(module, out m))
                 {
-                    m = PolyfillModule.GetModuleEntry();
-                    m.Name = module;
-                    Debug.Assert(target == false);
-                    return m;
-                }
+                    if (m.IsTarget == target)
+                        return m;
 
-                throw new IpTablesNetException(string.Format("The factory could not find module: {0}", module));
+                    throw new IpTablesNetException(string.Format("The factory could not find a module of the correct type: {0}",
+                        module));
+                }
             }
 
-            if (m.IsTarget == target)
+            if (polyfill)
+            {
+                m = PolyfillModule.GetModuleEntry();
+                m.Name = module;
+                Debug.Assert(target == false);
                 return m;
+            }
 
-            throw new IpTablesNetException(string.Format("The factory could not find a module of the correct type: {0}",
-                module));
+            throw new IpTablesNetException(string.Format("The factory could not find module: {0}", module));
         }
 
         public ModuleEntry? GetModuleOrDefault(string module, bool target = false)
         {
-            if (!_modules.ContainsKey(module)) return null;
-            var m = _modules[module];
+            ModuleEntry m;
+            lock (_modulesLock)
+            {
+                if (!_modules.TryGetValue(module, out m)) return null;
+            }
+
             if (m.IsTarget == target)
                 return m;
 
