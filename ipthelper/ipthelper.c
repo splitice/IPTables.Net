@@ -1108,10 +1108,12 @@ EXPORT int commit_handle4(void *handle, char *diagnostic,
 
 	status = iptc_commit(handle);
 	commit_errno = errno;
-	if (!status && (commit_errno == EPROTOTYPE ||
-		commit_errno == EPROTONOSUPPORT || commit_errno == ENOENT))
-		diagnose_revision4(handle, diagnostic, diagnostic_length);
-	iptc_free(handle);
+	if (!status) {
+		if (commit_errno == EPROTOTYPE ||
+			commit_errno == EPROTONOSUPPORT || commit_errno == ENOENT)
+			diagnose_revision4(handle, diagnostic, diagnostic_length);
+		iptc_free(handle);
+	}
 	errno = commit_errno;
 	return status;
 }
@@ -1131,10 +1133,12 @@ EXPORT int commit_handle6(void *handle, char *diagnostic,
 
 	status = ip6tc_commit(handle);
 	commit_errno = errno;
-	if (!status && (commit_errno == EPROTOTYPE ||
-		commit_errno == EPROTONOSUPPORT || commit_errno == ENOENT))
-		diagnose_revision6(handle, diagnostic, diagnostic_length);
-	ip6tc_free(handle);
+	if (!status) {
+		if (commit_errno == EPROTOTYPE ||
+			commit_errno == EPROTONOSUPPORT || commit_errno == ENOENT)
+			diagnose_revision6(handle, diagnostic, diagnostic_length);
+		ip6tc_free(handle);
+	}
 	errno = commit_errno;
 	return status;
 }
