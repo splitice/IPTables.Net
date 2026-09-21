@@ -37,6 +37,7 @@
 #include <stdarg.h>
 #include <limits.h>
 #include <unistd.h>
+#include <sys/socket.h>
 #include <xtables.h>
 #include <fcntl.h>
 #include <assert.h>
@@ -52,6 +53,16 @@
 #include <wordexp.h>
 #endif
 #include <setjmp.h>
+
+#ifndef IPT_SO_GET_REVISION_MATCH
+#define IPT_SO_GET_REVISION_MATCH (IPT_BASE_CTL + 2)
+#define IPT_SO_GET_REVISION_TARGET (IPT_BASE_CTL + 3)
+#endif
+
+#ifndef IP6T_SO_GET_REVISION_MATCH
+#define IP6T_SO_GET_REVISION_MATCH 68
+#define IP6T_SO_GET_REVISION_TARGET 69
+#endif
 
 char* errbuffer = NULL;
 jmp_buf buf = { };
@@ -920,6 +931,216 @@ EXPORT int execute_command6(const char* rule, void *h){
 	free(newargv);
 	capture_cleanup();
 	return ret;
+}
+
+typedef struct {
+	int socket;
+	int ip_version;
+	int protocol;
+	int match_option;
+	int target_option;
+	void *handle;
+	const char *chain;
+	unsigned int rule_number;
+	char *diagnostic;
+	size_t diagnostic_length;
+} revision_scan_t;
+
+static int check_extension_revision(revision_scan_t *scan, const char *kind,
+	const char *name, unsigned char revision, int option)
+{
+	struct xt_get_revision requested_revision;
+	socklen_t requested_revision_length = sizeof(requested_revision);
+	int query_errno;
+
+	memset(&requested_revision, 0, sizeof(requested_revision));
+	strncpy(requested_revision.name, name, sizeof(requested_revision.name) - 1);
+	requested_revision.revision = revision;
+
+	if (getsockopt(scan->socket, scan->protocol, option, &requested_revision,
+		&requested_revision_length) >= 0)
+		return 0;
+
+	query_errno = errno;
+	if (query_errno == EPROTONOSUPPORT || query_errno == EPROTOTYPE) {
+		snprintf(scan->diagnostic, scan->diagnostic_length,
+			"incompatible %s \"%s\" revision %u in chain \"%s\", rule %u",
+			kind, name, revision, scan->chain, scan->rule_number);
+		return 1;
+	}
+
+	if (query_errno == ENOENT) {
+		snprintf(scan->diagnostic, scan->diagnostic_length,
+			"missing %s \"%s\" revision %u in chain \"%s\", rule %u",
+			kind, name, revision, scan->chain, scan->rule_number);
+		return 1;
+	}
+
+	return 0;
+}
+
+static int check_match_revision(const struct xt_entry_match *match,
+	revision_scan_t *scan)
+{
+	if (match->u.user.name[0] == '\0')
+		return 0;
+
+	return check_extension_revision(scan, "match", match->u.user.name,
+		match->u.user.revision, scan->match_option);
+}
+
+static int check_target_revision(const struct xt_entry_target *target,
+	revision_scan_t *scan)
+{
+	if (target->u.user.name[0] == '\0' ||
+		strcmp(target->u.user.name, XT_ERROR_TARGET) == 0)
+		return 0;
+	if ((scan->ip_version == 4 && iptc_is_chain(target->u.user.name, scan->handle)) ||
+		(scan->ip_version == 6 && ip6tc_is_chain(target->u.user.name, scan->handle)))
+		return 0;
+
+	return check_extension_revision(scan, "target", target->u.user.name,
+		target->u.user.revision, scan->target_option);
+}
+
+static void diagnose_revision4(void *handle, char *diagnostic,
+	size_t diagnostic_length)
+{
+	const char *chain;
+	revision_scan_t scan;
+
+	if (diagnostic == NULL || diagnostic_length == 0)
+		return;
+	diagnostic[0] = '\0';
+
+	memset(&scan, 0, sizeof(scan));
+	scan.socket = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
+	if (scan.socket < 0)
+		return;
+	scan.ip_version = 4;
+	scan.protocol = IPPROTO_IP;
+	scan.match_option = IPT_SO_GET_REVISION_MATCH;
+	scan.target_option = IPT_SO_GET_REVISION_TARGET;
+	scan.diagnostic = diagnostic;
+	scan.diagnostic_length = diagnostic_length;
+	scan.handle = handle;
+
+	for (chain = iptc_first_chain(handle); chain != NULL;
+		chain = iptc_next_chain(handle)) {
+		const struct ipt_entry *entry;
+
+		scan.chain = chain;
+		scan.rule_number = 1;
+		for (entry = iptc_first_rule(chain, handle); entry != NULL;
+			entry = iptc_next_rule(entry, handle), ++scan.rule_number) {
+			struct xt_entry_target *target;
+
+			if (IPT_MATCH_ITERATE(entry, check_match_revision, &scan) != 0)
+				goto done;
+
+			target = ipt_get_target((struct ipt_entry *)entry);
+			if (check_target_revision(target, &scan) != 0)
+				goto done;
+		}
+	}
+
+done:
+	close(scan.socket);
+}
+
+static void diagnose_revision6(void *handle, char *diagnostic,
+	size_t diagnostic_length)
+{
+	const char *chain;
+	revision_scan_t scan;
+
+	if (diagnostic == NULL || diagnostic_length == 0)
+		return;
+	diagnostic[0] = '\0';
+
+	memset(&scan, 0, sizeof(scan));
+	scan.socket = socket(AF_INET6, SOCK_RAW, IPPROTO_RAW);
+	if (scan.socket < 0)
+		return;
+	scan.ip_version = 6;
+	scan.protocol = IPPROTO_IPV6;
+	scan.match_option = IP6T_SO_GET_REVISION_MATCH;
+	scan.target_option = IP6T_SO_GET_REVISION_TARGET;
+	scan.diagnostic = diagnostic;
+	scan.diagnostic_length = diagnostic_length;
+	scan.handle = handle;
+
+	for (chain = ip6tc_first_chain(handle); chain != NULL;
+		chain = ip6tc_next_chain(handle)) {
+		const struct ip6t_entry *entry;
+
+		scan.chain = chain;
+		scan.rule_number = 1;
+		for (entry = ip6tc_first_rule(chain, handle); entry != NULL;
+			entry = ip6tc_next_rule(entry, handle), ++scan.rule_number) {
+			struct xt_entry_target *target;
+
+			if (IP6T_MATCH_ITERATE(entry, check_match_revision, &scan) != 0)
+				goto done;
+
+			target = ip6t_get_target((struct ip6t_entry *)entry);
+			if (check_target_revision(target, &scan) != 0)
+				goto done;
+		}
+	}
+
+done:
+	close(scan.socket);
+}
+
+EXPORT int commit_handle4(void *handle, char *diagnostic,
+	size_t diagnostic_length)
+{
+	int status;
+	int commit_errno;
+
+	if (diagnostic != NULL && diagnostic_length != 0)
+		diagnostic[0] = '\0';
+	if (handle == NULL) {
+		errno = EINVAL;
+		return 0;
+	}
+
+	status = iptc_commit(handle);
+	commit_errno = errno;
+	if (!status) {
+		if (commit_errno == EPROTOTYPE ||
+			commit_errno == EPROTONOSUPPORT || commit_errno == ENOENT)
+			diagnose_revision4(handle, diagnostic, diagnostic_length);
+		iptc_free(handle);
+	}
+	errno = commit_errno;
+	return status;
+}
+
+EXPORT int commit_handle6(void *handle, char *diagnostic,
+	size_t diagnostic_length)
+{
+	int status;
+	int commit_errno;
+
+	if (diagnostic != NULL && diagnostic_length != 0)
+		diagnostic[0] = '\0';
+	if (handle == NULL) {
+		errno = EINVAL;
+		return 0;
+	}
+
+	status = ip6tc_commit(handle);
+	commit_errno = errno;
+	if (!status) {
+		if (commit_errno == EPROTOTYPE ||
+			commit_errno == EPROTONOSUPPORT || commit_errno == ENOENT)
+			diagnose_revision6(handle, diagnostic, diagnostic_length);
+		ip6tc_free(handle);
+	}
+	errno = commit_errno;
+	return status;
 }
 
 EXPORT int init_helper4(void){

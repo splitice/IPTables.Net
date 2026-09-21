@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using IPTables.Net.Exceptions;
 using Serilog;
 
@@ -388,6 +389,12 @@ namespace IPTables.Net.Iptables.NativeLibrary
         [DllImport(Helper, SetLastError = true)]
         public static extern int execute_command6(string command, IntPtr h);
 
+        [DllImport(Helper, SetLastError = true, CharSet = CharSet.Ansi)]
+        private static extern int commit_handle4(IntPtr h, StringBuilder diagnostic, UIntPtr diagnosticLength);
+
+        [DllImport(Helper, SetLastError = true, CharSet = CharSet.Ansi)]
+        private static extern int commit_handle6(IntPtr h, StringBuilder diagnostic, UIntPtr diagnosticLength);
+
         [DllImport(Helper, SetLastError = true)]
         public static extern int init_helper4();
 
@@ -516,6 +523,8 @@ namespace IPTables.Net.Iptables.NativeLibrary
         private List<string> _debugEntries = new List<string>();
         private ILogger logger;
         private int _ipVersion;
+        private int? _lastCommitError;
+        private string _lastCommitDiagnostic;
 
         private void DebugEntry(string message)
         {
@@ -542,6 +551,8 @@ namespace IPTables.Net.Iptables.NativeLibrary
         {
             if (_handle != IntPtr.Zero)
                 throw new IpTablesNetException("A table is already open, commit or discard first");
+            _lastCommitError = null;
+            _lastCommitDiagnostic = null;
             if (_ipVersion == 4)
                 _handle = init_handle4(table);
             else
@@ -596,7 +607,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public int GetLastError()
         {
-            return Marshal.GetLastWin32Error();
+            return _lastCommitError ?? Marshal.GetLastWin32Error();
         }
 
         public string GetErrorString()
@@ -607,7 +618,10 @@ namespace IPTables.Net.Iptables.NativeLibrary
                 error = iptc_strerror(lastError);
             else
                 error = ip6tc_strerror(lastError);
-            return string.Format("({0}) {1}", lastError, Marshal.PtrToStringAnsi(error));
+            var message = string.Format("({0}) {1}", lastError, Marshal.PtrToStringAnsi(error));
+            if (!string.IsNullOrWhiteSpace(_lastCommitDiagnostic))
+                message += "; " + _lastCommitDiagnostic;
+            return message;
         }
 
 
@@ -674,17 +688,25 @@ namespace IPTables.Net.Iptables.NativeLibrary
                 _debugEntries.Clear();
             }
 
-            bool status;
+            _lastCommitError = null;
+            _lastCommitDiagnostic = null;
 
+            var diagnostic = new StringBuilder(1024);
+            int result;
             if (_ipVersion == 4)
-                status = iptc_commit(_handle) == 1;
+                result = commit_handle4(_handle, diagnostic, new UIntPtr((uint)diagnostic.Capacity));
             else
-                status = ip6tc_commit(_handle) == 1;
+                result = commit_handle6(_handle, diagnostic, new UIntPtr((uint)diagnostic.Capacity));
+
+            var commitError = Marshal.GetLastWin32Error();
+            _handle = IntPtr.Zero;
+
+            bool status = result == 1;
             if (!status)
-                Free();
-            else
-                //Commit includes free
-                _handle = IntPtr.Zero;
+            {
+                _lastCommitError = commitError;
+                _lastCommitDiagnostic = diagnostic.ToString();
+            }
             return status;
         }
 
