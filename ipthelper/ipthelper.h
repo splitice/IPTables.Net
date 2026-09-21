@@ -1,4 +1,5 @@
 #pragma once
+#include <stddef.h>
 #include <libiptc/libiptc.h>
 #include <libiptc/libip6tc.h>
 
@@ -24,6 +25,8 @@ extern "C" {
 	extern EXPORT const char* output_rule6(const struct ip6t_entry *e, void *h, const char *chain, int counters);
 	extern EXPORT int execute_command6(const char* rule, void *h);
 	extern EXPORT int execute_command4(const char* rule, void *h);
+	extern EXPORT int commit_handle4(void *h, char *diagnostic, size_t diagnostic_length);
+	extern EXPORT int commit_handle6(void *h, char *diagnostic, size_t diagnostic_length);
 	extern EXPORT int init_helper4(void);
 	extern EXPORT int init_helper6(void);
 	extern EXPORT void* init_handle4(const char* table);
