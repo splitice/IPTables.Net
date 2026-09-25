@@ -38,6 +38,18 @@ namespace IPTables.Net.Tests
         }
 
         [Fact]
+        public void TestParseRuleCountersInPacketsBytesOrder()
+        {
+            const string toParse = "*filter\n:INPUT ACCEPT [0:0]\n[12:34] -A INPUT -j ACCEPT\nCOMMIT";
+
+            var rules = IPTablesSaveParser.GetRulesFromOutput(System, toParse, "filter", 4);
+            var rule = Assert.Single(rules.GetChain("INPUT", "filter").Rules);
+
+            Assert.Equal(12, rule.Counters.Packets);
+            Assert.Equal(34, rule.Counters.Bytes);
+        }
+
+        [Fact]
         public static void TestParsePortForward()
         {
             String toParse =

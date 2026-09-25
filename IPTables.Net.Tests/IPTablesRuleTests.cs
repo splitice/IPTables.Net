@@ -35,5 +35,32 @@ namespace IPTables.Net.Tests
             mark.SetOrMark(1);
             Assert.Equal("-A INPUT -j MARK --set-xmark 0x1/0x1", rule.GetActionCommand());
         }
+
+        [Fact]
+        public void InitialCountersAreIncludedOnlyWhenRequested()
+        {
+            var chains = new IpTablesChainSet(4);
+            var rule = IpTablesRule.Parse("-A INPUT -j ACCEPT", null, chains, 4);
+            rule.Counters = new PacketCounters(bytes: 34, packets: 12);
+
+            Assert.Equal("-A INPUT -j ACCEPT", rule.GetActionCommand());
+            Assert.Equal("-A INPUT -c 12 34 -j ACCEPT",
+                rule.GetActionCommand(incCounters: true));
+        }
+
+        [Fact]
+        public void ShallowClonePreservesInitialCounters()
+        {
+            var chains = new IpTablesChainSet(4);
+            var rule = IpTablesRule.Parse("-A INPUT -j ACCEPT", null, chains, 4);
+            rule.Counters = new PacketCounters(bytes: 34, packets: 12);
+
+            var clone = rule.ShallowClone();
+
+            Assert.Equal(34, clone.Counters.Bytes);
+            Assert.Equal(12, clone.Counters.Packets);
+            Assert.Equal("-A INPUT -c 12 34 -j ACCEPT",
+                clone.GetActionCommand(incCounters: true));
+        }
     }
 }

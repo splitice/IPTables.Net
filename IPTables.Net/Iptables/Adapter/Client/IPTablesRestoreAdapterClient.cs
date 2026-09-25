@@ -98,7 +98,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 return;
             }
 
-            var command = rule.GetActionCommand("-I", false);
+            var command = rule.GetActionCommand("-I", false, true);
             _builder.AddCommand(rule.Chain.Table, command);
         }
 
@@ -111,7 +111,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 binaryClient.ReplaceRule(rule);
             }
 
-            var command = rule.GetActionCommand("-R", false);
+            var command = rule.GetActionCommand("-R", false, true);
             _builder.AddCommand(rule.Chain.Table, command);
         }
 
@@ -125,7 +125,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 return;
             }
 
-            var command = rule.GetActionCommand("-A", false);
+            var command = rule.GetActionCommand("-A", false, true);
             _builder.AddCommand(rule.Chain.Table, command);
         }
 

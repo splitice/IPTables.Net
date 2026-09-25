@@ -141,6 +141,7 @@ namespace IPTables.Net.Iptables
             _system = rule.System;
             Chain = rule.Chain;
             _moduleData = rule.ModuleDataInternal;
+            _counters = rule.Counters;
         }
 
         #endregion
@@ -206,11 +207,18 @@ namespace IPTables.Net.Iptables
         /// Get the command parameters that would be necessary to define this rule
         /// </summary>
         /// <param name="incTable"></param>
+        /// <param name="incCounters">Include nonzero initial packet and byte counters.</param>
         /// <returns></returns>
-        public string GetCommand(bool incTable = true)
+        public string GetCommand(bool incTable = true, bool incCounters = false)
         {
             var command = "";
             if (incTable && Chain.Table != "filter") command += "-t " + Chain.Table;
+
+            if (incCounters && (_counters.Packets != 0 || _counters.Bytes != 0))
+            {
+                if (command.Length != 0) command += " ";
+                command += "-c " + _counters.Packets + " " + _counters.Bytes;
+            }
 
             foreach (var e in _moduleData)
             {
@@ -238,8 +246,9 @@ namespace IPTables.Net.Iptables
         /// </summary>
         /// <param name="opt"></param>
         /// <param name="incTable"></param>
+        /// <param name="incCounters">Include nonzero initial packet and byte counters.</param>
         /// <returns></returns>
-        public string GetActionCommand(string opt = "-A", bool incTable = true)
+        public string GetActionCommand(string opt = "-A", bool incTable = true, bool incCounters = false)
         {
             var command = opt + " " + Chain.Name + " ";
 
@@ -260,7 +269,7 @@ namespace IPTables.Net.Iptables
                 if (position != -1) command += position + " ";
             }
 
-            command += GetCommand(incTable);
+            command += GetCommand(incTable, incCounters);
             return command;
         }
 

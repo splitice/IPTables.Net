@@ -38,19 +38,19 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override void InsertRule(IpTablesRule rule)
         {
-            var command = rule.GetActionCommand("-I");
+            var command = rule.GetActionCommand("-I", incCounters: true);
             ExecutionHelper.ExecuteIptables(_iptables, command, _iptablesBinary);
         }
 
         public override void ReplaceRule(IpTablesRule rule)
         {
-            var command = rule.GetActionCommand("-R");
+            var command = rule.GetActionCommand("-R", incCounters: true);
             ExecutionHelper.ExecuteIptables(_iptables, command, _iptablesBinary);
         }
 
         public override void AddRule(IpTablesRule rule)
         {
-            var command = rule.GetActionCommand();
+            var command = rule.GetActionCommand(incCounters: true);
             AddRule(command);
         }
 

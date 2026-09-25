@@ -89,7 +89,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 return;
             }
 
-            var command = rule.GetActionCommand("-I");
+            var command = rule.GetActionCommand("-I", incCounters: true);
             if (GetInterface(rule.Chain.Table).ExecuteCommand(_iptablesBinary + " " + command) != 1)
                 throw new IpTablesNetException(string.Format("Failed to insert rule \"{0}\" due to error: \"{1}\"",
                     command, GetInterface(rule.Chain.Table).GetErrorString()));
@@ -105,7 +105,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 return;
             }
 
-            var command = rule.GetActionCommand("-R");
+            var command = rule.GetActionCommand("-R", incCounters: true);
             if (GetInterface(rule.Chain.Table).ExecuteCommand(_iptablesBinary + " " + command) != 1)
                 throw new IpTablesNetException(string.Format("Failed to replace rule \"{0}\" due to error: \"{1}\"",
                     command, GetInterface(rule.Chain.Table).GetErrorString()));
@@ -121,7 +121,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 return;
             }
 
-            var command = rule.GetActionCommand("-A");
+            var command = rule.GetActionCommand("-A", incCounters: true);
             if (GetInterface(rule.Chain.Table).ExecuteCommand(_iptablesBinary + " " + command) != 1)
                 throw new IpTablesNetException(string.Format("Failed to add rule \"{0}\" due to error: \"{1}\"",
                     command, GetInterface(rule.Chain.Table).GetErrorString()));
