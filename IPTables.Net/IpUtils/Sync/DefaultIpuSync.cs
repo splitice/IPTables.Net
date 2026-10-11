@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using IPTables.Net.IpUtils.Utils;
 
@@ -19,7 +19,7 @@ namespace IPTables.Net.IpUtils.Sync
         {
             var objects = new HashSet<IpObject>(with);
 
-            foreach (var ipobj in _getter())
+            foreach (var ipobj in new HashSet<IpObject>(_getter()))
                 if (!objects.Contains(ipobj))
                     _controller.Delete(ipobj);
                 else
