@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using SystemInteract;
@@ -56,6 +56,7 @@ namespace IPTables.Net.IpUtils.Utils
 
             if (firstKey != null)
             {
+                if (i >= strs.Length) throw new IpTablesNetException("Missing value for " + firstKey);
                 var v = strs[i];
                 if (firstTrimChars != null) v = v.TrimEnd(firstTrimChars);
                 ret.Pairs.Add(firstKey, v);
@@ -91,9 +92,7 @@ namespace IPTables.Net.IpUtils.Utils
             {
                 string output, error;
                 ProcessHelper.ReadToEnd(process, out output, out error);
-                /*Console.WriteLine(cmd);
-                Console.WriteLine("output" + output);
-                Console.WriteLine("error" + error);*/
+                if (process.ExitCode != 0) throw new IpControllerException($"ip {cmd.TrimEnd()} exited with {process.ExitCode}: {error} {output}");
                 return new string[] {output.Trim(), error.Trim()};
             }
         }

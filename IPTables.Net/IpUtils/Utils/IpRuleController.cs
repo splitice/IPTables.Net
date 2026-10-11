@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using SystemInteract;
 using IPTables.Net.Exceptions;
@@ -44,7 +44,10 @@ namespace IPTables.Net.IpUtils.Utils
 
         public IpObject ParseObject(string str)
         {
-            return ParseObject(str, "pref", new[] {':'});
+            var result = ParseObject(str, "pref", new[] { ':' });
+            if (result != null && !uint.TryParse(result.Pairs["pref"], out _))
+                throw new IpTablesNetException("Invalid rule priority: " + result.Pairs["pref"]);
+            return result;
         }
 
         internal override string[] ExportObject(IpObject obj)
