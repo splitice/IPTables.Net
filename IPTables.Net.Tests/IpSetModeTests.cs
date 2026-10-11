@@ -6,6 +6,51 @@ namespace IPTables.Net.Tests;
 public class IpSetModeTests
 {
     [Theory]
+    [InlineData(0u, 0u, true)]
+    [InlineData(16u, 0u, true)]
+    [InlineData(16u, 16u, true)]
+    [InlineData(0u, 32u, false)]
+    [InlineData(16u, 32u, false)]
+    public void SetComparisonHonorsOnlyExplicitDesiredSeeds(uint currentSeed, uint desiredSeed, bool equal)
+    {
+        var current = IpSetSet.Parse($"demo hash:ip initval {currentSeed}", null);
+        var desired = IpSetSet.Parse($"demo hash:ip initval {desiredSeed}", null);
+        Assert.Equal(equal, current.SetEquals(desired));
+        Assert.Equal(equal, current.SetEquals(desired, size: false));
+    }
+
+    [Theory]
+    [InlineData(0u, 0u, false)]
+    [InlineData(16u, 0u, false)]
+    [InlineData(16u, 16u, false)]
+    [InlineData(0u, 32u, true)]
+    [InlineData(16u, 32u, true)]
+    public void SeedChangesReplaceExistingSetsAndConverge(uint currentSeed, uint desiredSeed, bool replace)
+    {
+        var saved = $"create demo hash:ip initval {currentSeed}\nadd demo 192.0.2.1\n";
+        var os = new ScriptedSystem { Respond = (_, args) => new(args == "save" ? saved : "") };
+        var system = new IpTablesSystem(os, null);
+        var desired = new IpSetSets(new[] { $"create demo hash:ip initval {desiredSeed}", "add demo 192.0.2.1" }, system);
+
+        desired.Sync();
+
+        if (replace)
+        {
+            var restore = Assert.Single(os.Calls, call => call.Arguments == "restore");
+            Assert.Equal($"create demo_S hash:ip family inet hashsize 1024 maxelem 65536 initval {desiredSeed}\n" +
+                "swap demo_S demo\ndestroy demo_S\nadd demo 192.0.2.1\n", restore.Text.Replace("\r", ""));
+            saved = $"create demo hash:ip initval {desiredSeed}\nadd demo 192.0.2.1\n";
+        }
+        else
+            Assert.Equal("save", Assert.Single(os.Calls).Arguments);
+
+        os.Calls.Clear();
+        desired.Sync();
+        Assert.Equal("save", Assert.Single(os.Calls).Arguments);
+        Assert.False(system.SetAdapter.InTransaction);
+    }
+
+    [Theory]
     [InlineData(IpSetSyncMode.SetOnly, false, false)] [InlineData(IpSetSyncMode.SetOnly, true, false)]
     [InlineData(IpSetSyncMode.SetAndEntries, false, true)] [InlineData(IpSetSyncMode.SetAndEntries, true, true)]
     [InlineData(IpSetSyncMode.SetAndEntriesOnCreate, false, true)] [InlineData(IpSetSyncMode.SetAndEntriesOnCreate, true, false)]

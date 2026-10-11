@@ -217,12 +217,18 @@ namespace IPTables.Net.IpSet
             return Parse(arguments, system, startOffset);
         }
 
+        /// <summary>
+        /// Checks whether this set matches the desired configuration.
+        /// A zero InitVal in the desired set leaves the existing seed unspecified.
+        /// </summary>
         public bool SetEquals(IpSetSet set, bool size = true)
         {
             if (!(set.Family == Family && set.MaxElem == MaxElem && set.Name == Name && set.Timeout == Timeout && _bucketSize == set._bucketSize &&
                   set.Type == Type && set.BitmapRange.Equals(BitmapRange) && set.CreateOptions.OrderBy(a => a)
                       .SequenceEqual(CreateOptions.OrderBy(a => a))))
                 return false;
+
+            if (set.InitVal != 0 && set.InitVal != InitVal) return false;
 
             if (size) return set.HashSize == HashSize;
 
