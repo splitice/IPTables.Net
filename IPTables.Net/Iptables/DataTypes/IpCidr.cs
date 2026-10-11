@@ -159,7 +159,10 @@ namespace IPTables.Net.Iptables.DataTypes
             _ = new IpCidr(findAddress, u); // Validate before changing address bits.
             var bytes = findAddress.GetAddressBytes();
             for (int bit = (int)u; bit < bytes.Length * 8; bit++) bytes[bit / 8] &= (byte)~(128 >> (bit % 8));
-            return new IpCidr(new IPAddress(bytes), u);
+            var network = findAddress.AddressFamily == AddressFamily.InterNetworkV6
+                ? new IPAddress(bytes, findAddress.ScopeId)
+                : new IPAddress(bytes);
+            return new IpCidr(network, u);
         }
     }
 }

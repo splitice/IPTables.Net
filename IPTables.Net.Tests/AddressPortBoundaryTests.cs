@@ -56,4 +56,21 @@ public class AddressPortBoundaryTests
         Assert.Equal("[::1]:80", IpPort.Parse("[::1]:80").ToString());
         Assert.Equal("192.0.2.1:0", IpPort.Parse("192.0.2.1").ToString());
     }
+    [Theory]
+    [InlineData("fe80::1234%7", 128u, "fe80::1234%7")]
+    [InlineData("fe80::1234%7", 64u, "fe80::%7")]
+    [InlineData("2001:db8::1234", 64u, "2001:db8::")]
+    [InlineData("192.0.2.129", 32u, "192.0.2.129")]
+    [InlineData("192.0.2.129", 24u, "192.0.2.0")]
+    public void RebasePreservesScopeAndAddressFamily(string original, uint prefix, string expected)
+    {
+        var address = IPAddress.Parse(original);
+        var result = IpCidr.NewRebase(address, prefix);
+        Assert.Equal(IPAddress.Parse(expected), result.Address);
+        Assert.Equal(prefix, result.Prefix);
+        Assert.Equal(address.AddressFamily, result.Address.AddressFamily);
+        Assert.Equal(original, address.ToString());
+        if (address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+            Assert.Equal(address.ScopeId, result.Address.ScopeId);
+    }
 }
