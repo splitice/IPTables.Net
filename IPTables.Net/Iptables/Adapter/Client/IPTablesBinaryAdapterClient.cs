@@ -63,10 +63,11 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             string versionOutput, error;
             ExecutionHelper.ExecuteIptables(_iptables, "-V", _iptablesBinary, out versionOutput, out error);
-            var r = new Regex(@"iptables v([0-9]+\.[0-9]+\.[0-9]+)");
+            var r = new Regex(@"^\s*ip6?tables\s+v([0-9]+\.[0-9]+\.[0-9]+)(?=\s|$)");
             if (!r.IsMatch(versionOutput)) throw new IpTablesNetException("Unable to get version string");
             var match = r.Match(versionOutput);
-            return new Version(match.Groups[1].Value);
+            if (!Version.TryParse(match.Groups[1].Value, out var version)) throw new IpTablesNetException("Unable to get version string");
+            return version;
         }
 
         public override bool HasChain(string table, string chainName)
