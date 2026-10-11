@@ -1,4 +1,4 @@
-﻿//#define DEBUG_NATIVE_IPTCP
+//#define DEBUG_NATIVE_IPTCP
 
 using System;
 using System.Collections.Generic;
@@ -434,6 +434,8 @@ namespace IPTables.Net.Iptables.NativeLibrary
             return err;
         }
 
+        private static readonly object HelperLock = new object();
+        private bool _ownsHelper;
         private static int _helperInit = 0;
         private static int _helperInitCount = 0;
         public bool Disposed = false;
@@ -473,8 +475,11 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public IptcInterface(string table, int ipVersion, ILogger log = null)
         {
+            if (ipVersion != 4 && ipVersion != 6) throw new ArgumentOutOfRangeException(nameof(ipVersion));
             _ipVersion = ipVersion;
             logger = log;
+            lock (HelperLock)
+            {
             if (_helperInit == ipVersion)
             {
                 _helperInitCount++;
@@ -497,7 +502,9 @@ namespace IPTables.Net.Iptables.NativeLibrary
                 _helperInitCount++;
             }
 
-            OpenTable(table);
+            _ownsHelper = true;
+            try { OpenTable(table); } catch { Dispose(); throw; }
+            }
         }
 
         ~IptcInterface()
@@ -507,16 +514,17 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public void Dispose()
         {
-            if (_handle != IntPtr.Zero)
+            lock (HelperLock)
             {
-                Debug.Assert(_helperInit >= 0);
-                Free();
-            }
-
-            if (!Disposed)
-            {
-                if (--_helperInitCount == 0) _helperInit = 0;
+                if (Disposed) return;
+                if (_handle != IntPtr.Zero) Free();
+                if (_ownsHelper)
+                {
+                    if (--_helperInitCount == 0) _helperInit = 0;
+                    _ownsHelper = false;
+                }
                 Disposed = true;
+                GC.SuppressFinalize(this);
             }
         }
 
@@ -533,7 +541,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         private void RequireHandle()
         {
-            Debug.Assert(!Disposed);
+            if (Disposed) throw new ObjectDisposedException(nameof(IptcInterface));
             if (_handle == IntPtr.Zero) throw new IpTablesNetException("No IP Table currently open");
         }
 
@@ -549,6 +557,7 @@ namespace IPTables.Net.Iptables.NativeLibrary
 
         public void OpenTable(string table)
         {
+            if (Disposed) throw new ObjectDisposedException(nameof(IptcInterface));
             if (_handle != IntPtr.Zero)
                 throw new IpTablesNetException("A table is already open, commit or discard first");
             _lastCommitError = null;
