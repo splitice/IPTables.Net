@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using SystemInteract;
 using IPTables.Net.Exceptions;
@@ -39,7 +39,7 @@ namespace IPTables.Net.IpUtils.Utils
 
                 if (obj != null)
                 {
-                    if (table != "default" && table != "all") obj.Pairs.Add("table", table);
+                    if (table != null && table != "default" && table != "all" && !obj.Pairs.ContainsKey("table")) obj.Pairs.Add("table", table);
                     r.Add(obj);
                 }
             }

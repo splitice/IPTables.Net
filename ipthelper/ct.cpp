@@ -512,7 +512,8 @@ int restore_nf_cts(bool expectation, char* data, int data_len)
 
 		nlh = (struct nlmsghdr *)&data[i];
 		
-		if (i + nlh->nlmsg_len > data_len)
+		if (nlh->nlmsg_len < sizeof(struct nlmsghdr)) { exit_code = -EINVAL; goto out; }
+		if (nlh->nlmsg_len > (unsigned)(data_len - i))
 		{
 			break;
 		}

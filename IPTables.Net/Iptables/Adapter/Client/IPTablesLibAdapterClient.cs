@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -231,7 +231,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             if (!_inTransaction) return;
 
-            if (tableCommitOrder == null) tableCommitOrder = _interfaces.Keys;
+            tableCommitOrder = (tableCommitOrder ?? Enumerable.Empty<string>()).Concat(_interfaces.Keys).Distinct().ToList();
 
             IpTablesNetExceptionErrno ex = null;
             foreach (var table in tableCommitOrder)
@@ -268,10 +268,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _inTransaction = false;
         }
 
-        ~IPTablesLibAdapterClient()
-        {
-            Dispose();
-        }
 
         public override void Dispose()
         {

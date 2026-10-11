@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using IPTables.Net.Iptables.Adapter.Client;
@@ -51,6 +51,7 @@ namespace IPTables.Net.Iptables.TableSync
         {
             //Copy the rules
             var currentRules = new List<IpTablesRule>(chain.Rules);
+            with = with.ToList();
 
 
             int i = 0, len = with.Count();
@@ -77,6 +78,8 @@ namespace IPTables.Net.Iptables.TableSync
                 }
 
                 //Debug:
+                // Protected rules may match desired rules, but are never modified.
+                if (!_shouldDelete(cR)) continue;
                 if (_ruleComparerForUpdate(cR, withRule) || shouldUpdate)
                 {
                     //Replace this rule

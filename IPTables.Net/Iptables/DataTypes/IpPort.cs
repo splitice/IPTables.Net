@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 
 namespace IPTables.Net.Iptables.DataTypes
@@ -17,32 +17,19 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public static IpPort Parse(string ipPort)
         {
-            var p = ipPort.Split(new[] {':'});
-            IPAddress ip;
             try
             {
-                ip = IPAddress.Parse(p[0]);
+                var parsed = IPPortOrRange.Parse(ipPort);
+                if (!parsed.LowerAddress.Equals(parsed.UpperAddress) || parsed.Port.IsRange()) return Any;
+                return new IpPort(parsed.LowerAddress, parsed.Port.LowerPort);
             }
-            catch (Exception)
-            {
-                return Any;
-            }
-
-            if (p.Length != 2) return new IpPort(ip, 0);
-
-            try
-            {
-                return new IpPort(ip, uint.Parse(p[1]));
-            }
-            catch (Exception)
-            {
-                return Any;
-            }
+            catch (Exception ex) when (ex is ArgumentException || ex is FormatException || ex is OverflowException)
+            { return Any; }
         }
 
         public override string ToString()
         {
-            return Address + ":" + Port;
+            return (Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6 ? "[" + Address + "]" : Address.ToString()) + ":" + Port;
         }
     }
 }

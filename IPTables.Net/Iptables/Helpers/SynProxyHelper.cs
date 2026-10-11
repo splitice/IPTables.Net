@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,7 +27,7 @@ namespace IPTables.Net.Iptables.Helpers
         }
 
         /// <summary>
-        /// Does the Linux Kernel support SYNPROXY
+        /// Whether the kernel version is eligible for SYNPROXY; this does not probe module availability.
         /// </summary>
         /// <param name="system"></param>
         /// <returns></returns>
@@ -38,20 +38,14 @@ namespace IPTables.Net.Iptables.Helpers
             {
                 ProcessHelper.ReadToEnd(process, out output, out error);
                 if (process.ExitCode != 0)
-                    throw new IpTablesNetException("Unable to execute uname and retreive the kenel version");
+                    throw new IpTablesNetException($"Unable to retrieve kernel version: uname exited with {process.ExitCode}: {error}");
             }
 
-            var regex = new Regex(@"([0-9]+)\.([0-9]+)\.([0-9]+)\-([0-9]+)");
-            if (regex.IsMatch(output))
-            {
-                var match = regex.Match(output);
-                var version = new Version(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value),
-                    int.Parse(match.Groups[3].Value), int.Parse(match.Groups[4].Value));
-
-                if (version >= new Version(3, 12)) return true;
-            }
-
-            return false;
+            var match = Regex.Match(output, @"^\s*([0-9]+)\.([0-9]+)(?:\.([0-9]+))?(?:-[^\s]+|\+[^\s]*)?\s*$");
+            if (!match.Success) return false;
+            var numeric = match.Groups[1].Value + "." + match.Groups[2].Value + "." +
+                (match.Groups[3].Success ? match.Groups[3].Value : "0");
+            return Version.TryParse(numeric, out var version) && version >= new Version(3, 12);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,7 +23,7 @@ namespace IPTables.Net.IpUtils.Utils
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Pairs.OrderBy((a) => a.GetHashCode()).SequenceEqual(other.Pairs.OrderBy((a) => a.GetHashCode())) &&
+            return Pairs.OrderBy(a => a.Key, StringComparer.Ordinal).SequenceEqual(other.Pairs.OrderBy(a => a.Key, StringComparer.Ordinal)) &&
                    Singles.SetEquals(other.Singles);
         }
 
@@ -37,11 +37,11 @@ namespace IPTables.Net.IpUtils.Utils
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return Singles.OfType<object>().Union(Pairs.OfType<object>()).OrderBy((a) => a.GetHashCode())
-                    .Aggregate(13, (current, m) => current * 397 + m.GetHashCode());
-            }
+            var hash = new HashCode();
+            foreach (var pair in Pairs.OrderBy(a => a.Key, StringComparer.Ordinal))
+            { hash.Add(pair.Key, StringComparer.Ordinal); hash.Add(pair.Value, StringComparer.Ordinal); }
+            foreach (var single in Singles.OrderBy(a => a, StringComparer.Ordinal)) hash.Add(single, StringComparer.Ordinal);
+            return hash.ToHashCode();
         }
     }
 }

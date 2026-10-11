@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using SystemInteract;
 using IPTables.Net.Exceptions;
@@ -24,51 +24,28 @@ namespace IPTables.Net.IpSet.Adapter
             _system = system;
         }
 
-        private bool ExecuteTransaction()
+        private bool ExecuteTransaction() => ExecuteRestore(_transactionCommands);
+
+        private bool ExecuteRestore(IEnumerable<string> commands)
         {
-            string output, error;
-
-            using (var process = _system.StartProcess(BinaryName, "restore"))
-            {
-                if (WriteStrings(_transactionCommands, process.StandardInput))
-                {
-                    process.StandardInput.Flush();
-                    process.StandardInput.Close();
-                    ProcessHelper.ReadToEnd(process, out output, out error);
-
-                    //OK
-                    if (process.ExitCode == 0) return true;
-                }
-                else
-                {
-                    ProcessHelper.ReadToEnd(process, out output, out error);
-                }
-            }
-
-            error = error.Trim();
-            if (error.Length != 0)
-                throw new IpTablesNetException(string.Format("Failed to execute transaction: {0}", error));
-
+            using var process = _system.StartProcess(BinaryName, "restore");
+            if (!WriteStrings(commands, process.StandardInput)) throw new IOException("Unable to write ipset restore input");
+            process.StandardInput.Close();
+            ProcessHelper.ReadToEnd(process, out var output, out var error);
+            if (process.ExitCode == 0) return true;
+            if (!string.IsNullOrWhiteSpace(error)) throw new IpTablesNetException("Failed to execute ipset restore: " + error.Trim());
             return false;
         }
 
         public bool RestoreSets(IEnumerable<IpSetSet> sets)
         {
-            //ipset restore
-            using (var process = _system.StartProcess(BinaryName, "restore"))
+            var commands = new List<string>();
+            foreach (var set in sets)
             {
-                if (WriteSets(sets, process.StandardInput))
-                {
-                    process.StandardInput.Flush();
-                    process.StandardInput.Close();
-                    ProcessHelper.WaitForExit(process);
-
-                    //OK
-                    if (process.ExitCode != 0) return true;
-                }
-
-                return false;
+                commands.Add(set.GetFullCommand());
+                foreach (var entry in set.Entries) commands.Add(entry.GetFullCommand());
             }
+            return ExecuteRestore(commands);
         }
 
         private bool WriteStrings(IEnumerable<string> strings, StreamWriter standardInput)
@@ -111,12 +88,10 @@ namespace IPTables.Net.IpSet.Adapter
             if (!string.IsNullOrEmpty(setName)) args += " " + ShellHelper.EscapeArguments(setName);
             using (var process = _system.StartProcess(BinaryName, args))
             {
-                ProcessHelper.ReadToEnd(process, line =>
-                {
-                    if (line == null) return;
-                    var trimmed = line.Trim();
-                    if (trimmed.Length != 0) sets.Accept(trimmed, iptables);
-                }, err => { });
+                ProcessHelper.ReadToEnd(process, out var output, out var error);
+                if (process.ExitCode != 0) throw new IpTablesNetException("Failed to save sets: " + error);
+                foreach (var line in output.Split('\n'))
+                    if (!string.IsNullOrWhiteSpace(line)) sets.Accept(line.Trim(), iptables);
             }
         }
 
@@ -152,14 +127,15 @@ namespace IPTables.Net.IpSet.Adapter
 
         public bool EndTransactionCommit()
         {
-            var ret = true;
-            if (_transactionCommands != null && _transactionCommands.Count != 0) ret = ExecuteTransaction();
-            _transactionCommands = null;
-            return ret;
+            try { return _transactionCommands == null || _transactionCommands.Count == 0 || ExecuteTransaction(); }
+            finally { _transactionCommands = null; }
         }
+
+        public void EndTransactionRollback() => _transactionCommands = null;
 
         public void StartTransaction()
         {
+            if (InTransaction) throw new IpTablesNetException("IPSet transaction already started");
             _transactionCommands = new List<string>();
         }
 

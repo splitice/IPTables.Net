@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,43 +17,16 @@ namespace IPTables.Net.Iptables.Helpers
         public static List<PortOrRange> CompressRanges(List<PortOrRange> ranges)
         {
             var ret = new List<PortOrRange>();
-            var start = new PortOrRange(0);
-            int previous = -1, previousLower = -1;
-            foreach (var current in ranges.OrderBy((a) => a.LowerPort))
+            foreach (var current in ranges.OrderBy(a => a.LowerPort).ThenBy(a => a.UpperPort))
             {
-                if (current.LowerPort == previous + 1)
-                {
-                    if (start.LowerPort == 0) start = new PortOrRange((uint) previousLower, current.UpperPort);
-                }
+                if (ret.Count == 0 || (ulong)current.LowerPort > (ulong)ret[ret.Count - 1].UpperPort + 1)
+                    ret.Add(current);
                 else
                 {
-                    if (start.UpperPort != 0)
-                    {
-                        ret.Add(new PortOrRange(start.LowerPort, (uint) previous));
-                        start = new PortOrRange(0);
-                    }
-                    else if (previous != -1)
-                    {
-                        ret.Add(new PortOrRange((uint) previousLower, (uint) previous));
-                    }
+                    var previous = ret[ret.Count - 1];
+                    ret[ret.Count - 1] = new PortOrRange(previous.LowerPort, Math.Max(previous.UpperPort, current.UpperPort));
                 }
-
-                previous = (int) current.UpperPort;
-                previousLower = (int) current.LowerPort;
             }
-
-            if (start.UpperPort != 0)
-            {
-                ret.Add(new PortOrRange(start.LowerPort, (uint) previous));
-                // ReSharper disable RedundantAssignment
-                start = new PortOrRange(0);
-                // ReSharper restore RedundantAssignment
-            }
-            else if (previous != -1)
-            {
-                ret.Add(new PortOrRange((uint) previousLower, (uint) previous));
-            }
-
             return ret;
         }
 
@@ -92,8 +65,7 @@ namespace IPTables.Net.Iptables.Helpers
             {
                 if (a.IsRange() && b.IsRange() || !a.IsRange() && !b.IsRange())
                 {
-                    if (a.LowerPort < b.LowerPort) return -1;
-                    return 1;
+                    return a.LowerPort.CompareTo(b.LowerPort);
                 }
 
                 if (a.IsRange()) return -1;

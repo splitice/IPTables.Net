@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using SystemInteract;
 using IPTables.Net.Exceptions;
 
@@ -28,14 +28,14 @@ namespace IPTables.Net.Iptables.Helpers
 
                 //ERR: INVALID COMMAND LINE
                 if (process.ExitCode == 2)
-                    throw new IpTablesNetException("IPTables execution failed: Invalid Command Line - " + command);
+                    throw new IpTablesNetException("IPTables execution failed: Invalid Command Line - " + command + ": " + error);
 
                 //ERR: GENERAL ERROR
                 if (process.ExitCode == 1)
-                    throw new IpTablesNetException("IPTables execution failed: Error - " + command);
+                    throw new IpTablesNetException("IPTables execution failed: Error - " + command + ": " + error);
 
                 //ERR: UNKNOWN
-                throw new IpTablesNetException("IPTables execution failed: Unknown Error - " + command);
+                throw new IpTablesNetException("IPTables execution failed: Unknown Error - " + command + ": " + error);
             }
         }
     }

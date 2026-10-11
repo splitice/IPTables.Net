@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -509,8 +509,11 @@ namespace IPTables.Net.Iptables
             if (Chain == null) throw new IpTablesNetException("Unknown Chain");
             var idx = Chain.Rules.IndexOf(this);
             if (idx == -1) throw new IpTablesNetException("Could not find rule to replace");
-            client.ReplaceRule(withRule);
-            Chain.Rules[idx] = withRule;
+            var replacement = withRule.ShallowClone();
+            replacement.Chain = Chain;
+            Chain.Rules[idx] = replacement;
+            try { client.ReplaceRule(replacement); }
+            catch { Chain.Rules[idx] = this; throw; }
         }
 
         #endregion

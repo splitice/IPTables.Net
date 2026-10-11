@@ -15,6 +15,9 @@ This repository contains a .NET 10 solution for working with Linux iptables from
 
 Both scripts will bootstrap a usable .NET SDK if `dotnet` is missing. By default they infer the needed SDK channel from the highest `TargetFramework` declared in the repo's `.csproj` files. On Linux they also build `libipthelper` and install missing native build dependencies through a supported package manager when needed.
 
+- Run `./scripts/tests/test-runner.sh` and `python3 scripts/tests/test-native-results.py` when changing runner behavior. These use stubs and require no privileges.
+- CI uses the same fast/full entry points. Stable CI requires all tests in the native lifecycle/family and system test classes to pass; skipped native cases fail the coverage check. Conntrack/kernel tests run only through the explicit `run_unstable` workflow input.
+
 ## Native Helper Notes
 
 - `ipthelper/` builds `libipthelper.so`, which is required for `IPTablesLibAdapter`, `IptcInterface`, and the conntrack/native tests.

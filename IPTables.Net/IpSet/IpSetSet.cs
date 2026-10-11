@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -155,7 +155,7 @@ namespace IPTables.Net.IpSet
         internal IpSetSet(IpTablesSystem system)
         {
             _system = system;
-            _entries = new HashSet<IpSetEntry>();
+            _entries = new HashSet<IpSetEntry>(IpSetEntryKeyComparer.Instance);
             _createOptions = new List<string>();
         }
 
@@ -179,6 +179,8 @@ namespace IPTables.Net.IpSet
 
             if (_bucketSize > 0 && _bucketSize != 12) command += " bucketsize " + _bucketSize;
 
+            if (_initVal != 0) command += " initval " + _initVal;
+
             foreach (var co in _createOptions) command += " " + co;
 
             return command;
@@ -192,7 +194,7 @@ namespace IPTables.Net.IpSet
         public IEnumerable<string> GetEntryCommands()
         {
             var ret = new List<string>();
-            foreach (var entry in Entries) ret.Add("add " + _name + " " + entry.GetKeyCommand());
+            foreach (var entry in Entries) ret.Add(entry.GetFullCommand());
 
             return ret;
         }
@@ -215,12 +217,18 @@ namespace IPTables.Net.IpSet
             return Parse(arguments, system, startOffset);
         }
 
+        /// <summary>
+        /// Checks whether this set matches the desired configuration.
+        /// A zero InitVal in the desired set leaves the existing seed unspecified.
+        /// </summary>
         public bool SetEquals(IpSetSet set, bool size = true)
         {
-            if (!(set.MaxElem == MaxElem && set.Name == Name && set.Timeout == Timeout && _bucketSize == set._bucketSize &&
+            if (!(set.Family == Family && set.MaxElem == MaxElem && set.Name == Name && set.Timeout == Timeout && _bucketSize == set._bucketSize &&
                   set.Type == Type && set.BitmapRange.Equals(BitmapRange) && set.CreateOptions.OrderBy(a => a)
                       .SequenceEqual(CreateOptions.OrderBy(a => a))))
                 return false;
+
+            if (set.InitVal != 0 && set.InitVal != InitVal) return false;
 
             if (size) return set.HashSize == HashSize;
 

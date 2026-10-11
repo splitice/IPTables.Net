@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -70,7 +70,9 @@ namespace IPTables.Net.Iptables
             out CommandParser parserOut, int version = 4, string defaultTable = "filter")
         {
             Debug.Assert(chains.IpVersion == version);
-            var arguments = ArgumentHelper.SplitArguments(rule);
+            string[] arguments;
+            try { arguments = ArgumentHelper.SplitArguments(rule); }
+            catch (Exception ex) { throw new IpTablesParserException(rule, ex); }
             var count = arguments.Length;
             var ipRule = new IpTablesRule(system, new IpTablesChain(defaultTable, null, version, system));
             var ipCmd = new IpTablesCommand(null, defaultTable, IpTablesCommandType.Unknown, -1, ipRule);
@@ -84,6 +86,7 @@ namespace IPTables.Net.Iptables
                 {
                     if (arguments[i] == "!")
                     {
+                        if (not) throw new IpTablesNetException("Repeated negation");
                         not = true;
                         continue;
                     }
@@ -91,6 +94,8 @@ namespace IPTables.Net.Iptables
                     i += parser.FeedToSkip(i, not);
                     not = false;
                 }
+                if (not) throw new IpTablesNetException("Trailing negation");
+                if (count == 0 || string.IsNullOrWhiteSpace(ipCmd.ChainName)) throw new IpTablesNetException("Missing command or chain");
             }
             catch (Exception ex)
             {

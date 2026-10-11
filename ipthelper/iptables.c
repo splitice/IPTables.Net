@@ -921,32 +921,18 @@ static void clear_rule_matches(struct xtables_rule_match **matches)
 }
 
 EXPORT void* init_handle4(const char* table){
-	const char* err;
-	void* handle = iptc_init(table);
-	err = iptc_strerror(errno);
-	
-	/* try to insmod the module if iptc_init failed */
-	if (!handle)
-	{
-		if (xtables_modprobe_program == NULL)
-		{
-			xtables_error(OTHER_PROBLEM, "init error: %s", err);
-		}
-		else if (xtables_load_ko(xtables_modprobe_program, false) != -1)
-		{
-			handle = iptc_init(table);
-			if (!handle)
-			{
-				xtables_error(OTHER_PROBLEM, "unable to init module %s after loading: %s", xtables_modprobe_program, err);
-			}
-		}
-		else
-		{
-			xtables_error(OTHER_PROBLEM, "unable to load module %s. init error: %s", xtables_modprobe_program, err);
-		}
-	}
-
-	return handle;
+    extern char *errbuffer;
+    errbuffer = NULL;
+    void *handle = iptc_init(table);
+    if (!handle && xtables_modprobe_program != NULL) {
+        int saved_errno = errno;
+        if (xtables_load_ko(xtables_modprobe_program, false) != -1)
+            handle = iptc_init(table);
+        else
+            errno = saved_errno;
+    }
+    /* Managed callers have no active xtables longjmp target. Return errno. */
+    return handle;
 }
 
 static void

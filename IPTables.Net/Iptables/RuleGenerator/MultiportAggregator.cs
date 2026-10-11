@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -54,8 +54,8 @@ namespace IPTables.Net.Iptables.RuleGenerator
             _chain = chain;
             _table = table;
             _extractKey = extractKey;
-            _extractPort = extractPort;
-            _setPort = setPort;
+            _extractPort = extractPort ?? throw new ArgumentNullException(nameof(extractPort));
+            _setPort = setPort ?? throw new ArgumentNullException(nameof(setPort));
             _setJump = setJump;
             _commentPrefix = commentPrefix;
             if (baseRule == null) baseRule = "-A " + chain + " -t " + table;
@@ -102,9 +102,9 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 ruleComment.CommentText = _commentPrefix + "|" + chainName + "|" + ruleIdx;
 
                 // Create just one rule if there is only one set of multiports
-                if (ruleCount == 1 && ranges.Count == 1 && _setJump != null)
+                if (ruleCount == 1 && ranges.Count == 1)
                 {
-                    _setJump(rule1, key);
+                    _setJump?.Invoke(rule1, key);
                     rule1.Chain = ruleSet.Chains.GetChainOrDefault(_chain, _table);
                 }
                 else
@@ -181,7 +181,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
                     if (chain.Rules.Count != 0)
                     {
                         var jumpRule = IpTablesRule.Parse(_baseRule, system, ruleSet.Chains, ruleSet.IpVersion);
-                        _setJump(jumpRule, p.Key);
+                        _setJump?.Invoke(jumpRule, p.Key);
                         //jumpRule.
                         jumpRule.GetModuleOrLoad<CoreModule>("core").Jump = chainName;
                         jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix + "|MA|" +
@@ -190,13 +190,13 @@ namespace IPTables.Net.Iptables.RuleGenerator
                     }
                     else
                     {
-                        Log.Debug(string.Format("No rules in the chain \"{chainName}\", skipping jump from {chain}.",
+                        Log.Debug(string.Format("No rules in the chain \"{0}\", skipping jump from {1}.",
                             chainName, _chain));
                     }
                 }
                 else
                 {
-                    _setJump(singleRule, p.Key);
+                    _setJump?.Invoke(singleRule, p.Key);
                     //ruleSet.AddRule(singleRule);
                 }
 

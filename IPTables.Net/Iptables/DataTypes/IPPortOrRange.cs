@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Net;
+using System.Numerics;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using IPTables.Net.Exceptions;
@@ -17,29 +18,18 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public IPPortOrRange(IPAddress lowerAddress, IPAddress upperAddress, PortOrRange port)
         {
+            if (lowerAddress.AddressFamily != upperAddress.AddressFamily ||
+                new BigInteger(lowerAddress.GetAddressBytes(), true, true) > new BigInteger(upperAddress.GetAddressBytes(), true, true))
+                throw new ArgumentException("Invalid address range");
+            if (port.UpperPort > ushort.MaxValue) throw new ArgumentOutOfRangeException(nameof(port));
             _lowerAddress = lowerAddress;
             _upperAddress = upperAddress;
             _port = port;
         }
 
-        public IPPortOrRange(IPAddress lowerAddress, IPAddress upperAddress)
-        {
-            _lowerAddress = lowerAddress;
-            _upperAddress = upperAddress;
-            _port = PortOrRange.Any;
-        }
-
-        public IPPortOrRange(IPAddress lowerAddress, PortOrRange port)
-        {
-            _upperAddress = _lowerAddress = lowerAddress;
-            _port = port;
-        }
-
-        public IPPortOrRange(IPAddress lowerAddress)
-        {
-            _upperAddress = _lowerAddress = lowerAddress;
-            _port = PortOrRange.Any;
-        }
+        public IPPortOrRange(IPAddress lowerAddress, IPAddress upperAddress) : this(lowerAddress, upperAddress, PortOrRange.Any) { }
+        public IPPortOrRange(IPAddress lowerAddress, PortOrRange port) : this(lowerAddress, lowerAddress, port) { }
+        public IPPortOrRange(IPAddress lowerAddress) : this(lowerAddress, lowerAddress, PortOrRange.Any) { }
 
         public IPAddress LowerAddress => _lowerAddress;
 

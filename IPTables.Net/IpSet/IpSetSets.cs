@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Supporting;
@@ -38,6 +38,8 @@ namespace IPTables.Net.IpSet
                 //Start transaction
                 System.SetAdapter.StartTransaction();
 
+            try
+            {
             // Dump sets in system
             var systemSets = System.SetAdapter.SaveSets(System);
 
@@ -59,12 +61,28 @@ namespace IPTables.Net.IpSet
                     //Update if applicable
                     if (!systemSet.SetEquals(set))
                     {
+                        if (systemSet.Type != set.Type || systemSet.Family != set.Family)
+                            throw new IpTablesNetException("Cannot swap sets with different types or address families: " + set.Name);
+                        if (systemSets.HasSet(set.Name + "_S"))
+                            throw new IpTablesNetException("Temporary set already exists: " + set.Name + "_S");
+                        var previousEntries = systemSet.Entries;
+
                         // Create a new set as _S of the target
                         systemSet = new IpSetSet(set.Type, set.Name + "_S", set.Timeout, set.Family, System,
                             set.SyncMode, set.BitmapRange, set.CreateOptions);
                         systemSet.HashSize = set.HashSize;
                         systemSet.MaxElem = set.MaxElem;
+                        systemSet.BucketSize = set.BucketSize;
+                        systemSet.InitVal = set.InitVal;
                         System.SetAdapter.CreateSet(systemSet);
+
+                        if (set.SyncMode == IpSetSyncMode.SetOnly)
+                            foreach (var previous in previousEntries)
+                            {
+                                var copy = IpSetEntry.ParseFromParts(systemSet, previous.GetKeyCommand());
+                                copy.Timeout = previous.Timeout;
+                                System.SetAdapter.AddEntry(copy);
+                            }
 
                         // Swap (setname becomes setname+"_S" but keeps it's items)
                         System.SetAdapter.SwapSet(systemSet.Name, set.Name);
@@ -92,6 +110,12 @@ namespace IPTables.Net.IpSet
                 //End Transaction: COMMIT
                 if (!System.SetAdapter.EndTransactionCommit())
                     throw new IpTablesNetException("Failed to commit IPSets");
+            }
+            catch
+            {
+                if (transactional) System.SetAdapter.EndTransactionRollback();
+                throw;
+            }
         }
 
 

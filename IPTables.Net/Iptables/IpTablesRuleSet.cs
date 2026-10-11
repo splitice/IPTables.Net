@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -148,128 +148,43 @@ namespace IPTables.Net.Iptables
         public void Sync(IRuleSync sync,
             Func<IpTablesChain, bool> canDeleteChain = null, int maxRetries = 10)
         {
-            using (var client = _system.GetTableAdapter(_ipVersion))
+            if (maxRetries < 0) throw new ArgumentOutOfRangeException(nameof(maxRetries));
+            using var client = _system.GetTableAdapter(_ipVersion);
+            for (int attempt = 0; ; attempt++)
             {
-                var chainsToAdd = new List<IpTablesChain>();
-                bool needed;
-                var retries = maxRetries;
-
-                do
+                try
                 {
-                    try
+                    client.StartTransaction();
+                    var tables = Chains.Select(c => c.Table).Distinct().ToList();
+                    var current = tables.ToDictionary(t => t, t => _system.GetChains(client, t).ToList());
+                    foreach (var chain in Chains)
+                        if (!current[chain.Table].Any(c => c.Name == chain.Name))
+                            current[chain.Table].Add(_system.AddChain(client, chain));
+                    if (client is IPTablesLibAdapterClient)
                     {
-                        //Start transaction
-                        client.StartTransaction();
-                        try
-                        {
-                            //Load all chains, figure out what to add
-                            var tableChains = new Dictionary<string, List<IpTablesChain>>();
-                            foreach (var chain in Chains)
-                            {
-                                if (!tableChains.ContainsKey(chain.Table))
-                                {
-                                    var chains = _system.GetChains(client, chain.Table).ToList();
-                                    tableChains.Add(chain.Table, chains);
-                                }
-
-                                if (
-                                        tableChains[chain.Table].FirstOrDefault(
-                                            a => a.Name == chain.Name && a.Table == chain.Table) ==
-                                        null)
-                                    //Chain doesnt exist, to create
-                                    chainsToAdd.Add(chain);
-                            }
-
-                            //Add the new chains / rules
-                            foreach (var chain in chainsToAdd)
-                                tableChains[chain.Table].Add(_system.AddChain(client, chain));
-
-                            chainsToAdd.Clear();
-
-                            //Special case
-                            if (client is IPTablesLibAdapterClient)
-                            {
-                                //Sync chain adds before starting rule adds
-                                client.EndTransactionCommit();
-                                client.StartTransaction();
-                            }
-
-                            //Update chains with differing rules
-                            foreach (var chain in Chains)
-                            {
-                                var realChain =
-                                    tableChains[chain.Table].First(a => a.Name == chain.Name && a.Table == chain.Table);
-                                if (realChain != null)
-                                    //Update chain
-                                    realChain.SyncInternal(client, chain.Rules, sync);
-                            }
-                        }
-                        catch
-                        {
-                            try
-                            {
-                                client.EndTransactionRollback();
-                            }
-                            catch
-                            {
-                            }
-
-                            throw;
-                        }
-
-                        //End Transaction: COMMIT
                         client.EndTransactionCommit();
-
-                        if (canDeleteChain != null)
-                        {
-                            //Start transaction
-                            //Needs new transaction, bug in libiptc?
-                            client.StartTransaction();
-
-                            try
-                            {
-                                foreach (var table in Chains.Select(a => a.Table).Distinct())
-                                foreach (var chain in _system.GetChains(table, _ipVersion))
-                                    if (!_chains.HasChain(chain.Name, chain.Table) && canDeleteChain(chain))
-                                        chain.Delete(client);
-                            }
-                            catch
-                            {
-                                try
-                                {
-                                    client.EndTransactionRollback();
-                                }
-                                catch
-                                {
-                                }
-
-                                throw;
-                            }
-
-                            //End Transaction: COMMIT
-                            if (client is IPTablesLibAdapterClient)
-                                (client as IPTablesLibAdapterClient).EndTransactionCommit(sync.TableOrder);
-                            else
-                                client.EndTransactionCommit();
-                        }
-
-                        needed = false;
+                        client.StartTransaction();
                     }
-                    catch (IpTablesNetExceptionErrno ex)
+                    foreach (var chain in Chains)
+                        current[chain.Table].First(c => c.Name == chain.Name).SyncInternal(client, chain.Rules, sync);
+                    client.EndTransactionCommit();
+                    if (canDeleteChain != null)
                     {
-                        client.EndTransactionRollback();
-                        if (ex.Errno == 11 && retries != 0) //Resource Temporarily unavailable
-                        {
-                            Thread.Sleep(100 * (maxRetries - retries));
-                            retries--;
-                            needed = true;
-                        }
-                        else
-                        {
-                            throw;
-                        }
+                        client.StartTransaction();
+                        foreach (var table in tables)
+                        foreach (var chain in _system.GetChains(client, table))
+                            if (!_chains.HasChain(chain.Name, table) && canDeleteChain(chain)) chain.Delete(client);
+                        if (client is IPTablesLibAdapterClient native) native.EndTransactionCommit(sync.TableOrder);
+                        else client.EndTransactionCommit();
                     }
-                } while (needed);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    try { client.EndTransactionRollback(); } catch { /* Preserve the original failure. */ }
+                    if (ex is not IpTablesNetExceptionErrno error || error.Errno != 11 || attempt >= maxRetries) throw;
+                    Thread.Sleep(100 * attempt);
+                }
             }
         }
 
@@ -299,12 +214,13 @@ namespace IPTables.Net.Iptables
             }
         }
 
+        /// <summary>Copies chains, ordered rules, module state and counters while retaining the system and IP version.</summary>
         public IpTablesRuleSet DeepClone()
         {
             var rs = new IpTablesRuleSet(IpVersion, System);
             foreach (var chain in _chains) rs.AddChain(chain.Name, chain.Table);
 
-            foreach (var rule in Rules) rs.AddRule(rule.GetActionCommand());
+            foreach (var rule in Rules) rs.AddRule(rule.GetActionCommand()).Counters = rule.Counters;
 
             return rs;
         }

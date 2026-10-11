@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics;
 using IPTables.Net.IpSet;
 using IPTables.Net.Iptables.DataTypes;
@@ -84,7 +84,7 @@ namespace IPTables.Net.Supporting
             out IpSetEntry o, out TValue f)
         {
             var find = new IpSetEntry(findOriginal.Set, findOriginal.Cidr, findOriginal.Protocol, findOriginal.Port,
-                findOriginal.Mac);
+                findOriginal.Mac) { Cidr2 = findOriginal.Cidr2 };
             for (var i = find.Cidr.Prefix; i != 0; i--)
             {
                 find.Cidr = IpCidr.NewRebase(find.Cidr.Address, i);

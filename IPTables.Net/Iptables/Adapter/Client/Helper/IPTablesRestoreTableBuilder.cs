@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -35,25 +35,47 @@ namespace IPTables.Net.Iptables.Adapter.Client.Helper
             var commandTable = _tables[table];
 
             //iptables-restore doesnt support ' quotes
-            ruleCommand = ruleCommand.Replace('\'', '"');
+            ruleCommand = NormalizeQuotes(ruleCommand);
 
 
             commandTable.Commands.Add(ruleCommand);
         }
 
+        private static string NormalizeQuotes(string value)
+        {
+            var output = new StringBuilder();
+            char quote = '\0';
+            for (int i = 0; i < value.Length; i++)
+            {
+                char c = value[i];
+                if (quote == '\0')
+                {
+                    if (c == '\'' || c == '"') quote = c;
+                    output.Append(c == '\'' ? '"' : c);
+                }
+                else if (quote == '"')
+                {
+                    output.Append(c);
+                    if (c == '\\' && i + 1 < value.Length) output.Append(value[++i]);
+                    else if (c == '"') quote = '\0';
+                }
+                else if (c == '\'') { output.Append('"'); quote = '\0'; }
+                else
+                {
+                    if (c == '\\' && i + 1 < value.Length && (value[i + 1] == '\'' || value[i + 1] == '\\')) c = value[++i];
+                    if (c == '"' || c == '\\') output.Append('\\');
+                    output.Append(c);
+                }
+            }
+            if (quote != '\0') throw new IpTablesNetException("Unterminated quoted restore argument");
+            return output.ToString();
+        }
+
         private bool WriteOutputLine(StreamWriter output, string line)
         {
-            if (!output.BaseStream.CanWrite) return false;
-            try
-            {
-                output.WriteLine(line);
-                output.Flush();
-            }
-            catch (IOException)
-            {
-                return false;
-            }
-
+            if (!output.BaseStream.CanWrite) throw new IOException("Restore stream is not writable");
+            output.WriteLine(line);
+            output.Flush();
             return true;
         }
 

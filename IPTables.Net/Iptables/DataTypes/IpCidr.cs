@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
@@ -18,6 +18,9 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public IpCidr(IPAddress address, uint prefix)
         {
+            ArgumentNullException.ThrowIfNull(address);
+            if (prefix > (address.AddressFamily == AddressFamily.InterNetworkV6 ? 128u : 32u))
+                throw new ArgumentOutOfRangeException(nameof(prefix));
             Address = address;
             Prefix = prefix;
         }
@@ -50,6 +53,7 @@ namespace IPTables.Net.Iptables.DataTypes
         public static IpCidr Parse(string cidr)
         {
             var p = cidr.Split(new[] {'/'});
+            if (p.Length > 2) throw new IpTablesNetException("Invalid CIDR components");
             IPAddress ip;
             try
             {
@@ -62,7 +66,6 @@ namespace IPTables.Net.Iptables.DataTypes
 
             if (p.Length == 1) return new IpCidr(ip);
 
-            if (Equals(ip, IPAddress.Any)) return new IpCidr(ip, 0);
 
             try
             {
@@ -129,25 +132,16 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public bool Contains(IpCidr cidr)
         {
-            var thisNetwork = GetIPNetwork();
-            var innerNetwork = cidr.GetIPNetwork();
-
-            if (thisNetwork.Network.ToInt() <= innerNetwork.Network.ToInt() &&
-                thisNetwork.Broadcast.ToInt() >= innerNetwork.Broadcast.ToInt())
-                return true;
-
-            return false;
+            return Address.AddressFamily == cidr.Address.AddressFamily && Prefix <= cidr.Prefix && Contains(cidr.Address);
         }
 
         public bool Contains(IPAddress addr)
         {
-            var thisNetwork = GetIPNetwork();
-            var innerNetwork = addr.ToInt();
-            if (thisNetwork.Network.ToInt() <= innerNetwork &&
-                thisNetwork.Broadcast.ToInt() >= innerNetwork)
-                return true;
-
-            return false;
+            if (Address.AddressFamily != addr.AddressFamily) return false;
+            var outer = Address.GetAddressBytes(); var inner = addr.GetAddressBytes();
+            for (int bit = 0; bit < Prefix; bit++)
+                if ((outer[bit / 8] & (128 >> (bit % 8))) != (inner[bit / 8] & (128 >> (bit % 8)))) return false;
+            return true;
         }
 
         public override bool Equals(object obj)
@@ -162,19 +156,13 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public static IpCidr NewRebase(IPAddress findAddress, uint u)
         {
-            // IPv4
-            if (findAddress.AddressFamily == AddressFamily.InterNetwork)
-            {
-                if (u == 32) return new IpCidr(findAddress, u);
-                var iAddr = findAddress.ToInt() & ~(long) (Math.Pow(2, 32 - u) - 1);
-                var ip = IPAddressExtension.ToAddr(iAddr);
-                return new IpCidr(ip, u);
-            }
-
-            // IPv6
-            if (u == 128) return new IpCidr(findAddress, u);
-            var ipNet = IPNetwork2::System.Net.IPNetwork.Parse(findAddress.ToString(), (byte) u);
-            return new IpCidr(ipNet.Network, u);
+            _ = new IpCidr(findAddress, u); // Validate before changing address bits.
+            var bytes = findAddress.GetAddressBytes();
+            for (int bit = (int)u; bit < bytes.Length * 8; bit++) bytes[bit / 8] &= (byte)~(128 >> (bit % 8));
+            var network = findAddress.AddressFamily == AddressFamily.InterNetworkV6
+                ? new IPAddress(bytes, findAddress.ScopeId)
+                : new IPAddress(bytes);
+            return new IpCidr(network, u);
         }
     }
 }

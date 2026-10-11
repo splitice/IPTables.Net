@@ -1178,48 +1178,29 @@ EXPORT void ipth_free(void* ptr)
 
 EXPORT char* ipth_bpf_compile(const char* dltname, const char* code, int length)
 {
-	struct bpf_program program;
-	struct bpf_insn *ins;
-	int i, dlt, n;
-	char* buffer = (char*)malloc(length + 1);
-	char* bufferptr = buffer;
-
-	dlt = pcap_datalink_name_to_val(dltname);
-	if (dlt == -1) {
-		return NULL;
-	}
-
-	if (pcap_compile_nopcap(65535, dlt, &program, code, 1,
-							PCAP_NETMASK_UNKNOWN)) {
-		fprintf(stderr, "Compilation error\n");
-		return NULL;
-	}
-
-	n = snprintf(bufferptr, length, "%d,", program.bf_len);
-	bufferptr += n;
-	length -= n;
-	ins = program.bf_insns;
-	for (i = 0; i < program.bf_len-1; ++ins, ++i){
-		if(length == 0){
-			goto error;
-		}
-		n = snprintf(bufferptr, length, "%u %u %u %u,", ins->code, ins->jt, ins->jf, ins->k);
-		bufferptr += n;
-		length -= n;
-	}
-
-	n = snprintf(bufferptr, length, "%u %u %u %u", ins->code, ins->jt, ins->jf, ins->k);
-	bufferptr += n;
-	length -= n;
-	if(length == 0){
-		goto error;
-	}
-
-	goto ok;
+    struct bpf_program program;
+    int dlt, n, used = 0;
+    char *buffer;
+    if (length <= 0 || dltname == NULL || code == NULL) return NULL;
+    dlt = pcap_datalink_name_to_val(dltname);
+    if (dlt == -1) return NULL;
+    if (pcap_compile_nopcap(65535, dlt, &program, code, 1, PCAP_NETMASK_UNKNOWN)) return NULL;
+    buffer = malloc((size_t)length);
+    if (buffer == NULL) { pcap_freecode(&program); return NULL; }
+    n = snprintf(buffer, length, "%u,", program.bf_len);
+    if (n < 0 || n >= length) goto error;
+    used = n;
+    for (unsigned int i = 0; i < program.bf_len; ++i) {
+        struct bpf_insn *ins = &program.bf_insns[i];
+        n = snprintf(buffer + used, length - used, "%u %u %u %u%s", ins->code, ins->jt, ins->jf, ins->k,
+                     i + 1 < program.bf_len ? "," : "");
+        if (n < 0 || n >= length - used) goto error;
+        used += n;
+    }
+    pcap_freecode(&program);
+    return buffer;
 error:
-	free(buffer);
-	buffer = NULL;
-ok:
-	pcap_freecode(&program);
-	return buffer;
+    free(buffer);
+    pcap_freecode(&program);
+    return NULL;
 }
