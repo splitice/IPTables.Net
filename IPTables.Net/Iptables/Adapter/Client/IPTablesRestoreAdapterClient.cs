@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -53,7 +53,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             {
                 string output, error;
                 ProcessHelper.ReadToEnd(process, out output, out error);
-                if (!error.Contains(NoClearOption))
+                if (process.ExitCode != 0 || !(output + error).Contains(NoClearOption))
                     throw new IpTablesNetException(
                         "iptables-restore client is not compiled from patched source (patch-iptables-restore.diff)");
             }
@@ -183,6 +183,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
             {
                 string toEnd, error;
                 ProcessHelper.ReadToEnd(process, out toEnd, out error);
+                if (process.ExitCode != 0) throw new IpTablesNetException(error);
                 return IPTablesSaveParser.GetRulesFromOutput(_system, toEnd, table, _ipVersion);
             }
         }
@@ -196,78 +197,28 @@ namespace IPTables.Net.Iptables.Adapter.Client
         public override void EndTransactionCommit()
         {
             if (!_inTransaction) return;
-
-            using (var process = StartProcess(_iptablesRestoreBinary, NoFlushOption + " " + NoClearOption))
+            using var buffer = new MemoryStream();
+            using (var writer = new StreamWriter(buffer, new System.Text.UTF8Encoding(false), 1024, true))
             {
-                if (_builder.WriteOutput(process.StandardInput))
+                _builder.WriteOutput(writer);
+                writer.Flush();
+            }
+            var rules = System.Text.Encoding.UTF8.GetString(buffer.ToArray());
+            if (rules.Length != 0)
+            {
+                using var process = StartProcess(_iptablesRestoreBinary, NoFlushOption + " " + NoClearOption);
+                process.StandardInput.Write(rules);
+                process.StandardInput.Close();
+                ProcessHelper.ReadToEnd(process, out var output, out var error);
+                if (process.ExitCode != 0)
                 {
-                    process.StandardInput.Flush();
-                    process.StandardInput.Close();
-                    string output, error;
-                    ProcessHelper.ReadToEnd(process, out output, out error);
-
-                    //OK
-                    if (process.ExitCode != 0)
-                    {
-                        //ERR: INVALID COMMAND LINE
-                        if (process.ExitCode == 2)
-                        {
-                            var ms = new MemoryStream();
-                            var sw = new StreamWriter(ms);
-                            _builder.WriteOutput(sw);
-                            sw.Flush();
-                            ms.Seek(0, SeekOrigin.Begin);
-                            var sr = new StreamReader(ms);
-                            Log.Error("Error invalid command line: {error}", sr.ReadToEnd());
-                            throw new IpTablesNetException(
-                                "IpTables-Restore execution failed: Invalid Command Line - " +
-                                process.StandardError.ReadToEnd());
-                        }
-
-                        //ERR: GENERAL ERROR
-                        if (process.ExitCode == 1)
-                        {
-                            Log.Error("An General Error Occured: {error}", error);
-
-                            var ms = new MemoryStream();
-                            var sw = new StreamWriter(ms);
-                            _builder.WriteOutput(sw);
-                            sw.Flush();
-                            ms.Seek(0, SeekOrigin.Begin);
-                            var sr = new StreamReader(ms);
-                            var rules = sr.ReadToEnd();
-
-                            var r = new Regex("line ([0-9]+) failed");
-                            if (r.IsMatch(error))
-                            {
-                                var m = r.Match(error);
-                                var g = m.Groups[1];
-                                var i = int.Parse(g.Value);
-
-                                throw new IpTablesNetException("IpTables-Restore failed to parse rule: " +
-                                                               rules.Split(new char[] {'\n'})
-                                                                   .Skip(i - 1)
-                                                                   .FirstOrDefault());
-                            }
-
-                            throw new IpTablesNetException("IpTables-Restore execution failed: Error");
-                        }
-
-                        //ERR: UNKNOWN
-                        throw new IpTablesNetException("IpTables-Restore execution failed: Unknown Error");
-                    }
-                }
-
-                try
-                {
-                    process.Close();
-                }
-                catch
-                {
+                    var line = Regex.Match(error, @"line ([0-9]+) failed");
+                    string context = "";
+                    if (line.Success && int.TryParse(line.Groups[1].Value, out var number))
+                        context = rules.Split('\n').ElementAtOrDefault(number - 1) ?? "";
+                    throw new IpTablesNetException($"IpTables-Restore execution failed (exit {process.ExitCode}): {error} {context}".Trim());
                 }
             }
-
-
             _inTransaction = false;
         }
 
