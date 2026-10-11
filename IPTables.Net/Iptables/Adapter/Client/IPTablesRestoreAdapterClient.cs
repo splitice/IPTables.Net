@@ -53,7 +53,11 @@ namespace IPTables.Net.Iptables.Adapter.Client
             {
                 string output, error;
                 ProcessHelper.ReadToEnd(process, out output, out error);
-                if (process.ExitCode != 0 || !(output + error).Contains(NoClearOption))
+                var help = output + "\n" + error;
+                // Older patched restore binaries exit 1 after printing usage for --help.
+                var helpExit = process.ExitCode == 0 ||
+                    (process.ExitCode == 1 && Regex.IsMatch(help, @"(?m)^Usage:\s", RegexOptions.IgnoreCase));
+                if (!helpExit || !help.Contains(NoClearOption))
                     throw new IpTablesNetException(
                         "iptables-restore client is not compiled from patched source (patch-iptables-restore.diff)");
             }
