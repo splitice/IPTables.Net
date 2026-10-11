@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.Helpers;
@@ -44,9 +44,9 @@ namespace IPTables.Net.Iptables.RuleGenerator
         {
             _chain = chain;
             _table = table;
-            _extractor = extractor;
-            _setter = setter;
-            _nestedGenerator = nestedGenerator;
+            _extractor = extractor ?? throw new ArgumentNullException(nameof(extractor));
+            _setter = setter ?? throw new ArgumentNullException(nameof(setter));
+            _nestedGenerator = nestedGenerator ?? throw new ArgumentNullException(nameof(nestedGenerator));
             _commentPrefix = commentPrefix;
         }
 
@@ -54,7 +54,7 @@ namespace IPTables.Net.Iptables.RuleGenerator
         {
             var key = _extractor(rule);
             if (!_protocols.ContainsKey(key))
-                _protocols.Add(key, _nestedGenerator(ShortHash.HexHash(_chain + "_" + key), _table));
+                _protocols.Add(key, _nestedGenerator(ShortHash.HexHash(_chain + "_" + key), _table) ?? throw new InvalidOperationException("Nested generator returned null"));
 
             var gen = _protocols[key];
 
@@ -76,12 +76,15 @@ namespace IPTables.Net.Iptables.RuleGenerator
                 jumpRule.GetModuleOrLoad<CoreModule>("core").Jump = chainName;
                 jumpRule.GetModuleOrLoad<CommentModule>("comment").CommentText = _commentPrefix + "|FS|" + description;
                 _setter(jumpRule, p.Key);
-                ruleSet.AddRule(jumpRule);
+
 
                 //Nested output
 
                 ruleSet.AddChain(chainName, _table);
                 p.Value.Output(system, ruleSet);
+                var generated = ruleSet.Chains.GetChainOrDefault(chainName, _table);
+                if (generated != null && generated.Rules.Count > 0) ruleSet.AddRule(jumpRule);
+                else if (generated != null) ruleSet.Chains.RemoveChain(generated);
             }
         }
     }
