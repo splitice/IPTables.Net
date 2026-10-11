@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dynamitey" Version="2.0.10.189" />
-	<PackageReference Include="IPNetwork2" Version="2.6.618">
+    <PackageReference Include="Dynamitey" Version="3.0.3" />
+	<PackageReference Include="IPNetwork2" Version="4.3.0">
 		<Aliases>IPNetwork2</Aliases>
 	</PackageReference>
     <PackageReference Include="SystemInteract" Version="1.1.5" />

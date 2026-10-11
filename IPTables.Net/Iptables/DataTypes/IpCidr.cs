@@ -40,9 +40,9 @@ namespace IPTables.Net.Iptables.DataTypes
             }
         }
 
-        public IPNetwork2::System.Net.IPNetwork GetIPNetwork()
+        public IPNetwork2::System.Net.IPNetwork2 GetIPNetwork()
         {
-            return IPNetwork2::System.Net.IPNetwork.Parse(Address, IPNetwork2::System.Net.IPNetwork.ToNetmask((byte) Prefix, Address.AddressFamily));
+            return IPNetwork2::System.Net.IPNetwork2.Parse(Address, IPNetwork2::System.Net.IPNetwork2.ToNetmask((byte) Prefix, Address.AddressFamily));
         }
 
         public bool Equals(IpCidr other)
