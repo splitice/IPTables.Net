@@ -8,6 +8,7 @@ namespace IPTables.Net.IpSet.Parser
         private readonly string[] _arguments;
         private IpSetEntry _entry;
         private IpSetSets _sets;
+        private bool _hasKey;
 
         public IpSetEntryParser(string[] arguments, IpSetEntry entry, IpSetSets sets)
         {
@@ -23,6 +24,7 @@ namespace IPTables.Net.IpSet.Parser
 
         public string GetNextArg(int position, int offset = 1)
         {
+            if (position + offset >= _arguments.Length) throw new IpTablesNetException("Missing value for " + _arguments[position]);
             return _arguments[position + offset];
         }
 
@@ -35,6 +37,7 @@ namespace IPTables.Net.IpSet.Parser
         {
             var typeComponents = entry.Set.TypeComponents;
             var optionComponents = value.Split(new char[] {','});
+            if (optionComponents.Length != typeComponents.Length) throw new IpTablesNetException("Invalid entry tuple arity");
 
             for (var i = 0; i < optionComponents.Length; i++)
                 switch (typeComponents[i])
@@ -91,12 +94,16 @@ namespace IPTables.Net.IpSet.Parser
             }
             else if (option == "packets" || option == "bytes")
             {
-                // ignore
+                // Counters are observational metadata, not part of an entry key.
+                ulong.Parse(GetNextArg(position));
                 return 1;
             }
+            else if (_hasKey)
+                throw new IpTablesNetException("Unknown entry option: " + option);
             else
             {
                 ParseEntry(_entry, option);
+                _hasKey = true;
             }
 
             return 0;

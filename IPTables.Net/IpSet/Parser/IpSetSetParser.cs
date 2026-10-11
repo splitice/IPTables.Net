@@ -1,4 +1,4 @@
-﻿using IPTables.Net.Iptables.DataTypes;
+using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.IpSet.Parser
 {
@@ -21,6 +21,7 @@ namespace IPTables.Net.IpSet.Parser
 
         public string GetNextArg(int offset = 1)
         {
+            if (Position + offset >= _arguments.Length) throw new IPTables.Net.Exceptions.IpTablesNetException("Missing value for " + GetCurrentArg());
             return _arguments[Position + offset];
         }
 

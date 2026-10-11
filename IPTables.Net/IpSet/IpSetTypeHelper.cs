@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using IPTables.Net.Exceptions;
 
@@ -52,6 +52,7 @@ namespace IPTables.Net.IpSet
             else
                 throw new IpTablesNetException(string.Format("Unknown set type: {0}", str));
 
+            if (parts.Length != 2) throw new IpTablesNetException("Invalid set type: " + str);
             var types = parts[1].Split(',');
             foreach (var t in types)
                 if (t == "ip")

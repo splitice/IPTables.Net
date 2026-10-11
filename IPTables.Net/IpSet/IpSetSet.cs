@@ -179,6 +179,8 @@ namespace IPTables.Net.IpSet
 
             if (_bucketSize > 0 && _bucketSize != 12) command += " bucketsize " + _bucketSize;
 
+            if (_initVal != 0) command += " initval " + _initVal;
+
             foreach (var co in _createOptions) command += " " + co;
 
             return command;
@@ -192,7 +194,7 @@ namespace IPTables.Net.IpSet
         public IEnumerable<string> GetEntryCommands()
         {
             var ret = new List<string>();
-            foreach (var entry in Entries) ret.Add("add " + _name + " " + entry.GetKeyCommand());
+            foreach (var entry in Entries) ret.Add(entry.GetFullCommand());
 
             return ret;
         }

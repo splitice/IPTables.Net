@@ -122,7 +122,7 @@ namespace IPTables.Net.IpSet
 
         public static IpSetEntry Parse(string[] arguments, IpSetSets sets, int startOffset = 0)
         {
-            if (arguments.Length < 2 + startOffset) return null;
+            if (arguments.Length < 2 + startOffset) throw new IpTablesNetException("Missing set name or entry key");
 
             try
             {
