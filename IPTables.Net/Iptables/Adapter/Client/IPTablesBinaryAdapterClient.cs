@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SystemInteract;
@@ -72,15 +72,12 @@ namespace IPTables.Net.Iptables.Adapter.Client
         public override bool HasChain(string table, string chainName)
         {
             var command = string.Format("-L {0} -t {1}", chainName, table);
-            try
-            {
-                ExecutionHelper.ExecuteIptables(_iptables, command, _iptablesBinary);
-                return true;
-            }
-            catch (IpTablesNetException)
-            {
-                return false;
-            }
+            using var process = System.StartProcess(_iptablesBinary, command);
+            ProcessHelper.ReadToEnd(process, out var output, out var error);
+            if (process.ExitCode == 0) return true;
+            if (process.ExitCode == 1 && (error.Contains("No chain/target/match by that name") ||
+                error.Contains("does not exist"))) return false;
+            throw new IpTablesNetException("Unable to query chain " + chainName + ": " + error);
         }
 
         public override void AddChain(string table, string chainName)
@@ -111,7 +108,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 string output, error;
                 ProcessHelper.ReadToEnd(process, out output, out error);
 
-                if (string.IsNullOrEmpty(output) && !string.IsNullOrEmpty(error))
+                if (process.ExitCode != 0 || (string.IsNullOrEmpty(output) && !string.IsNullOrEmpty(error)))
                 {
                     throw new IpTablesNetException(error);
                 }

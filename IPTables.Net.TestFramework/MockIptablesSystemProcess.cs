@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -14,8 +14,10 @@ namespace IPTables.Net.TestFramework
         private Thread _outputReader;
         private Thread _errorReader;
 
-        public MockIptablesSystemProcess(StreamReader output = null, StreamReader error = null)
+        public MockIptablesSystemProcess(StreamReader output = null, StreamReader error = null, int exitCode = 0, StreamWriter input = null)
         {
+            ExitCode = exitCode;
+            StandardInput = input;
             StandardOutput = output;
             if (output != null)
             {
@@ -153,9 +155,10 @@ namespace IPTables.Net.TestFramework
         public event DataReceivedEventHandler OutputDataReceived;
         public event DataReceivedEventHandler ErrorDataReceived;
         public event EventHandler Exited;
+        public bool IsDisposed { get; private set; }
         public void Dispose()
         {
-            
+            IsDisposed = true;
         }
     }
 }
