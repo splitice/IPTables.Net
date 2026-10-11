@@ -41,4 +41,48 @@ public class NfAcctTests
         Assert.Contains("denied", Assert.Throws<IpTablesNetException>(actions[operation]).Message);
         Assert.True(Assert.Single(fake.Calls).Process.IsDisposed);
     }
+    [Theory]
+    [InlineData("nfacct v1.0.2: error: No such file or directory\n")]
+    [InlineData("nfacct v1.0.3: error: No such file or directory\n")]
+    public void MissingObjectReturnsNullOrFalseAndCanBeCreated(string error)
+    {
+        var fake = new ScriptedSystem { Respond = (_, args) => args.StartsWith("get ") ? new("", error, 1) : new() };
+        var client = new NfAcct.NfAcct(fake);
+        Assert.Null(client.Get("missing"));
+        Assert.Null(client.Get("missing", true));
+        if (!client.Exist("missing")) client.Add("missing");
+        Assert.Equal(new[] { "get missing xml", "get missing xml reset", "get missing xml", "add missing" }, fake.Calls.Select(x => x.Arguments));
+        Assert.All(fake.Calls, call => Assert.True(call.Process.IsDisposed));
+    }
+    [Theory]
+    [InlineData("", "nfacct v1.0.2: error: Operation not permitted", 1)]
+    [InlineData("", "nfacct v1.0.2: error: Permission denied", 1)]
+    [InlineData("", "nfacct v1.0.2: mnl_socket_open: No such file or directory", 1)]
+    [InlineData("", "/usr/sbin/nfacct: No such file or directory", 1)]
+    [InlineData("", "", 1)]
+    [InlineData("partial", "nfacct v1.0.2: error: No such file or directory", 1)]
+    [InlineData("", "nfacct v1.0.2: error: No such file or directory", 2)]
+    public void LookupFailuresAreNotMistakenForMissingObjects(string output, string error, int exit)
+    {
+        var fake = new ScriptedSystem { Respond = (_, _) => new(output, error, exit) };
+        var client = new NfAcct.NfAcct(fake);
+        Assert.Throws<IpTablesNetException>(() => client.Get("a"));
+        Assert.Throws<IpTablesNetException>(() => client.Exist("a"));
+        Assert.All(fake.Calls, call => Assert.True(call.Process.IsDisposed));
+    }
+    [Fact]
+    public void MissingObjectDiagnosticDoesNotHideOtherCommandFailures()
+    {
+        var fake = new ScriptedSystem { Respond = (_, _) => new("", "nfacct v1.0.2: error: No such file or directory", 1) };
+        var client = new NfAcct.NfAcct(fake);
+        Assert.Throws<IpTablesNetException>(() => client.List());
+        Assert.Throws<IpTablesNetException>(() => client.Add("a"));
+        Assert.Throws<IpTablesNetException>(() => client.Delete("a"));
+    }
+    [Fact]
+    public void LookupProcessStartFailurePropagates()
+    {
+        var fake = new ScriptedSystem { Respond = (_, _) => throw new System.ComponentModel.Win32Exception(2) };
+        Assert.Throws<System.ComponentModel.Win32Exception>(() => new NfAcct.NfAcct(fake).Exist("a"));
+    }
 }
