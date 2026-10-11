@@ -79,6 +79,9 @@ namespace IPTables.Net.IpSet
             var parts = new List<string>();
             if (Cidr.Prefix != 0) parts.Add(Cidr.ToString());
             if (_mac != null) parts.Add(_mac);
+            // A flag follows both addresses; a port precedes the second address.
+            var flag = (Set.Type & IpSetType.Flag) != 0;
+            if (flag && Cidr2.Prefix != 0) parts.Add(Cidr2.ToString());
             if (_port != -1)
             {
                 if (_protocol != null)
@@ -87,7 +90,7 @@ namespace IPTables.Net.IpSet
                     parts.Add(_port.ToString());
             }
 
-            if (Cidr2.Prefix != 0) parts.Add(Cidr2.ToString());
+            if (!flag && Cidr2.Prefix != 0) parts.Add(Cidr2.ToString());
             if (parts.Count == 0) throw new IpTablesNetException("Invalid IpSet entry, no parts to key");
 
             return string.Join(",", parts.ToArray());

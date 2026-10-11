@@ -6,6 +6,22 @@ namespace IPTables.Net.Tests;
 public class IpSetModeTests
 {
     [Theory]
+    [InlineData("hash:ip,ip,flag", "192.0.2.1,198.51.100.1,61")]
+    [InlineData("hash:ip,port,ip", "192.0.2.1,udp:123,198.51.100.1")]
+    public void ResizePreservesCompositeEntryOrder(string type, string key)
+    {
+        var saved = $"create demo {type} hashsize 1024 timeout 600\nadd demo {key} timeout 480\n";
+        var os = new ScriptedSystem { Respond = (_, args) => new(args == "save" ? saved : "") };
+        var system = new IpTablesSystem(os, null);
+        var desired = new IpSetSets(new[] { $"create demo {type} hashsize 2048 timeout 600" }, system);
+        desired.Sets.Single().SyncMode = IpSetSyncMode.SetOnly;
+        desired.Sync();
+        var restore = Assert.Single(os.Calls, call => call.Arguments == "restore").Text;
+        Assert.Contains($"add demo_S {key} timeout 480\n", restore.Replace("\r", ""));
+        Assert.False(system.SetAdapter.InTransaction);
+    }
+
+    [Theory]
     [InlineData(0u, 0u, true)]
     [InlineData(16u, 0u, true)]
     [InlineData(16u, 16u, true)]
