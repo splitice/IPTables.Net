@@ -9,6 +9,12 @@ name: CI
 on:
   push:
   pull_request:
+  workflow_dispatch:
+    inputs:
+      run_unstable:
+        description: Run opt-in conntrack/kernel tests on a disposable runner
+        type: boolean
+        default: false
 
 env:
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
@@ -40,46 +46,49 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }} 
 
-    - name: Install dependencies
-      run: dotnet restore
+    - name: Runner contract tests
+      run: |
+        ./scripts/tests/test-runner.sh
+        python3 scripts/tests/test-native-results.py
 
-    - name: Build
-      id: build
-      run: dotnet build --configuration Release --no-restore
+    - name: Managed tests
+      run: ./test.sh --fast
 
-    - name: Install system dependencies
-      uses: awalsh128/cache-apt-pkgs-action@latest
+    - name: Stable native and system tests
+      run: |
+        mkdir -p artifacts
+        ./test.sh --full --iptables-backend legacy --logger "trx;LogFileName=$PWD/artifacts/stable.trx"
+
+    - name: Require native coverage and report skips
+      if: always()
+      run: python3 scripts/check-native-results.py artifacts/stable.trx
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
       with:
-        packages: build-essential libxtables-dev libip6tc-dev libip4tc-dev libiptc-dev libnl-3-dev libnl-3-200 libnetfilter-conntrack3 libnfnetlink-dev libnfnetlink0 libpcap0.8 libpcap0.8-dev sudo
-        version: 1.0
+        name: stable-test-results
+        path: artifacts/*.trx
 
-    - name: Install dependencies
-      run: dotnet restore
-
-    - name: Modprobe IP6 tables
-      run: |
-         sudo modprobe ip6_tables
-         sudo modprobe ip6table_filter
-         sudo modprobe ip6table_mangle
-
-         if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
-          sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
-          sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
-         fi
-
-    - name: NUnit Tests
-      run: SKIP_SYSTEM_TESTS=1 dotnet test IPTables.Net.Tests
-
-    - name: Install ipthelper dependency
-      run: |
-        cd ipthelper
-        CONFIG="Release" sudo -E bash install.sh
-        CONFIG="Debug" sudo -E bash install.sh
-        sudo ldconfig
-        cd ..
-
-    - name: All Tests
-      run: sudo dotnet test
+  unstable:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_unstable
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Opt-in kernel tests
+        run: |
+          mkdir -p artifacts
+          RUN_UNSTABLE_SYSTEM_TESTS=1 timeout 10m ./test.sh --full --filter 'Category=NotWorkingOnTravis' --logger "trx;LogFileName=$PWD/artifacts/unstable.trx"
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unstable-test-results
+          path: artifacts/*.trx
 
   upload:
     name: upload

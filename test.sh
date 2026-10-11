@@ -155,6 +155,12 @@ cleanup_test_chains() {
 run_full_tests() {
     local results_dir
     local trap_command
+    unset SKIP_SYSTEM_TESTS
+    local -a runtime_env=()
+    local runtime_name
+    for runtime_name in DOTNET_PROCESSOR_COUNT DOTNET_GCHeapHardLimit; do
+        if [[ -n "${!runtime_name:-}" ]]; then runtime_env+=("${runtime_name}=${!runtime_name}"); fi
+    done
     local -a effective_test_args=("${DOTNET_TEST_ARGS[@]}")
     results_dir="$(mktemp -d)"
     trap_command="$(printf 'rm -rf -- %q; cleanup_test_chains; restore_iptables_backend' "$results_dir")"
@@ -186,6 +192,7 @@ run_full_tests() {
         "DOTNET_SKIP_FIRST_TIME_EXPERIENCE=${DOTNET_SKIP_FIRST_TIME_EXPERIENCE}" \
         "LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}" \
         "HOME=/root" \
+        "${runtime_env[@]}" \
         dotnet test "${REPO_ROOT}/IPTables.Net.Tests/IPTables.Net.Tests.csproj" \
         --configuration "$CONFIGURATION" \
         --no-build \
@@ -248,6 +255,11 @@ EOF
     esac
     shift
 done
+
+case "$TEST_MODE" in
+    auto|fast|full) ;;
+    *) die "Unsupported test mode '${TEST_MODE}'. Expected auto, fast or full." ;;
+esac
 
 IPTABLES_BACKEND="$(normalize_iptables_backend "$IPTABLES_BACKEND")"
 
