@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -41,8 +41,15 @@ namespace IPTables.Net.Iptables.Modules.Core
         public string Target { get; set; } = null;
         public TargetMode TargetMode { get; set; } = TargetMode.Jump;
 
-        public CoreModule(int version) : base(version)
+        private readonly int _version;
+        public CoreModule(int version) : base(version) { _version = version; }
+
+        private IpCidr ParseAddress(string text)
         {
+            var value = IpCidr.Parse(text);
+            var family = _version == 4 ? System.Net.Sockets.AddressFamily.InterNetwork : System.Net.Sockets.AddressFamily.InterNetworkV6;
+            if (value.Address.AddressFamily != family) throw new IPTables.Net.Exceptions.IpTablesNetException("Address family does not match rule version");
+            return value;
         }
 
         public string Jump
@@ -93,11 +100,11 @@ namespace IPTables.Net.Iptables.Modules.Core
                     return 1;
                 case OptionSourceLong:
                 case OptionSourceShort:
-                    Source = new ValueOrNot<IpCidr>(IpCidr.Parse(parser.GetNextArg()), IpCidr.Any, not);
+                    Source = new ValueOrNot<IpCidr>(ParseAddress(parser.GetNextArg()), IpCidr.Any, not);
                     return 1;
                 case OptionDestinationLong:
                 case OptionDestinationShort:
-                    Destination = new ValueOrNot<IpCidr>(IpCidr.Parse(parser.GetNextArg()), IpCidr.Any, not);
+                    Destination = new ValueOrNot<IpCidr>(ParseAddress(parser.GetNextArg()), IpCidr.Any, not);
                     return 1;
                 case OptionJumpLong:
                 case OptionJumpShort:
