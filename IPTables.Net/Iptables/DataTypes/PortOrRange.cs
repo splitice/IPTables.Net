@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace IPTables.Net.Iptables.DataTypes
 {
@@ -11,6 +11,7 @@ namespace IPTables.Net.Iptables.DataTypes
 
         public PortOrRange(uint lowerPort, uint upperPort, char splitChar = ':')
         {
+            if (lowerPort > upperPort) throw new ArgumentOutOfRangeException(nameof(upperPort));
             _lowerPort = lowerPort;
             _upperPort = upperPort;
             _splitChar = splitChar;
@@ -43,6 +44,7 @@ namespace IPTables.Net.Iptables.DataTypes
             var split = getNextArg.Split(new[] {splitChar});
             if (split.Length == 1) return new PortOrRange(uint.Parse(split[0]), splitChar);
 
+            if (split.Length != 2) throw new FormatException("Expected one value or two range endpoints");
             return new PortOrRange(uint.Parse(split[0]), uint.Parse(split[1]), splitChar);
         }
 
