@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -32,18 +32,19 @@ namespace IPTables.Net.Conntrack
         public static extern int cr_constant(string constant);
 
         [DllImport(Helper)]
-        public static extern int cr_free(CrImg img);
+        public static extern void cr_free(ref CrImg img);
 
         [DllImport(Helper)]
         public static extern int cr_length(IntPtr node);
 
         [DllImport(Helper)]
-        public static extern int conditional_free();
+        public static extern void conditional_free();
 
         [DllImport(Helper)]
-        public static extern int conditional_init(int address_family, [In] ConntrackQueryFilter[] qf, int qfLength);
+        public static extern void conditional_init(int address_family, [In] ConntrackQueryFilter[] qf, int qfLength);
 
         [DllImport(Helper)]
+        [return: MarshalAs(UnmanagedType.I1)]
         public static extern bool cr_extract_field([In] ConntrackQueryFilter[] qf, int qfLength, byte[] data,
             IntPtr output, int outputLen);
     }

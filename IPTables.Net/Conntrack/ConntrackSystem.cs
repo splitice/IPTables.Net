@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -11,7 +11,10 @@ namespace IPTables.Net.Conntrack
 {
     public class ConntrackSystem
     {
-        private object _queryLock = new object();
+        private static readonly object QueryLock = new object();
+        private readonly ConntrackApi _native;
+        public ConntrackSystem() : this(new ConntrackApi()) { }
+        internal ConntrackSystem(ConntrackApi native) { _native = native; }
         private Dictionary<string, ushort> _constants = new Dictionary<string, ushort>();
 
         public ushort GetConstant(string key)
@@ -21,8 +24,8 @@ namespace IPTables.Net.Conntrack
                 ushort value;
                 if (!_constants.TryGetValue(key, out value))
                 {
-                    var v = ConntrackHelper.cr_constant(key);
-                    if (v == -1) throw new KeyNotFoundException(string.Format("Unable to lookup constant {0}", key));
+                    var v = _native.Constant(key);
+                    if (v < 0 || v > ushort.MaxValue) throw new KeyNotFoundException(string.Format("Unable to lookup constant {0}", key));
                     Debug.Assert(v <= ushort.MaxValue);
                     value = (ushort) v;
                     _constants.Add(key, value);
@@ -34,13 +37,17 @@ namespace IPTables.Net.Conntrack
 
         public bool ExtractField<T>(ConntrackQueryFilter[] qf, byte[] conn, out T output) where T : struct
         {
+            ArgumentNullException.ThrowIfNull(qf);
+            ArgumentNullException.ThrowIfNull(conn);
+            if (conn.Length < 20 || BitConverter.ToUInt32(conn, 0) < 20 || BitConverter.ToUInt32(conn, 0) > conn.Length)
+                throw new ArgumentException("Invalid conntrack record length", nameof(conn));
             var size = Marshal.SizeOf(typeof(T));
             var handle = Marshal.AllocHGlobal(size);
             if (handle == IntPtr.Zero) throw new IpTablesNetException("Unable to allocate memory for Conntrack field");
 
             try
             {
-                var ret = ConntrackHelper.cr_extract_field(qf, qf.Length, conn, handle, size);
+                var ret = _native.Extract(qf, conn, handle, size);
                 if (ret)
                 {
                     var obj = Marshal.PtrToStructure(handle, typeof(T));
@@ -70,58 +77,55 @@ namespace IPTables.Net.Conntrack
         /// <returns>remaining unprocessed data</returns>
         public int Restore(bool expectationsTable, byte[] data, uint restoreMark = 0, uint restoreMarkMask = 0)
         {
-            var useRestoreMark = restoreMark != 0 || restoreMarkMask != 0;
-            if (useRestoreMark) ConntrackHelper.restore_mark_init(restoreMark, restoreMarkMask);
-            var errorCode = ConntrackHelper.restore_nf_cts(expectationsTable, data, data.Length);
-            if (errorCode < 0)
-                throw new IpTablesNetException(string.Format("An error occured while loading NFCTs with the errno: {0}",
-                    -errorCode));
-            if (useRestoreMark) ConntrackHelper.restore_mark_free();
-
-            return errorCode;
+            ArgumentNullException.ThrowIfNull(data);
+            lock (QueryLock)
+            {
+                var useRestoreMark = restoreMark != 0 || restoreMarkMask != 0;
+                try
+                {
+                    if (useRestoreMark) _native.Mark(restoreMark, restoreMarkMask);
+                    var result = _native.Restore(expectationsTable, data);
+                    if (result < 0) throw new IpTablesNetException($"Unable to restore conntrack records: errno {-result}");
+                    return result;
+                }
+                finally { if (useRestoreMark) _native.ClearMark(); }
+            }
         }
 
         public void Dump(bool expectationTable, Action<byte[]> cb, ConntrackQueryFilter[] qf = null,
             AddressFamily addressFamily = AddressFamily.Unspecified)
         {
-            lock (_queryLock)
+            ArgumentNullException.ThrowIfNull(cb);
+            int family = addressFamily switch
             {
-                ConntrackHelper.conditional_init((int) addressFamily, qf, qf == null ? 0 : qf.Length);
-
+                AddressFamily.Unspecified => 0,
+                AddressFamily.InterNetwork => 2,
+                AddressFamily.InterNetworkV6 => 10,
+                _ => throw new ArgumentOutOfRangeException(nameof(addressFamily))
+            };
+            lock (QueryLock)
+            {
+                var img = new ConntrackHelper.CrImg();
                 try
                 {
-                    var buffer = new byte[1];
-                    var img = new ConntrackHelper.CrImg();
-                    Debug.Assert(img.CrNode == IntPtr.Zero);
-
-                    ConntrackHelper.dump_nf_cts(expectationTable, ref img);
-
-                    try
+                    _native.Filter(family, qf);
+                    var result = _native.Dump(expectationTable, ref img);
+                    if (result < 0) throw new IpTablesNetException($"Unable to dump conntrack records: errno {-result}");
+                    var ptr = img.CrNode;
+                    while (ptr != IntPtr.Zero)
                     {
-                        var ptr = img.CrNode;
-                        while (ptr != IntPtr.Zero)
-                        {
-                            var crsize = ConntrackHelper.cr_length(ptr);
-                            var newPtr = Marshal.ReadIntPtr(ptr);
-
-                            crsize -= IntPtr.Size;
-                            Debug.Assert(crsize > 0);
-                            if (buffer.Length != crsize) buffer = new byte[crsize];
-
-                            Marshal.Copy(new IntPtr((long) ptr + IntPtr.Size), buffer, 0, crsize);
-                            cb(buffer);
-
-                            ptr = newPtr;
-                        }
-                    }
-                    finally
-                    {
-                        if (img.CrNode != IntPtr.Zero) ConntrackHelper.cr_free(img);
+                        var size = _native.Length(ptr) - IntPtr.Size;
+                        if (size < 20) throw new IpTablesNetException("Invalid conntrack record length");
+                        var buffer = new byte[size];
+                        Marshal.Copy(IntPtr.Add(ptr, IntPtr.Size), buffer, 0, size);
+                        cb(buffer);
+                        ptr = Marshal.ReadIntPtr(ptr);
                     }
                 }
                 finally
                 {
-                    if (qf != null || addressFamily != AddressFamily.Unspecified) ConntrackHelper.conditional_free();
+                    try { if (img.CrNode != IntPtr.Zero) _native.Free(ref img); }
+                    finally { _native.ClearFilter(); }
                 }
             }
         }
