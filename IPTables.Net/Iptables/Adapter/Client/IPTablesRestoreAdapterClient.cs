@@ -109,6 +109,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 //Revert to using IPTables Binary if non transactional
                 var binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.ReplaceRule(rule);
+                return;
             }
 
             var command = rule.GetActionCommand("-R", false, true);
@@ -131,6 +132,11 @@ namespace IPTables.Net.Iptables.Adapter.Client
 
         public override void AddRule(string command)
         {
+            if (!_inTransaction)
+            {
+                new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary).AddRule(command);
+                return;
+            }
             var table = ExtractTable(command);
             _builder.AddCommand(table, command);
         }
@@ -160,6 +166,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                 //Revert to using IPTables Binary if non transactional
                 var binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
                 binaryClient.AddChain(table, chainName);
+                return;
             }
 
             _builder.AddChain(table, chainName);
@@ -169,12 +176,16 @@ namespace IPTables.Net.Iptables.Adapter.Client
         {
             if (_inTransaction)
             {
-                _builder.DeleteChain(table, chainName);
+                if (!_builder.DeleteChain(table, chainName))
+                {
+                    if (flush) _builder.AddCommand(table, "-F " + chainName);
+                    _builder.AddCommand(table, "-X " + chainName);
+                }
                 return;
             }
 
             var binaryClient = new IPTablesBinaryAdapterClient(_ipVersion, _system, _iptablesBinary);
-            binaryClient.DeleteChain(table, chainName);
+            binaryClient.DeleteChain(table, chainName, flush);
         }
 
         public override IpTablesChainSet ListRules(string table)
@@ -219,6 +230,7 @@ namespace IPTables.Net.Iptables.Adapter.Client
                     throw new IpTablesNetException($"IpTables-Restore execution failed (exit {process.ExitCode}): {error} {context}".Trim());
                 }
             }
+            _builder.Clear();
             _inTransaction = false;
         }
 
@@ -228,10 +240,6 @@ namespace IPTables.Net.Iptables.Adapter.Client
             _inTransaction = false;
         }
 
-        ~IPTablesRestoreAdapterClient()
-        {
-            Dispose();
-        }
 
 
         public override void Dispose()
