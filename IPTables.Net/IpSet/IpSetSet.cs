@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -217,7 +217,7 @@ namespace IPTables.Net.IpSet
 
         public bool SetEquals(IpSetSet set, bool size = true)
         {
-            if (!(set.MaxElem == MaxElem && set.Name == Name && set.Timeout == Timeout && _bucketSize == set._bucketSize &&
+            if (!(set.Family == Family && set.MaxElem == MaxElem && set.Name == Name && set.Timeout == Timeout && _bucketSize == set._bucketSize &&
                   set.Type == Type && set.BitmapRange.Equals(BitmapRange) && set.CreateOptions.OrderBy(a => a)
                       .SequenceEqual(CreateOptions.OrderBy(a => a))))
                 return false;
