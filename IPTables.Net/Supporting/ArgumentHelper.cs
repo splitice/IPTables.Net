@@ -1,57 +1,34 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-
 namespace IPTables.Net.Supporting
 {
     public class ArgumentHelper
     {
         public static string[] SplitArguments(string commandLine)
         {
-            var parmChars = commandLine.ToCharArray();
-            var inSingleQuote = false;
-            var inDoubleQuote = false;
-            var inSpace = true;
-            var lastChar = 0;
-            for (var index = 0; index < parmChars.Length; index++)
+            ArgumentNullException.ThrowIfNull(commandLine);
+            var result = new List<string>(); var token = new StringBuilder();
+            char quote = '\0'; bool started = false;
+            for (int i = 0; i < commandLine.Length; i++)
             {
-                // replace double quote with 0x00 if not in single quote
-                if (parmChars[index] == '"' && !inSingleQuote)
+                char c = commandLine[i];
+                if (c == '\\' && i + 1 < commandLine.Length &&
+                    (commandLine[i + 1] == '\\' || commandLine[i + 1] == quote ||
+                     (quote == '\0' && (char.IsWhiteSpace(commandLine[i + 1]) || commandLine[i + 1] == '\'' || commandLine[i + 1] == '"'))))
+                { token.Append(commandLine[++i]); started = true; }
+                else if (quote != '\0')
+                { if (c == quote) quote = '\0'; else token.Append(c); started = true; }
+                else if (c == '\'' || c == '"') { quote = c; started = true; }
+                else if (char.IsWhiteSpace(c))
                 {
-                    inDoubleQuote = !inDoubleQuote;
-                    parmChars[index] = '\x00';
+                    if (started) { result.Add(token.ToString()); token.Clear(); started = false; }
                 }
-
-                // replace single quote with 0x00 if not in single quote
-                if (parmChars[index] == '\'' && !inDoubleQuote)
-                {
-                    inSingleQuote = !inSingleQuote;
-                    parmChars[index] = '\x00';
-                }
-
-                // replace space with 0x01 if not in any quotes
-                if (parmChars[index] == ' ' && !inSingleQuote && !inDoubleQuote)
-                {
-                    if (inSpace)
-                    {
-                        parmChars[index] = '\x00';
-                    }
-                    else
-                    {
-                        parmChars[index] = '\x01';
-                        inSpace = true;
-                    }
-                }
-                else
-                {
-                    lastChar = index;
-                    inSpace = false;
-                }
+                else { token.Append(c); started = true; }
             }
-
-            // remove all ignore chars (0x00), then split by space seperator (0x01)
-            return new string(parmChars, 0, lastChar + 1).Replace("\x00", "").Split(new[] {'\x01'});
+            if (quote != '\0') throw new FormatException("Unterminated quoted argument");
+            if (started) result.Add(token.ToString());
+            return result.ToArray();
         }
     }
 }

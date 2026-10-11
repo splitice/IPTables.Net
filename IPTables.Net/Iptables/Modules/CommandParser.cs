@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -57,6 +57,7 @@ namespace IPTables.Net.Iptables.Modules
 
         public string GetNextArg(int offset = 1)
         {
+            if (Position + offset >= _arguments.Length) throw new IpTablesNetException("Missing value for " + GetCurrentArg());
             return _arguments[Position + offset];
         }
 
@@ -82,15 +83,16 @@ namespace IPTables.Net.Iptables.Modules
                 _ipCommand.Type = IpTablesCommand.GetCommandType(option);
                 if (option == "-D" || option == "-R" || option == "-I")
                 {
-                    var nextArg = GetNextArg(2);
+                    var nextArg = GetRemainingArgs() >= 2 ? GetNextArg(2) : "";
                     uint offset;
                     if (uint.TryParse(nextArg, out offset))
                     {
-                        if (offset == 0) throw new Exception("Invalid offset");
+                        if (offset == 0 || offset > int.MaxValue) throw new IpTablesNetException("Invalid offset");
                         _ipCommand.Offset = (int) offset - 1;
                         return 2;
                     }
 
+                    if (option == "-R" || (option == "-D" && nextArg.Length == 0)) throw new IpTablesNetException("Missing rule position or specification");
                     _ipCommand.Offset = -1;
                 }
 
