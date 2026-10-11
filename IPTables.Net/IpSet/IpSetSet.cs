@@ -155,7 +155,7 @@ namespace IPTables.Net.IpSet
         internal IpSetSet(IpTablesSystem system)
         {
             _system = system;
-            _entries = new HashSet<IpSetEntry>();
+            _entries = new HashSet<IpSetEntry>(IpSetEntryKeyComparer.Instance);
             _createOptions = new List<string>();
         }
 

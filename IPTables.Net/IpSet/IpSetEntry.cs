@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using IPTables.Net.Exceptions;
@@ -131,6 +131,7 @@ namespace IPTables.Net.IpSet
 
                 for (var i = startOffset; i < arguments.Length; i++) i += parser.FeedToSkip(i, i == startOffset);
 
+                entry.Set.Entries.Add(entry);
                 return entry;
             }
             catch (Exception ex)
@@ -139,6 +140,8 @@ namespace IPTables.Net.IpSet
                     string.Format("Failed to parse {0}", string.Join(" ", arguments.Skip(startOffset))), ex);
             }
         }
+
+        public override int GetHashCode() => HashCode.Combine(_set, IpSetEntryKeyComparer.Instance.GetHashCode(this), _timeout);
 
         public bool KeyEquals(IpSetEntry other, bool cidr = true)
         {

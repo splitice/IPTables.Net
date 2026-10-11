@@ -1,4 +1,4 @@
-﻿using IPTables.Net.Exceptions;
+using IPTables.Net.Exceptions;
 using IPTables.Net.Iptables.DataTypes;
 
 namespace IPTables.Net.IpSet.Parser
@@ -83,7 +83,6 @@ namespace IPTables.Net.IpSet.Parser
                 var set = _sets.GetSetByName(option);
                 if (set == null) throw new IpTablesNetException($"The set {option} does not exist");
                 _entry.Set = set;
-                set.Entries.Add(_entry);
             }
             else if (option == "timeout")
             {
