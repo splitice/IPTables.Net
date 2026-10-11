@@ -214,12 +214,13 @@ namespace IPTables.Net.Iptables
             }
         }
 
+        /// <summary>Copies chains, ordered rules, module state and counters while retaining the system and IP version.</summary>
         public IpTablesRuleSet DeepClone()
         {
             var rs = new IpTablesRuleSet(IpVersion, System);
             foreach (var chain in _chains) rs.AddChain(chain.Name, chain.Table);
 
-            foreach (var rule in Rules) rs.AddRule(rule.GetActionCommand());
+            foreach (var rule in Rules) rs.AddRule(rule.GetActionCommand()).Counters = rule.Counters;
 
             return rs;
         }
